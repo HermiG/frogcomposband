@@ -2710,7 +2710,7 @@ static void get_exp_from_mon(int dam, monster_type *m_ptr, bool mon_dead)
         s64b_mul(&new_exp, &new_exp_frac, 0, coffee_mult);
     }
 
-    if ((coffee_break == SPEED_INSTA_COFFEE))
+    if (coffee_break == SPEED_INSTA_COFFEE)
     {
         int exp_div = 40;
         int cap = 40;

@@ -65,43 +65,6 @@ static bool new_game = TRUE;
 #define MAX_COLORS 256
 #define MSG_MAX SOUND_MAX
 
-/**
- * Keyset mappings for various keys.
- */
-#define ARROW_DOWN    0x80
-#define ARROW_LEFT    0x81
-#define ARROW_RIGHT   0x82
-#define ARROW_UP      0x83
-
-#define KC_F1         0x84
-#define KC_F2         0x85
-#define KC_F3         0x86
-#define KC_F4         0x87
-#define KC_F5         0x88
-#define KC_F6         0x89
-#define KC_F7         0x8A
-#define KC_F8         0x8B
-#define KC_F9         0x8C
-#define KC_F10        0x8D
-#define KC_F11        0x8E
-#define KC_F12        0x8F
-#define KC_F13        0x90
-#define KC_F14        0x91
-#define KC_F15        0x92
-
-#define KC_HELP       0x93
-#define KC_HOME       0x94
-#define KC_PGDOWN     0x97
-#define KC_INSERT     0x98
-#define KC_PAUSE      0x99
-#define KC_BREAK      0x9a
-#define KC_BEGIN      0x9b
-#define KC_ENTER      0x9c /* ASCII \r */
-#define KC_TAB        0x9d /* ASCII \t */
-#define KC_DELETE     0x9e
-#define KC_BACKSPACE  0x9f /* ASCII \h */
-//#define ESCAPE        0xE000
-
 //OSType _ftype;
 //OSType _fcreator;
 
@@ -1506,7 +1469,7 @@ static void Term_init_cocoa(term *t)
     /* Set its title and, for auxiliary terms, tentative size */
     if (termIdx == 0)
     {
-        [window setTitle:@"PosChengband"];
+        [window setTitle:@"FrogComposBand"];
     }
     else
     {
@@ -2004,7 +1967,7 @@ static errr Term_pict_cocoa(int x, int y, int n, const int *ap,
  *
  * Draw several ("n") chars, with an attr, at a given location.
  */
-static errr Term_text_cocoa(int x, int y, int n, byte_hack a, cptr cp)
+static errr Term_text_cocoa(int x, int y, int n, byte a, cptr cp)
 {
     NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
 
@@ -2732,7 +2695,7 @@ static BOOL send_event(NSEvent *event)
             
             break;
         }
-            
+        
         case NSLeftMouseDown:
         {
             /* Queue mouse presses if they occur in the map section

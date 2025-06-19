@@ -21,7 +21,7 @@ static u32b latest_visit_mark;  /* Max number of visit_mark */
 
 /*
  * Initialize saved_floors array. Make sure that old temporal files
- * are not remaining as gurbages.
+ * are not remaining as garbage.
  */
 void init_saved_floors(bool force)
 {
@@ -29,13 +29,6 @@ void init_saved_floors(bool force)
     int i;
     int fd = -1;
     int mode = 0644;
-
-#ifdef SET_UID
-# ifdef SECURE
-    /* Get "games" permissions */
-    beGames();
-# endif
-#endif
 
     for (i = 0; i < MAX_SAVED_FLOORS; i++)
     {
@@ -60,7 +53,7 @@ void init_saved_floors(bool force)
             {
                 msg_print("Error: There are old temporal files.");
                 msg_print("Make sure you are not running two game processes simultaneously.");
-                msg_print("If the temporal files are garbages of old crashed process, ");
+                msg_print("If the temporal files are garbage of old crashed process, ");
                 msg_print("you can delete it safely.");
                 if (!get_check("Do you delete old temporal files? ")) quit("Aborted.");
                 force = TRUE;
@@ -98,13 +91,6 @@ void init_saved_floors(bool force)
 
     /* No change floor mode yet */
     change_floor_mode = 0;
-
-#ifdef SET_UID
-# ifdef SECURE
-    /* Drop "games" permissions */
-    bePlayer();
-# endif
-#endif
 }
 
 
@@ -116,13 +102,6 @@ void clear_saved_floor_files(void)
 {
     char floor_savefile[1024];
     int i;
-
-#ifdef SET_UID
-# ifdef SECURE
-    /* Get "games" permissions */
-    beGames();
-# endif
-#endif
 
     for (i = 0; i < MAX_SAVED_FLOORS; i++)
     {
@@ -144,13 +123,6 @@ void clear_saved_floor_files(void)
         /* Drop permissions */
         safe_setuid_drop();
     }
-
-#ifdef SET_UID
-# ifdef SECURE
-    /* Drop "games" permissions */
-    bePlayer();
-# endif
-#endif
 }
 
 

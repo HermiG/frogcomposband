@@ -1392,19 +1392,6 @@ bool save_player(void)
 
     char    safe[1024];
 
-
-#ifdef SET_UID
-
-# ifdef SECURE
-
-    /* Get "games" permissions */
-    beGames();
-
-# endif
-
-#endif
-
-
     /* New savefile */
     strcpy(safe, savefile);
     strcat(safe, ".new");
@@ -1482,18 +1469,6 @@ bool save_player(void)
         /* Success */
         result = TRUE;
     }
-
-
-#ifdef SET_UID
-
-# ifdef SECURE
-
-    /* Drop "games" permissions */
-    bePlayer();
-
-# endif
-
-#endif
 
     /* Return the result */
     return (result);
@@ -1832,15 +1807,6 @@ void remove_loc(void)
     char temp[1024];
 #endif /* VERIFY_SAVEFILE */
 
-#ifdef SET_UID
-# ifdef SECURE
-
-    /* Get "games" permissions */
-    beGames();
-
-# endif /* SECURE */
-#endif /* SET_UID */
-
 #ifdef VERIFY_SAVEFILE
 
     /* Lock on savefile */
@@ -1851,15 +1817,6 @@ void remove_loc(void)
     fd_kill(temp);
 
 #endif /* VERIFY_SAVEFILE */
-
-#ifdef SET_UID
-# ifdef SECURE
-
-    /* Drop "games" permissions */
-    bePlayer();
-
-# endif /* SECURE */
-#endif /* SET_UID */
 
 }
 
@@ -1889,16 +1846,6 @@ bool save_floor(saved_floor_type *sf_ptr, u32b mode)
     bool ok = FALSE;
     savefile_ptr file = NULL;
 
-    if (!(mode & SLF_SECOND))
-    {
-#ifdef SET_UID
-# ifdef SECURE
-        /* Get "games" permissions */
-        beGames();
-# endif
-#endif
-    }
-
     sprintf(floor_savefile, "%s.F%02d", savefile, (int)sf_ptr->savefile_id);
     file = savefile_open_write(floor_savefile);
     if (file)
@@ -1913,16 +1860,6 @@ bool save_floor(saved_floor_type *sf_ptr, u32b mode)
         safe_setuid_grab();
         (void)fd_kill(floor_savefile);
         safe_setuid_drop();
-    }
-
-    if (!(mode & SLF_SECOND))
-    {
-#ifdef SET_UID
-# ifdef SECURE
-        /* Drop "games" permissions */
-        bePlayer();
-# endif
-#endif
     }
 
     return ok;

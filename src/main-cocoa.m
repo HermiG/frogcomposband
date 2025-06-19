@@ -34,7 +34,7 @@
 
 static NSSize const AngbandScaleIdentity = {1.0, 1.0};
 static NSString * const AngbandDirectoryNameLib = @"lib";
-static NSString * const AngbandDirectoryNameBase = @"PosChengband";
+static NSString * const AngbandDirectoryNameBase = @"FrogComposBand";
 
 static NSString * const AngbandTerminalsDefaultsKey = @"Terminals";
 static NSString * const AngbandTerminalRowsDefaultsKey = @"Rows";
@@ -91,8 +91,6 @@ static bool new_game = TRUE;
 
 #define KC_HELP       0x93
 #define KC_HOME       0x94
-#define KC_PGUP       0x95
-#define KC_END        0x96
 #define KC_PGDOWN     0x97
 #define KC_INSERT     0x98
 #define KC_PAUSE      0x99

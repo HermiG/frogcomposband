@@ -70,6 +70,7 @@ x64/
 build/
 [Bb]in/
 [Oo]bj/
+FrogComposband.app
 
 # MSTest test Results
 [Tt]est[Rr]esult*/

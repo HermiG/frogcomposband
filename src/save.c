@@ -11,6 +11,7 @@
 /* Purpose: interact with savefiles */
 
 #include "angband.h"
+#include <unistd.h>
 
 /*Exo's character information patch*/
 void updatecharinfoS(void)

@@ -17,6 +17,10 @@
 
 #include "angband.h"
 
+#ifdef BOOL
+#undef BOOL
+#endif
+
 #if defined(MACH_O_CARBON)
 
 /* Default creator signature */
@@ -25,8 +29,8 @@
 #endif
 
 /* Mac headers */
-#include <Cocoa/Cocoa.h>
-#include <Carbon/Carbon.h> // For keycodes
+#import <Cocoa/Cocoa.h>
+#import <Carbon/Carbon.h> // For keycodes
 
 static NSSize const AngbandScaleIdentity = {1.0, 1.0};
 static NSString * const AngbandDirectoryNameLib = @"lib";
@@ -964,12 +968,12 @@ static int compare_advances(const void *ap, const void *bp)
 	/* Register the sound hook */
 	//sound_hook = play_sound;
     
+    /* Set the "system" type */
+    ANGBAND_SYS = "mac";
+  
     /* Initialize */
     init_angband();
 
-    /* Note the "system" */
-    ANGBAND_SYS = "mac";
-    
     /* Initialize some save file stuff */
     player_egid = getegid();
     

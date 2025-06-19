@@ -18,17 +18,16 @@ EXE = $(NAME)
 # for consistency with older versions, use a lower case bundle ID
 BUNDLE_IDENTIFIER = org.rephial.angband
 
-ARCH = -arch i386 -arch x86_64
+ARCH = -arch x86_64
 WARNINGS = -W -Wall -Wno-unused-parameter -Wno-missing-field-initializers
 JUST_C = -std=c99 -Wdeclaration-after-statement
-OBJ_CFLAGS = -std=c99 -x objective-c -mmacosx-version-min=10.5
-CFLAGS = -g -I. $(WARNINGS) $(OPT) -DMACH_O_CARBON -DHAVE_MKSTEMP \
-	-fno-stack-protector $(ARCH)
+OBJ_CFLAGS = -std=c99 -x objective-c -mmacosx-version-min=10.13
+CFLAGS = -g -I. $(WARNINGS) $(OPT) -DMACH_O_CARBON -DHAVE_MKSTEMP -fno-stack-protector $(ARCH)
 LIBS = -framework Cocoa
 # Fix for bug #1663: Set the deployment target via environment variable
 # for the final link command. See http://grauonline.de/wordpress/?p=71
 # or http://stackoverflow.com/questions/5509885/creating-app-for-old-mac-from-new-mac-machine
-DEPLOYMENT_TARGET = MACOSX_DEPLOYMENT_TARGET=10.5
+DEPLOYMENT_TARGET = MACOSX_DEPLOYMENT_TARGET=12.0
 
 # Import user prefs
 # If you don't want to edit this file, put your module redefinitions
@@ -64,9 +63,7 @@ OSX_OBJS = main-cocoa.o
 $(EXE).o: $(OBJS)
 	@printf "%10s %-20s\n" LD $@.x86_64
 	@$(LD) -r -arch x86_64 -o $@.x86_64 $(OBJS)
-	@printf "%10s %-20s\n" LD $@.i386
-	@$(LD) -r -arch i386 -o $@.i386 $(OBJS)
-	lipo -arch x86_64 $@.x86_64 -arch i386 $@.i386 -create -output frogcomposband.o
+	lipo -arch x86_64 $@.x86_64 -create -output frogcomposband.o
 
 $(EXE): $(EXE).o $(OSX_OBJS)
 	$(DEPLOYMENT_TARGET) $(CC) $(CFLAGS) $(LDFLAGS) -o $(EXE) $(EXE).o $(OSX_OBJS) $(LIBS) 
@@ -76,7 +73,7 @@ $(EXE): $(EXE).o $(OSX_OBJS)
 #
 
 clean:
-	-rm -f $(OBJS) $(EXE) $(EXE).o.i386 $(EXE).o.x86_64 $(EXE).o $(OSX_OBJS)
+	-rm -f $(OBJS) $(EXE) $(EXE).o.x86_64 $(EXE).o $(OSX_OBJS)
 
 
 #
@@ -124,7 +121,7 @@ LIBFILES = \
   ../lib/edit/*.txt \
   ../lib/file/*.txt \
   ../lib/help/*.txt \
-  ../lib/help/*.hlp \
+  ../lib/help/html/*.html \
   ../lib/pref/*.prf \
 
 install: $(EXE) $(ICONFILES) $(PLIST) $(LIBFILES)
@@ -138,6 +135,7 @@ install: $(EXE) $(ICONFILES) $(PLIST) $(LIBFILES)
 	@mkdir -p $(APPRES)/lib/edit
 	@mkdir -p $(APPRES)/lib/file
 	@mkdir -p $(APPRES)/lib/help
+	@mkdir -p $(APPRES)/lib/help/html
 	@mkdir -p $(APPRES)/lib/pref
 	@mkdir -p $(APPRES)/lib/script
 	@mkdir -p $(APPRES)/lib/xtra/graf
@@ -147,7 +145,7 @@ install: $(EXE) $(ICONFILES) $(PLIST) $(LIBFILES)
 	@cp ../lib/edit/*.txt $(APPRES)/lib/edit
 	@cp ../lib/file/*.txt $(APPRES)/lib/file
 	@cp ../lib/help/*.txt $(APPRES)/lib/help
-	@cp ../lib/help/*.hlp $(APPRES)/lib/help
+	@cp ../lib/help/html/*.html $(APPRES)/lib/help/html
 	@cp ../lib/pref/*.prf $(APPRES)/lib/pref
 
 	# 'optionally' install sound and graphics tiles, if present

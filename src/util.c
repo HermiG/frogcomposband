@@ -15,6 +15,14 @@
 
 #include <assert.h>
 
+#ifdef _WIN32
+  #include <io.h>  // _read, _write on Windows
+#else
+  #include <unistd.h>  // read, write on POSIX
+  #define _read(fd, buf, n) read((fd), (buf), (n))
+  #define _write(fd, buf, n) write((fd), (buf), (n))
+#endif
+
 /* Stop using auto_more and use the new improved handling instead! */
 #define AUTO_MORE_PROMPT     0
 #define AUTO_MORE_SKIP_ONE   1   /* Skip to next message */

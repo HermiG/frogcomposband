@@ -147,7 +147,7 @@ P:^_S21\r
 A:\e\e\\.4
 P:^_S22\r
 
-A:\e\e\\.5
+A:\e\e*(
 P:^_S23\r
 
 A:\e\e\\.6
@@ -164,7 +164,7 @@ P:^_S28\r
 
 
 #
-# Control-Keypad -- Directed tunneling
+# Control-Keypad -- Directed grid alteration
 #
 
 A:\e\e\\+1
@@ -179,7 +179,7 @@ P:^_C21\r
 A:\e\e\\+4
 P:^_C22\r
 
-A:\e\e\\+5
+A:^V
 P:^_C23\r
 
 A:\e\e\\+6
@@ -197,7 +197,7 @@ P:^_C28\r
 
 
 #
-# Option-Control-Keypad -- wield {@0} and tunnel
+# Option-Control-Keypad -- wield {@0} and alter grid
 #
 
 A:\e\ew0\s\s\\+1
@@ -253,6 +253,39 @@ P:^_61\r
 A:8
 P:^_62\r
 
+#
+# Hack -- Arrow-Keys - Directed running
+#
+
+A:\e\e\\.4
+P:^_S59\r
+
+A:\e\e\\.6
+P:^_S60\r
+
+A:\e\e\\.2
+P:^_S61\r
+
+A:\e\e\\.8
+P:^_S62\r
+
+#
+# Hack -- Arrow-Keys - Directed grid alteration
+#
+
+A:\e\e\\+4
+P:^_C59\r
+
+A:\e\e\\+6
+P:^_C60\r
+
+A:\e\e\\+2
+P:^_C61\r
+
+A:\e\e\\+8
+P:^_C62\r
+
+
 
 #
 # Hack -- Scroll Keys
@@ -272,7 +305,7 @@ P:^_55\r
 
 
 #
-# Extras
+# Extra
 #
 
 A:\x7f

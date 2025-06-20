@@ -2571,23 +2571,36 @@ static BOOL send_event(NSEvent *event)
           // -----------------------
           bool special = false;
           switch (vk) {
-            case kVK_UpArrow:    special = true; break;
-            case kVK_DownArrow:  special = true; break;
-            case kVK_LeftArrow:  special = true; break;
-            case kVK_RightArrow: special = true; break;
-            case kVK_Home:       special = true; break;
-            case kVK_End:        special = true; break;
-            case kVK_PageUp:     special = true; break;
-            case kVK_PageDown:   special = true; break;
-            case kVK_Help:       special = true; break;
-            case kVK_ForwardDelete:   special = true; break;
-            case kVK_Escape:     ch = ESCAPE; break;
-            case kVK_Return:
-            case kVK_ANSI_KeypadEnter: ch = '\r'; break;
-            case kVK_Tab:              ch = '\t'; break;
-            case kVK_Delete:           ch = '\b'; break;
+            case kVK_ANSI_Keypad0:
+            case kVK_ANSI_Keypad1:
+            case kVK_ANSI_Keypad2:
+            case kVK_ANSI_Keypad3:
+            case kVK_ANSI_Keypad4:
+            case kVK_ANSI_Keypad5:
+            case kVK_ANSI_Keypad6:
+            case kVK_ANSI_Keypad7:
+            case kVK_ANSI_Keypad8:
+            case kVK_ANSI_Keypad9:
+            case kVK_UpArrow:
+            case kVK_DownArrow:
+            case kVK_LeftArrow:
+            case kVK_RightArrow:
+            case kVK_PageUp:
+            case kVK_PageDown:
+            case kVK_Home:
+            case kVK_End:
+            case kVK_Help:
+            case kVK_ForwardDelete:
+                special = true;
+                break;
+            
+            case kVK_ANSI_KeypadEnter:
+            case kVK_Return:  ch = '\r';   break;
+            case kVK_Tab:     ch = '\t';   break;
+            case kVK_Delete:  ch = '\b';   break;
+            case kVK_Escape:  ch = ESCAPE; break;
             default:
-              break;
+                break;
           }
           
           if (ch) {

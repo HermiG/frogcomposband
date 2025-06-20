@@ -112,7 +112,7 @@ static int _chaotic_calc_stats(int *modifiers, int level)
 static void _chaotic_calc_things(personality_ptr pers_ptr)
 {
     int i, summa, stat_modifiers[MAX_STATS] = {0};
-    if ((p_ptr->lev < 1) && (p_ptr->lev > 50)) return;   
+    if ((p_ptr->lev < 1) || (p_ptr->lev > 50)) return;
     summa = _chaotic_calc_stats(stat_modifiers, p_ptr->lev);
     if (p_ptr->lev == 50) /* try to force balanced final stats to avoid huge life rating bonus/malus */
     {

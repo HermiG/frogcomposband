@@ -486,20 +486,15 @@ errr path_build(char *buf, int max, cptr path, cptr file)
 FILE *my_fopen(cptr file, cptr mode)
 {
     char buf[1024];
-
-#if defined(MAC_MPW) || defined(MACH_O_CARBON)
-    FILE *tempfff;
-#endif
-
+  
     /* Hack -- Try to parse the path */
     if (path_parse(buf, 1024, file)) return (NULL);
 
-    //#if defined(MAC_MPW) || defined(MACH_O_CARBON)
-#if 0
+#if 0 // defined(MAC_MPW) || defined(MACH_O_CARBON)
     if (my_strchr(mode, 'w'))
     {
         /* setting file type/creator */
-        tempfff = fopen(buf, mode);
+        FILE *tempfff = fopen(buf, mode);
         fsetfileinfo(buf, _fcreator, _ftype);
         fclose(tempfff);
     }

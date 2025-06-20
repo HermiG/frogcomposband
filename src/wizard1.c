@@ -1887,7 +1887,7 @@ static char _effect_color(int which)
 static void _display_device_power(doc_ptr doc, effect_t *effect)
 {
     cptr s = do_effect(effect, SPELL_INFO, 0);
-    int  dd, ds, base, amt;
+    int  dd, ds, base, amt = 0;
 
     if (!s || !strlen(s))
     {

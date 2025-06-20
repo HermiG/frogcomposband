@@ -960,10 +960,7 @@ static int compare_advances(const void *ap, const void *bp)
 }
 
 + (void)endGame
-{    
-    /* Hack -- Forget messages */
-    msg_flag = FALSE;
-    
+{
     p_ptr->playing = FALSE;
     p_ptr->leaving = TRUE;
     quit_when_ready = TRUE;
@@ -2516,15 +2513,9 @@ static void quit_calmly(void)
     /* Save the game and Quit (if it's safe) */
     if (inkey_flag)
     {
-        /* Hack -- Forget messages */
-        //msg_flag = FALSE;
-        
-        /* Save the game */
         do_cmd_save_game(FALSE);
         record_current_savefile();
         
-        
-        /* Quit */
         quit(NULL);
     }
     
@@ -2954,10 +2945,6 @@ static bool cocoa_get_file(const char *suggested_name, char *path, size_t len)
 
 - (IBAction)saveGame:sender
 {
-    /* Hack -- Forget messages */
-    //msg_flag = FALSE;
-    
-    /* Save the game */
     do_cmd_save_game(FALSE);
     
     /* Record the current save file so we can select it by default next time. It's a little sketchy that this only happens when we save through the menu; ideally game-triggered saves would trigger it too. */

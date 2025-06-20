@@ -2302,8 +2302,8 @@ errr Term_resize(int w, int h)
     if (Term->fixed_shape) return (-1);
 
     /* Ignore illegal changes */
-    if ((w < 1) || (h < 1)) return (-1);
-
+    if ((w <   1) || (h <   1)) return (-1);
+    if ((w > 255) || (h > 255)) return (-1);
 
     /* Ignore non-changes */
     if ((Term->wid == w) && (Term->hgt == h) && (arg_bigtile == use_bigtile))
@@ -2579,6 +2579,8 @@ errr term_nuke(term *t)
  */
 errr term_init(term *t, int w, int h, int k)
 {
+    w = MAX(0, MIN(w, 255));
+    h = MAX(0, MIN(h, 255));
     int y;
 
 

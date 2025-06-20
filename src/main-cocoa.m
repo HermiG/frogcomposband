@@ -1216,7 +1216,7 @@ static NSMenuItem *superitem(NSMenuItem *self)
 
     term *old = Term;
     Term_activate( self->terminal );
-    Term_resize( (int)newColumns, (int)newRows);
+    Term_resize(MIN((int)newColumns, 255), MIN((int)newRows, 255));
     Term_redraw();
     Term_activate( old );
 }
@@ -1236,13 +1236,12 @@ static NSMenuItem *superitem(NSMenuItem *self)
 }
 
 - (NSSize)windowWillResize:(NSWindow *)sender toSize:(NSSize)frameSize {
-  AngbandContext* angbandContext = Term->data;
   
   // Get the content size (the drawable area, excluding title bar, etc.)
   NSSize contentSize = [sender contentRectForFrameRect:(NSRect){ .size = frameSize }].size;
   
   // Snap the content width to a multiple of tile width
-  contentSize.width = roundf((contentSize.width - borderSize.width * 2) / angbandContext->tileSize.width) * angbandContext->tileSize.width + borderSize.width * 2;
+  contentSize.width = roundf((contentSize.width - borderSize.width * 2) / tileSize.width) * tileSize.width + borderSize.width * 2;
   
   // Convert content size back to frame size
   NSRect frameRect = [sender frameRectForContentRect:(NSRect){ .size = contentSize }];
@@ -2138,7 +2137,7 @@ static term *term_data_link(int i)
     term *newterm = ZNEW(term);
 
     /* Initialize the term */
-    term_init(newterm, columns, rows, 256 /* keypresses, for some reason? */);
+    term_init(newterm, MIN(columns, 255), MIN(rows, 255), 256 /* keypresses, for some reason? */);
     
     /* Differentiate between BS/^h, Tab/^i, etc. */
     //newterm->complex_input = TRUE;
@@ -2654,10 +2653,11 @@ static BOOL send_event(NSEvent *event)
 
               NSPoint p = [event locationInWindow];
               NSSize tileSize = angbandContext->tileSize;
+              NSRect contentRect = [[event window] contentRectForFrameRect:[[event window] frame]];
 
               // Coordinate conversion: Cocoa origin is bottom-left, Angband is top-left
               x = (p.x - angbandContext->borderSize.width) / tileSize.width;
-              y = rows - ((p.y - angbandContext->borderSize.height) / tileSize.height);
+              y = ((contentRect.size.height - p.y) - angbandContext->borderSize.height) / tileSize.height;
 
               // Clamp to bounds
               mouse_cursor_x = MAX(0, MIN(x, cols - 1));

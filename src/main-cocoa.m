@@ -926,12 +926,12 @@ static int compare_advances(const void *ap, const void *bp)
     /* Set up game event handlers */
     //init_display();
     
-	/* Register the sound hook */
-	//sound_hook = play_sound;
+	  /* Register the sound hook */
+	  //sound_hook = play_sound;
     
     /* Set the "system" type */
     ANGBAND_SYS = "mac";
-  
+    
     /* Initialize */
     init_angband();
 
@@ -1195,13 +1195,9 @@ static NSMenuItem *superitem(NSMenuItem *self)
     if( saveToDefaults )
     {
         int termIndex = 0;
-
         for( termIndex = 0; termIndex < ANGBAND_TERM_MAX; termIndex++ )
         {
-            if( angband_term[termIndex] == self->terminal )
-            {
-                break;
-            }
+            if( angband_term[termIndex] == self->terminal ) break;
         }
 
         NSArray *terminals = [[NSUserDefaults standardUserDefaults] valueForKey: AngbandTerminalsDefaultsKey];
@@ -1242,9 +1238,14 @@ static NSMenuItem *superitem(NSMenuItem *self)
     [self resizeTerminalWithContentRect: contentRect saveToDefaults: YES];
 }
 
-//- (NSSize)windowWillResize: (NSWindow *)sender toSize: (NSSize)frameSize
-//{
-//}
+- (NSSize)windowWillResize:(NSWindow *)sender toSize:(NSSize)frameSize {
+    AngbandContext* angbandContext = Term->data;
+    
+    frameSize.width  -= fmod(frameSize.width,  angbandContext->tileSize.width);
+    frameSize.height -= fmod(frameSize.height, angbandContext->tileSize.height);
+    
+    return frameSize;
+}
 
 - (void)windowDidEnterFullScreen: (NSNotification *)notification
 {
@@ -1264,19 +1265,12 @@ static NSMenuItem *superitem(NSMenuItem *self)
 {
     NSWindow *window = [notification object];
 
-    if( window != self->primaryWindow )
-    {
-        return;
-    }
+    if( window != self->primaryWindow ) return;
 
     int termIndex = 0;
-
     for( termIndex = 0; termIndex < ANGBAND_TERM_MAX; termIndex++ )
     {
-        if( angband_term[termIndex] == self->terminal )
-        {
-            break;
-        }
+        if( angband_term[termIndex] == self->terminal ) break;
     }
 
     NSMenuItem *item = [[[NSApplication sharedApplication] windowsMenu] itemWithTag: AngbandWindowMenuItemTagBase + termIndex];
@@ -1292,19 +1286,12 @@ static NSMenuItem *superitem(NSMenuItem *self)
 {
     NSWindow *window = [notification object];
 
-    if( window != self->primaryWindow )
-    {
-        return;
-    }
+    if( window != self->primaryWindow ) return;
 
     int termIndex = 0;
-
     for( termIndex = 0; termIndex < ANGBAND_TERM_MAX; termIndex++ )
     {
-        if( angband_term[termIndex] == self->terminal )
-        {
-            break;
-        }
+        if( angband_term[termIndex] == self->terminal ) break;
     }
 
     NSMenuItem *item = [[[NSApplication sharedApplication] windowsMenu] itemWithTag: AngbandWindowMenuItemTagBase + termIndex];
@@ -2004,19 +1991,8 @@ static errr Term_text_cocoa(int x, int y, int n, byte a, cptr cp)
     unsigned rightPushOptions = push_options(x + n - 1, y);
     leftPushOptions &= ~ PUSH_RIGHT;
     rightPushOptions &= ~ PUSH_LEFT;
-#if 0    
-    switch (a / MAX_COLORS) {
-    case BG_BLACK:
-	    [[NSColor blackColor] set];
-	    break;
-    case BG_SAME:
-	    set_color_for_index(a % MAX_COLORS);
-	    break;
-    case BG_DARK:
-	    set_color_for_index(TERM_SHADE);
-	    break;
-    }
-#endif    
+    
+    [[NSColor blackColor] set];
     NSRect rectToClear = charRect;
     rectToClear.size.width = tileWidth * n;
     NSRectFill(crack_rect(rectToClear, AngbandScaleIdentity, leftPushOptions | rightPushOptions));
@@ -2040,20 +2016,8 @@ static errr Term_text_cocoa(int x, int y, int n, byte a, cptr cp)
             {
                 NSRect overdrawRect = [angbandContext rectInImageForTileAtX:overdrawX Y:y];
                 NSRect expandedRect = crack_rect(overdrawRect, AngbandScaleIdentity, push_options(overdrawX, y));
-#if 0                
-                // Make sure we redisplay it
-		switch (previouslyDrawnAttr / MAX_COLORS) {
-		case BG_BLACK:
-		    [[NSColor blackColor] set];
-		    break;
-		case BG_SAME:
-		    set_color_for_index(previouslyDrawnAttr % MAX_COLORS);
-		    break;
-		case BG_DARK:
-		    set_color_for_index(TERM_SHADE);
-		    break;
-		}
-#endif
+
+                [[NSColor blackColor] set];
                 NSRectFill(expandedRect);
                 redisplayRect = NSUnionRect(redisplayRect, expandedRect);
                 
@@ -2224,7 +2188,7 @@ static void load_prefs()
 
     NSDictionary *defaults = [[NSDictionary alloc] initWithObjectsAndKeys:
                               @"Menlo", @"FontName",
-                              [NSNumber numberWithFloat:13.f], @"FontSize",
+                              [NSNumber numberWithFloat:14.f], @"FontSize",
                               [NSNumber numberWithInt:60], @"FramesPerSecond",
                               [NSNumber numberWithBool:YES], @"AllowSound",
                               [NSNumber numberWithInt:GRAPHICS_NONE], @"GraphicsID",
@@ -2245,7 +2209,7 @@ static void load_prefs()
     
     /* font */
     default_font = [[NSFont fontWithName:[defs valueForKey:@"FontName-0"] size:[defs floatForKey:@"FontSize-0"]] retain];
-    if (! default_font) default_font = [[NSFont fontWithName:@"Menlo" size:13.] retain];
+    if (! default_font) default_font = [[NSFont fontWithName:@"Menlo" size:14.f] retain];
 }
 
 /* Arbitary limit on number of possible samples per event */
@@ -2553,7 +2517,7 @@ static void quit_calmly(void)
     if (inkey_flag)
     {
         /* Hack -- Forget messages */
-        msg_flag = FALSE;
+        //msg_flag = FALSE;
         
         /* Save the game */
         do_cmd_save_game(FALSE);
@@ -2595,88 +2559,78 @@ static BOOL send_event(NSEvent *event)
     {
         case NSKeyDown:
         {
-            /* Try performing a key equivalent */
-            if ([[NSApp mainMenu] performKeyEquivalent:event]) break;
+          if ([[NSApp mainMenu] performKeyEquivalent:event]) break;
+          
+          [NSCursor setHiddenUntilMouseMoves:YES];
+          
+          unsigned modifiers = [event modifierFlags];
+          int mc = !!(modifiers & NSControlKeyMask);
+          int ms = !!(modifiers & NSShiftKeyMask);
+          int mo = !!(modifiers & NSAlternateKeyMask);
+          int mx = !!(modifiers & NSCommandKeyMask);
+          int kp = !!(modifiers & NSNumericPadKeyMask);
+          
+          unichar c = ([[event characters] length] > 0) ? [[event characters] characterAtIndex:0] : 0;
+          char ch = 0;
+          
+          int vk = [event keyCode]; // Cocoa virtual key code
+          
+          // -----------------------
+          // Step 2: Map Cocoa key codes for known special keys
+          // -----------------------
+          bool special = false;
+          switch (vk) {
+            case kVK_UpArrow:    special = true; break;
+            case kVK_DownArrow:  special = true; break;
+            case kVK_LeftArrow:  special = true; break;
+            case kVK_RightArrow: special = true; break;
+            case kVK_Home:       special = true; break;
+            case kVK_End:        special = true; break;
+            case kVK_PageUp:     special = true; break;
+            case kVK_PageDown:   special = true; break;
+            case kVK_Help:       special = true; break;
+            case kVK_ForwardDelete:   special = true; break;
+            case kVK_Escape:     ch = ESCAPE; break;
+            case kVK_Return:
+            case kVK_ANSI_KeypadEnter: ch = '\r'; break;
+            case kVK_Tab:              ch = '\t'; break;
+            case kVK_Delete:           ch = '\b'; break;
+            default:
+              break;
+          }
+          
+          if (ch) {
+            Term_keypress(ch);
+            break;
+          }
+          
+          // -----------------------
+          // Step 3: Encode special keys using macro sequence
+          // -----------------------
+          if (special && vk >= 64) {
+            Term_keypress(31);  // Begin macro sequence
             
-            unsigned modifiers = [event modifierFlags];
+            if (mc) Term_keypress('C');
+            if (ms) Term_keypress('S');
+            if (mo) Term_keypress('O');
+            if (mx) Term_keypress('X');
             
-            /* Send all NSCommandKeyMasks through */
-            if (modifiers & NSCommandKeyMask)
-            {
-                [NSApp sendEvent:event];
-                break;
-            }
+            Term_keypress('0' + (vk - 64) / 10);
+            Term_keypress('0' + (vk - 64) % 10);
             
-            if (! [[event characters] length]) break;
-            
-            
-            /* Extract some modifiers */
-            //int mc = !! (modifiers & NSControlKeyMask);
-            //int ms = !! (modifiers & NSShiftKeyMask);
-            //int mo = !! (modifiers & NSAlternateKeyMask);
-            //int mx = !! (modifiers & NSCommandKeyMask);
-            int kp = !! (modifiers & NSNumericPadKeyMask);
-            
-            
-            /* Get the Angband char corresponding to this unichar */
-            unichar c = [[event characters] characterAtIndex:0];
-            char ch;
-            switch (c) {
-                /* Note that NSNumericPadKeyMask is set if any of the arrow
-                 * keys are pressed. We don't want KC_MOD_KEYPAD set for
-                 * those. See #1662 for more details. */
-                case NSUpArrowFunctionKey: ch = ARROW_UP; kp = 0; break;
-                case NSDownArrowFunctionKey: ch = ARROW_DOWN; kp = 0; break;
-                case NSLeftArrowFunctionKey: ch = ARROW_LEFT; kp = 0; break;
-                case NSRightArrowFunctionKey: ch = ARROW_RIGHT; kp = 0; break;
-                case NSF1FunctionKey: ch = KC_F1; break;
-                case NSF2FunctionKey: ch = KC_F2; break;
-                case NSF3FunctionKey: ch = KC_F3; break;
-                case NSF4FunctionKey: ch = KC_F4; break;
-                case NSF5FunctionKey: ch = KC_F5; break;
-                case NSF6FunctionKey: ch = KC_F6; break;
-                case NSF7FunctionKey: ch = KC_F7; break;
-                case NSF8FunctionKey: ch = KC_F8; break;
-                case NSF9FunctionKey: ch = KC_F9; break;
-                case NSF10FunctionKey: ch = KC_F10; break;
-                case NSF11FunctionKey: ch = KC_F11; break;
-                case NSF12FunctionKey: ch = KC_F12; break;
-                case NSF13FunctionKey: ch = KC_F13; break;
-                case NSF14FunctionKey: ch = KC_F14; break;
-                case NSF15FunctionKey: ch = KC_F15; break;
-                case NSHelpFunctionKey: ch = KC_HELP; break;
-                case NSHomeFunctionKey: ch = KC_HOME; break;
-                case NSPageUpFunctionKey: ch = KC_PGUP; break;
-                case NSPageDownFunctionKey: ch = KC_PGDOWN; break;
-                case NSBeginFunctionKey: ch = KC_BEGIN; break;
-                case NSEndFunctionKey: ch = KC_END; break;
-                case NSInsertFunctionKey: ch = KC_INSERT; break;
-                case NSDeleteFunctionKey: ch = KC_DELETE; break;
-                case NSPauseFunctionKey: ch = KC_PAUSE; break;
-                case NSBreakFunctionKey: ch = KC_BREAK; break;
-                    
-                default:
-                    if (c <= 0x7F)
-                        ch = (char)c;
-                    else
-                        ch = '\0';
-                    break;
-            }
-            
-            /* override special keys */
-            switch([event keyCode]) {
-                case kVK_Return: ch = KC_ENTER; break;
-                case kVK_Escape: ch = ESCAPE; break;
-                case kVK_Tab: ch = KC_TAB; break;
-                case kVK_Delete: ch = KC_BACKSPACE; break;
-                case kVK_ANSI_KeypadEnter: ch = KC_ENTER; kp = TRUE; break;
-            }
+            Term_keypress(13); // End macro sequence
+            break;
+          }
+          
+          // -----------------------
+          // Step 1: Handle basic ASCII (if no modifiers)
+          // -----------------------
+          if (c <= 0x7F) Term_keypress((char)c); // Fallback: try printable character anyway
+          
+          break;
+        }
 
-            /* Hide the mouse pointer */
-            [NSCursor setHiddenUntilMouseMoves:YES];
-            
-            /* Enqueue it */
-            if (ch != '\0')
+        
         case NSRightMouseUp:
         {
           if (mouse_cursor_targeting_state == 1 || 1)
@@ -2907,9 +2861,8 @@ static bool cocoa_get_file(const char *suggested_name, char *path, size_t len)
 {
     NSFontPanel *panel = [NSFontPanel sharedFontPanel];
     NSFont *termFont = default_font;
-
-    int i;
-    for (i=0; i < ANGBAND_TERM_MAX; i++) {
+  
+    for (int i=0; i < ANGBAND_TERM_MAX; i++) {
         if ([(id)angband_term[i]->data isMainWindow]) {
             termFont = [(id)angband_term[i]->data selectionFont];
             break;
@@ -2924,13 +2877,9 @@ static bool cocoa_get_file(const char *suggested_name, char *path, size_t len)
 {
     int mainTerm;
     for (mainTerm=0; mainTerm < ANGBAND_TERM_MAX; mainTerm++) {
-        if ([(id)angband_term[mainTerm]->data isMainWindow]) {
-            break;
-        }
+        if ([(id)angband_term[mainTerm]->data isMainWindow]) break;
     }
-
-    /* Bug #1709: Only change font for angband windows */
-    if (mainTerm == ANGBAND_TERM_MAX) return;
+    if (mainTerm >= ANGBAND_TERM_MAX) return; // Bug #1709: Only change font for angband windows
     
     NSFont *oldFont = default_font;
     NSFont *newFont = [sender convertFont:oldFont];
@@ -2945,10 +2894,8 @@ static bool cocoa_get_file(const char *suggested_name, char *path, size_t len)
     
     /* Record it in the preferences */
     NSUserDefaults *defs = [NSUserDefaults angbandDefaults];
-    [defs setValue:[newFont fontName] 
-        forKey:[NSString stringWithFormat:@"FontName-%d", mainTerm]];
-    [defs setFloat:[newFont pointSize]
-        forKey:[NSString stringWithFormat:@"FontSize-%d", mainTerm]];
+    [defs setValue:[newFont  fontName] forKey:[NSString stringWithFormat:@"FontName-%d", mainTerm]];
+    [defs setFloat:[newFont pointSize] forKey:[NSString stringWithFormat:@"FontSize-%d", mainTerm]];
     [defs synchronize];
     
     NSDisableScreenUpdates();
@@ -3010,7 +2957,7 @@ static bool cocoa_get_file(const char *suggested_name, char *path, size_t len)
 - (IBAction)saveGame:sender
 {
     /* Hack -- Forget messages */
-    msg_flag = FALSE;
+    //msg_flag = FALSE;
     
     /* Save the game */
     do_cmd_save_game(FALSE);
@@ -3028,8 +2975,7 @@ static bool cocoa_get_file(const char *suggested_name, char *path, size_t len)
     {
         if( tag == AngbandWindowMenuItemTagBase )
         {
-            // the main window should always be available and visible
-            return YES;
+            return YES; // the main window should always be available and visible
         }
         else
         {
@@ -3066,8 +3012,7 @@ static bool cocoa_get_file(const char *suggested_name, char *path, size_t len)
     }
     else if( sel == @selector(sendAngbandCommand:) )
     {
-        // we only want to be able to send commands during an active game
-        return !!game_in_progress;
+        return !!game_in_progress; // we only want to be able to send commands during an active game
     }
     else return YES;
 }
@@ -3092,7 +3037,7 @@ static bool cocoa_get_file(const char *suggested_name, char *path, size_t len)
     NSMenu *windowsMenu = [[NSApplication sharedApplication] windowsMenu];
     [windowsMenu addItem: [NSMenuItem separatorItem]];
 
-    NSMenuItem *angbandItem = [[NSMenuItem alloc] initWithTitle: @"PosChengband" action: @selector(selectWindow:) keyEquivalent: @"0"];
+    NSMenuItem *angbandItem = [[NSMenuItem alloc] initWithTitle: @"FrogComposBand" action: @selector(selectWindow:) keyEquivalent: @"0"];
     [angbandItem setTarget: self];
     [angbandItem setTag: AngbandWindowMenuItemTagBase];
     [windowsMenu addItem: angbandItem];

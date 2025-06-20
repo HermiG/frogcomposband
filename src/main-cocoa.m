@@ -1183,7 +1183,7 @@ static NSMenuItem *superitem(NSMenuItem *self)
 - (void)resizeTerminalWithContentRect: (NSRect)contentRect saveToDefaults: (BOOL)saveToDefaults
 {
     CGFloat newRows = floor( (contentRect.size.height - (borderSize.height * 2.0)) / tileSize.height );
-    CGFloat newColumns = ceil( (contentRect.size.width - (borderSize.width * 2.0)) / tileSize.width );
+    CGFloat newColumns = floor( (contentRect.size.width - (borderSize.width * 2.0)) / tileSize.width );
 
     self->cols = newColumns;
     self->rows = newRows;
@@ -1236,12 +1236,17 @@ static NSMenuItem *superitem(NSMenuItem *self)
 }
 
 - (NSSize)windowWillResize:(NSWindow *)sender toSize:(NSSize)frameSize {
-    AngbandContext* angbandContext = Term->data;
-    
-    frameSize.width  -= fmod(frameSize.width,  angbandContext->tileSize.width);
-    frameSize.height -= fmod(frameSize.height, angbandContext->tileSize.height);
-    
-    return frameSize;
+  AngbandContext* angbandContext = Term->data;
+  
+  // Get the content size (the drawable area, excluding title bar, etc.)
+  NSSize contentSize = [sender contentRectForFrameRect:(NSRect){ .size = frameSize }].size;
+  
+  // Snap the content width to a multiple of tile width
+  contentSize.width = roundf((contentSize.width - borderSize.width * 2) / angbandContext->tileSize.width) * angbandContext->tileSize.width + borderSize.width * 2;
+  
+  // Convert content size back to frame size
+  NSRect frameRect = [sender frameRectForContentRect:(NSRect){ .size = contentSize }];
+  return frameRect.size;
 }
 
 - (void)windowDidEnterFullScreen: (NSNotification *)notification
@@ -2651,8 +2656,8 @@ static BOOL send_event(NSEvent *event)
               NSSize tileSize = angbandContext->tileSize;
 
               // Coordinate conversion: Cocoa origin is bottom-left, Angband is top-left
-              x = p.x / (tileSize.width * AngbandScaleIdentity.width);
-              y = rows - (p.y / (tileSize.height * AngbandScaleIdentity.height));
+              x = (p.x - angbandContext->borderSize.width) / tileSize.width;
+              y = rows - ((p.y - angbandContext->borderSize.height) / tileSize.height);
 
               // Clamp to bounds
               mouse_cursor_x = MAX(0, MIN(x, cols - 1));

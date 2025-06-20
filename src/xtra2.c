@@ -5684,7 +5684,7 @@ bool tgt_pt(int *x_ptr, int *y_ptr, int rng)
         n = 0;
     }
 
-    msg_print("Select a point and press <color:y>space</color>. < and > cycle through stairs, * cycles through monsters");
+    msg_print("Select a point and press <color:y>space</color>. < and > cycle through stairs, * cycles through all points of interest. ");
 
     while ((ch != ESCAPE) && !success)
     {
@@ -5701,11 +5701,8 @@ bool tgt_pt(int *x_ptr, int *y_ptr, int rng)
         case '.':
         case '5':
         case '0':
-            /* illegal place */
-            if (player_bold(y, x)) ch = 0;
-
-            /* okay place */
-            else success = TRUE;
+            if (player_bold(y, x)) ch = 0; // illegal tile
+            else success = TRUE; // ok
 
             break;
 
@@ -5713,6 +5710,7 @@ bool tgt_pt(int *x_ptr, int *y_ptr, int rng)
 		/* Composband: Move cursor to monsters */
         case '>':
         case '<':
+        case '*':
             if (expand_list && temp_n)
             {
                 int dx, dy;
@@ -5727,22 +5725,20 @@ bool tgt_pt(int *x_ptr, int *y_ptr, int rng)
 
                     if (ch == '>')
                     {
-                        if (cave_have_flag_grid(c_ptr, FF_LESS) ||
-                            cave_have_flag_grid(c_ptr, FF_QUEST_ENTER))
-                            n++;
-                        else
-                            break;
+                      if (cave_have_flag_grid(c_ptr, FF_MORE) || cave_have_flag_grid(c_ptr, FF_QUEST_ENTER)) break;
                     }
                     else if (ch == '<')
                     {
-                        if (cave_have_flag_grid(c_ptr, FF_MORE))
-                            n++;
-                        else
-                            break;
+                      if (cave_have_flag_grid(c_ptr, FF_LESS)) break;
                     }
+                    else
+                    {
+                      if(c_ptr->info & (CAVE_MARK)) break;
+                    }
+                    n++;
                 }
 
-                if (n == temp_n)    /* Loop out taget list */
+                if (n == temp_n)    /* Loop out target list */
                 {
                     n = 0;
                     y = py;

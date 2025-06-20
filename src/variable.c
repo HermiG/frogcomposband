@@ -457,6 +457,13 @@ bool closing_flag;        /* Dungeon is closing */
 point_t viewport_origin;
 
 /*
+ * Mouse cursor variables
+ */
+char mouse_cursor_targeting_state;
+int mouse_cursor_x;
+int mouse_cursor_y;
+
+/*
  * Player location in dungeon
  */
 int py;

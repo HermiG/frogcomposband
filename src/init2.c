@@ -1510,6 +1510,8 @@ void display_news(void)
  */
 void init_angband(void)
 {
+    mouse_cursor_targeting_state = 0;
+  
     int fd = -1;
     char buf[1024];
 

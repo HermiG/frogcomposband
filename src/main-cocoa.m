@@ -2677,23 +2677,38 @@ static BOOL send_event(NSEvent *event)
             
             /* Enqueue it */
             if (ch != '\0')
+        case NSRightMouseUp:
+        {
+          if (mouse_cursor_targeting_state == 1 || 1)
+          {
+            AngbandContext *angbandContext = [[[event window] contentView] angbandContext];
+            AngbandContext *mainAngbandContext = angband_term[0]->data;
+
+            if (mainAngbandContext->primaryWindow && [[event window] windowNumber] == [mainAngbandContext->primaryWindow windowNumber])
             {
-                
-                /* Enqueue the keypress */
-#ifdef KC_MOD_ALT
-                byte mods = 0;
-                if (mo) mods |= KC_MOD_ALT;
-                if (mx) mods |= KC_MOD_META;
-                if (mc && MODS_INCLUDE_CONTROL(ch)) mods |= KC_MOD_CONTROL;
-                if (ms && MODS_INCLUDE_SHIFT(ch)) mods |= KC_MOD_SHIFT;
-                if (kp) mods |= KC_MOD_KEYPAD;
-                Term_keypress(ch, mods);
-#else
-                Term_keypress(ch);
-#endif
+              int cols, rows, x, y;
+              Term_get_size(&cols, &rows);
+
+              NSPoint p = [event locationInWindow];
+              NSSize tileSize = angbandContext->tileSize;
+
+              // Coordinate conversion: Cocoa origin is bottom-left, Angband is top-left
+              
+              x = p.x / (tileSize.width * AngbandScaleIdentity.width);
+              y = rows - (p.y / (tileSize.height * AngbandScaleIdentity.height));
+
+              // Clamp to bounds
+              mouse_cursor_x = MAX(0, MIN(x, cols - 1));
+              mouse_cursor_y = MAX(0, MIN(y, rows - 1));
+              mouse_cursor_targeting_state = 2;
+
+              Term_keypress('`');
             }
-            
-            break;
+          }
+
+          // Pass event through so other UI continues to work
+          [NSApp sendEvent:event];
+          break;
         }
         
         case NSLeftMouseDown:

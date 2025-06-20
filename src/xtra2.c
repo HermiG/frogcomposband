@@ -5677,7 +5677,13 @@ bool tgt_pt(int *x_ptr, int *y_ptr, int rng)
 
     x = px;
     y = py;
-
+    
+    if(mouse_cursor_targeting_state == 0) {
+        mouse_cursor_x = px;
+        mouse_cursor_y = py;
+        mouse_cursor_targeting_state = 1;
+    }
+    
     if (expand_list)
     {
         tgt_pt_prepare();
@@ -5691,7 +5697,7 @@ bool tgt_pt(int *x_ptr, int *y_ptr, int rng)
         bool move_fast = FALSE;
 
         move_cursor_relative(y, x);
-        ch = inkey();
+        ch = (mouse_cursor_targeting_state == 2) ? '`' : inkey();
         switch (ch)
         {
         case ESCAPE:
@@ -5703,7 +5709,30 @@ bool tgt_pt(int *x_ptr, int *y_ptr, int rng)
         case '0':
             if (player_bold(y, x)) ch = 0; // illegal tile
             else success = TRUE; // ok
+            break;
 
+		/* Composband: Move cursor to mouse cursor coordinate */
+        case '`':
+            if(mouse_cursor_targeting_state == 2) {
+                mouse_cursor_targeting_state = 1;
+                
+                point_t pt = ui_xy_to_cave_pt(mouse_cursor_x, mouse_cursor_y);
+                mouse_cursor_x = pt.x;
+                mouse_cursor_y = pt.y;
+                
+                if (panel_contains(mouse_cursor_y, mouse_cursor_x)) {
+                    if (mouse_cursor_x == x && mouse_cursor_y == y) { // double-clicked
+                      if (player_bold(y, x)) ch = 0; // illegal tile
+                      else success = TRUE; // ok
+                      break;
+                    }
+                    
+                    x = mouse_cursor_x;
+                    y = mouse_cursor_y;
+                } else {
+                    bell(); // or silently ignore
+                }
+            }
             break;
 
         /* XAngband: Move cursor to stairs */
@@ -5838,6 +5867,8 @@ bool tgt_pt(int *x_ptr, int *y_ptr, int rng)
             break;
         }
     }
+    
+    mouse_cursor_targeting_state = 0;
 
     msg_line_clear();
 

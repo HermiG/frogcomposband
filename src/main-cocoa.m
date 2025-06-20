@@ -2630,7 +2630,7 @@ static BOOL send_event(NSEvent *event)
           break;
         }
 
-        
+        case NSLeftMouseUp:
         case NSRightMouseUp:
         {
           if (mouse_cursor_targeting_state == 1 || 1)
@@ -2647,7 +2647,6 @@ static BOOL send_event(NSEvent *event)
               NSSize tileSize = angbandContext->tileSize;
 
               // Coordinate conversion: Cocoa origin is bottom-left, Angband is top-left
-              
               x = p.x / (tileSize.width * AngbandScaleIdentity.width);
               y = rows - (p.y / (tileSize.height * AngbandScaleIdentity.height));
 
@@ -2655,22 +2654,22 @@ static BOOL send_event(NSEvent *event)
               mouse_cursor_x = MAX(0, MIN(x, cols - 1));
               mouse_cursor_y = MAX(0, MIN(y, rows - 1));
               mouse_cursor_targeting_state = 2;
-
-              Term_keypress('`');
+              
+              if([event type] == NSLeftMouseUp)  Term_keypress('|');
+              if([event type] == NSRightMouseUp) Term_keypress('`');
             }
           }
-
-          // Pass event through so other UI continues to work
-          [NSApp sendEvent:event];
+          
+          [NSApp sendEvent:event]; // Pass event through so other UI continues to work
           break;
         }
         
         case NSLeftMouseDown:
         {
-            /* Queue mouse presses if they occur in the map section
-             * of the main window.
-             */
 #if 0
+          /* Queue mouse presses if they occur in the map section
+           * of the main window.
+           */
             AngbandContext *angbandContext =
                 [[[event window] contentView] angbandContext];
             AngbandContext *mainAngbandContext =
@@ -2705,8 +2704,7 @@ static BOOL send_event(NSEvent *event)
                 }
             }
 #endif
-            /* Pass click through to permit focus change, resize, etc. */
-            [NSApp sendEvent:event];
+            [NSApp sendEvent:event]; // Pass event through so other UI continues to work
             break;
         }
 

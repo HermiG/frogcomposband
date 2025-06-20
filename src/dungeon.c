@@ -4217,7 +4217,15 @@ static void _dispatch_command(int old_now_turn)
         /* Look around */
         case 'l':
         {
+            mouse_cursor_targeting_state = 0;
             do_cmd_look();
+            break;
+        }
+        
+        // Look at cursor click
+        case '|':
+        {
+            if(mouse_cursor_targeting_state) do_cmd_look();
             break;
         }
 

@@ -4638,32 +4638,34 @@ bool target_set(int mode)
     cave_type *c_ptr;
     rect_t     map_rect = ui_map_rect();
 
-
     /* Cancel target */
     target_who = 0;
 
-
     /* Cancel tracking */
     /* health_track(0); */
-
-
+  
+    if(mouse_cursor_targeting_state == 2) flag = FALSE;
+    if(mouse_cursor_targeting_state == 0) {
+        mouse_cursor_targeting_state = 1;
+        mouse_cursor_x = -1;
+        mouse_cursor_y = -1;
+    }
+    
     /* Prepare the "temp" array */
     target_set_prepare(mode);
 
     /* Start near the player */
     m = 0;
-
+    
     /* Interact */
     while (!done)
     {
-        /* Interesting grids */
-        if (flag && temp_n)
+        if (flag && temp_n) // Interesting grids
         {
             y = temp_y[m];
             x = temp_x[m];
-
-            if ( !(mode & TARGET_LOOK)
-              && !(mode & TARGET_MARK) )
+          
+            if ( !(mode & TARGET_LOOK) && !(mode & TARGET_MARK) )
             {
                 prt_path(y, x, (mode & TARGET_DISI) ? PROJECT_DISI : 0);
             }
@@ -4672,8 +4674,7 @@ bool target_set(int mode)
             c_ptr = &cave[y][x];
 
             /* Allow target */
-            if ( target_able(c_ptr->m_idx)
-             || ((mode & (TARGET_MARK|TARGET_DISI|TARGET_XTRA)) && m_list[c_ptr->m_idx].ml))
+            if ( target_able(c_ptr->m_idx) || ((mode & (TARGET_MARK|TARGET_DISI|TARGET_XTRA)) && m_list[c_ptr->m_idx].ml))
             {
                 strcpy(info, rogue_like_commands ? "q,t,p,o,x,(,+,-,?,<dir>" : "q,t,p,o,x,j,+,-,?,<dir>");
             }
@@ -4699,7 +4700,7 @@ bool target_set(int mode)
             }
 
             if (((query == 'j') || (query == 'J')) && (!rogue_like_commands)) query = '(';
-
+          
             /* Analyze */
             switch (query)
             {
@@ -4714,14 +4715,16 @@ bool target_set(int mode)
                     done = TRUE;
                     break;
                 }
-
+                
+                case '|': // Target cursor
+                    break;
+                
                 case 't':
                 case '.':
                 case '5':
                 case '0':
                 {
-                    if ( target_able(c_ptr->m_idx)
-                     || ((mode & (TARGET_MARK | TARGET_DISI | TARGET_XTRA)) && m_list[c_ptr->m_idx].ml))
+                    if ( target_able(c_ptr->m_idx) || ((mode & (TARGET_MARK | TARGET_DISI | TARGET_XTRA)) && m_list[c_ptr->m_idx].ml))
                     {
                         health_track(c_ptr->m_idx);
                         target_who = c_ptr->m_idx;
@@ -4810,16 +4813,14 @@ bool target_set(int mode)
 
                 default:
                 {
-                    /* Extract the action (if any) */
-                    d = get_keymap_dir(query, FALSE);
+                    d = get_keymap_dir(query, FALSE); // Extract the action (if any)
 
                     if (!d) bell();
                     break;
                 }
-            }
-
-            /* Hack -- move around */
-            if (d)
+            } // switch(query)
+            
+            if (d) // Move around
             {
                 /* Modified to scroll to monster */
                 int y2 = viewport_origin.y;
@@ -4849,9 +4850,7 @@ bool target_set(int mode)
                         /* Use that grid */
                         if (i >= 0) m = i;
                     }
-
-                    /* Nothing interesting */
-                    else
+                    else // Nothing interesting
                     {
                         int dx = ddx[d];
                         int dy = ddy[d];
@@ -4914,18 +4913,27 @@ bool target_set(int mode)
                     }
                 }
 
-                /* Use that grid */
-                m = i;
+                m = i; // use that grid
             }
         }
-
-        /* Arbitrary grids */
-        else
+        else // Arbitrary grids
         {
+            if(mouse_cursor_targeting_state == 2) {
+              mouse_cursor_targeting_state = 1;
+              
+              point_t pt = ui_xy_to_cave_pt(mouse_cursor_x, mouse_cursor_y);
+              
+              if (panel_contains(pt.y, pt.x)) {
+                x = pt.x;
+                y = pt.y;
+              } else {
+                bell();
+              }
+            }
+            
             bool move_fast = FALSE;
 
-            if ( !(mode & TARGET_LOOK)
-              && !(mode & TARGET_MARK) )
+            if ( !(mode & TARGET_LOOK) && !(mode & TARGET_MARK) )
             {
                 prt_path(y, x, (mode & TARGET_DISI) ? PROJECT_DISI : 0);
             }
@@ -4954,7 +4962,7 @@ bool target_set(int mode)
             }
 
             if (((query == 'j') || (query == 'J')) && (!rogue_like_commands)) query = '(';
-
+          
             /* Analyze the keypress */
             switch (query)
             {
@@ -4969,26 +4977,28 @@ bool target_set(int mode)
                     done = TRUE;
                     break;
                 }
+                
+                case '|': // Target cursor
+                    break;
 
                 case 't':
                 case '.':
                 case '5':
                 case '0':
-                if ( !(mode & TARGET_MARK)
-                  || (c_ptr->m_idx && m_list[c_ptr->m_idx].ml) )
-                {
-                    if (mode & TARGET_MARK)
-                        target_who = c_ptr->m_idx;
+                    if ( !(mode & TARGET_MARK) || (c_ptr->m_idx && m_list[c_ptr->m_idx].ml) )
+                    {
+                        if (mode & TARGET_MARK)
+                            target_who = c_ptr->m_idx;
+                        else
+                            target_who = -1;
+                        target_grab(y, x);
+                        done = TRUE;
+                    }
                     else
-                        target_who = -1;
-                    target_grab(y, x);
-                    done = TRUE;
-                }
-                else
-                {
-                    bell();
-                }
-                break;
+                    {
+                        bell();
+                    }
+                    break;
 
                 case 'p':
                 {
@@ -5076,11 +5086,10 @@ bool target_set(int mode)
                     if (!d) bell();
                     break;
                 }
-            }
-
-            /* Handle "direction" */
-            if (d)
-            {
+            } // switch(query)
+          
+            if (d) // handle "direction"
+            {   
                 int dx = ddx[d];
                 int dy = ddy[d];
 
@@ -5124,10 +5133,12 @@ bool target_set(int mode)
                 /* Slide into legality */
                 if (y >= cur_hgt-1) y = cur_hgt- 2;
                 else if (y <= 0) y = 1;
-            }
-        }
-    }
-
+            } // d
+        } // selection mode
+    } // loop
+    
+    mouse_cursor_targeting_state = 0;
+    
     /* Forget */
     temp_n = 0;
 
@@ -5679,9 +5690,9 @@ bool tgt_pt(int *x_ptr, int *y_ptr, int rng)
     y = py;
     
     if(mouse_cursor_targeting_state == 0) {
-        mouse_cursor_x = px;
-        mouse_cursor_y = py;
         mouse_cursor_targeting_state = 1;
+        mouse_cursor_x = -1;
+        mouse_cursor_y = -1;
     }
     
     if (expand_list)
@@ -5708,27 +5719,25 @@ bool tgt_pt(int *x_ptr, int *y_ptr, int rng)
         case '5':
         case '0':
             if (player_bold(y, x)) ch = 0; // illegal tile
-            else success = TRUE; // ok
+            else success = TRUE;
             break;
 
-		/* Composband: Move cursor to mouse cursor coordinate */
+		    /* Composband: Move cursor to mouse cursor coordinate */
         case '`':
             if(mouse_cursor_targeting_state == 2) {
                 mouse_cursor_targeting_state = 1;
                 
                 point_t pt = ui_xy_to_cave_pt(mouse_cursor_x, mouse_cursor_y);
-                mouse_cursor_x = pt.x;
-                mouse_cursor_y = pt.y;
                 
-                if (panel_contains(mouse_cursor_y, mouse_cursor_x)) {
-                    if (mouse_cursor_x == x && mouse_cursor_y == y) { // double-clicked
+                if (panel_contains(pt.y, pt.x)) {
+                    if (pt.x == x && pt.y == y) { // double-clicked
                       if (player_bold(y, x)) ch = 0; // illegal tile
-                      else success = TRUE; // ok
+                      else success = TRUE;
                       break;
                     }
                     
-                    x = mouse_cursor_x;
-                    y = mouse_cursor_y;
+                    x = pt.x;
+                    y = pt.y;
                 } else {
                     bell(); // or silently ignore
                 }
@@ -5736,7 +5745,7 @@ bool tgt_pt(int *x_ptr, int *y_ptr, int rng)
             break;
 
         /* XAngband: Move cursor to stairs */
-		/* Composband: Move cursor to monsters */
+        /* Composband: Move cursor to monsters */
         case '>':
         case '<':
         case '*':

@@ -4797,6 +4797,12 @@ bool target_set(int mode)
 
                 case '(':
                 {
+                    if (player_bold(y, x)) {
+                      travel_tgt = FALSE;
+                      done = TRUE;
+                      break;
+                    }
+                  
                     if ((!p_ptr->wild_mode) && (in_bounds(y,x)) && (cave[y][x].info & CAVE_MARK) && ((y != py) || (x != px)) && (player_can_enter(cave[y][x].feat, 0)))
                     {
                         travel_cancel_fully();
@@ -5061,6 +5067,12 @@ bool target_set(int mode)
 
                 case '(':
                 {
+                    if (player_bold(y, x)) {
+                      travel_tgt = FALSE;
+                      done = TRUE;
+                      break;
+                    }
+                    
                     if ((!p_ptr->wild_mode) && (in_bounds(y,x)) && (cave[y][x].info & CAVE_MARK) && ((y != py) || (x != px)) && (player_can_enter(cave[y][x].feat, 0)))
                     {
                         travel_cancel_fully();

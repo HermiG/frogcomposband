@@ -1015,16 +1015,21 @@ static NSMenuItem *superitem(NSMenuItem *self)
         CGFloat width = self->cols * tileSize.width + borderSize.width * 2.0;
         CGFloat height = self->rows * tileSize.height + borderSize.height * 2.0;
         NSRect contentRect = NSMakeRect( 0.0, 0.0, width, height );
-
-        NSUInteger styleMask = NSTitledWindowMask | NSResizableWindowMask | NSMiniaturizableWindowMask;
-
+      
         // make every window other than the main window closable
-        if( angband_term[0]->data != self )
+        if( angband_term[0]->data == self )
         {
-            styleMask |= NSClosableWindowMask;
+          NSUInteger styleMask = NSWindowStyleMaskTitled | NSWindowStyleMaskResizable | NSWindowStyleMaskMiniaturizable;
+          primaryWindow = [[NSWindow alloc] initWithContentRect:contentRect styleMask: styleMask backing:NSBackingStoreBuffered defer:YES];
+        } else {
+          NSUInteger styleMask = NSWindowStyleMaskUtilityWindow | NSWindowStyleMaskTitled | NSWindowStyleMaskResizable | NSWindowStyleMaskMiniaturizable | NSWindowStyleMaskClosable;
+          NSPanel *panel = [[NSPanel alloc] initWithContentRect:contentRect styleMask: styleMask backing:NSBackingStoreBuffered defer:YES];
+          
+          // Prevent panel from hiding when app loses focus
+          [panel setHidesOnDeactivate:NO];
+          
+          primaryWindow = (NSWindow *)panel;
         }
-
-        primaryWindow = [[NSWindow alloc] initWithContentRect:contentRect styleMask: styleMask backing:NSBackingStoreBuffered defer:YES];
 
         /* Not to be released when closed */
         [primaryWindow setReleasedWhenClosed:NO];
@@ -2796,6 +2801,27 @@ static bool cocoa_get_file(const char *suggested_name, char *path, size_t len)
     }
 }
 
+- (void)appDidBecomeActive:(NSNotification *)note {
+  // Raise utility panels to floating window level when app activates
+  for(int i = 1; i < ANGBAND_TERM_MAX; i++) {
+    if(angband_term[i] && angband_term[i]->data) {
+      AngbandContext *context = angband_term[i]->data;
+      [context->primaryWindow setLevel:NSFloatingWindowLevel];
+    }
+  }
+}
+
+- (void)appDidResignActive:(NSNotification *)note {
+  // Lower utility panels to normal window level when app deactivates
+  for(int i = 1; i < ANGBAND_TERM_MAX; i++) {
+    if(angband_term[i] && angband_term[i]->data) {
+      AngbandContext *context = angband_term[i]->data;
+      [context->primaryWindow setLevel:NSNormalWindowLevel];
+    }
+  }
+}
+
+
 /**
  *  Send a command to Angband via a menu item. This places the appropriate key down events into the queue
  *  so that it seems like the user pressed them (instead of trying to use the term directly).
@@ -2883,6 +2909,16 @@ static bool cocoa_get_file(const char *suggested_name, char *path, size_t len)
 
 - (void)applicationDidFinishLaunching:sender
 {
+  [[NSNotificationCenter defaultCenter] addObserver:self
+                                           selector:@selector(appDidBecomeActive:)
+                                               name:NSApplicationDidBecomeActiveNotification
+                                             object:nil];
+  
+  [[NSNotificationCenter defaultCenter] addObserver:self
+                                           selector:@selector(appDidResignActive:)
+                                               name:NSApplicationDidResignActiveNotification
+                                             object:nil];
+  
     [AngbandContext beginGame];
     
     //once beginGame finished, the game is over - that's how Angband works, and we should quit

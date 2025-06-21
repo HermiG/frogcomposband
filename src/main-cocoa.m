@@ -1383,7 +1383,7 @@ static void Term_init_cocoa(term *t)
         rows = [[term valueForKey: AngbandTerminalRowsDefaultsKey] integerValue];
         columns = [[term valueForKey: AngbandTerminalColumnsDefaultsKey] integerValue];
     }
-
+    
     context->cols = columns;
     context->rows = rows;
     [context resizeOverdrawCache];
@@ -1863,13 +1863,13 @@ static errr Term_text_cocoa(int x, int y, int n, byte a, cptr cp)
         if (overdrawX >= 0 && (size_t)overdrawX < angbandContext->cols)
         {
             wchar_t previouslyDrawnVal = angbandContext->charOverdrawCache[y * angbandContext->cols + overdrawX];
-	    //int previouslyDrawnAttr = angbandContext->attrOverdrawCache[y * angbandContext->cols + overdrawX];
+            
             // Don't overdraw if it's not text
             if (previouslyDrawnVal != NO_OVERDRAW)
             {
                 NSRect overdrawRect = [angbandContext rectInImageForTileAtX:overdrawX Y:y];
                 NSRect expandedRect = crack_rect(overdrawRect, AngbandScaleIdentity, push_options(overdrawX, y));
-
+                
                 [[NSColor blackColor] set];
                 NSRectFill(expandedRect);
                 redisplayRect = NSUnionRect(redisplayRect, expandedRect);
@@ -2562,7 +2562,7 @@ static bool cocoa_get_file(const char *suggested_name, char *path, size_t len)
 - (IBAction)openGame:sender;
 
 - (IBAction)selectWindow: (id)sender;
-
+- (IBAction)cycleWindows: (id)sender;
 @end
 
 @implementation AngbandAppDelegate
@@ -2743,6 +2743,33 @@ static bool cocoa_get_file(const char *suggested_name, char *path, size_t len)
     NSInteger subwindowNumber = [(NSMenuItem *)sender tag] - AngbandWindowMenuItemTagBase;
     AngbandContext *context = angband_term[subwindowNumber]->data;
     [context->primaryWindow makeKeyAndOrderFront: self];
+}
+
+- (IBAction)cycleWindows:(id)sender
+{
+  NSWindow *currentKeyWindow = [NSApp keyWindow];
+  NSInteger i;
+  
+  // Find the index of the current key window
+  for(i = 0; i < ANGBAND_TERM_MAX; i++) {
+    if(angband_term[i] && angband_term[i]->data) {
+      AngbandContext *context = angband_term[i]->data;
+      if(context->primaryWindow == currentKeyWindow) break;
+    }
+  }
+  
+  // Activate the next term window
+  for (i++; i <= ANGBAND_TERM_MAX; i++) {
+    NSInteger nextIndex = i % ANGBAND_TERM_MAX;
+    if(angband_term[nextIndex] && angband_term[nextIndex]->data) {
+      AngbandContext *context = angband_term[nextIndex]->data;
+      NSWindow *win = context->primaryWindow;
+      if([win isVisible]) {
+        [win makeKeyAndOrderFront:self];
+        return;
+      }
+    }
+  }
 }
 
 - (void)prepareWindowsMenu

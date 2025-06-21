@@ -18,10 +18,8 @@
 #include "angband.h"
 
 #ifdef BOOL
-#undef BOOL
+# undef BOOL
 #endif
-
-#if defined(MACH_O_CARBON)
 
 /* Default creator signature */
 #ifndef ANGBAND_CREATOR
@@ -34,7 +32,7 @@
 
 static NSSize const AngbandScaleIdentity = {1.0, 1.0};
 static NSString * const AngbandDirectoryNameLib = @"lib";
-static NSString * const AngbandDirectoryNameBase = @"FrogComposBand";
+static NSString * const AngbandDirectoryNameBase = @"FrogComposband";
 
 static NSString * const AngbandTerminalsDefaultsKey = @"Terminals";
 static NSString * const AngbandTerminalRowsDefaultsKey = @"Rows";
@@ -47,49 +45,31 @@ static NSInteger const AngbandCommandMenuItemTagBase = 2000;
 # define USE_LIVE_RESIZE_CACHE 1
 #endif
 
-/* Global defines etc from Angband 3.5-dev - NRM */
+/* The max number of glyphs we support */
+#define GLYPH_COUNT 256
+#define MAX_COLORS 256
+#define MSG_MAX SOUND_MAX
+
 #define ANGBAND_TERM_MAX 8
+
 /**
  * Specifies what kind of thing a file is, when writing.  See file_open().
  */
 typedef enum
 {
-        FTYPE_TEXT = 1,
-        FTYPE_SAVE,
-        FTYPE_RAW,
-        FTYPE_HTML
+    FTYPE_TEXT = 1,
+    FTYPE_SAVE,
+    FTYPE_RAW,
+    FTYPE_HTML
 } file_type;
 
 static bool new_game = TRUE;
-
-#define MAX_COLORS 256
-#define MSG_MAX SOUND_MAX
-
-//OSType _ftype;
-//OSType _fcreator;
-
-/* End Angband stuff - NRM */
-
-/* Our command-fetching function */
-//static errr cocoa_get_cmd(cmd_context context, bool wait);
-
 
 /* Application defined event numbers */
 enum
 {
     AngbandEventWakeup = 1
 };
-
-/* Redeclare some 10.7 constants and methods so we can build on 10.6 */
-enum
-{
-    Angband_NSWindowCollectionBehaviorFullScreenPrimary = 1 << 7,
-    Angband_NSWindowCollectionBehaviorFullScreenAuxiliary = 1 << 8
-};
-
-@interface NSWindow (AngbandLionRedeclares)
-- (void)setRestorable:(BOOL)flag;
-@end
 
 /* Delay handling of pre-emptive "quit" event */
 static BOOL quit_when_ready = FALSE;
@@ -100,16 +80,11 @@ static BOOL allow_sounds = YES;
 /* Set to indicate the game is over and we can quit without delay */
 static Boolean game_is_finished = FALSE;
 
-/* Our frames per second (e.g. 60). A value of 0 means unthrottled. */
 static int frames_per_second;
 
-/* Function to get the default font */
 static NSFont *default_font;
 
 @class AngbandView;
-
-/* The max number of glyphs we support */
-#define GLYPH_COUNT 256
 
 /* An AngbandContext represents a logical Term (i.e. what Angband thinks is a window). This typically maps to one NSView, but may map to more than one NSView (e.g. the Test and real screen saver view). */
 @interface AngbandContext : NSObject <NSWindowDelegate>
@@ -173,7 +148,6 @@ static NSFont *default_font;
 /* Called when the context is going down. */
 - (void)dispose;
 
-/* Returns the size of the image. */
 - (NSSize)imageSize;
 
 /* Return the rect for a tile at given coordinates. */
@@ -188,7 +162,6 @@ static NSFont *default_font;
 /* Locks focus on the Angband image but does NOT scale the CTM. Appropriate for drawing hairlines. */
 - (CGContextRef)lockFocusUnscaled;
 
-/* Unlocks focus. */
 - (void)unlockFocus;
 
 /* Returns the primary window for this angband context, creating it if necessary */
@@ -230,13 +203,8 @@ static NSFont *default_font;
 
 /* Class methods */
 
-/* Begins an Angband game. This is the entry point for starting off. */
 + (void)beginGame;
-
-/* Ends an Angband game. */
 + (void)endGame;
-
-/* Internal method */
 - (AngbandView *)activeView;
 
 @end
@@ -281,10 +249,7 @@ static void AngbandUpdateWindowVisibility(void)
     {
         AngbandContext *angbandContext = angband_term[i]->data;
 
-        if( angbandContext == nil )
-        {
-            continue;
-        }
+        if( angbandContext == nil ) continue;
 
         BOOL termHasSubwindowFlags = ((window_flag[i] & validWindowFlagsMask) > 0);
 
@@ -353,18 +318,6 @@ static unsigned push_options(unsigned x, unsigned y)
 /*
  * Graphics support
  */
-
-/*
- * The tile image
- */
-//static CGImageRef pict_image;
-
-/*
- * Numbers of rows and columns in a tileset,
- * calculated by the PICT/PNG loading code
- */
-//static int pict_cols = 0;
-//static int pict_rows = 0;
 
 /*
  * Value used to signal that we using ASCII, not graphical tiles.
@@ -748,11 +701,9 @@ static int compare_advances(const void *ap, const void *bp)
     return [self lockFocusUnscaled];
 }
 
-
 - (NSRect)rectInImageForTileAtX:(int)x Y:(int)y
 {
-    int flippedY = y;
-    return NSMakeRect(x * tileSize.width + borderSize.width, flippedY * tileSize.height + borderSize.height, tileSize.width, tileSize.height);
+    return NSMakeRect(x * tileSize.width + borderSize.width, y * tileSize.height + borderSize.height, tileSize.width, tileSize.height);
 }
 
 - (void)setSelectionFont:(NSFont*)font adjustTerminal: (BOOL)adjustTerminal
@@ -786,11 +737,9 @@ static int compare_advances(const void *ap, const void *bp)
 {
     if ((self = [super init]))
     {
-        /* Default rows and cols */
         self->cols = 80;
         self->rows = 24;
 
-        /* Default border size */
         self->borderSize = NSMakeSize(2, 2);
 
         /* Allocate overdraw cache, unscanned and collectable. */
@@ -837,14 +786,11 @@ static int compare_advances(const void *ap, const void *bp)
     self->attrOverdrawCache = NULL;
 }
 
-/* Usual Cocoa fare */
 - (void)dealloc
 {
     [self dispose];
     [super dealloc];
 }
-
-
 
 #pragma mark -
 #pragma mark Directories and Paths Setup
@@ -1053,17 +999,12 @@ static NSMenuItem *superitem(NSMenuItem *self)
 
 - (BOOL)validateMenuItem:(NSMenuItem *)menuItem
 {
-    int tag = [menuItem tag];
-    SEL sel = [menuItem action];
-    if (sel == @selector(setGraphicsMode:))
+    if ([menuItem action] == @selector(setGraphicsMode:))
     {
-        [menuItem setState: (tag == graf_mode_req)];
+        [menuItem setState: ([menuItem tag] == graf_mode_req)];
         return YES;
     }
-    else
-    {
-        return YES;
-    }
+    return YES;
 }
 
 - (NSWindow *)makePrimaryWindow
@@ -1236,7 +1177,6 @@ static NSMenuItem *superitem(NSMenuItem *self)
 }
 
 - (NSSize)windowWillResize:(NSWindow *)sender toSize:(NSSize)frameSize {
-  
   // Get the content size (the drawable area, excluding title bar, etc.)
   NSSize contentSize = [sender contentRectForFrameRect:(NSRect){ .size = frameSize }].size;
   
@@ -1372,7 +1312,6 @@ static void set_color_for_index(int idx)
 {
     u16b rv, gv, bv;
     
-    /* Extract the R,G,B data */
     rv = angband_color_table[idx][1];
     gv = angband_color_table[idx][2];
     bv = angband_color_table[idx][3];
@@ -1398,7 +1337,6 @@ static void record_current_savefile(void)
 
 /*
  * Initialize a new Term
- *
  */
 static void Term_init_cocoa(term *t)
 {
@@ -1427,7 +1365,6 @@ static void Term_init_cocoa(term *t)
         }
     }
     
-    /* Set its font. */
     NSString *fontName = [[NSUserDefaults angbandDefaults] 
         stringForKey:[NSString stringWithFormat:@"FontName-%d", termIdx]];
     if (! fontName) fontName = [default_font fontName];
@@ -1450,26 +1387,24 @@ static void Term_init_cocoa(term *t)
     context->cols = columns;
     context->rows = rows;
     [context resizeOverdrawCache];
-
-    /* Get the window */
+    
     NSWindow *window = [context makePrimaryWindow];
     
     /* Set its title and, for auxiliary terms, tentative size */
     if (termIdx == 0)
     {
-        [window setTitle:@"FrogComposBand"];
+        [window setTitle:@"FrogComposband"];
     }
     else
     {
         [window setTitle:[NSString stringWithFormat:@"Term %d", termIdx]];
     }
     
-    
     /* If this is the first term, and we support full screen (Mac OS X Lion or later), then allow it to go full screen (sweet). Allow other terms to be FullScreenAuxilliary, so they can at least show up. Unfortunately in Lion they don't get brought to the full screen space; but they would only make sense on multiple displays anyways so it's not a big loss. */
     if ([window respondsToSelector:@selector(toggleFullScreen:)])
     {
         NSWindowCollectionBehavior behavior = [window collectionBehavior];
-        behavior |= (termIdx == 0 ? Angband_NSWindowCollectionBehaviorFullScreenPrimary : Angband_NSWindowCollectionBehaviorFullScreenAuxiliary);
+        behavior |= (termIdx == 0 ? NSWindowCollectionBehaviorFullScreenPrimary : NSWindowCollectionBehaviorFullScreenAuxiliary);
         [window setCollectionBehavior:behavior];
     }
     
@@ -1478,13 +1413,6 @@ static void Term_init_cocoa(term *t)
     {
         [window setRestorable:NO];
     }
-    
-    /* Position the window, either through autosave or cascading it */
-    [window center];
-    
-    /* Cascade it */
-    static NSPoint lastPoint = {0, 0};
-    lastPoint = [window cascadeTopLeftFromPoint:lastPoint];
     
     /* And maybe that's all for naught */
     if (autosaveName) [window setFrameAutosaveName:autosaveName];
@@ -1501,7 +1429,6 @@ static void Term_init_cocoa(term *t)
     t->mapped_flag = true;
     [pool drain];
 }
-
 
 
 /*
@@ -1526,69 +1453,7 @@ static void Term_nuke_cocoa(term *t)
     
     [pool drain];
 }
-#if 0
-/* Returns the CGImageRef corresponding to an image with the given name in the resource directory, transferring ownership to the caller */
-static CGImageRef create_angband_image(NSString *name)
-{
-    CGImageRef decodedImage = NULL, result = NULL;
-    
-    /* Get the path to the image */
-    NSBundle *bundle = [NSBundle bundleForClass:[AngbandView class]];
-    NSString *path = [bundle pathForImageResource:name];
-    
-    /* Try using ImageIO to load it */
-    if (path)
-    {
-        NSURL *url = [[NSURL alloc] initFileURLWithPath:path isDirectory:NO];
-        if (url)
-        {
-            NSDictionary *options = [[NSDictionary alloc] initWithObjectsAndKeys:(id)kCFBooleanTrue, kCGImageSourceShouldCache, nil];
-            CGImageSourceRef source = CGImageSourceCreateWithURL((CFURLRef)url, (CFDictionaryRef)options);
-            if (source)
-            {
-                /* We really want the largest image, but in practice there's only going to be one */
-                decodedImage = CGImageSourceCreateImageAtIndex(source, 0, (CFDictionaryRef)options);
-                CFRelease(source);
-            }
-            [options release];
-            [url release];
-        }
-    }
-    
-    /* Draw the sucker to defeat ImageIO's weird desire to cache and decode on demand. Our images aren't that big! */
-    if (decodedImage)
-    {
-        size_t width = CGImageGetWidth(decodedImage), height = CGImageGetHeight(decodedImage);
-        
-        /* Compute our own bitmap info */
-        CGBitmapInfo imageBitmapInfo = CGImageGetBitmapInfo(decodedImage);
-        CGBitmapInfo contextBitmapInfo = kCGBitmapByteOrderDefault;
-        
-        switch (imageBitmapInfo & kCGBitmapAlphaInfoMask) {
-            case kCGImageAlphaNone:
-            case kCGImageAlphaNoneSkipLast:
-            case kCGImageAlphaNoneSkipFirst:
-                /* No alpha */
-                contextBitmapInfo |= kCGImageAlphaNone;
-                break;
-            default:
-                /* Some alpha, use premultiplied last which is most efficient. */
-                contextBitmapInfo |= kCGImageAlphaPremultipliedLast;
-                break;
-        }
-        
-        CGContextRef ctx = CGBitmapContextCreate(NULL, width, height, CGImageGetBitsPerComponent(decodedImage), CGImageGetBytesPerRow(decodedImage), CGImageGetColorSpace(decodedImage), contextBitmapInfo);
-        CGContextSetBlendMode(ctx, kCGBlendModeCopy);
-        CGContextDrawImage(ctx, CGRectMake(0, 0, width, height), decodedImage);
-        result = CGBitmapContextCreateImage(ctx);
-        
-        /* Done with these things */
-        CFRelease(ctx);
-        CGImageRelease(decodedImage);
-    }
-    return result;
-}
-#endif
+
 /*
  * React to changes
  */
@@ -1657,8 +1522,7 @@ static errr Term_xtra_cocoa_react(void)
 #endif    
     [pool drain];
     
-    /* Success */
-    return (0);
+    return 0;
 }
 
 
@@ -1675,13 +1539,9 @@ static errr Term_xtra_cocoa(int n, int v)
     /* Analyze */
     switch (n)
     {
-            /* Make a noise */
         case TERM_XTRA_NOISE:
         {
-            /* Make a noise */
             NSBeep();
-            
-            /* Success */
             break;
         }
             
@@ -1694,7 +1554,6 @@ static errr Term_xtra_cocoa(int n, int v)
             /* Process an event */
             (void)check_events(CHECK_EVENTS_NO_WAIT);
             
-            /* Success */
             break;
         }
             
@@ -1704,7 +1563,6 @@ static errr Term_xtra_cocoa(int n, int v)
             /* Process an event */
             (void)check_events(v);
             
-            /* Success */
             break;
         }
             
@@ -1714,7 +1572,6 @@ static errr Term_xtra_cocoa(int n, int v)
             /* Hack -- flush all events */
             while (check_events(CHECK_EVENTS_DRAIN)) /* loop */;
             
-            /* Success */
             break;
         }
             
@@ -1735,7 +1592,6 @@ static errr Term_xtra_cocoa(int n, int v)
             [angbandContext unlockFocus];
             [angbandContext clearOverdrawCache];
             [angbandContext setNeedsDisplay:YES];
-            /* Success */
             break;
         }
             
@@ -1767,7 +1623,6 @@ static errr Term_xtra_cocoa(int n, int v)
                 
             }
             
-            /* Success */
             break;
         }
             
@@ -1786,7 +1641,6 @@ static errr Term_xtra_cocoa(int n, int v)
     
     [pool drain];
     
-    /* Oops */
     return result;
 }
 
@@ -1813,7 +1667,6 @@ static errr Term_curs_cocoa(int x, int y)
     /* Invalidate that rect */
     [angbandContext setNeedsDisplayInBaseRect:redisplayRect];
     
-    /* Success */
     [pool drain];
     return 0;
 }
@@ -1846,7 +1699,6 @@ static errr Term_wipe_cocoa(int x, int y, int n)
     
     [pool drain];
     
-    /* Success */
     return (0);
 }
 #if 0
@@ -1946,10 +1798,10 @@ static errr Term_pict_cocoa(int x, int y, int n, const int *ap,
     
     [pool drain];
     
-    /* Success */
     return (0);
 }
 #endif
+
 /*
  * Low level graphics.  Assumes valid input.
  *
@@ -2058,56 +1910,7 @@ static errr Term_text_cocoa(int x, int y, int n, byte a, cptr cp)
     /* Success */
     return (0);
 }
-#if 0
-/* From the Linux mbstowcs(3) man page:
- *   If dest is NULL, n is ignored, and the conversion  proceeds  as  above,
- *   except  that  the converted wide characters are not written out to mem‐
- *   ory, and that no length limit exists.
- */
-static size_t Term_mbcs_cocoa(wchar_t *dest, const char *src, int n)
-{
-    int i;
-    int count = 0;
 
-    /* Unicode code point to UTF-8
-     *  0x0000-0x007f:   0xxxxxxx
-     *  0x0080-0x07ff:   110xxxxx 10xxxxxx
-     *  0x0800-0xffff:   1110xxxx 10xxxxxx 10xxxxxx
-     * 0x10000-0x1fffff: 11110xxx 10xxxxxx 10xxxxxx 10xxxxxx
-     * Note that UTF-16 limits Unicode to 0x10ffff. This code is not
-     * endian-agnostic.
-     */
-    for (i = 0; i < n || dest == NULL; i++) {
-        if ((src[i] & 0x80) == 0) {
-            if (dest != NULL) dest[count] = src[i];
-            if (src[i] == 0) break;
-        } else if ((src[i] & 0xe0) == 0xc0) {
-            if (dest != NULL) dest[count] = 
-                            (((unsigned char)src[i] & 0x1f) << 6)| 
-                            ((unsigned char)src[i+1] & 0x3f);
-            i++;
-        } else if ((src[i] & 0xf0) == 0xe0) {
-            if (dest != NULL) dest[count] = 
-                            (((unsigned char)src[i] & 0x0f) << 12) | 
-                            (((unsigned char)src[i+1] & 0x3f) << 6) |
-                            ((unsigned char)src[i+2] & 0x3f);
-            i += 2;
-        } else if ((src[i] & 0xf8) == 0xf0) {
-            if (dest != NULL) dest[count] = 
-                            (((unsigned char)src[i] & 0x0f) << 18) | 
-                            (((unsigned char)src[i+1] & 0x3f) << 12) |
-                            (((unsigned char)src[i+2] & 0x3f) << 6) |
-                            ((unsigned char)src[i+3] & 0x3f);
-            i += 3;
-        } else {
-            /* Found an invalid multibyte sequence */
-            return (size_t)-1;
-        }
-        count++;
-    }
-    return count;
-}
-#endif
 /* Post a nonsense event so that our event loop wakes up */
 static void wakeup_event_loop(void)
 {
@@ -2159,7 +1962,6 @@ static term *term_data_link(int i)
     newterm->curs_hook = Term_curs_cocoa;
     newterm->text_hook = Term_text_cocoa;
     //newterm->pict_hook = Term_pict_cocoa;
-    //newterm->mbcs_hook = Term_mbcs_cocoa;
     
     /* Global pointer */
     angband_term[i] = newterm;
@@ -2425,60 +2227,16 @@ static void play_sound(int event)
     [autorelease_pool drain];
 }
 #endif
-/*
- * 
- */
+
 static void init_windows(void)
 {
-    /* Create the main window */
-    term *primary = term_data_link(0);
-    
-    /* Prepare to create any additional windows */
-    int i;
-    for (i=1; i < ANGBAND_TERM_MAX; i++) {
+    for (int i=0; i < ANGBAND_TERM_MAX; i++) {
         term_data_link(i);
     }
     
-    /* Activate the primary term */
-    Term_activate(primary);
+    Term_activate(angband_term[0]);
 }
 
-#if 0
-/*
- *    Run the event loop and return a gameplay status to init_angband
- */
-static errr get_cmd_init(void)
-{     
-    if (cmd.command == CMD_NULL)
-    {
-        /* Prompt the user */ 
-        prt("[Choose 'New' or 'Open' from the 'File' menu]", 23, 17);
-        Term_fresh();
-        
-        while (cmd.command == CMD_NULL) {
-            NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
-            NSEvent *event = [NSApp nextEventMatchingMask:NSAnyEventMask untilDate:[NSDate distantFuture] inMode:NSDefaultRunLoopMode dequeue:YES];
-            if (event) [NSApp sendEvent:event];
-            [pool drain];        
-        }
-    }
-    
-    /* Push the command to the game. */
-    cmd_insert_s(&cmd);
-    
-    return 0; 
-} 
-
-
-/* Return a command */
-static errr cocoa_get_cmd(cmd_context context, bool wait)
-{
-    if (context == CMD_INIT) 
-        return get_cmd_init();
-    else 
-        return textui_get_cmd(context, wait);
-}
-#endif
 /* Return the directory into which we put data (save and config) */
 static NSString *get_data_directory(void)
 {
@@ -2673,50 +2431,6 @@ static BOOL send_event(NSEvent *event)
           break;
         }
         
-        case NSLeftMouseDown:
-        {
-#if 0
-          /* Queue mouse presses if they occur in the map section
-           * of the main window.
-           */
-            AngbandContext *angbandContext =
-                [[[event window] contentView] angbandContext];
-            AngbandContext *mainAngbandContext =
-                angband_term[0]->data;
-
-            if (mainAngbandContext->primaryWindow &&
-                [[event window] windowNumber] ==
-                [mainAngbandContext->primaryWindow windowNumber])
-            {
-                int cols, rows, x, y;
-                Term_get_size(&cols, &rows);
-
-                /* Term_mousepress() expects the origin (0,0) at the upper
-                 * left, while locationInWindow puts the origin at the lower
-                 * left.
-                 */
-                NSPoint p = [event locationInWindow];
-                NSSize tileSize = angbandContext->tileSize;
-                x = p.x/(tileSize.width * AngbandScaleIdentity.width);
-                y = rows - p.y/(tileSize.height * AngbandScaleIdentity.height);
-                    
-                /* Sidebar plus border == thirteen characters;
-                 * top row is reserved, and bottom row may have mouse buttons.
-                 * Coordinates run from (0,0) to (cols-1, rows-1).
-                 */
-                if ((x > 13 && x <= cols - 1 &&
-                     y > 0  && y <= rows - 2) ||
-                    (OPT(mouse_buttons) && y == rows - 1 && 
-                     x >= COL_MAP && x < COL_MAP + button_get_length()))
-                {
-                    Term_mousepress(x, y, 1);
-                }
-            }
-#endif
-            [NSApp sendEvent:event]; // Pass event through so other UI continues to work
-            break;
-        }
-
         case NSApplicationDefined:
         {
             if ([event subtype] == AngbandEventWakeup)
@@ -2773,7 +2487,6 @@ static BOOL check_events(int wait)
     
     /* Something happened */
     return YES;
-    
 }
 
 /*
@@ -2859,7 +2572,6 @@ static bool cocoa_get_file(const char *suggested_name, char *path, size_t len)
 
 - (IBAction)newGame:sender
 {
-    /* Game is in progress */
     game_in_progress = TRUE;
     new_game = TRUE;
 }
@@ -2953,7 +2665,6 @@ static bool cocoa_get_file(const char *suggested_name, char *path, size_t len)
         /* Remember this so we can select it by default next time */
         record_current_savefile();
         
-        /* Game is in progress */
         game_in_progress = TRUE;
         new_game = FALSE;
     }
@@ -3040,7 +2751,7 @@ static bool cocoa_get_file(const char *suggested_name, char *path, size_t len)
     NSMenu *windowsMenu = [[NSApplication sharedApplication] windowsMenu];
     [windowsMenu addItem: [NSMenuItem separatorItem]];
 
-    NSMenuItem *angbandItem = [[NSMenuItem alloc] initWithTitle: @"FrogComposBand" action: @selector(selectWindow:) keyEquivalent: @"0"];
+    NSMenuItem *angbandItem = [[NSMenuItem alloc] initWithTitle: @"FrogComposband" action: @selector(selectWindow:) keyEquivalent: @"0"];
     [angbandItem setTarget: self];
     [angbandItem setTag: AngbandWindowMenuItemTagBase];
     [windowsMenu addItem: angbandItem];
@@ -3165,7 +2876,6 @@ static bool cocoa_get_file(const char *suggested_name, char *path, size_t len)
     }
     else
     {
-      //cmd_insert(CMD_QUIT);
         /* Post an escape event so that we can return from our get-key-event function */
         wakeup_event_loop();
         quit_when_ready = true;
@@ -3183,8 +2893,7 @@ static bool cocoa_get_file(const char *suggested_name, char *path, size_t len)
 #if 0    
     /* If it's non-empty, then we've already built it. Currently graphics modes won't change once created; if they ever can we can remove this check.
        Note that the check mark does change, but that's handled in validateMenuItem: instead of menuNeedsUpdate: */
-    if ([menu numberOfItems] > 0)
-        return;
+    if ([menu numberOfItems] > 0) return;
     
     /* This is the action for all these menu items */
     SEL action = @selector(setGraphicsMode:);
@@ -3203,7 +2912,6 @@ static bool cocoa_get_file(const char *suggested_name, char *path, size_t len)
         NSString *title = [[NSString alloc] initWithUTF8String:graf->menuname];
         if (! title) title = [@"(Unknown)" copy];
         
-        /* Make the item */
         NSMenuItem *item = [menu addItemWithTitle:title action:action keyEquivalent:@""];
         [item setTag:graf->grafID];
     }
@@ -3223,9 +2931,6 @@ static bool cocoa_get_file(const char *suggested_name, char *path, size_t len)
     /* Put it in savefile */
     if (! [file getFileSystemRepresentation:savefile maxLength:sizeof savefile]) return NO;
     
-    /* Success, remember to load it */
-    //cmd.command = CMD_LOADFILE;
-    
     /* Wake us up in case this arrives while we're sitting at the Welcome screen! */
     wakeup_event_loop();
     
@@ -3239,5 +2944,3 @@ int main(int argc, char* argv[])
     NSApplicationMain(argc, (void*)argv);    
     return (0);
 }
-
-#endif /* MACINTOSH || MACH_O_CARBON */

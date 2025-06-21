@@ -14,6 +14,7 @@ OPT ?= -O2
 NAME = FrogComposband
 APPNAME = $(NAME).app
 EXE = $(NAME)
+NIB = cocoa/English.lproj/MainMenu.nib
 
 # for consistency with older versions, use a lower case bundle ID
 BUNDLE_IDENTIFIER = org.rephial.angband
@@ -80,9 +81,13 @@ clean:
 # Basic build rules and dependencies
 #
 
+%.nib: %.xib
+	ibtool --compile "$@" "$<"
+
 main-cocoa.o : main-cocoa.m
 	@printf "%10s %-20s (objective-c)\n" CC $<
 	@$(CC) $(CFLAGS) $(OBJ_CFLAGS) -c -o $@ $<
+
 %.o : %.c
 	@printf "%10s %-20s\n" CC $<
 	@$(CC) $(JUST_C) $(CFLAGS) -c -o $@ $<
@@ -124,13 +129,13 @@ LIBFILES = \
   ../lib/help/html/*.html \
   ../lib/pref/*.prf \
 
-install: $(EXE) $(ICONFILES) $(PLIST) $(LIBFILES)
+install: $(EXE) $(NIB) $(ICONFILES) $(PLIST) $(LIBFILES)
 	@echo making directories...
 	@mkdir -p $(APPBNDL)
 	@mkdir -p $(APPCONT)
 	@mkdir -p $(APPBIN)
 	@mkdir -p $(APPRES)
-	@mkdir -p $(APPRES)/English.lproj/MainMenu.nib 
+	@mkdir -p $(APPRES)/English.lproj
 	@mkdir -p $(APPRES)/lib/data
 	@mkdir -p $(APPRES)/lib/edit
 	@mkdir -p $(APPRES)/lib/file
@@ -158,7 +163,7 @@ install: $(EXE) $(ICONFILES) $(PLIST) $(LIBFILES)
 
 	install -m 755 $(EXE) $(APPBIN)
 	install -m 644 $(ICONFILES) $(APPRES)
-	cp cocoa/English.lproj/MainMenu.nib/*ib $(APPRES)/English.lproj/MainMenu.nib
+	cp -r cocoa/English.lproj/MainMenu.nib $(APPRES)/English.lproj/MainMenu.nib
 	cp cocoa/CommandMenu.plist $(APPRES)/CommandMenu.plist
 	sed -e 's/\$$VERSION\$$/$(VERSION)/' \
 		-e 's/\$$COPYRIGHT\$$/$(COPYRIGHT)/' \

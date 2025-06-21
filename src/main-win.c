@@ -3680,11 +3680,26 @@ LRESULT FAR PASCAL AngbandWndProc(HWND hWnd, UINT uMsg,
             else Term_keypress(wParam);
             return 0;
         }
-
+        
+#if 1
+        case WM_LBUTTONUP:
+        case WM_RBUTTONUP:
+        {
+            if (hWnd == data[0]->w) {
+                mouse_cursor_targeting_state = 2;
+                mouse_cursor_x = MAX(0, MIN(GET_X_LPARAM(lParam) / td->tile_wid, td->cols - 1));
+                mouse_cursor_y = MAX(0, MIN(GET_Y_LPARAM(lParam) / td->tile_hgt, td->rows - 1));
+                
+                if(uMsg == WM_LBUTTONUP) Term_keypress('|');
+                if(uMsg == WM_RBUTTONUP) Term_keypress('`');
+            }
+            return 0;
+        }
+#else
         case WM_LBUTTONDOWN:
         {
-            mousex = MIN(LOWORD(lParam) / td->tile_wid, td->cols - 1);
-            mousey = MIN(HIWORD(lParam) / td->tile_hgt, td->rows - 1);
+            mousex = MIN(GET_X_LPARAM(lParam) / td->tile_wid, td->cols - 1);
+            mousey = MIN(GET_Y_LPARAM(lParam) / td->tile_hgt, td->rows - 1);
             mouse_down = TRUE;
             oldx = mousex;
             oldy = mousey;
@@ -3742,8 +3757,8 @@ LRESULT FAR PASCAL AngbandWndProc(HWND hWnd, UINT uMsg,
             if (mouse_down)
             {
                 int dx, dy;
-                int cx = MIN(LOWORD(lParam) / td->tile_wid, td->cols - 1);
-                int cy = MIN(HIWORD(lParam) / td->tile_hgt, td->rows - 1);
+                int cx = MIN(GET_X_LPARAM(lParam) / td->tile_wid, td->cols - 1);
+                int cy = MIN(GET_Y_LPARAM(lParam) / td->tile_hgt, td->rows - 1);
                 int ox, oy;
 
                 if (paint_rect)
@@ -3770,7 +3785,7 @@ LRESULT FAR PASCAL AngbandWndProc(HWND hWnd, UINT uMsg,
             }
             return 0;
         }
-
+#endif
         case WM_INITMENU:
         {
             setup_menus();
@@ -4214,8 +4229,8 @@ LRESULT FAR PASCAL AngbandSaverProc(HWND hWnd, UINT uMsg,
         {
             if (iMouse)
             {
-                dx = LOWORD(lParam) - xMouse;
-                dy = HIWORD(lParam) - yMouse;
+                dx = GET_X_LPARAM(lParam) - xMouse;
+                dy = GET_Y_LPARAM(lParam) - yMouse;
 
                 if (dx < 0) dx = -dx;
                 if (dy < 0) dy = -dy;
@@ -4228,8 +4243,8 @@ LRESULT FAR PASCAL AngbandSaverProc(HWND hWnd, UINT uMsg,
 
             /* Save last location */
             iMouse = 1;
-            xMouse = LOWORD(lParam);
-            yMouse = HIWORD(lParam);
+            xMouse = GET_X_LPARAM(lParam);
+            yMouse = GET_Y_LPARAM(lParam);
 
             return 0;
         }

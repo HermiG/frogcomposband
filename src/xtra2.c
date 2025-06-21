@@ -4186,7 +4186,6 @@ static int target_set_aux(int y, int x, int mode, cptr info)
     {
         cptr name = "something strange";
 
-
         /* Display a message */
         sprintf(out_val, "%s%s%s%s [%s]", s1, s2, s3, name, info);
 
@@ -4678,9 +4677,7 @@ bool target_set(int mode)
             {
                 strcpy(info, rogue_like_commands ? "q,t,p,o,x,(,+,-,?,<dir>" : "q,t,p,o,x,j,+,-,?,<dir>");
             }
-
-            /* Dis-allow target */
-            else
+            else /* Dis-allow target */
             {
                 strcpy(info, rogue_like_commands ? "q,p,o,x,(,+,-,?,<dir>" : "q,p,o,x,j,+,-,?,<dir>");
             }
@@ -4717,6 +4714,7 @@ bool target_set(int mode)
                 }
                 
                 case '|': // Target cursor
+                    flag = FALSE;
                     break;
                 
                 case 't':
@@ -4924,27 +4922,31 @@ bool target_set(int mode)
         }
         else // Arbitrary grids
         {
+            bool move_fast = FALSE;
+            bool double_clicked = FALSE;
+
             if(mouse_cursor_targeting_state == 2) {
               mouse_cursor_targeting_state = 1;
               
               point_t pt = ui_xy_to_cave_pt(mouse_cursor_x, mouse_cursor_y);
               
               if (panel_contains(pt.y, pt.x)) {
+                if (pt.x == x && pt.y == y) { // double-clicked
+                  double_clicked = TRUE;
+                }
+                
                 x = pt.x;
                 y = pt.y;
               } else {
                 bell();
               }
             }
-            
-            bool move_fast = FALSE;
 
             if ( !(mode & TARGET_LOOK) && !(mode & TARGET_MARK) )
             {
                 prt_path(y, x, (mode & TARGET_DISI) ? PROJECT_DISI : 0);
             }
 
-            /* Access */
             c_ptr = &cave[y][x];
 
             if ((mode & TARGET_MARK) && !m_list[c_ptr->m_idx].ml)
@@ -4953,8 +4955,14 @@ bool target_set(int mode)
                 strcpy(info, rogue_like_commands ? "q,t,p,m,x,(,+,-,?,<dir>" : "q,t,p,m,x,j,+,-,?,<dir>");
 
 
-            /* Describe and Prompt (enable "TARGET_LOOK") */
-            while (!(query = target_set_aux(y, x, mode | TARGET_LOOK, info)));
+            if (double_clicked) {
+              query = '5';
+            }
+            else
+            {
+              /* Describe and Prompt (enable "TARGET_LOOK") */
+              while (!(query = target_set_aux(y, x, mode | TARGET_LOOK, info)));
+            }
 
             /* Cancel tracking */
             /* health_track(0); */
@@ -4968,7 +4976,7 @@ bool target_set(int mode)
             }
 
             if (((query == 'j') || (query == 'J')) && (!rogue_like_commands)) query = '(';
-          
+
             /* Analyze the keypress */
             switch (query)
             {
@@ -5259,7 +5267,11 @@ bool get_aim_dir_aux(int *dp, int target_mode)
     /* Global direction */
     dir = command_dir;
 
-
+    if(mouse_cursor_targeting_state == 0) {
+      mouse_cursor_targeting_state = 1;
+      mouse_cursor_x = -1;
+      mouse_cursor_y = -1;
+    }
 
 #ifdef ALLOW_REPEAT /* TNB */
 
@@ -5317,6 +5329,17 @@ bool get_aim_dir_aux(int *dp, int target_mode)
                 dir = 5;
                 break;
             }
+            
+            case '|':
+            case '`':
+              if(mouse_cursor_targeting_state == 2) {
+                point_t pt = ui_xy_to_cave_pt(mouse_cursor_x, mouse_cursor_y);
+                
+                if (panel_contains(pt.y, pt.x)) {
+                  if (target_set(target_mode)) dir = 5;
+                }
+              }
+              break;
 
             /* Set new target */
             case '*':

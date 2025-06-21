@@ -185,7 +185,7 @@ The birth options can only be accessed while creating a new character
   player's virtues are appropriately aligned with their type.
   
   Allow monsters hostile to each other (allow_hostile_monster)
-  If this option is on, monster infighting is disallowed except when 
+  If this option is off, monster infighting is disallowed except when 
   one of the monsters is a pet or friendly monster. With the option on, 
   infighting can also occur between hostile (or friendly) monsters of 
   opposite alignments.

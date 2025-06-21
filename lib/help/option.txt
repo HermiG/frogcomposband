@@ -83,7 +83,7 @@ With this option off, once a standard artifact is generated (either on the dunge
 This option allows some monsters to generate as friendly. A few monster races are friendly by default; turning virtues on allows additional monsters of specific types to spawn friendly if the player's virtues are appropriately aligned with their type.
 
 <topic:allow_hostile_monster><color:U>Allow monsters hostile to each other</color> <color:D>(allow_hostile_monster)</color>
-If this option is on, monster infighting is disallowed except when one of the monsters is a pet or friendly monster. With the option on, infighting can also occur between hostile (or friendly) monsters of opposite alignments.
+If this option is off, monster infighting is disallowed except when one of the monsters is a pet or friendly monster. With the option on, infighting can also occur between hostile (or friendly) monsters of opposite alignments.
 
 <topic:allow_pets><color:U>Allow player to summon/charm monsters</color> <color:D>(allow_pets)</color>
 This option allows the player to summon pets or turn hostile monsters into pets (see <link:monster.txt#Pets>). Turning this option off is generally not recommended, and would make pet-based characters like Quylthulgs, Beastmasters and Cavalry essentially unplayable.

@@ -351,11 +351,8 @@ static void hook_quit(const char * str);
 static void load_prefs(void);
 static void load_sounds(void);
 static void init_windows(void);
-static void handle_open_when_ready(void);
 //static void play_sound(int event);
 static BOOL check_events(int wait);
-//static void cocoa_file_open_hook(const char *path, file_type ftype);
-//static bool cocoa_get_file(const char *suggested_name, char *path, size_t len);
 static BOOL send_event(NSEvent *event);
 static void record_current_savefile(void);
 
@@ -883,9 +880,6 @@ static int compare_advances(const void *ap, const void *bp)
 
     /* Initialize some save file stuff */
     player_egid = getegid();
-    
-    /* Handle "open_when_ready" */
-    //handle_open_when_ready();
     
     /* Handle pending events (most notably update) and flush input */
     Term_flush();
@@ -2249,26 +2243,6 @@ static NSString *get_data_directory(void)
 }
 
 /*
- * Handle the "open_when_ready" flag
- */
-static void handle_open_when_ready(void)
-{
-    /* Check the flag XXX XXX XXX make a function for this */
-    if (open_when_ready && initialized && !game_in_progress)
-    {
-        /* Forget */
-        open_when_ready = FALSE;
-        
-        /* Game is in progress */
-        game_in_progress = TRUE;
-        
-        /* Wait for a keypress */
-        pause_line(23);
-    }
-}
-
-
-/*
  * Handle quit_when_ready, by Peter Ammon,
  * slightly modified to check inkey_flag.
  */
@@ -2304,7 +2278,6 @@ static BOOL contains_angband_view(NSView *view)
 /* Encodes an NSEvent Angband-style, or forwards it along.  Returns YES if the event was sent to Angband, NO if Cocoa (or nothing) handled it */
 static BOOL send_event(NSEvent *event)
 {
-        
     /* If the receiving window is not an Angband window, then do nothing */
     if (! contains_angband_view([[event window] contentView]))
     {
@@ -2326,7 +2299,7 @@ static BOOL send_event(NSEvent *event)
           int ms = !!(modifiers & NSShiftKeyMask);
           int mo = !!(modifiers & NSAlternateKeyMask);
           int mx = !!(modifiers & NSCommandKeyMask);
-          int kp = !!(modifiers & NSNumericPadKeyMask);
+          //int kp = !!(modifiers & NSNumericPadKeyMask);
           
           unichar c = ([[event characters] length] > 0) ? [[event characters] characterAtIndex:0] : 0;
           char ch = 0;
@@ -2515,42 +2488,7 @@ static void hook_quit(const char * str)
     plog(str);
     exit(0);
 }
-#if 0
-/* Set HFS file type and creator codes on a path */
-static void cocoa_file_open_hook(const char *path, file_type ftype)
-{
-    NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
-    NSString *pathString = [NSString stringWithUTF8String:path];
-    if (pathString)
-    {   
-        u32b mac_type = 'TEXT';
-        if (ftype == FTYPE_RAW)
-            mac_type = 'DATA';
-        else if (ftype == FTYPE_SAVE)
-            mac_type = 'SAVE';
-        
-        NSDictionary *attrs = [NSDictionary dictionaryWithObjectsAndKeys:[NSNumber numberWithUnsignedLong:mac_type], NSFileHFSTypeCode, [NSNumber numberWithUnsignedLong:ANGBAND_CREATOR], NSFileHFSCreatorCode, nil];
-        [[NSFileManager defaultManager] setAttributes:attrs ofItemAtPath:pathString error:NULL];
-    }
-    [pool drain];
-}
 
-/* A platform-native file save dialogue box, e.g. for saving character dumps */
-static bool cocoa_get_file(const char *suggested_name, char *path, size_t len)
-{
-    NSSavePanel *panel = [NSSavePanel savePanel];
-    NSString *directory = [NSString stringWithCString:ANGBAND_DIR_USER encoding:NSASCIIStringEncoding];
-    NSString *filename = [NSString stringWithCString:suggested_name encoding:NSASCIIStringEncoding];
-
-    if ([panel runModalForDirectory:directory file:filename] == NSOKButton) {
-        const char *p = [[[panel URL] path] UTF8String];
-        my_strcpy(path, p, len);
-        return TRUE;
-    }
-
-    return FALSE;
-}
-#endif
 /*** Main program ***/
 
 @interface AngbandAppDelegate : NSObject {

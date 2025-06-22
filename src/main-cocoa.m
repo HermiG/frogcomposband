@@ -276,43 +276,38 @@ static void AngbandUpdateWindowVisibility(void)
 /* Here is some support for rounding to pixels in a scaled context */
 static double push_pixel(double pixel, double scale, BOOL increase)
 {
-    double scaledPixel = pixel * scale;
-    /* Have some tolerance! */
-    double roundedPixel = round(scaledPixel);
-    if (fabs(roundedPixel - scaledPixel) <= .0001)
-    {
-        scaledPixel = roundedPixel;
-    }
-    else
-    {
-        scaledPixel = (increase ? ceil : floor)(scaledPixel);
-    }
-    return scaledPixel / scale;
+  double scaledPixel = pixel * scale;
+  
+  double roundedPixel = round(scaledPixel);
+  if (fabs(roundedPixel - scaledPixel) <= .0001) scaledPixel = roundedPixel;
+  else scaledPixel = (increase ? ceil : floor)(scaledPixel);
+  
+  return scaledPixel / scale;
 }
 
 /* Descriptions of how to "push pixels" in a given rect to integralize. For example, PUSH_LEFT means that we round expand the left edge if set, otherwise we shrink it. */
 enum
 {
-    PUSH_LEFT = 0x1,
-    PUSH_RIGHT = 0x2,
-    PUSH_BOTTOM = 0x4,
-    PUSH_TOP = 0x8
+  PUSH_LEFT = 0x1,
+  PUSH_RIGHT = 0x2,
+  PUSH_BOTTOM = 0x4,
+  PUSH_TOP = 0x8
 };
 
 /* Return a rect whose border is in the "cracks" between tiles */
 static NSRect crack_rect(NSRect rect, NSSize scale, unsigned pushOptions)
 {
-    double rightPixel = push_pixel(NSMaxX(rect), scale.width, !! (pushOptions & PUSH_RIGHT));
-    double topPixel = push_pixel(NSMaxY(rect), scale.height, !! (pushOptions & PUSH_TOP));
-    double leftPixel = push_pixel(NSMinX(rect), scale.width, ! (pushOptions & PUSH_LEFT));
-    double bottomPixel = push_pixel(NSMinY(rect), scale.height, ! (pushOptions & PUSH_BOTTOM));
-    return NSMakeRect(leftPixel, bottomPixel, rightPixel - leftPixel, topPixel - bottomPixel);    
+  double leftPixel   = push_pixel(NSMinX(rect), scale.width,   ! (pushOptions & PUSH_LEFT));
+  double bottomPixel = push_pixel(NSMinY(rect), scale.height,  ! (pushOptions & PUSH_BOTTOM));
+  double rightPixel  = push_pixel(NSMaxX(rect), scale.width,  !! (pushOptions & PUSH_RIGHT));
+  double topPixel    = push_pixel(NSMaxY(rect), scale.height, !! (pushOptions & PUSH_TOP));
+  return NSMakeRect(leftPixel, bottomPixel, rightPixel - leftPixel, topPixel - bottomPixel);
 }
 
 /* Returns the pixel push options (describing how we round) for the tile at a given index. Currently it's pretty uniform! */
 static unsigned push_options(unsigned x, unsigned y)
 {
-    return PUSH_TOP | PUSH_LEFT;
+  return PUSH_TOP | PUSH_LEFT;
 }
 
 /*
@@ -530,17 +525,9 @@ static int compare_advances(const void *ap, const void *bp)
     if (! self->terminal) return;
     
     term *old = Term;
-    
-    /* Activate the term */
     Term_activate(self->terminal);
-    
-    /* Redraw the contents */
     Term_redraw();
-    
-    /* Flush the output */
     Term_fresh();
-    
-    /* Restore the old term */
     Term_activate(old);
 }
 
@@ -601,62 +588,46 @@ static int compare_advances(const void *ap, const void *bp)
 - (void)drawWChar:(wchar_t)wchar inRect:(NSRect)tile
 {
     CGContextRef ctx = [[NSGraphicsContext currentContext] graphicsPort];
-    CGFloat tileOffsetY = CTFontGetAscent( (CTFontRef)[angbandViewFont screenFont] );
-    CGFloat tileOffsetX = 0.0;
-    NSFont *screenFont = [angbandViewFont screenFont];
+  
+    CTFontRef screenFont = (CTFontRef)[angbandViewFont screenFont];
+    CGFloat tileOffsetY = CTFontGetAscent(screenFont);
+    CGFloat tileOffsetX = 0.0f;
+    CGFloat scale = 1.0f;
+    
     UniChar unicharString[2] = {(UniChar)wchar, 0};
 
     // Get glyph and advance
     CGGlyph thisGlyphArray[1] = { 0 };
     CGSize advances[1] = { { 0, 0 } };
-    CTFontGetGlyphsForCharacters((CTFontRef)screenFont, unicharString, thisGlyphArray, 1);
+    CTFontGetGlyphsForCharacters(screenFont, unicharString, thisGlyphArray, 1);
     CGGlyph glyph = thisGlyphArray[0];
-    CTFontGetAdvancesForGlyphs((CTFontRef)screenFont, kCTFontHorizontalOrientation, thisGlyphArray, advances, 1);
+    CTFontGetAdvancesForGlyphs(screenFont, kCTFontHorizontalOrientation, thisGlyphArray, advances, 1);
     CGSize advance = advances[0];
     
-    /* If our font is not monospaced, our tile width is deliberately not big enough for every character. In that event, if our glyph is too wide, we need to compress it horizontally. Compute the compression ratio. 1.0 means no compression. */
-    double compressionRatio;
+    /* If our font is not monospaced, some characters can exceed the tile width.
+     * If our glyph is too wide, compute scale to compress it horizontally.
+     * Otherwize, compute the offset to account for potentially undersized glyphs */
     if (advance.width <= NSWidth(tile))
-    {
-        /* Our glyph fits, so we can just draw it, possibly with an offset */
-        compressionRatio = 1.0;
-        tileOffsetX = (NSWidth(tile) - advance.width)/2;
-    }
+      tileOffsetX = (NSWidth(tile) - advance.width)/2; // Our glyph fits, so we can just draw it, with an offset if undersized
     else
-    {
-        /* Our glyph doesn't fit, so we'll have to compress it */
-        compressionRatio = NSWidth(tile) / advance.width;
-        tileOffsetX = 0;
-    }
-
-    
-    /* Now draw it */
-    CGAffineTransform textMatrix = CGContextGetTextMatrix(ctx);
-    CGFloat savedA = textMatrix.a;
-
-    /* Set the position */
-    textMatrix.tx = tile.origin.x + tileOffsetX;
-    textMatrix.ty = tile.origin.y + tileOffsetY;
-
-    /* Maybe squish it horizontally. */
-    if (compressionRatio != 1.)
-    {
-        textMatrix.a *= compressionRatio;
-    }
-
-    textMatrix = CGAffineTransformScale( textMatrix, 1.0, -1.0 );
-    CGContextSetTextMatrix(ctx, textMatrix);
-    CGContextShowGlyphsWithAdvances(ctx, &glyph, &CGSizeZero, 1);
-    
-    /* Restore the text matrix if we messed with the compression ratio */
-    if (compressionRatio != 1.)
-    {
-        textMatrix.a = savedA;
-        CGContextSetTextMatrix(ctx, textMatrix);
-    }
-
-    textMatrix = CGAffineTransformScale( textMatrix, 1.0, -1.0 );
-    CGContextSetTextMatrix(ctx, textMatrix);
+      scale = NSWidth(tile) / advance.width; // Our glyph doesn't fit, so we'll have to scale it down
+  
+  CGAffineTransform t = CGAffineTransformIdentity;
+  
+  // Flip the Y-axis to match Core Text coordinate system
+  t = CGAffineTransformScale(t, 1.0f, -1.0f);
+  
+  // Position the baseline
+  t = CGAffineTransformTranslate(t, tile.origin.x + tileOffsetX, -(tile.origin.y + tileOffsetY));
+  
+  // Apply horizontal compression if needed
+  if (scale != 1.0f) t = CGAffineTransformScale(t, scale, 1.0f);
+  
+  CGContextSetTextMatrix(ctx, t);
+  CGContextShowGlyphsWithAdvances(ctx, &glyph, &CGSizeZero, 1);
+  
+  // Restore to identity to avoid carryover
+  CGContextSetTextMatrix(ctx, CGAffineTransformIdentity);
 }
 
 /* Indication that we're redrawing everything, so get rid of the overdraw cache. */
@@ -664,6 +635,10 @@ static int compare_advances(const void *ap, const void *bp)
 {
     memset(charOverdrawCache, 0, self->cols * self->rows * sizeof *charOverdrawCache);
     memset(attrOverdrawCache, 0, self->cols * self->rows * sizeof *attrOverdrawCache);
+}
+
+- (void)clearOverdrawCacheFromX:(int)x y:(int)y width:(int)n {
+    memset(&charOverdrawCache[y * self->cols + x], 0, n * sizeof *charOverdrawCache);
 }
 
 /* Lock and unlock focus on our image or layer, setting up the CTM appropriately. */
@@ -710,23 +685,19 @@ static int compare_advances(const void *ap, const void *bp)
     [angbandViewFont release];
     angbandViewFont = font;
     
-    /* Update our glyph info */
     [self updateGlyphInfo];
-
+    
     if( adjustTerminal )
     {
         // adjust terminal to fit window with new font; save the new columns and rows since they could be changed
         NSRect contentRect = [self->primaryWindow contentRectForFrameRect: [self->primaryWindow frame]];
         [self resizeTerminalWithContentRect: contentRect saveToDefaults: YES];
     }
-
-    /* Update our image */
+    
     [self updateImage];
     
-    /* Clear our overdraw cache */
     [self clearOverdrawCache];
     
-    /* Get redrawn */
     [self requestRedraw];
 }
 
@@ -1599,7 +1570,7 @@ static errr Term_xtra_cocoa(int n, int v)
         case TERM_XTRA_REACT:
         {
             /* React to changes */
-            return (Term_xtra_cocoa_react());
+            return Term_xtra_cocoa_react();
         }
             
             /* Delay (milliseconds) */
@@ -1682,7 +1653,7 @@ static errr Term_wipe_cocoa(int x, int y, int n)
     AngbandContext *angbandContext = Term->data;
     
     /* clear our overdraw cache for subpixel rendering */
-    [angbandContext clearOverdrawCache];
+    [angbandContext clearOverdrawCacheFromX:x y:y width:n];
     
     /* Erase the block of characters */
     NSRect rect = [angbandContext rectInImageForTileAtX:x Y:y];
@@ -1820,13 +1791,14 @@ static errr Term_text_cocoa(int x, int y, int n, byte a, cptr cp)
      and then re-blit the previous and next character (if any).
      */
     
+    if(a >= MAX_COLORS) a=1;
+    
     NSRect redisplayRect = NSZeroRect;
     AngbandContext* angbandContext = Term->data;
     
     /* record our data in our cache */
     int start = y * angbandContext->cols + x;
-    int location;
-    for (location = 0; location < n; location++) {
+    for (int location = 0; location < n; location++) {
         angbandContext->charOverdrawCache[start + location] = cp[location];
         angbandContext->attrOverdrawCache[start + location] = a;
     }
@@ -1842,7 +1814,7 @@ static errr Term_text_cocoa(int x, int y, int n, byte a, cptr cp)
     /* erase behind us */
     unsigned leftPushOptions = push_options(x, y);
     unsigned rightPushOptions = push_options(x + n - 1, y);
-    leftPushOptions &= ~ PUSH_RIGHT;
+    leftPushOptions  &= ~ PUSH_RIGHT;
     rightPushOptions &= ~ PUSH_LEFT;
     
     [[NSColor blackColor] set];
@@ -1855,8 +1827,7 @@ static errr Term_text_cocoa(int x, int y, int n, byte a, cptr cp)
     
     /* Handle overdraws */
     const int overdraws[2] = {x-1, x+n}; //left, right
-    int i;
-    for (i=0; i < 2; i++) {
+    for (int i=0; i < 2; i++) {
         int overdrawX = overdraws[i];
         
         // Nothing to overdraw if we're at an edge
@@ -1864,38 +1835,31 @@ static errr Term_text_cocoa(int x, int y, int n, byte a, cptr cp)
         {
             wchar_t previouslyDrawnVal = angbandContext->charOverdrawCache[y * angbandContext->cols + overdrawX];
             
-            // Don't overdraw if it's not text
-            if (previouslyDrawnVal != NO_OVERDRAW)
+            NSRect overdrawRect = [angbandContext rectInImageForTileAtX:overdrawX Y:y];
+            NSRect expandedRect = crack_rect(overdrawRect, AngbandScaleIdentity, push_options(overdrawX, y));
+            
+            [[NSColor blackColor] set];
+            NSRectFill(expandedRect);
+            redisplayRect = NSUnionRect(redisplayRect, expandedRect);
+            
+            if (previouslyDrawnVal && previouslyDrawnVal != NO_OVERDRAW)
             {
-                NSRect overdrawRect = [angbandContext rectInImageForTileAtX:overdrawX Y:y];
-                NSRect expandedRect = crack_rect(overdrawRect, AngbandScaleIdentity, push_options(overdrawX, y));
+                byte color = angbandContext->attrOverdrawCache[y * angbandContext->cols + overdrawX];
                 
-                [[NSColor blackColor] set];
-                NSRectFill(expandedRect);
-                redisplayRect = NSUnionRect(redisplayRect, expandedRect);
-                
-                // Redraw text if we have any
-                if (previouslyDrawnVal != 0)
-                {
-                    byte color = angbandContext->attrOverdrawCache[y * angbandContext->cols + overdrawX]; 
-                    
-                    set_color_for_index(color);
-                    [angbandContext drawWChar:previouslyDrawnVal inRect:overdrawRect];
-                }
+                set_color_for_index(color);
+                [angbandContext drawWChar:previouslyDrawnVal inRect:overdrawRect];
             }
         }
     }
     
-    /* Set the color */
-    set_color_for_index(a % MAX_COLORS);
+    set_color_for_index(a);
     
     /* Draw each */
     NSRect rectToDraw = charRect;
-    for (i=0; i < n; i++) {
+    for (int i=0; i < n; i++) {
         [angbandContext drawWChar:cp[i] inRect:rectToDraw];
         rectToDraw.origin.x += tileWidth;
     }
-
     
     // Invalidate what we just drew
     NSRect drawnRect = charRect;
@@ -1907,8 +1871,7 @@ static errr Term_text_cocoa(int x, int y, int n, byte a, cptr cp)
     
     [pool drain];
     
-    /* Success */
-    return (0);
+    return 0;
 }
 
 /* Post a nonsense event so that our event loop wakes up */

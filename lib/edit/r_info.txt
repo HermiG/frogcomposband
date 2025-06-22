@@ -1770,9 +1770,9 @@ S:SCARE
 D:A ratlike creature with a humanlike face. "The bones of the
 D:tiny paws, it is rumoured, imply prehensile characteristics
 D:more typical of a diminutive monkey than a of a rat; while the
-D:small skull with its savage yellow fangs is of the utmost
+D:small skull, with its savage yellow fangs, is of the utmost
 D:anomalousness, appearing from certain angles like a miniature,
-D:monstrously degrade parody of a human skull."
+D:monstrously degraded parody of a human skull."
 
 N:116:Novice archer
 G:p:G

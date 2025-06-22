@@ -1309,13 +1309,14 @@ Boolean open_when_ready = FALSE;
 /* Sets an Angband color at a given index */
 static void set_color_for_index(int idx)
 {
-    u16b rv, gv, bv;
-    
-    rv = angband_color_table[idx][1];
-    gv = angband_color_table[idx][2];
-    bv = angband_color_table[idx][3];
-    
-    CGContextSetRGBFillColor([[NSGraphicsContext currentContext] graphicsPort], rv/255., gv/255., bv/255., 1.);
+  CGFloat rv, gv, bv;
+  CGFloat gamma = 1.4f;
+  
+  rv = powf(angband_color_table[idx][1]/255.0f, 1.0f/gamma);
+  gv = powf(angband_color_table[idx][2]/255.0f, 1.0f/gamma);
+  bv = powf(angband_color_table[idx][3]/255.0f, 1.0f/gamma);
+  
+  CGContextSetRGBFillColor([[NSGraphicsContext currentContext] graphicsPort], rv, gv, bv, 1.0f);
 }
 
 /* Remember the current character in UserDefaults so we can select it by default next time. */

@@ -445,8 +445,8 @@ static void do_cmd_wiz_change(void)
 /* Blue-Mage - learn spells for free */
 static void do_cmd_wiz_blue_mage(void)
 {
-    int n = get_quantity("Which type? ", MST_COUNT - 1);
-    int e = get_quantity("Which effect? ", 200);
+    int n = get_quantity_aux("Which type? ", MST_COUNT - 1, 1);
+    int e = get_quantity_aux("Which effect? ", 200, 1);
     blue_mage_learn_spell_aux(n, e, 0, 0, TRUE);
 }
 
@@ -709,7 +709,7 @@ static void wiz_create_item(void)
             n = 1;
             break;
         default:
-            n = get_quantity("How many? ", 99);
+            n = get_quantity_aux("How many? ", 99, 1);
         }
     }
 
@@ -1760,7 +1760,7 @@ void do_cmd_debug(void)
     /*  mut_gain_choice(mut_demigod_pred);*/
     /*  mut_gain_choice(mut_draconian_pred); */
 
-      n = get_quantity("Which One? ", 500);
+      n = get_quantity_aux("Which One? ", 500, 1);
         if (n == 500)
         {
             int i;
@@ -1936,7 +1936,7 @@ void do_cmd_debug(void)
            or browse the object knowledge command (~2). Wizard commands "A and "O
            are also useful.*/
         int lev;
-        int max_depth = get_quantity("Max Depth? ", 100);
+        int max_depth = get_quantity_aux("Max Depth? ", 100, 1);
 
         _wiz_stats_begin();
         _stats_reset_monster_levels();
@@ -2024,7 +2024,7 @@ void do_cmd_debug(void)
     {
         /* In this version, we gather statistics on the current level of the
            current dungeon. You still want to start with a fresh character. */
-        int reps = get_quantity("How many reps? ", 100);
+        int reps = get_quantity_aux("How many reps? ", 100, 1);
 
         _wiz_stats_begin();
         _wiz_stats_gather(dungeon_type, dun_level, reps);

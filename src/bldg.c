@@ -4052,7 +4052,7 @@ static void bldg_process_command(building_type *bldg, int i)
         }
         else if ((select_dungeon == DUNGEON_HEAVEN) && (quests_get(QUEST_METATRON)->status != QS_FINISHED)) max_depth = 585;
 
-        amt = get_quantity(format("Teleport to which level of %s? ", d_name + d_info[select_dungeon].name), max_depth);
+        amt = get_quantity_aux(format("Teleport to which level of %s? ", d_name + d_info[select_dungeon].name), max_depth, 1);
         if (amt > 0)
         {
             p_ptr->word_recall = 1;

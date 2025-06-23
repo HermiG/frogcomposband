@@ -3155,7 +3155,6 @@ s16b get_quantity_aux(cptr prompt, int max, int default_amt)
         /* Build a prompt */
         sprintf(tmp, "Quantity (1-%d): ", max);
 
-
         /* Use that prompt */
         prompt = tmp;
     }
@@ -3211,7 +3210,7 @@ s16b get_quantity_aux(cptr prompt, int max, int default_amt)
  */
 s16b get_quantity(cptr prompt, int max)
 {
-    return get_quantity_aux(prompt, max, 1);
+    return get_quantity_aux(prompt, max, max);
 }
 
 

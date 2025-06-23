@@ -834,7 +834,6 @@ static void _break_down_potion_spell(int cmd, variant *res){
 }
 
 void _reproduceInf(object_type* o_ptr){
-	
 	u32b flgs[OF_ARRAY_SIZE];
 	int infct, cost, tier, limit = _INFUSION_CAP;
 	char o_name[MAX_NLEN];
@@ -850,19 +849,13 @@ void _reproduceInf(object_type* o_ptr){
 		msg_print("This slot is already full."); // perhaps make it sound more flavourful...
 		return;
 	}
-	else if (!o_ptr){
-		if (flush_failure) flush();
-		msg_print("There's nothing to reproduce."); 
-		return;
-	}
 
 	sound(SOUND_QUAFF); // what the hell would be the sound anyway?
 
-
 	limit = _INFUSION_CAP - o_ptr->number;
-	if (limit < 0) limit = 0;
+  if (limit <= 0) return;
 
-	infct = get_quantity(NULL, MIN(_INFUSION_CAP, limit));
+	infct = get_quantity_aux(NULL, limit, 1);
 	if (infct <= 0) return;
 
 	cost = infct * _FindFormula(o_ptr->sval)->cost;

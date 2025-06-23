@@ -100,11 +100,11 @@ void quiver_remove_all(void)
 
 void quiver_drop(obj_ptr obj)
 {
-    int amt = obj->number;
-
     assert(obj);
     assert(obj->loc.where == INV_QUIVER);
     assert(obj->number > 0);
+
+    int amt = obj->number;
 
     if (obj->number > 1)
     {

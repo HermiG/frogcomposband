@@ -17847,6 +17847,9 @@ F:DROP_SKELETON | DROP_CORPSE | POS_GAIN_AC
 P:Copy:Human:Warrior
 P:Life:80
 P:Body:Bird
+D:A stocky birdlike beast with powerful legs and short, flightless wings.
+D:Though not particularly graceful, it runs fast and packs a mighty kick.
+D:Sometimes tamed as a riding mount, but known to have an ornery nature.
 
 N:998:Black Chiokovo
 G:B:D
@@ -17860,6 +17863,9 @@ F:DROP_SKELETON | DROP_CORPSE | POS_GAIN_AC
 P:Copy:Human:Warrior
 P:Life:80
 P:Body:Giant Bird
+D:A fierce, black-feathered Chiokovo with sharp claws and a cruel beak.
+D:Capable of short glides, it pounces from ledges or trees to strike prey.
+D:Few tame it, for its mood is dark and its fury difficult to control.
 
 N:999:Devu Chiokovo
 G:B:y
@@ -17875,6 +17881,9 @@ F:DROP_60 | DROP_90 | DROP_1D2 | DROP_2D2 | DROP_3D2 | DROP_4D2 | RIDING
 F:DROP_SKELETON | DROP_CORPSE | POS_GAIN_AC
 P:Copy:Demigod:Warrior
 P:Body:Giant Bird
+D:A towering war-beast of ancient line, bred for power and destruction.
+D:Its razor claws can tear plate, and its crushing beak shatters stone.
+D:Drawn to glittering objects, it steals what it can and keeps what it finds.
 
 N:1000:Bahamut, Celestial Dragon of Good
 G:D:w

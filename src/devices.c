@@ -1629,7 +1629,7 @@ static cptr _do_scroll(int sval, int mode)
         }
         break;
     case SV_SCROLL_MONSTER_CONFUSION:
-        if (desc) return "You can confuse monster you hit just for once when you read it.";
+        if (desc) return "It empowers your next melee attack to confuse when you read it.";
         if (cast)
         {
             if (p_ptr->prace == RACE_MON_RING) /* no melee attacks */

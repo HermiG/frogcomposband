@@ -3939,7 +3939,7 @@ extern int PlayerUID;
 #define TERM_SKY_DARK           28  /* 'n' */   /* 1,2,3 */
 #define TERM_PALE_BLUE          29  /* 'K' */   /* 3,3,4 */
 #define TERM_D_PINK             30  /* 'p' */   /* 3,1,2 */
-#define TERM_CHESTNUT           31  /* 'h' */   /* 0,0,3 */
+#define TERM_CHESTNUT           31  /* 'h' */   /* 3,2,2 */
 #define MAX_COLOR               32
 #define COLOR_MASK              0x1F
 #else

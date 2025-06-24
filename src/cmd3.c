@@ -1271,13 +1271,14 @@ static void _list_monsters_aux(_mon_list_ptr list, rect_t display_rect, int mode
     int  ct_types = vec_length(list->list);
     bool done = FALSE;
     bool redraw = TRUE;
+    bool show_object_location = TRUE;
     int  cmd_queue[10]; /* A worthy hack!! */
     int  q_pos = 0;
     int  q_ct = 0;
+    int obj_loc_y = -1, obj_loc_x = -1;
 
     page_size = display_rect.cy;
-    if (page_size > ct_types)
-        page_size = ct_types;
+    if (page_size > ct_types) page_size = ct_types;
 
     msg_line_clear();
     screen_save();
@@ -1304,24 +1305,43 @@ static void _list_monsters_aux(_mon_list_ptr list, rect_t display_rect, int mode
             }
             redraw = FALSE;
         }
-        Term_gotoxy(display_rect.x, display_rect.y + pos);
+
         {
-            int idx = top + pos;
-            if (0 <= idx && idx < ct_types)
-            {
-                _mon_list_info_ptr info_ptr = vec_get(list->list, idx);
-                assert(info_ptr);
-                if (info_ptr->r_idx && info_ptr->r_idx != p_ptr->monster_race_idx)
-                {
-                    monster_race_track(info_ptr->r_idx);
-                    window_stuff();
-                }
+          int idx = top + pos;
+          if (idx > 0 && idx < ct_types)
+          {
+            _mon_list_info_ptr info_ptr = vec_get(list->list, idx);
+            assert(info_ptr);
+            
+            if(info_ptr->m_idx) {
+              obj_loc_y =  m_list[info_ptr->m_idx].fy;
+              obj_loc_x =  m_list[info_ptr->m_idx].fx;
             }
+            
+            if (info_ptr->r_idx && info_ptr->r_idx != p_ptr->monster_race_idx)
+            {
+              monster_race_track(info_ptr->r_idx);
+              window_stuff();
+            }
+          }
         }
+
+        if(show_object_location && obj_loc_y >= 0 && obj_loc_x >= 0) {
+          Term_draw(display_rect.x+0, display_rect.y + pos, TERM_YELLOW,'[');
+          Term_draw(display_rect.x+2, display_rect.y + pos, TERM_YELLOW,']');
+          move_cursor_relative(obj_loc_y, obj_loc_x);
+        }
+        else Term_gotoxy(display_rect.x, display_rect.y + pos);
+
         if (q_pos < q_ct)
-            cmd = cmd_queue[q_pos++];
+          cmd = cmd_queue[q_pos++];
         else
-            cmd = inkey_special(TRUE);
+          cmd = inkey_special(TRUE);
+
+        if(show_object_location) {
+          Term_draw(display_rect.x+0, display_rect.y + pos, 0, ' ');
+          Term_draw(display_rect.x+2, display_rect.y + pos, 0, ' ');
+        }
 
         if (rogue_like_commands)
         {
@@ -1329,12 +1349,13 @@ static void _list_monsters_aux(_mon_list_ptr list, rect_t display_rect, int mode
             else if (cmd == 'k') cmd = SKEY_UP;
         }
 
+        int idx = top + pos;
+
         switch (cmd)
         {
         /* Monster Recall */
         case '/': case 'R':
         {
-            int idx = top + pos;
             if (0 <= idx && idx < ct_types)
             {
                 _mon_list_info_ptr info_ptr = vec_get(list->list, idx);
@@ -1355,7 +1376,6 @@ static void _list_monsters_aux(_mon_list_ptr list, rect_t display_rect, int mode
         {
             if (mode == MON_LIST_PROBING)
             {
-                int idx = top + pos;
                 if (0 <= idx && idx < ct_types)
                 {
                     _mon_list_info_ptr info_ptr = vec_get(list->list, idx);
@@ -1412,7 +1432,6 @@ static void _list_monsters_aux(_mon_list_ptr list, rect_t display_rect, int mode
         /* Rename Pet */
         case 'N':
         {
-            int idx = top + pos;
             if (0 <= idx && idx < ct_types)
             {
                 _mon_list_info_ptr info_ptr = vec_get(list->list, idx);
@@ -1449,7 +1468,6 @@ static void _list_monsters_aux(_mon_list_ptr list, rect_t display_rect, int mode
         /* Set Current Target */
         case '*': case '5': case 'T':
         {
-            int idx = top + pos;
             if (0 <= idx && idx < ct_types)
             {
                 _mon_list_info_ptr info_ptr = vec_get(list->list, idx);
@@ -1474,7 +1492,6 @@ static void _list_monsters_aux(_mon_list_ptr list, rect_t display_rect, int mode
         case '(':
         case '`':
         {
-            int idx = top + pos;
             if (0 <= idx && idx < ct_types)
             {
                 _mon_list_info_ptr info_ptr = vec_get(list->list, idx);
@@ -1497,7 +1514,7 @@ static void _list_monsters_aux(_mon_list_ptr list, rect_t display_rect, int mode
             break;
         case '1': case SKEY_BOTTOM:
             top = MAX(0, ct_types - page_size);
-            pos = (top == 0) ? 1 : 0;
+            pos = MAX(1, ct_types - 1 - top);
             redraw = TRUE;
             handled = TRUE;
             break;
@@ -1516,46 +1533,58 @@ static void _list_monsters_aux(_mon_list_ptr list, rect_t display_rect, int mode
             if (top > ct_types - page_size)
             {
                 top = MAX(0, ct_types - page_size);
-                pos = 0;
+                pos = 1;
             }
             redraw = TRUE;
             handled = TRUE;
             break;
-        case '2': case SKEY_DOWN:
-            if (top + pos < ct_types - 1)
-            {
-                pos++;
+          case SKEY_DOWN:
+          case '2':
+          {
+            for(idx++; idx < ct_types-1; idx++) {
+              _mon_list_info_ptr info_ptr = vec_get(list->list, idx);
+              if(info_ptr->m_idx) break;
             }
-            else
+            
+            pos = idx - top;
+            if(idx >= ct_types)
             {
+              top = 0;
+              pos = 1;
+              redraw = TRUE;
+            }
+            
+            if (pos >= page_size)
+            {
+              top++;
+              pos--;
+              redraw = TRUE;
+            }
+            handled = TRUE;
+            break;
+          }
+          case SKEY_UP:
+          case '8':
+          {
+            for(idx--; idx > 0; idx--) {
+              _mon_list_info_ptr info_ptr = vec_get(list->list, idx);
+              if(info_ptr->m_idx) break;
+            }
+            
+            pos = idx - top;
+            if(pos <= 0) {
+              if(top > 0) {
+                top -= 1-pos;
                 pos = 1;
-                top = 0;
-                redraw = TRUE;
-            }
-
-            if (pos == page_size)
-            {
-                pos--;
-                top++;
-                redraw = TRUE;
+              } else {
+                top = MAX(0, ct_types - page_size);
+                pos = MIN(page_size - 1, (ct_types - 1) - top);
+              }
+              redraw = TRUE;
             }
             handled = TRUE;
             break;
-        case '8': case SKEY_UP:
-            if (pos > 0)
-                pos--;
-            if (pos == 0)
-            {
-                if (top > 0) top--;
-                else
-                {
-                    top = MAX(0, ct_types - page_size);
-                    pos = MIN(page_size - 1, (ct_types - 1) - top);
-                }
-                redraw = TRUE;
-            }
-            handled = TRUE;
-            break;
+          }
         /* Help */
         case '?':
             doc_display_help("context_monster_list.txt", NULL);
@@ -1616,14 +1645,36 @@ static void _list_monsters_aux(_mon_list_ptr list, rect_t display_rect, int mode
                     }
                 }
                 i++;
-                if (i >= page_size)
-                    i = 0;
+                if (i >= page_size) i = 0;
             }
         }
 
         /* Exit on unknown key? */
         if (!handled && quick_messages && mode != MON_LIST_PROBING) /* Hey, it cost mana to get here! */
             done = TRUE;
+        
+        {
+          // Fixup in case the selected list item is not a real object
+          int idx = top + pos;
+          _mon_list_info_ptr info_ptr = vec_get(list->list, idx);
+          
+          if(!info_ptr->m_idx) {
+            for(idx++; idx < ct_types; idx++) {
+              info_ptr = vec_get(list->list, idx);
+              if(info_ptr->m_idx) {
+                pos = idx - top;
+                
+                if (pos >= page_size) {
+                  top += pos - (page_size-1);
+                  pos = page_size-1;
+                  redraw = TRUE;
+                }
+                break;
+              }
+            }
+          }
+        }
+      
     }
     screen_load();
 }
@@ -1631,7 +1682,9 @@ static void _list_monsters_aux(_mon_list_ptr list, rect_t display_rect, int mode
 void do_cmd_list_monsters(int mode)
 {
     _mon_list_ptr list = _create_monster_list(mode);
-    rect_t        display_rect = ui_menu_rect();
+    rect_t display_rect = ui_menu_rect();
+
+    display_rect.cy -= 8; // I have no idea why this is oversized by 8 lines
 
     if (display_rect.cx > monster_list_width)
         display_rect.cx = monster_list_width;
@@ -1995,12 +2048,16 @@ static int _draw_obj_list(_obj_list_ptr list, int top, rect_t rect)
 void do_cmd_list_objects(void)
 {
     _obj_list_ptr list = _create_obj_list();
-    rect_t        display_rect = ui_menu_rect();
-    bool          stairs_on = list_stairs;
-    bool          disable_toggling = FALSE;
+    rect_t display_rect = ui_menu_rect();
 
+    display_rect.cy -= 8; // I have no idea why this is oversized by 8 lines
+  
     if (display_rect.cx > object_list_width)
         display_rect.cx = object_list_width;
+
+    bool stairs_on = list_stairs;
+    bool disable_toggling = FALSE;
+    bool show_object_location = TRUE;
 
     if (((list->ct_total + list->ct_feature) < 1) && (!stairs_on))
     {
@@ -2016,10 +2073,10 @@ void do_cmd_list_objects(void)
         int  ct_types = vec_length(list->list);
         bool done = FALSE;
         bool redraw = TRUE;
+        int obj_loc_y = -1, obj_loc_x = -1;
 
         page_size = display_rect.cy;
-        if (page_size > ct_types)
-            page_size = ct_types;
+        if (page_size > ct_types) page_size = ct_types;
 
         msg_line_clear();
         screen_save();
@@ -2027,25 +2084,45 @@ void do_cmd_list_objects(void)
         while (!done)
         {
             int cmd;
-
+            
             if (redraw)
             {
                 int ct;
                 ct = _draw_obj_list(list, top, display_rect);
                 Term_erase(display_rect.x, display_rect.y + ct, display_rect.cx);
-                c_put_str(TERM_L_BLUE, "[Press ESC to exit. Press ? for help]",
-                        display_rect.y + ct, display_rect.x + 3);
+                c_put_str(TERM_L_BLUE, "[Press ESC to exit. Press ? for help]", display_rect.y + ct, display_rect.x + 3);
                 redraw = FALSE;
             }
-            Term_gotoxy(display_rect.x, display_rect.y + pos);
+
+            if (top + pos > 0 && top + pos < ct_types) {
+              _obj_list_info_ptr info_ptr = vec_get(list->list, top + pos);
+              if (info_ptr->idx) {
+                obj_loc_y = info_ptr->y;
+                obj_loc_x = info_ptr->x;
+              }
+            }
+
+            if(show_object_location && obj_loc_y >= 0 && obj_loc_x >= 0) {
+              Term_draw(display_rect.x+0, display_rect.y + pos, TERM_YELLOW,'[');
+              Term_draw(display_rect.x+2, display_rect.y + pos, TERM_YELLOW,']');
+              move_cursor_relative(obj_loc_y, obj_loc_x);
+            }
+            else Term_gotoxy(display_rect.x, display_rect.y + pos);
 
             cmd = inkey_special(TRUE);
+
+            if(show_object_location) {
+              Term_draw(display_rect.x+0, display_rect.y + pos, 0, ' ');
+              Term_draw(display_rect.x+2, display_rect.y + pos, 0, ' ');
+            }
 
             if (rogue_like_commands)
             {
                 if (cmd == 'j') cmd = SKEY_DOWN;
                 else if (cmd == 'k') cmd = SKEY_UP;
             }
+
+            int idx = top + pos;
 
             switch (cmd)
             {
@@ -2083,7 +2160,6 @@ void do_cmd_list_objects(void)
             case '/':
             case 'I':
             {
-                int idx = top + pos;
                 if (0 <= idx && idx < ct_types)
                 {
                     _obj_list_info_ptr info_ptr = vec_get(list->list, idx);
@@ -2106,7 +2182,6 @@ void do_cmd_list_objects(void)
             case '(':
             case '`':
             {
-                int idx = top + pos;
                 if (0 <= idx && idx < ct_types)
                 {
                     _obj_list_info_ptr info_ptr = vec_get(list->list, idx);
@@ -2122,13 +2197,13 @@ void do_cmd_list_objects(void)
             case SKEY_TOP:
             case '7':
                 top = 0;
-                pos = 0;
+                pos = 1;
                 redraw = TRUE;
                 break;
             case SKEY_BOTTOM:
             case '1':
                 top = MAX(0, ct_types - page_size);
-                pos = 0;
+                pos = MAX(1, ct_types - 1 - top);
                 redraw = TRUE;
                 break;
             case SKEY_PGUP:
@@ -2137,7 +2212,7 @@ void do_cmd_list_objects(void)
                 if (top < 0)
                 {
                     top = 0;
-                    pos = 0;
+                    pos = 1;
                 }
                 redraw = TRUE;
                 break;
@@ -2147,45 +2222,55 @@ void do_cmd_list_objects(void)
                 if (top > ct_types - page_size)
                 {
                     top = MAX(0, ct_types - page_size);
-                    pos = 0;
+                    pos = 1;
                 }
                 redraw = TRUE;
                 break;
             case SKEY_DOWN:
             case '2':
-                if (top + pos < ct_types - 1)
-                {
-                    pos++;
+              {
+                for(idx++; idx < ct_types-1; idx++) {
+                  _obj_list_info_ptr info_ptr = vec_get(list->list, idx);
+                  if(info_ptr->idx) break;
                 }
-                else
+                
+                pos = idx - top;
+                if(idx >= ct_types)
                 {
-                    pos = 0;
-                    top = 0;
-                    redraw = TRUE;
+                  top = 0;
+                  pos = 1;
+                  redraw = TRUE;
                 }
-
-                if (pos == page_size)
+                
+                if (pos >= page_size)
                 {
-                    pos--;
-                    top++;
-                    redraw = TRUE;
+                  top++;
+                  pos--;
+                  redraw = TRUE;
                 }
                 break;
+              }
             case SKEY_UP:
             case '8':
-                if (pos > 0)
-                    pos--;
-                if (pos == 0)
-                {
-                    if (top > 0) top--;
-                    else
-                    {
-                        top = MAX(0, ct_types - page_size);
-                        pos = MIN(page_size - 1, (ct_types - 1) - top);
-                    }
-                    redraw = TRUE;
+              {
+                for(idx--; idx > 0; idx--) {
+                  _obj_list_info_ptr info_ptr = vec_get(list->list, idx);
+                  if(info_ptr->idx) break;
+                }
+                
+                pos = idx - top;
+                if(pos <= 0) {
+                  if(top >= 1-pos) {
+                    top -= 1-pos;
+                    pos = 1;
+                  } else {
+                    top = MAX(0, ct_types - page_size);
+                    pos = MIN(page_size - 1, (ct_types - 1) - top);
+                  }
+                  redraw = TRUE;
                 }
                 break;
+              }
 
             default: /* Attempt to locate next element in list beginning with pressed key */
             {
@@ -2245,15 +2330,37 @@ void do_cmd_list_objects(void)
                             }
                         }
                         i++;
-                        if (i >= page_size)
-                            i = 0;
+                        if (i >= page_size) i = 0;
                     }
                 }
 
-                if (!found && quick_messages)
-                    done = TRUE;
+                if (!found && quick_messages) done = TRUE;
             }}
+
+            {
+              // Fixup in case the selected list item is not a real object
+              int idx = top + pos;
+              _obj_list_info_ptr info_ptr = vec_get(list->list, idx);
+              
+              if(!info_ptr->idx) {
+                for(idx++; idx < ct_types; idx++) {
+                  info_ptr = vec_get(list->list, idx);
+                  if(info_ptr->idx) {
+                    pos = idx - top;
+                    
+                    if (pos >= page_size) {
+                      top += pos - (page_size-1);
+                      pos = page_size-1;
+                      redraw = TRUE;
+                    }
+                    break;
+                  }
+                }
+              }
+            }
+          
         }
+      
         screen_load();
     }
     else

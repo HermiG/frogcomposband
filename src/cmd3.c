@@ -2062,6 +2062,9 @@ void do_cmd_list_objects(void)
             case ']':
                 done = TRUE;
                 break;
+                
+            case '<':
+            case '>':
             case 'S':
             {
                 if (disable_toggling) break;

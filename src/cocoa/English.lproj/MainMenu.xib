@@ -71,10 +71,28 @@
                                     <action selector="newGame:" target="265" id="271"/>
                                 </connections>
                             </menuItem>
+                            <menuItem title="Resume" keyEquivalent="r" id="8Q3-wo-rBM">
+                                <connections>
+                                    <action selector="resumeGame:" target="-1" id="303"/>
+                                </connections>
+                            </menuItem>
                             <menuItem title="Open…" keyEquivalent="o" id="72">
                                 <connections>
-                                    <action selector="openGame:" target="265" id="272"/>
+                                    <action selector="openGame:" target="-1" id="4Fk-of-SqS"/>
                                 </connections>
+                            </menuItem>
+                            <menuItem title="Open Recent" id="xqE-tG-FdC">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <menu key="submenu" title="Open Recent" systemMenu="recentDocuments" id="dQH-rv-iAi">
+                                    <items>
+                                        <menuItem title="Clear Menu" id="U5Q-mk-IE4">
+                                            <modifierMask key="keyEquivalentModifierMask"/>
+                                            <connections>
+                                                <action selector="clearRecentDocuments:" target="-1" id="CZZ-f6-ouv"/>
+                                            </connections>
+                                        </menuItem>
+                                    </items>
+                                </menu>
                             </menuItem>
                             <menuItem isSeparatorItem="YES" id="79">
                                 <modifierMask key="keyEquivalentModifierMask" command="YES"/>
@@ -191,7 +209,7 @@
                     </menu>
                 </menuItem>
             </items>
-            <point key="canvasLocation" x="-135" y="112"/>
+            <point key="canvasLocation" x="202" y="-8"/>
         </menu>
         <customObject id="265" userLabel="AngbandAppDelegate" customClass="AngbandAppDelegate">
             <connections>

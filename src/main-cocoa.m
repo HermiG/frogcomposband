@@ -1293,13 +1293,15 @@ static void set_color_for_index(int idx)
 /* Remember the current character in UserDefaults so we can select it by default next time. */
 static void record_current_savefile(void)
 {
-    NSString *savefileString = [[NSString stringWithCString:savefile encoding:NSMacOSRomanStringEncoding] lastPathComponent];
-    if (savefileString)
-    {
-        NSUserDefaults *angbandDefs = [NSUserDefaults angbandDefaults];
-        [angbandDefs setObject:savefileString forKey:@"SaveFile"];
-        [angbandDefs synchronize];        
-    }
+  NSString *savefileString = [[NSString stringWithCString:savefile encoding:NSMacOSRomanStringEncoding] lastPathComponent];
+  if (savefileString)
+  {
+    [[NSDocumentController sharedDocumentController] noteNewRecentDocumentURL:[NSURL fileURLWithPath:@(savefile)]];
+    
+    NSUserDefaults *angbandDefs = [NSUserDefaults angbandDefaults];
+    [angbandDefs setObject:savefileString forKey:@"SaveFile"];
+    [angbandDefs synchronize];
+  }
 }
 
 
@@ -2465,8 +2467,9 @@ static void hook_quit(const char * str)
 @property (nonatomic, retain) NSDictionary *commandMenuTagMap;
 
 - (IBAction)newGame:sender;
-- (IBAction)editFont:sender;
+- (IBAction)resumeGame:sender;
 - (IBAction)openGame:sender;
+- (IBAction)editFont:sender;
 
 - (IBAction)selectWindow: (id)sender;
 - (IBAction)cycleWindows: (id)sender;
@@ -2481,6 +2484,19 @@ static void hook_quit(const char * str)
 {
     game_in_progress = TRUE;
     new_game = TRUE;
+}
+
+- (IBAction)resumeGame:sender
+{
+  if(!game_in_progress) {
+    NSURL *mostRecent = [[[NSDocumentController sharedDocumentController] recentDocumentURLs] firstObject];
+    if ([mostRecent isFileURL] && [[NSFileManager defaultManager] fileExistsAtPath:[mostRecent path]]) {
+      if ([[mostRecent path] getFileSystemRepresentation:savefile maxLength:sizeof savefile]) {
+        game_in_progress = TRUE;
+        new_game = FALSE;
+      }
+    }
+  }
 }
 
 - (IBAction)editFont:sender
@@ -2535,48 +2551,47 @@ static void hook_quit(const char * str)
 
 - (IBAction)openGame:sender
 {
-    NSAutoreleasePool* pool = [[NSAutoreleasePool alloc] init];
-    BOOL selectedSomething = NO;
-    int panelResult;
-    NSString* startingDirectory;
-    
-    /* Get where we think the save files are */
-    startingDirectory = [get_data_directory() stringByAppendingPathComponent:@"/save/"];
-    
-    /* Get what we think the default save file name is. Deafult to the empty string. */
-    NSString *savefileName = [[NSUserDefaults angbandDefaults] stringForKey:@"SaveFile"];
-    if (! savefileName) savefileName = @"";
-    
-    /* Set up an open panel */
-    NSOpenPanel* panel = [NSOpenPanel openPanel];
-    [panel setCanChooseFiles:YES];
-    [panel setCanChooseDirectories:NO];
-    [panel setResolvesAliases:YES];
-    [panel setAllowsMultipleSelection:YES];
-    [panel setTreatsFilePackagesAsDirectories:YES];
-    
-    /* Run it */
-    panelResult = [panel runModalForDirectory:startingDirectory file:savefileName types:nil];
-    if (panelResult == NSOKButton)
+  NSAutoreleasePool* pool = [[NSAutoreleasePool alloc] init];
+  BOOL selectedSomething = NO;
+  int panelResult;
+  NSString* startingDirectory;
+  
+  /* Get where we think the save files are */
+  startingDirectory = [get_data_directory() stringByAppendingPathComponent:@"/save/"];
+  
+  /* Get what we think the default save file name is. Deafult to the empty string. */
+  NSString *savefileName = [[NSUserDefaults angbandDefaults] stringForKey:@"SaveFile"];
+  if (! savefileName) savefileName = @"";
+  
+  /* Set up an open panel */
+  NSOpenPanel* panel = [NSOpenPanel openPanel];
+  [panel setCanChooseFiles:YES];
+  [panel setCanChooseDirectories:NO];
+  [panel setResolvesAliases:YES];
+  [panel setAllowsMultipleSelection:NO];
+  [panel setTreatsFilePackagesAsDirectories:YES];
+  
+  /* Run it */
+  panelResult = [panel runModalForDirectory:startingDirectory file:savefileName types:nil];
+  if (panelResult == NSOKButton)
+  {
+    NSArray* filenames = [panel filenames];
+    if ([filenames count] > 0)
     {
-        NSArray* filenames = [panel filenames];
-        if ([filenames count] > 0)
-        {
-            selectedSomething = [[filenames objectAtIndex:0] getFileSystemRepresentation:savefile maxLength:sizeof savefile];
-        }
+        selectedSomething = [[filenames objectAtIndex:0] getFileSystemRepresentation:savefile maxLength:sizeof savefile];
     }
+  }
+  
+  if (selectedSomething)
+  {
+    /* Remember this so we can select it by default next time */
+    record_current_savefile();
     
-    if (selectedSomething)
-    {
-        
-        /* Remember this so we can select it by default next time */
-        record_current_savefile();
-        
-        game_in_progress = TRUE;
-        new_game = FALSE;
-    }
-    
-    [pool drain];
+    game_in_progress = TRUE;
+    new_game = FALSE;
+  }
+  
+  [pool drain];
 }
 
 - (IBAction)saveGame:sender
@@ -2589,53 +2604,63 @@ static void hook_quit(const char * str)
 
 - (BOOL)validateMenuItem:(NSMenuItem *)menuItem
 {
-    SEL sel = [menuItem action];
-    NSInteger tag = [menuItem tag];
-
-    if( tag >= AngbandWindowMenuItemTagBase && tag < AngbandWindowMenuItemTagBase + ANGBAND_TERM_MAX )
+  SEL sel = [menuItem action];
+  NSInteger tag = [menuItem tag];
+  
+  [[[[[NSApp mainMenu] itemWithTitle:@"File"] submenu] itemWithTitle:@"Open Recent"] setEnabled: !game_in_progress];
+  
+  if( tag >= AngbandWindowMenuItemTagBase && tag < AngbandWindowMenuItemTagBase + ANGBAND_TERM_MAX )
+  {
+    if( tag == AngbandWindowMenuItemTagBase )
     {
-        if( tag == AngbandWindowMenuItemTagBase )
-        {
-            return YES; // the main window should always be available and visible
-        }
-        else
-        {
-            NSInteger subwindowNumber = tag - AngbandWindowMenuItemTagBase;
-            return (window_flag[subwindowNumber] > 0);
-        }
-
-        return NO;
+      return YES; // the main window should always be available and visible
+    }
+    else
+    {
+      NSInteger subwindowNumber = tag - AngbandWindowMenuItemTagBase;
+      return (window_flag[subwindowNumber] > 0);
     }
 
-    if (sel == @selector(newGame:))
-    {
-        return ! game_in_progress;
-    }
-    else if (sel == @selector(editFont:))
-    {
-        return YES;
-    }
-    else if (sel == @selector(openGame:))
-    {
-        return ! game_in_progress;
-    }
-    else if (sel == @selector(setRefreshRate:) && [superitem(menuItem) tag] == 150)
-    {
-        NSInteger fps = [[NSUserDefaults standardUserDefaults] integerForKey: @"FramesPerSecond"];
-        [menuItem setState: ([menuItem tag] == fps)];
-        return YES;
-    }
-    else if( sel == @selector(setGraphicsMode:) )
-    {
-        NSInteger requestedGraphicsMode = [[NSUserDefaults standardUserDefaults] integerForKey: @"GraphicsID"];
-        [menuItem setState: (tag == requestedGraphicsMode)];
-        return YES;
-    }
-    else if( sel == @selector(sendAngbandCommand:) )
-    {
-        return !!game_in_progress; // we only want to be able to send commands during an active game
-    }
-    else return YES;
+    return NO;
+  }
+  
+  if (sel == @selector(newGame:))
+  {
+    return ! game_in_progress;
+  }
+  else if (sel == @selector(resumeGame:))
+  {
+    if(game_in_progress) return NO;
+    
+    NSURL *mostRecent = [[[NSDocumentController sharedDocumentController] recentDocumentURLs] firstObject];
+    return [mostRecent isFileURL] && [[NSFileManager defaultManager] fileExistsAtPath:[mostRecent path]];
+  }
+  else if (sel == @selector(openGame:))
+  {
+      return ! game_in_progress;
+  }
+  else if (sel == @selector(editFont:))
+  {
+    return YES;
+  }
+  else if (sel == @selector(setRefreshRate:) && [superitem(menuItem) tag] == 150)
+  {
+      NSInteger fps = [[NSUserDefaults standardUserDefaults] integerForKey: @"FramesPerSecond"];
+      [menuItem setState: ([menuItem tag] == fps)];
+      return YES;
+  }
+  else if( sel == @selector(setGraphicsMode:) )
+  {
+      NSInteger requestedGraphicsMode = [[NSUserDefaults standardUserDefaults] integerForKey: @"GraphicsID"];
+      [menuItem setState: (tag == requestedGraphicsMode)];
+      return YES;
+  }
+  else if( sel == @selector(sendAngbandCommand:) )
+  {
+      return !!game_in_progress; // we only want to be able to send commands during an active game
+  }
+  
+  return YES;
 }
 
 
@@ -2886,20 +2911,26 @@ static void hook_quit(const char * str)
 /* Delegate method that gets called if we're asked to open a file. */
 - (BOOL)application:(NSApplication *)sender openFiles:(NSArray *)filenames
 {
-    /* Can't open a file once we've started */
-    if (game_in_progress) return NO;
-    
-    /* We can only open one file. Use the last one. */
-    NSString *file = [filenames lastObject];
-    if (! file) return NO;
-    
-    /* Put it in savefile */
-    if (! [file getFileSystemRepresentation:savefile maxLength:sizeof savefile]) return NO;
-    
-    /* Wake us up in case this arrives while we're sitting at the Welcome screen! */
-    wakeup_event_loop();
-    
-    return YES;
+  /* Can't open a file once we've started */
+  if (game_in_progress) return NO;
+  
+  /* We can only open one file. Use the last one. */
+  NSString *file = [filenames lastObject];
+  if (! file) return NO;
+  
+  /* Put it in savefile */
+  if (! [file getFileSystemRepresentation:savefile maxLength:sizeof savefile]) return NO;
+  
+  /* Remember this so we can select it by default next time */
+  record_current_savefile();
+  
+  game_in_progress = TRUE;
+  new_game = FALSE;
+
+  /* Wake us up in case this arrives while we're sitting at the Welcome screen! */
+  //wakeup_event_loop();
+
+  return YES;
 }
 
 @end

@@ -96,12 +96,12 @@ static void _display_name(object_type *o_ptr, doc_ptr doc)
 {
     char o_name[MAX_NLEN];
     char o_name2[MAX_NLEN];
-    object_desc(o_name, o_ptr, OD_COLOR_CODED | OD_NAME_AND_ENCHANT | OD_NO_FLAVOR);
-    object_desc(o_name2, o_ptr, OD_NAME_AND_ENCHANT | OD_NO_FLAVOR);
     int width = MIN(72, doc->width);
     
     doc_insert_char(doc, object_attr(o_ptr), object_char(o_ptr));
     
+    object_desc(o_name, o_ptr, OD_COLOR_CODED | OD_NAME_AND_ENCHANT | OD_EXAMINE_FLAVOR);
+    object_desc(o_name2, o_ptr, OD_NAME_AND_ENCHANT | OD_EXAMINE_FLAVOR);
     if ((int)strlen(o_name2) + 11 > width)
     {
         doc_printf(doc, " %s\n", o_name);

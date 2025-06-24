@@ -1005,6 +1005,7 @@ char tval_to_attr_char(int tval)
  *   OD_NO_FLAVOR        : Allow to hidden flavor
  *   OD_FORCE_FLAVOR     : Get un-shuffled flavor name
  *   OD_SINGULAR         : Pretend o_ptr->number == 1.
+ *   OD_EXAMINE_FLAVOR   : Always show flavor when examining
  */
 void object_desc(char *buf, object_type *o_ptr, u32b mode)
 {
@@ -1067,7 +1068,7 @@ void object_desc(char *buf, object_type *o_ptr, u32b mode)
     if (object_is_known(o_ptr)) known = TRUE;
 
     /* Allow flavors to be hidden when aware */
-    if (aware && ((mode & OD_NO_FLAVOR) || plain_descriptions)) flavor = FALSE;
+    if (aware && !(mode & OD_EXAMINE_FLAVOR) && ((mode & OD_NO_FLAVOR) || plain_descriptions)) flavor = FALSE;
 
     /* Object is in the inventory of a store or spoiler */
     if ((mode & OD_STORE) || (o_ptr->ident & IDENT_STORE))

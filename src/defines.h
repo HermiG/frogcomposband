@@ -2497,10 +2497,12 @@ enum {
 #define OD_FORCE_FLAVOR     0x00000080  /* Get un-shuffled flavor name */
 #define OD_NAME_AND_DICE    0x00000100
 #define OD_COLOR_CODED      0x00000200  /* For msg_print only */
-#define OD_THROWING         0x00000400  /* buggy otherwise for throwing weapon info */
-#define OD_SINGULAR         0x00000800  /* pretend obj->number = 1 */
+#define OD_THROWING         0x00000400  /* Buggy otherwise for throwing weapon info */
+#define OD_SINGULAR         0x00000800  /* Pretend obj->number = 1 */
 #define OD_SHOW_DEVICE_INFO 0x00001000
-#define OD_BLACK_CURSES     0x00002000  /* show cursed items as black */
+#define OD_BLACK_CURSES     0x00002000  /* Show cursed items as black */
+#define OD_EXAMINE_FLAVOR   0x00004000  /* Always show flavor when examining */
+
 
 #define OD_LORE (OD_NAME_ONLY | OD_OMIT_PREFIX | OD_COLOR_CODED)
 

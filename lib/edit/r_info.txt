@@ -1713,7 +1713,7 @@ F:TAKE_ITEM | OPEN_DOOR | BASH_DOOR |
 F:HURT_LITE | RES_DARK | RES_DISE | DROP_SKELETON | DROP_CORPSE
 P:Copy:Nibelung:Rogue
 O:DROP_DWARF
-D:Night dwarfs collecting new riches for their master, Alberich.
+D:Night dwarves collecting riches for their master, Alberich.
 
 N:112:Disembodied hand that strangled people
 G:z:g
@@ -2869,7 +2869,7 @@ F:OPEN_DOOR | BASH_DOOR |
 F:EVIL | DEMON | RES_FIRE | NO_CONF
 F:POS_HOLD_LIFE
 P:Copy:Imp:Warrior
-D:An ugly screaming little demon servant of Tzeentch.
+D:A screaming, ugly little demon servant of Tzeentch.
 
 N:190:Hairy mold
 G:m:U
@@ -3682,7 +3682,7 @@ F:POS_HOLD_LIFE | POS_SEE_INVIS
 P:Copy:Imp:Chaos-Warrior
 S:1_IN_8
 S:CONFUSE | SCARE
-D:An ugly screaming little demon servant of Tzeentch.
+D:A shrieking, warped little demon in service to Tzeentch.
 
 N:243:Cloaker
 G:(:g

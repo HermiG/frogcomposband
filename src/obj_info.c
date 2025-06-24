@@ -96,15 +96,17 @@ static void _display_name(object_type *o_ptr, doc_ptr doc)
 {
     char o_name[MAX_NLEN];
     char o_name2[MAX_NLEN];
-    int leveys = MIN(72, doc->width);
-
     object_desc(o_name, o_ptr, OD_COLOR_CODED | OD_NAME_AND_ENCHANT | OD_NO_FLAVOR);
     object_desc(o_name2, o_ptr, OD_NAME_AND_ENCHANT | OD_NO_FLAVOR);
-    if ((int)strlen(o_name2) > leveys - 10)
+    int width = MIN(72, doc->width);
+    
+    doc_insert_char(doc, object_attr(o_ptr), object_char(o_ptr));
+    
+    if ((int)strlen(o_name2) + 11 > width)
     {
-        doc_printf(doc, "%s\n", o_name);
+        doc_printf(doc, " %s\n", o_name);
     }
-    else doc_printf(doc, "%s%*c%2d.%d lbs\n", o_name, leveys - (strlen(o_name2) + 9), ' ', o_ptr->weight / 10, o_ptr->weight % 10);
+    else doc_printf(doc, " %s%*c%2d.%d lb\n", o_name, width - (strlen(o_name2) + 10), ' ', o_ptr->weight / 10, o_ptr->weight % 10);
 }
 
 static void _selita_paikka(char *paikka_text, byte paikka, byte taso, byte origin)

@@ -9,7 +9,7 @@ This command displays all known objects on the current level. Objects the <color
   <color:keypress>Home/End</color>           Scroll to Top/Bottom of List
 
   <color:keypress>/ or I</color>             Inspect Selected Object
-  <color:keypress>J or ` or (</color>        Travel to Selected Object
+  <color:keypress>J, G, `, or (</color>      Travel to Selected Object
   <color:keypress>S or < or ></color>        Toggle Inclusion of Stairs
 
   <color:keypress>ESC or Q</color>           Quit this Command

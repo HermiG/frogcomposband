@@ -897,7 +897,7 @@ static int _inspector(obj_prompt_context_ptr context, int cmd)
         }
         else
             obj_display_doc(obj, context->doc);
-        doc_insert(context->doc, "<color:B>[Press <color:y>Any Key</color> to Continue, <color:y>Arrow Keys</color> to Scroll]</color>\n\n");
+        doc_insert(context->doc, "<color:B>[Press <color:y>Arrow Keys</color> to Browse; <color:y>Any Key</color> to Continue]</color>\n\n");
         Term_load();
         doc_sync_menu(context->doc);
 

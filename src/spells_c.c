@@ -647,7 +647,7 @@ void cure_wounds_III_spell(int cmd, variant *res)
         var_set_string(res, "Cure Critical Wounds");
         break;
     case SPELL_DESC:
-        var_set_string(res, "Heals cut, stun and HP greatly.");
+        var_set_string(res, "Cures cuts and stunning, and greatly restores health.");
         break;
     case SPELL_INFO:
         var_set_string(res, info_heal(8, spell_power(10), 0));
@@ -672,7 +672,7 @@ void curing_spell(int cmd, variant *res)
         var_set_string(res, "Curing");
         break;
     case SPELL_DESC:
-        var_set_string(res, "It heals you a bit and cures blindness, poison, confusion, stunning, cuts and hallucination.");
+        var_set_string(res, "It heals you a bit and cures blindness, poison, confusion, stunning, cuts, and hallucination.");
         break;
     case SPELL_INFO:
         var_set_string(res, info_heal(0, 0, spell_power(50)));

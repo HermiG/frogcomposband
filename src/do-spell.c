@@ -5609,7 +5609,7 @@ static cptr do_craft_spell(int spell, int mode)
 
     case 14:
         if (name) return "Curing";
-        if (desc) return "It cures what ails you including fear, poison, stunning, cuts and hallucination. Serious poisoning may not be cured completely.";
+        if (desc) return "It cures what ails you, including fear, poison, stunning, cuts, and hallucination. Serious poisoning may not be cured completely.";
         {
             if (cast)
             {

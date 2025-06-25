@@ -205,7 +205,7 @@ static void _cure_critical_wounds_spell(int cmd, variant *res)
         var_set_string(res, "Cure Critical Wounds");
         break;
     case SPELL_DESC:
-        var_set_string(res, "Heals cuts, stunning and some HP.");
+        var_set_string(res, "Cures cuts and stunning, and greatly restores health.");
         break;
     case SPELL_INFO:
         var_set_string(res, info_heal(12, 12, 0));

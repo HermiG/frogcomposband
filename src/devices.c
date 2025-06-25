@@ -763,7 +763,7 @@ static cptr _do_potion(int sval, int mode)
         }
         break;
     case SV_POTION_THERMAL:
-        if (desc) return "You get temporary resistance to fire and cold when you quaff it. This resistance is cumulative with equipment.";
+        if (desc) return "You gain temporary resistance to fire and cold when you quaff it. This resistance is cumulative with equipment.";
         if (info) return format("dur d%d+%d", _potion_power(10), _potion_power(10));
         if (cast)
         {
@@ -825,7 +825,7 @@ static cptr _do_potion(int sval, int mode)
         }
         break;
     case SV_POTION_CURE_LIGHT:
-        if (desc) return "It heals you slightly, cures berserk and reduces cuts when you quaff it.";
+        if (desc) return "It heals you slightly, cures berserk, and reduces cuts when you quaff it.";
         if (info) return info_heal(4, _potion_power(8), 0);
         if (cast)
         {
@@ -835,7 +835,7 @@ static cptr _do_potion(int sval, int mode)
         }
         break;
     case SV_POTION_CURE_SERIOUS:
-        if (desc) return "It heals you a bit, cures berserk and reduces cuts when you quaff it.";
+        if (desc) return "It heals you a bit, cures berserk, and reduces cuts when you quaff it.";
         if (info) return info_heal(8, _potion_power(8), 0);
         if (cast)
         {
@@ -845,7 +845,7 @@ static cptr _do_potion(int sval, int mode)
         }
         break;
     case SV_POTION_CURE_CRITICAL:
-        if (desc) return "It heals you and cures stunning, cuts and berserk when you quaff it.";
+        if (desc) return "It heals you and cures stunning, cuts, and berserk when you quaff it.";
         if (info) return info_heal(12, _potion_power(8), 0);
         if (cast)
         {
@@ -869,7 +869,7 @@ static cptr _do_potion(int sval, int mode)
         break;
     case SV_POTION_HEALING: {
         int amt = 300;
-        if (desc) return "It heals you and cures blindness, confusion, stunning, cuts and berserk when you quaff it.";
+        if (desc) return "It heals you and cures blindness, confusion, stunning, cuts, and berserk when you quaff it.";
         if (info) return info_heal(0, 0, _potion_power(amt));
         if (cast)
         {
@@ -883,7 +883,7 @@ static cptr _do_potion(int sval, int mode)
         }
         break; }
     case SV_POTION_STAR_HEALING:
-        if (desc) return "It heals you and cures blindness, confusion, poison, stunning, cuts, illnesses and berserk when you quaff it.";
+        if (desc) return "It heals you and cures blindness, confusion, poison, stunning, cuts, illnesses, and berserk when you quaff it.";
         if (info) return info_heal(0, 0, _potion_power(1000));
         if (cast)
         {
@@ -900,7 +900,7 @@ static cptr _do_potion(int sval, int mode)
         }
         break;
     case SV_POTION_LIFE:
-        if (desc) return "It heals you completely, restores life, experience and all your stats and cures blindness, confusion, poison, hallucination, stunning, cuts, slowness, illnesses and berserk when you quaff it.";
+        if (desc) return "It heals you completely, restores life, experience, and all your stats and cures blindness, confusion, poison, hallucination, stunning, cuts, slowness, illnesses, and berserk when you quaff it.";
         if (info) return info_heal(0, 0, _potion_power(5000));
         if (cast)
         {
@@ -948,7 +948,7 @@ static cptr _do_potion(int sval, int mode)
         }
         break;
     case SV_POTION_GREAT_CLARITY:
-        if (desc) return (p_ptr->pclass == CLASS_ALCHEMIST) ? "It greatly clears your mind when you quaff it and cures confusion, stunning and hallucinations." : "It greatly clears your mind when you quaff it and cures confusion and hallucinations.";
+        if (desc) return (p_ptr->pclass == CLASS_ALCHEMIST) ? "It greatly clears your mind when you quaff it and cures confusion, stunning, and hallucinations." : "It greatly clears your mind when you quaff it and cures confusion and hallucinations.";
         if (info) return format("10d%d + %d", _potion_power(10), _potion_power(15));
         if (cast)
         {
@@ -970,7 +970,7 @@ static cptr _do_potion(int sval, int mode)
         if (cast)
         {
             if (restore_mana()) device_noticed = TRUE;
-            if (set_shero(0,TRUE)) device_noticed = TRUE;
+            if (set_shero(0, TRUE)) device_noticed = TRUE;
         }
         break;
     case SV_POTION_RESTORE_EXP:
@@ -4840,7 +4840,7 @@ cptr do_effect(effect_t *effect, int mode, int boost)
     case EFFECT_CURING:
     {
         if (name) return "Curing";
-        if (desc) return "It cures blindness, confusion, stunning, cuts and hallucination and reduces poisoning.";
+        if (desc) return "It cures blindness, confusion, stunning, cuts, and hallucination, and reduces poisoning.";
         if (value) return format("%d", 1000);
         if (color) return format("%d", TERM_L_GREEN);
         if (cast)
@@ -7313,7 +7313,7 @@ cptr do_effect(effect_t *effect, int mode, int boost)
         break;
     case EFFECT_EXPERTSEXCHANGE: /* adapted from Frogspawn */
         if (name) return "Change Sex";
-        if (desc) return "It changes your biological gender.";
+        if (desc) return "It changes your biological sex.";
         if (value) return format("%d", 100);
         if (cast)
         {
@@ -7421,7 +7421,7 @@ cptr do_effect(effect_t *effect, int mode, int boost)
     {
         int pow = _extra(effect, effect->power * 2);
         if (name) return "Unfocus Rage";
-        if (desc) return ((p_ptr->pclass == CLASS_RAGE_MAGE) ? "Removes fear, removes berserk strength and converts up to 200 SP to HP." : "Removes fear and berserk strength.");
+        if (desc) return ((p_ptr->pclass == CLASS_RAGE_MAGE) ? "Removes fear and berserk strength, and converts up to 200 SP to HP." : "Removes fear and berserk strength.");
         if ((info) && (p_ptr->pclass == CLASS_RAGE_MAGE)) return format("power %d", pow);
         if (value) return format("%d", 2500);
         if (color) return format("%d", TERM_YELLOW);

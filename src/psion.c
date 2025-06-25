@@ -1077,11 +1077,11 @@ static void _psionic_healing_spell(int power, int cmd, variant *res)
     case SPELL_DESC:
     {
         const cptr _descriptions[_MAX_POWER] = {
-            "Cures blindness, stunning and cuts.",
-            "Cures blindness, stunning and cuts.",
-            "Cures blindness, stunning, cuts and hallucination.",
-            "Cures blindness, stunning, cuts and hallucination.",
-            "Cures blindness, stunning, cuts and hallucination. Restores all stats and experience."
+            "Cures blindness, stunning, and cuts.",
+            "Cures blindness, stunning, and cuts.",
+            "Cures blindness, stunning, cuts, and hallucination.",
+            "Cures blindness, stunning, cuts, and hallucination.",
+            "Cures blindness, stunning, cuts, and hallucination. Restores all stats and experience."
             };
         var_set_string(res, _descriptions[power-1]);
         break;

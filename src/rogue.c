@@ -337,7 +337,7 @@ cptr do_burglary_spell(int spell, int mode)
 
     case 6:
         if (name) return "Minor Getaway";
-        if (desc) return "Teleport medium distance.";
+        if (desc) return "Teleport a medium distance.";
 
         {
             int range = 30;
@@ -562,7 +562,7 @@ cptr do_burglary_spell(int spell, int mode)
 
     case 23:
         if (name) return "Major Getaway";
-        if (desc) return "Teleport long distance with very little energy use.";
+        if (desc) return "Teleport a long distance with very little energy use.";
 
         {
             int range = plev * 5;

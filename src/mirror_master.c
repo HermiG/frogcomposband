@@ -641,7 +641,7 @@ static void _shield_of_water_spell(int cmd, variant *res)
         break;
     case SPELL_DESC:
         if (lvl >= 40)
-            var_set_string(res, "Gives a bonus to AC, reflection and magic resistance.");
+            var_set_string(res, "Gives a bonus to AC, reflection, and magic resistance.");
         else if (lvl >= 32)
             var_set_string(res, "Gives a bonus to AC and reflection.");
         else

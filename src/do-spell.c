@@ -1555,7 +1555,7 @@ static cptr do_sorcery_spell(int spell, int mode)
 
     case 1:
         if (name) return "Phase Door";
-        if (desc) return "Teleport short distance.";
+        if (desc) return "Teleport a short distance.";
 
         {
             int range = 10;
@@ -1627,7 +1627,7 @@ static cptr do_sorcery_spell(int spell, int mode)
 
     case 5:
         if (name) return "Teleport";
-        if (desc) return "Teleport long distance.";
+        if (desc) return "Teleport a long distance.";
 
         {
             int range = plev * 5;
@@ -2195,7 +2195,7 @@ static cptr do_nature_spell(int spell, int mode)
 
     case 6:
         if (name) return "Resist Environment";
-        if (desc) return "Gives resistance to fire, cold and electricity for a while.";
+        if (desc) return "Gives resistance to fire, cold, and electricity for a while.";
 
         {
             int base = spell_power(20);
@@ -2444,7 +2444,7 @@ static cptr do_nature_spell(int spell, int mode)
 
     case 18:
         if (name) return "Resistance True";
-        if (desc) return "Gives resistance to fire, cold, electricity, acid and poison for a while.";
+        if (desc) return "Gives resistance to fire, cold, electricity, acid, and poison for a while.";
 
         {
             int base = spell_power(20);
@@ -2931,7 +2931,7 @@ static cptr do_chaos_spell(int spell, int mode)
 
     case 7:
         if (name) return "Teleport Self";
-        if (desc) return "Teleport long distance.";
+        if (desc) return "Teleport a long distance.";
 
         {
             int range = plev * 5;
@@ -4118,7 +4118,7 @@ static cptr do_trump_spell(int spell, int mode)
     {
     case 0:
         if (name) return "Phase Door";
-        if (desc) return "Teleport short distance.";
+        if (desc) return "Teleport a short distance.";
 
         {
             int range = 10;
@@ -4185,7 +4185,7 @@ static cptr do_trump_spell(int spell, int mode)
 
     case 4:
         if (name) return "Teleport";
-        if (desc) return "Teleport long distance.";
+        if (desc) return "Teleport a long distance.";
 
         {
             int range = plev * 4;
@@ -4843,7 +4843,7 @@ static cptr do_arcane_spell(int spell, int mode)
 
     case 4:
         if (name) return "Blink";
-        if (desc) return "Teleport short distance.";
+        if (desc) return "Teleport a short distance.";
 
         {
             int range = 10;
@@ -5084,7 +5084,7 @@ static cptr do_arcane_spell(int spell, int mode)
 
     case 19:
         if (name) return "Teleport";
-        if (desc) return "Teleport long distance.";
+        if (desc) return "Teleport a long distance.";
 
         {
             int range = plev * 5;
@@ -5674,7 +5674,7 @@ static cptr do_craft_spell(int spell, int mode)
 
     case 18:
         if (name) return "Resistance";
-        if (desc) return "Gives resistance to fire, cold, electricity, acid and poison for a while.";
+        if (desc) return "Gives resistance to fire, cold, electricity, acid, and poison for a while.";
 
         {
             int base = spell_power(20);
@@ -5754,7 +5754,7 @@ static cptr do_craft_spell(int spell, int mode)
 
     case 23:
         if (name) return "Magical Armor";
-        if (desc) return "Gives resistance to magic, bonus to AC, resistance to confusion, blindness, reflection, free action and levitation for a while.";
+        if (desc) return "Gives resistance to magic, confusion, and blindness, bonus to AC, reflection, free action, and levitation for a while.";
 
         {
             int base = spell_power(20);
@@ -6244,7 +6244,7 @@ static cptr do_daemon_spell(int spell, int mode)
 
     case 17:
         if (name) return "Devilish Cloak";
-        if (desc) return "Gives resistance to fire, acid and poison as well as an aura of fire.";
+        if (desc) return "Gives resistance to fire, acid, and poison as well as an aura of fire.";
 
         {
             int base = spell_power(20);
@@ -6598,7 +6598,7 @@ static cptr do_crusade_spell(int spell, int mode)
 
     case 5:
         if (name) return "Portal";
-        if (desc) return "Teleport medium distance.";
+        if (desc) return "Teleport a medium distance.";
 
         {
             int range = 25 + plev / 2;
@@ -6834,7 +6834,7 @@ static cptr do_crusade_spell(int spell, int mode)
 
     case 18:
         if (name) return "Angelic Cloak";
-        if (desc) return "Gives resistance to acid, cold and lightning. Gives aura of holy power which injures evil monsters which attacked you for a while.";
+        if (desc) return "Gives resistance to acid, cold, and lightning. Gives aura of holy power which injures evil monsters which attack you for a while.";
 
         {
             int base = 20;
@@ -7574,7 +7574,7 @@ static cptr do_music_spell(int spell, int mode)
 
     case 17:
         if (name) return "Finrod's Resistance";
-        if (desc) return "Gives resistance to fire, cold, electricity, acid and poison.";
+        if (desc) return "Gives resistance to fire, cold, electricity, acid, and poison.";
 
         /* Stop singing before start another */
         if (cast || fail) bard_stop_singing();

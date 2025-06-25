@@ -32,7 +32,7 @@ When you first enter your home, you will see an empty inventory. To leave items 
  s) <color:s>{</color> <color:U>24 Rounded Pebbles (2d3) (+5,+4)</color>                            0.4 lbs     32
  t) <color:s>{</color> <color:U>26 Rounded Pebbles (Elemental) (2d3) (+7,+6) {|F}</color>           0.4 lbs     54
  <color:B>(Page 33 of 35)</color>                                                                 
- <color:o>g</color> to get an item. <color:o>d</color> to drop an item. <color:o>x</color> to begin examining items.                
+ <color:o>g</color> to get an item. <color:o>s</color> to store an item. <color:o>x</color> to begin examining items.                
  <color:o>r</color> to begin removing (destroying) items.                                         
  <color:o>Esc</color> to exit. <color:o>?</color> for help.                                                        
 </style>
@@ -50,10 +50,10 @@ Another difference between the Museum and your home is that items given to the M
 
 <topic:QuickRef><style:heading>Quick Reference</style>
   <indent><color:G>Basic Commands</color>
-<color:keypress>d s</color>       Drop an item from your pack to your home
+<color:keypress>s d</color>       Store an item from your pack to your home
 <color:keypress>g p b</color>     Get an item from your home to your pack
-<color:keypress>x</color>         Examine an item in your home
-<color:keypress>r</color>         Permanently remove items from your home
+<color:keypress>x</color>         Examine items in your home
+<color:keypress>r</color>         Permanently remove (destroy) items in your home
 <color:keypress>q Esc</color>     Leave your home
 
 <color:G>Extra Commands</color>

@@ -41,8 +41,8 @@ After a bit of play, your home might look like this:
  s) { 24 Rounded Pebbles (2d3) (+5,+4)                            0.4 lbs     32
  t) { 26 Rounded Pebbles (Elemental) (2d3) (+7,+6) {|F}           0.4 lbs     54
  (Page 33 of 35)                                                                
- g to get an item. d to drop an item. x to begin examining items.               
  r to begin removing (destroying) items.                                        
+ g to get an item. s to store an item. x to begin examining items.               
  Esc to exit. ? for help.                                                       
 
 Once there are more objects than can be displayed on your screen, the 
@@ -79,10 +79,10 @@ potentially buy it back.
 
 Quick Reference
   Basic Commands
-  d s       Drop an item from your pack to your home
+  s d       Store an item from your pack to your home
   g p b     Get an item from your home to your pack
-  x         Examine an item in your home
-  r         Permanently remove items from your home
+  x         Examine items in your home
+  r         Permanently remove (destroy) items in your home
   q Esc     Leave your home
   
   Extra Commands

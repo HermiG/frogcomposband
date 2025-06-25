@@ -290,7 +290,7 @@ static void _display(_ui_context_ptr context)
     {
         doc_insert(doc,
             "<color:keypress>g</color> to get an item. "
-            "<color:keypress>d</color> to drop an item. ");
+            "<color:keypress>s</color> to store an item. ");
     }
     else
         doc_insert(doc, "<color:keypress>d</color> to donate an item. ");
@@ -521,7 +521,7 @@ static void _remove(_ui_context_ptr context)
         obj_ptr obj;
         char    name[MAX_NLEN];
 
-        if (!msg_command("<color:y>Remove which item <color:w>(<color:keypress>Esc</color> when done)</color>?</color>", &cmd)) break;
+        if (!msg_command("<color:y>Destroy which item <color:w>(<color:keypress>Esc</color> when done)</color>?</color>", &cmd)) break;
         if (cmd < 'a' || cmd > 'z') continue;
         slot = label_slot(cmd);
         slot = slot + context->top - 1;
@@ -529,7 +529,7 @@ static void _remove(_ui_context_ptr context)
         if (!obj) continue;
 
         object_desc(name, obj, OD_COLOR_CODED);
-        cmd = msg_prompt(format("<color:y>Really remove %s?</color> <color:v>It will "
+        cmd = msg_prompt(format("<color:y>Really discard %s?</color> <color:v>It will "
             "be permanently destroyed!</color> <color:y>[Y,n]</color>", name), "ny", PROMPT_YES_NO);
         if (cmd == 'n') continue;
         if (!can_player_destroy_object(obj))

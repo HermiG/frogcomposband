@@ -2256,7 +2256,7 @@ void peerless_tracker_mut(int cmd, variant *res)
         var_set_string(res, "You are a peerless tracker.");
         break;
     case SPELL_DESC:
-        var_set_string(res, "Maps nearby area. Detects all monsters, traps, doors and stairs.");
+        var_set_string(res, "Maps nearby area. Detects all monsters, traps, doors, and stairs.");
         break;
     case SPELL_HELP_DESC:
         var_set_string(res, "Gives the ability to map your surroundings and detect nearby monsters.");

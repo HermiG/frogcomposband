@@ -527,14 +527,14 @@ static void _magic_blueprint_spell(int cmd, variant *res)
         else if (p_ptr->lev < 25)
             var_set_string(res, "A map to treasure!  Maps the surrounding area and detects traps and doors.");
         else if (p_ptr->lev < 30)
-            var_set_string(res, "A map to treasure!  Maps the surrounding area and detects traps, doors and objects.");
+            var_set_string(res, "A map to treasure!  Maps the surrounding area and detects traps, doors, and objects.");
         else if (p_ptr->lev < 35)
-            var_set_string(res, "A map to treasure!  Maps the entire level and detects traps, doors and objects.");
+            var_set_string(res, "A map to treasure!  Maps the entire level and detects traps, doors, and objects.");
         else
-            var_set_string(res, "A map to treasure!  Maps and lights the entire level and detects traps, doors and objects.");
+            var_set_string(res, "A map to treasure!  Maps and lights the entire level and detects traps, doors and, objects.");
         break;
     case SPELL_SPOIL_DESC:
-        var_set_string(res, "Maps nearby area or the entire level (L35). Detects treasure, traps (L20), doors (L20) and objects (25).");
+        var_set_string(res, "Maps nearby area or the entire level (L35). Detects treasure, traps (L20), doors (L20), and objects (25).");
         break;
     case SPELL_CAST:
         {
@@ -651,7 +651,7 @@ static void _remove_obstacles_spell(int cmd, variant *res)
         var_set_string(res, "Remove Obstacles");
         break;
     case SPELL_DESC:
-        var_set_string(res, "Clears a path to treasure!  Traps, doors and trees will be removed.");
+        var_set_string(res, "Clears a path to treasure!  Traps, doors, and trees will be removed.");
         break;
     case SPELL_CAST:
         {

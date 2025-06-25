@@ -300,7 +300,7 @@ void nature_awareness_spell(int cmd, variant *res)
         var_set_string(res, "Nature Awareness");
         break;
     case SPELL_DESC:
-        var_set_string(res, "Maps nearby area. Detects all monsters, traps, doors and stairs.");
+        var_set_string(res, "Maps the nearby area. Detects all monsters, traps, doors, and stairs.");
         break;
     case SPELL_CAST:
         map_area(DETECT_RAD_MAP);
@@ -707,7 +707,7 @@ void polymorph_colossus_spell(int cmd, variant *res)
         var_set_string(res, "Polymorph Colossus");
         break;
     case SPELL_DESC:
-        var_set_string(res, "Mimic a Colossus for a while. Loses abilities of original race and gets great abilities as a colossus.");
+        var_set_string(res, "Temporarily transform into a colossus, losing the abilities of your race while gaining those of a mighty colossus.");
         break;
     case SPELL_INFO:
         var_set_string(res, info_duration(spell_power(15), spell_power(15)));
@@ -733,7 +733,7 @@ void polymorph_demon_spell(int cmd, variant *res)
         var_set_string(res, "Polymorph Demon");
         break;
     case SPELL_DESC:
-        var_set_string(res, "Mimic a demon for a while. Loses abilities of original race and gets abilities as a demon.");
+        var_set_string(res, "Temporarily transform into a demon, losing the abilities your race and gaining those of a demon.");
         break;
     case SPELL_INFO:
         var_set_string(res, info_duration(spell_power(15), spell_power(15)));
@@ -759,7 +759,7 @@ void polymorph_demonlord_spell(int cmd, variant *res)
         var_set_string(res, "Polymorph Demonlord");
         break;
     case SPELL_DESC:
-        var_set_string(res, "Mimic a demon lord for a while. Loses abilities of original race and gets great abilities as a demon lord. Even hard walls can't stop your walking.");
+        var_set_string(res, "Temporarily transform into a dread demon lord, losing the abilities of your race and gaining those of an unstoppable demon lord.");
         break;
     case SPELL_INFO:
         var_set_string(res, info_duration(spell_power(15), spell_power(15)));
@@ -819,7 +819,7 @@ void polymorph_vampire_spell(int cmd, variant *res)
         var_set_string(res, "Polymorph Vampire");
         break;
     case SPELL_DESC:
-        var_set_string(res, "Mimic a powerful vampire for a while. Loses abilities of original race and gets abilities as a vampire.");
+        var_set_string(res, "Temporarily transform into a powerful vampire, losing the abilities of your race and gaining those of a vampire.");
         break;
     case SPELL_INFO:
     {
@@ -891,7 +891,7 @@ void probing_spell(int cmd, variant *res)
         var_set_string(res, "Probe Monster");
         break;
     case SPELL_DESC:
-        var_set_string(res, "Determines the abilities, strengths and weaknesses of nearby monsters.");
+        var_set_string(res, "Determines the abilities, strengths, and weaknesses of nearby monsters.");
         break;
     case SPELL_CAST:
         probing();
@@ -1312,7 +1312,7 @@ void resist_fire_spell(int cmd, variant *res)
         var_set_string(res, "Resist Fire");
         break;
     case SPELL_DESC:
-        var_set_string(res, "Gives extra resistance to fire for a bit.");
+        var_set_string(res, "Gives temporary resistance to fire.");
         break;
     case SPELL_INFO:
         var_set_string(res, info_duration(base, base));
@@ -1336,7 +1336,7 @@ void resist_heat_cold_spell(int cmd, variant *res)
         var_set_string(res, "Resist Heat and Cold");
         break;
     case SPELL_DESC:
-        var_set_string(res, "Gives resistance to fire and cold.");
+        var_set_string(res, "Gives temporary resistance to fire and cold.");
         break;
     case SPELL_INFO:
         var_set_string(res, info_duration(base, base));

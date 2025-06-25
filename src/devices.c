@@ -1103,7 +1103,7 @@ static cptr _do_potion(int sval, int mode)
         }
         break;
     case SV_POTION_STAR_ENLIGHTENMENT: /* warning - long line ahead */
-        if (desc) return (p_ptr->pclass == CLASS_ALCHEMIST) ? "It maps, lights permanently and detects all items on the entire level, increases your intelligence and wisdom, detects all traps, doors, stairs, treasures in your vicinity, identifies all items in pack, provides temporary telepathy and gives information about yourself when you quaff it." : "It maps, lights permanently and detects all items on the entire level, increases your intelligence and wisdom, detects all traps, doors, stairs, treasures in your vicinity, identifies all items in pack and gives information about yourself when you quaff it.";
+        if (desc) return (p_ptr->pclass == CLASS_ALCHEMIST) ? "It maps, lights permanently and detects all items on the entire level, increases your intelligence and wisdom, detects all traps, doors, stairs, and treasures in your vicinity, identifies all items in your pack, provides temporary telepathy and reveals information about yourself when you quaff it." : "It maps, lights permanently and detects all items on the entire level, increases your intelligence and wisdom, detects all traps, doors, stairs, and treasures in your vicinity, identifies all items in your pack and reveals information about yourself when you quaff it.";
         if (cast)
         {
             msg_print("You begin to feel more enlightened...");
@@ -1125,7 +1125,7 @@ static cptr _do_potion(int sval, int mode)
         }
         break;
     case SV_POTION_SELF_KNOWLEDGE:
-        if (desc) return "It gives information about yourself when you quaff it.";
+        if (desc) return "It reveals information about yourself when you quaff it.";
         if (cast)
         {
             msg_print("You begin to know yourself a little better...");
@@ -1157,7 +1157,7 @@ static cptr _do_potion(int sval, int mode)
         }
         break;
     case SV_POTION_RESISTANCE:
-        if (desc) return "You get temporary resistance to the elements and poison when you quaff it. ";
+        if (desc) return "You gain temporary resistance to the elements and poison when you quaff it. ";
         if (info) return format("dur d%d+%d", _potion_power(20), _potion_power(20));
         if (cast)
         {
@@ -1167,7 +1167,7 @@ static cptr _do_potion(int sval, int mode)
         }
         break;
     case SV_POTION_CURING: {
-        if (desc) return "It cures blindness, confusion, stunning, cuts and hallucination and reduces poisoning when you quaff it.";
+        if (desc) return "It cures blindness, confusion, stunning, cuts, and hallucination, and reduces poisoning when you quaff it.";
         if (cast)
         {
             if (set_blind(0, TRUE)) device_noticed = TRUE;
@@ -1181,7 +1181,7 @@ static cptr _do_potion(int sval, int mode)
         }
         break; }
     case SV_POTION_INVULNERABILITY:
-        if (desc) return "You become invulnerable temporarily when you quaff it.";
+        if (desc) return "You become temporarily invulnerable when you quaff it.";
         if (info) return format("dur d%d+%d", _potion_power(4), _potion_power(4));
         if (cast)
         {
@@ -1191,7 +1191,7 @@ static cptr _do_potion(int sval, int mode)
         }
         break;
     case SV_POTION_NEW_LIFE:
-        if (desc) return "It changes your life rating and max of all your stats and cures all mutations when you quaff it.";
+        if (desc) return "It alters your life rating, maximizes all of your stats, and cures all mutations when you quaff it.";
         if (cast)
         {
             do_cmd_rerate(FALSE);
@@ -1216,7 +1216,7 @@ static cptr _do_potion(int sval, int mode)
         }
         break;
     case SV_POTION_NEO_TSUYOSHI:
-        if (desc) return "It cures hallucination and increases your strength and constitution temporarily when you quaff it but your strength and constitution permanently decrease lower than before when the effect expires.";
+        if (desc) return "It cures hallucination and temporarily increases your strength and constitution when you quaff it, but your strength and constitution will permanently decrease when the effect expires.";
         if (cast)
         {
             set_image(0, TRUE);
@@ -1312,7 +1312,7 @@ static cptr _do_scroll(int sval, int mode)
     switch (sval)
     {
     case SV_SCROLL_DARKNESS:
-        if (desc) return "It darkens nearby area or current room and blinds you when you read it.";
+        if (desc) return "It darkens the nearby area or current room and blinds you when you read it.";
         if (cast)
         {
             if (!res_save_default(RES_BLIND) && !res_save_default(RES_DARK))

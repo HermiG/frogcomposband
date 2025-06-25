@@ -10,9 +10,9 @@ static void _detect_near_spell(int cmd, variant *res)
         break;
     case SPELL_DESC:
         if (p_ptr->lev >= 25)
-            var_set_string(res, "Detects nearby monsters, traps, doors, stairs and objects.");
+            var_set_string(res, "Detects nearby monsters, traps, doors, stairs, and objects.");
         else if (p_ptr->lev >= 5)
-            var_set_string(res, "Detects nearby monsters, traps, doors and stairs.");
+            var_set_string(res, "Detects nearby monsters, traps, doors, and stairs.");
         else 
             var_set_string(res, "Detects nearby monsters.");
         break;

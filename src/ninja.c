@@ -155,11 +155,11 @@ static void _detect_near_spell(int cmd, variant *res)
         break;
     case SPELL_DESC:
         if (p_ptr->lev >= 45)
-            var_set_string(res, "Detects nearby monsters, traps, doors, stairs and objects. Maps the entire level.");
+            var_set_string(res, "Detects nearby monsters, traps, doors, stairs, and objects. Maps the entire level.");
         else if (p_ptr->lev >= 15)
-            var_set_string(res, "Detects nearby monsters, traps, doors, stairs and objects.");
+            var_set_string(res, "Detects nearby monsters, traps, doors, stairs, and objects.");
         else if (p_ptr->lev >= 5)
-            var_set_string(res, "Detects nearby monsters, traps, doors and stairs.");
+            var_set_string(res, "Detects nearby monsters, traps, doors, and stairs.");
         else 
             var_set_string(res, "Detects nearby monsters.");
         break;
@@ -233,7 +233,7 @@ void hide_in_flame_spell(int cmd, variant *res)
         var_set_string(res, "Hide in Flame");
         break;
     case SPELL_DESC:
-        var_set_string(res, "Generate a fire ball and teleport in a time. Gives resistance to fire for a while.");
+        var_set_string(res, "Generate a fire ball and teleport away. Grants temporary resistance to fire.");
         break;
     case SPELL_INFO:
         var_set_string(res, info_damage(0, 0, dam/2));
@@ -271,7 +271,7 @@ void hide_in_mist_spell(int cmd, variant *res)
         var_set_string(res, "Hide in Mist");
         break;
     case SPELL_DESC:
-        var_set_string(res, "Generates huge balls of poison, drain life and confusion, then teleports 30 squares.");
+        var_set_string(res, "Generate balls of poison, life-draining energy, and confusion, then teleport away.");
         break;
     case SPELL_CAST:
         fire_ball(GF_POIS, 0, 75+p_ptr->lev*2/3, p_ptr->lev/5+2);
@@ -332,7 +332,7 @@ void nyusin_spell(int cmd, variant *res)
         var_set_string(res, "Nyusin");
         break;
     case SPELL_DESC:
-        var_set_string(res, "Steps close to a monster and attacks at a time.");
+        var_set_string(res, "Steps close to an enemy and attacks.");
         break;
     case SPELL_CAST:
         var_set_bool(res, rush_attack(5, NULL));
@@ -375,7 +375,7 @@ static void _rengoku_kaen_spell(int cmd, variant *res)
         var_set_string(res, "Rengoku-Kaen");
         break;
     case SPELL_DESC:
-        var_set_string(res, "Fires some number of beams of fire, nether or plasma in random directions.");
+        var_set_string(res, "Fires beams of fire, nether, and plasma in random directions.");
         break;
     case SPELL_CAST:
     {
@@ -414,7 +414,7 @@ static void _smoke_ball_spell(int cmd, variant *res)
         var_set_string(res, "Smoke Ball");
         break;
     case SPELL_DESC:
-        var_set_string(res, "Releases a confusion ball which doesn't inflict any damage.");
+        var_set_string(res, "Produces a ball of smoke to confuse nearby enemies.");
         break;
     case SPELL_CAST:
     {
@@ -441,7 +441,7 @@ void syuriken_spreading_spell(int cmd, variant *res)
         var_set_string(res, "Syuriken Spreading");
         break;
     case SPELL_DESC:
-        var_set_string(res, "Shoots 8 iron Spikes in 8 random directions.");
+        var_set_string(res, "Throws 8 Iron Spikes in 8 random directions.");
         break;
     case SPELL_CAST:
     {

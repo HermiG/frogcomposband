@@ -15633,7 +15633,7 @@ F:POS_GAIN_AC
 P:Copy:Snotling:Warrior
 P:Body:Culverin
 S:1_IN_1 | SHOOT(4d6)
-D:A many legged scuttling thing, it spits pebbles with deadly force.
+D:A many-legged scuttling thing; it spits pebbles with deadly force.
 
 N:868:Behinder
 G:.:d

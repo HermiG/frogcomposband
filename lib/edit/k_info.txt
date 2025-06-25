@@ -338,7 +338,7 @@ W:0:0:0:5:1
 A:0/1
 P:0:1d3:-2:-4:0
 F:SHOW_MODS
-D:A shattered blade with barely enough edge left to be dangerous. Better than nothing—barely.
+D:A shattered blade with barely enough edge left to be dangerous. Better than nothing - barely.
 
 N:*:& Broken Sword~
 G:|:D
@@ -509,7 +509,7 @@ A:15/2
 P:0:1d10:0:0:0
 F:SHOW_MODS | TOWN
 D:A straight-bladed ninja sword, often used with stealth in mind.
-D:Unadorned and practical—deadly in the right hands.
+D:Unadorned and practical - deadly in the right hands.
 
 N:*:& Katana~
 G:|:W
@@ -571,7 +571,7 @@ A:30/1
 P:0:3d7:0:0:0
 F:SHOW_MODS | TOWN
 D:A great, double-edged broadsword which few can wield in one hand.
-D:Its massive size makes blocking nearly impossible—for your foes.
+D:Its massive size makes blocking nearly impossible - for your foes.
 
 N:*:& Flamberge~
 G:|:W
@@ -644,7 +644,7 @@ P:0:1d1:0:0:0
 F:SHOW_MODS
 F:IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD
 D:A deceptively tiny needle coated with fatal venom.
-D:It pierces the weakest point, delivering instant death—if you’re lucky.
+D:It pierces the weakest point, delivering instant death - if you’re lucky.
 
 N:*:& Falcon Sword~
 G:|:y

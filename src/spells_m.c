@@ -1354,6 +1354,7 @@ void resist_heat_cold_spell(int cmd, variant *res)
 
 void resist_poison_spell(int cmd, variant *res)
 {
+    int base = spell_power(20);
     switch (cmd)
     {
     case SPELL_NAME:
@@ -1363,7 +1364,7 @@ void resist_poison_spell(int cmd, variant *res)
         var_set_string(res, "Provides temporary resistance to poison.");
         break;
     case SPELL_CAST:
-        set_oppose_pois(randint1(20) + 20, FALSE);
+        set_oppose_pois(randint1(base) + base, FALSE);
         var_set_bool(res, TRUE);
         break;
     default:

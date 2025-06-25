@@ -897,11 +897,19 @@ static int _inspector(obj_prompt_context_ptr context, int cmd)
         }
         else
             obj_display_doc(obj, context->doc);
-        doc_insert(context->doc, "<color:B>[Press <color:y>Any Key</color> to Continue]</color>\n\n");
+        doc_insert(context->doc, "<color:B>[Press <color:y>Any Key</color> to Continue, <color:y>Arrow Keys</color> to Scroll]</color>\n\n");
         Term_load();
         doc_sync_menu(context->doc);
-        cmd = inkey();
-        return OP_CMD_HANDLED;
+
+        int k = inkey();
+        
+        if(k == SKEY_UP || k == '8' || k == SKEY_LEFT || k == '4') {
+          return OP_CMD_PREV;
+        }
+        else if(k == SKEY_DOWN || k == '2' || k == SKEY_RIGHT || k == '6') {
+          return OP_CMD_NEXT;
+        }
+          else return OP_CMD_HANDLED;
     }
     return OP_CMD_SKIPPED;
 }

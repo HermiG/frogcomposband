@@ -15,11 +15,17 @@ enum {
       /* prompt->cmd_handler processed the cmd. The dialog
        * should continue so the user can select an object. */
 
-    OP_CMD_DISMISS
+    OP_CMD_DISMISS,
       /* prompt->cmd_handler not only processed the cmd, but
        * obj_prompt should now dismiss the dialog with OP_CUSTOM.
        * In this case the handler should fill in context->prompt->custom
        * and perhaps context->prompt->obj as well. Its really up to you. */
+    OP_CMD_PREV,
+      /* prompt->cmd_handler processed the cmd and the user
+       * requested the previous item in the object list. */
+    OP_CMD_NEXT
+      /* prompt->cmd_handler processed the cmd and the user
+       * requested the next item in the object list. */
 };
 
 /* Parameters to obj_prompt */

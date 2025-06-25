@@ -133,19 +133,25 @@ int obj_prompt(obj_prompt_ptr prompt)
 
     context.doc = doc_alloc(MIN(80, ui_map_rect().cx));
     Term_save();
+    int cmd;
     for (;;)
     {
         obj_prompt_tab_ptr tab = vec_get(context.tabs, context.tab);
-        int                cmd;
-        slot_t             slot;
-
-        _display(&context);
-
-        cmd = inkey_special(TRUE);        
+        slot_t slot;
+      
+        if(tmp == OP_CMD_PREV && cmd > 'a') {
+            cmd--;
+        } else if(tmp == OP_CMD_NEXT && cmd < 'z') {
+            cmd++;
+        } else {
+            _display(&context);
+            cmd = inkey_special(TRUE);
+        }
         if (prompt->cmd_handler)
         {
             tmp = prompt->cmd_handler(&context, cmd);
             if (tmp == OP_CMD_HANDLED) continue;
+            if (tmp == OP_CMD_PREV || tmp == OP_CMD_NEXT) continue;
             if (tmp == OP_CMD_DISMISS)
             {
                 result = OP_CUSTOM;

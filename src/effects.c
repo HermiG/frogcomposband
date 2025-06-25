@@ -5710,6 +5710,9 @@ bool hp_player_aux(int num)
         if (p_ptr->chp + num <= p_ptr->mhp)
             device_lore = TRUE;
 
+        if(easy_damage)
+            msg_format("<color:G>You regain %d hit points.</color>", MIN(num, p_ptr->mhp - p_ptr->chp));
+
         /* Gain hitpoints */
         p_ptr->chp += num;
 

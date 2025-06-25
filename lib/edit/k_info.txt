@@ -1806,6 +1806,8 @@ I:36:0:0
 W:1:0:0:10:1
 A:1/255
 P:1:1d1:0:0:0
+D:An ordinary cotton shirt, offering next to no protection.
+D:You feel oddly underdressed for dungeon crawling.
 
 N:*:& Filthy Rag~
 G:(:D
@@ -1831,6 +1833,8 @@ I:36:3:0
 W:5:0:0:30:50
 A:7/2
 P:4:1d1:0:0:0
+D:Layers of lacquered paper stiffened to form crude armor.
+D:Surprisingly effective - unless it rains.
 
 N:*:Soft Leather Armour~
 G:(:U
@@ -1840,6 +1844,7 @@ A:3/1
 F:TOWN
 P:4:0d0:0:0:0
 D:A cuirass of pliable leather with a thicker leather jack.
+D:Favored by scouts and hunters for its flexibility.
 
 N:*:Soft Studded Leather~
 G:(:U
@@ -1849,6 +1854,7 @@ A:3/1
 F:TOWN
 P:5:1d1:0:0:0
 D:A cuirass of pliable leather studded with metal rivets.
+D:Offers improved protection without sacrificing mobility.
 
 N:*:Hard Leather Armour~
 G:(:U
@@ -1858,6 +1864,7 @@ A:5/1
 F:TOWN
 P:6:1d1:-1:0:0
 D:A boiled leather cuirass and shoulder plates.
+D:Rigid and reliable, though less forgiving than softer gear.
 
 N:*:Hard Studded Leather~
 G:(:U
@@ -1875,6 +1882,8 @@ I:36:8:0
 W:15:0:0:110:400
 A:15/1
 P:8:1d1:-1:0:0
+D:Crafted from the thick hide of a mighty rhino.
+D:Heavy and unwieldy, but practically impervious to claw and fang.
 
 N:*:Cord Armour~
 G:(:y
@@ -1883,6 +1892,8 @@ W:5:0:0:80:200
 A:7/1
 P:6:1d1:0:0:0
 F:TOWN
+D:Interwoven cords wrapped tightly around a padded tunic.
+D:Strange to look at, but more effective than it appears.
 
 N:*:Padded Armour~
 G:(:y
@@ -1891,6 +1902,8 @@ W:2:0:0:60:50
 A:5/1
 P:5:1d1:0:0:0
 F:TOWN
+D:A quilted garment layered for warmth and modest defense.
+D:Surprisingly popular among apprentice adventurers.
 
 N:*:Leather Scale Mail~
 G:(:U
@@ -1909,6 +1922,8 @@ W:20:0:0:130:700
 A:20/3
 P:12:1d2:-1:0:0
 F:TOWN
+D:A stylish leather coat reinforced for combat.
+D:Favored by rogues and wanderers who value form and function.
 
 N:*:Black Clothes
 G:(:D
@@ -1917,6 +1932,8 @@ W:15:0:0:80:5000
 A:40/4
 P:4:1d1:0:0:12
 F:STEALTH | IGNORE_FIRE | PLURAL
+D:Loose-fitting garments dyed pitch black to blend into the shadows.
+D:Perfect for those who strike unseen and vanish without a trace.
 
 N:*:Stone and Hide Armour~
 G:(:U
@@ -1924,6 +1941,8 @@ I:36:15:0
 W:35:0:0:200:1000
 A:35/7
 P:15:1d1:-1:0:0
+D:A brutal combination of stone plates and rawhide bindings.
+D:More mountain than man, its wearer rarely needs to dodge.
 
 N:*:Sexy Swimsuit~
 G:(:v
@@ -1932,6 +1951,8 @@ W:30:0:0:2:78000
 A:30/64
 P:0:0d0:0:0:0
 F:IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD | AGGRAVATE
+D:Its daring cut leaves very little to the imagination.
+D:Your enemies can't decide whether to laugh or blush.
 
 N:*:& Robe~
 G:(:D
@@ -1939,12 +1960,16 @@ I:36:60:0
 W:1:0:0:20:4
 A:1/255
 P:0:0d0:0:0:0
+D:A simple robe of indeterminate origin.
+D:Clean and serviceable, it may have belonged to a student or monk.
 
 N:*:Costume~
 G:(:R
 I:36:63:0
 W:1:0:0:10:1000000
 F:INSTA_ART
+D:A one-of-a-kind outfit tailored for showmanship and flair.
+D:You’re not sure whether to fight in it or perform on stage.
 
 ########################################################################
 #  Hard Armor (TV_HARD_ARMOR)

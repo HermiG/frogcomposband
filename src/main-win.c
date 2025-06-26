@@ -4409,7 +4409,7 @@ static void init_stuff(void)
     validate_dir(ANGBAND_DIR_INFO, FALSE);
     validate_dir(ANGBAND_DIR_PREF, TRUE);
     validate_dir(ANGBAND_DIR_SAVE, FALSE);
-    validate_dir(ANGBAND_DIR_USER, TRUE);
+    validate_dir(ANGBAND_DIR_USER, FALSE);
     validate_dir(ANGBAND_DIR_XTRA, TRUE);
 
     /* Build the filename */

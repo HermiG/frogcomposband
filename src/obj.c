@@ -891,6 +891,8 @@ static int _inspector(obj_prompt_context_ptr context, int cmd)
         if (object_is_flavor(obj) && !object_is_known(obj))
         {
             char name[MAX_NLEN];
+            doc_insert_char(context->doc, object_attr(obj), object_char(obj));
+            doc_insert(context->doc, " ");
             object_desc(name, obj, OD_COLOR_CODED);
             doc_insert(context->doc, name);
             doc_insert(context->doc, "\n\nYou have no special knowledge about this item.\n");

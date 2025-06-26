@@ -424,11 +424,6 @@ struct _term_data
 static term_data data[MAX_TERM_DATA];
 
 /*
- * Hack -- global "window creation" pointer
- */
-static term_data *my_td;
-
-/*
  * Remember normal size of main window when maxmized
  */
 POINT normsize;
@@ -2551,6 +2546,7 @@ static void init_windows(void)
     td->pos_y = 7 * 20;
     td->posfix = FALSE;
     td->bizarre = TRUE;
+
     /* Sub windows */
     for (i = 1; i < MAX_TERM_DATA; i++)
     {
@@ -2571,10 +2567,8 @@ static void init_windows(void)
         td->bizarre = TRUE;
     }
 
-
     /* Load prefs */
     load_prefs();
-
 
     /* Main window (need these before term_getsize gets called) */
     td = &data[0];
@@ -2592,7 +2586,6 @@ static void init_windows(void)
         td->dwExStyle = (WS_EX_TOOLWINDOW);
     }
 
-
     /* All windows */
     for (i = 0; i < MAX_TERM_DATA; i++)
     {
@@ -2606,7 +2599,6 @@ static void init_windows(void)
         td->tile_wid = td->font_wid;
         td->tile_hgt = td->font_hgt;
 
-
         /* Analyze the font */
         term_getsize(td);
 
@@ -2614,19 +2606,12 @@ static void init_windows(void)
         term_window_resize(td);
     }
 
-
     /* Sub windows (reverse order) */
     for (i = MAX_TERM_DATA - 1; i >= 1; --i)
     {
         td = &data[i];
-
-        my_td = td;
-        td->w = CreateWindowEx(td->dwExStyle, AngList,
-                       td->s, td->dwStyle,
-                       td->pos_x, td->pos_y,
-                       td->size_wid, td->size_hgt,
-                       HWND_DESKTOP, NULL, hInstance, NULL);
-        my_td = NULL;
+        td->w = CreateWindowEx(td->dwExStyle, AngList, td->s, td->dwStyle, td->pos_x, td->pos_y,
+                               td->size_wid, td->size_hgt, HWND_DESKTOP, NULL, hInstance, td);
         if (!td->w) quit("Failed to create sub-window");
         term_init_double_buffer(td);
 
@@ -2656,18 +2641,12 @@ static void init_windows(void)
         }
     }
 
-
     /* Main window */
     td = &data[0];
 
     /* Main window */
-    my_td = td;
-    td->w = CreateWindowEx(td->dwExStyle, AppName,
-                   td->s, td->dwStyle,
-                   td->pos_x, td->pos_y,
-                   td->size_wid, td->size_hgt,
-                   HWND_DESKTOP, NULL, hInstance, NULL);
-    my_td = NULL;
+    td->w = CreateWindowEx(td->dwExStyle, AppName, td->s, td->dwStyle, td->pos_x, td->pos_y,
+                           td->size_wid, td->size_hgt, HWND_DESKTOP, NULL, hInstance, td);
     if (!td->w) quit("Failed to create Angband window");
 
     term_data_link(td);
@@ -2687,10 +2666,8 @@ static void init_windows(void)
     /* New palette XXX XXX XXX */
     (void)new_palette();
 
-
     /* Create a "brush" for drawing the "cursor" */
     hbrYellow = CreateSolidBrush(win_clr[TERM_YELLOW]);
-
 
     /* Process pending messages */
     (void)Term_xtra_win_flush();
@@ -3598,36 +3575,26 @@ static bool process_keydown(WPARAM wParam, LPARAM lParam)
 }
 
 
-#ifdef __MWERKS__
-LRESULT FAR PASCAL AngbandWndProc(HWND hWnd, UINT uMsg,
-                  WPARAM wParam, LPARAM lParam);
-LRESULT FAR PASCAL AngbandWndProc(HWND hWnd, UINT uMsg,
-                  WPARAM wParam, LPARAM lParam)
-#else /* __MWERKS__ */
 LRESULT FAR PASCAL AngbandWndProc(HWND hWnd, UINT uMsg,
                       WPARAM wParam, LPARAM lParam)
-#endif /* __MWERKS__ */
 {
     PAINTSTRUCT ps;
     HDC hdc;
-    term_data *td;
     int i;
 
-
     /* Acquire proper "term_data" info */
-    td = (term_data *)GetWindowLong(hWnd, 0);
+	term_data *td = (term_data*)GetWindowLongPtrW(hWnd, GWLP_USERDATA);
 
-    /* Handle message */
+    /* Process message */
     switch (uMsg)
     {
-        /* XXX XXX XXX */
         case WM_NCCREATE:
         {
-            SetWindowLong(hWnd, 0, (LONG)(my_td));
+			CREATESTRUCT *cs = (CREATESTRUCT*)lParam;
+			SetWindowLongPtrW(hWnd, GWLP_USERDATA, (LONG_PTR)cs->lpCreateParams);
             break;
         }
 
-        /* XXX XXX XXX */
         case WM_CREATE:
         {
             return 0;
@@ -3640,8 +3607,7 @@ LRESULT FAR PASCAL AngbandWndProc(HWND hWnd, UINT uMsg,
 
             lpmmi = (MINMAXINFO FAR *)lParam;
 
-            /* this message was sent before WM_NCCREATE */
-            if (!td) return 1;
+            if (!td) return 1; // this message was sent before WM_NCCREATE
 
             /* Minimum window size is 80x27 */
             rc.left = rc.top = 0;
@@ -3685,10 +3651,10 @@ LRESULT FAR PASCAL AngbandWndProc(HWND hWnd, UINT uMsg,
         case WM_LBUTTONUP:
         case WM_RBUTTONUP:
         {
-            if (hWnd == data[0]->w) {
+            if (td && hWnd == data[0].w) {
                 mouse_cursor_targeting_state = 2;
-                mouse_cursor_x = MAX(0, MIN(GET_X_LPARAM(lParam) / td->tile_wid, td->cols - 1));
-                mouse_cursor_y = MAX(0, MIN(GET_Y_LPARAM(lParam) / td->tile_hgt, td->rows - 1));
+                mouse_cursor_x = MAX(0, MIN(LOWORD(lParam) / td->tile_wid, td->cols - 1));
+                mouse_cursor_y = MAX(0, MIN(HIWORD(lParam) / td->tile_hgt, td->rows - 1));
                 
                 if(uMsg == WM_LBUTTONUP) Term_keypress('|');
                 if(uMsg == WM_RBUTTONUP) Term_keypress('`');
@@ -3698,8 +3664,9 @@ LRESULT FAR PASCAL AngbandWndProc(HWND hWnd, UINT uMsg,
 #else
         case WM_LBUTTONDOWN:
         {
-            mousex = MIN(GET_X_LPARAM(lParam) / td->tile_wid, td->cols - 1);
-            mousey = MIN(GET_Y_LPARAM(lParam) / td->tile_hgt, td->rows - 1);
+			if(!td) return 1;
+            mousex = MIN(LOWORD(lParam) / td->tile_wid, td->cols - 1);
+            mousey = MIN(HIWORD(lParam) / td->tile_hgt, td->rows - 1);
             mouse_down = TRUE;
             oldx = mousex;
             oldy = mousey;
@@ -3754,11 +3721,12 @@ LRESULT FAR PASCAL AngbandWndProc(HWND hWnd, UINT uMsg,
 
         case WM_MOUSEMOVE:
         {
+			if(!td) return 1;
             if (mouse_down)
             {
                 int dx, dy;
-                int cx = MIN(GET_X_LPARAM(lParam) / td->tile_wid, td->cols - 1);
-                int cy = MIN(GET_Y_LPARAM(lParam) / td->tile_hgt, td->rows - 1);
+                int cx = MIN(LOWORD(lParam) / td->tile_wid, td->cols - 1);
+                int cy = MIN(HIWORD(lParam) / td->tile_hgt, td->rows - 1);
                 int ox, oy;
 
                 if (paint_rect)
@@ -3819,7 +3787,6 @@ LRESULT FAR PASCAL AngbandWndProc(HWND hWnd, UINT uMsg,
             {
                 /* Mega-Hack -- Delay death */
                 if (p_ptr->chp < 0) p_ptr->is_dead = FALSE;
-
 
                 /* Hardcode panic save */
                 p_ptr->panic_save = 1;
@@ -3975,7 +3942,7 @@ LRESULT FAR PASCAL AngbandWndProc(HWND hWnd, UINT uMsg,
 
         case WM_ACTIVATEAPP:
         {
-            if (IsIconic(td->w)) break;
+            if (!td || !td->w || IsIconic(td->w)) break;
 
             for (i = 1; i < MAX_TERM_DATA; i++)
             {
@@ -3998,36 +3965,26 @@ LRESULT FAR PASCAL AngbandWndProc(HWND hWnd, UINT uMsg,
 }
 
 
-#ifdef __MWERKS__
-LRESULT FAR PASCAL AngbandListProc(HWND hWnd, UINT uMsg,
-                       WPARAM wParam, LPARAM lParam);
 LRESULT FAR PASCAL AngbandListProc(HWND hWnd, UINT uMsg,
                        WPARAM wParam, LPARAM lParam)
-#else /* __MWERKS__ */
-LRESULT FAR PASCAL AngbandListProc(HWND hWnd, UINT uMsg,
-                       WPARAM wParam, LPARAM lParam)
-#endif /* __MWERKS__ */
 {
-    term_data *td;
     PAINTSTRUCT ps;
     HDC hdc;
     int i;
 
-
     /* Acquire proper "term_data" info */
-    td = (term_data *)GetWindowLong(hWnd, 0);
+	term_data *td = (term_data*)GetWindowLongPtrW(hWnd, GWLP_USERDATA);
 
     /* Process message */
     switch (uMsg)
     {
-        /* XXX XXX XXX */
         case WM_NCCREATE:
         {
-            SetWindowLong(hWnd, 0, (LONG)(my_td));
+			CREATESTRUCT *cs = (CREATESTRUCT*)lParam;
+			SetWindowLongPtrW(hWnd, GWLP_USERDATA, (LONG_PTR)cs->lpCreateParams);
             break;
         }
 
-        /* XXX XXX XXX */
         case WM_CREATE:
         {
             return 0;
@@ -4040,8 +3997,7 @@ LRESULT FAR PASCAL AngbandListProc(HWND hWnd, UINT uMsg,
 
             lpmmi = (MINMAXINFO FAR *)lParam;
 
-            /* this message was sent before WM_NCCREATE */
-            if (!td) return 1;
+            if (!td) return 1; // this message was sent before WM_NCCREATE
 
             rc.left = rc.top = 0;
             rc.right = rc.left + 20 * td->tile_wid + td->size_ow1 + td->size_ow2;
@@ -4059,17 +4015,11 @@ LRESULT FAR PASCAL AngbandListProc(HWND hWnd, UINT uMsg,
 
         case WM_SIZE:
         {
-            uint cols;
-            uint rows;
-            
-            /* this message was sent before WM_NCCREATE */
-            if (!td) return 1;
+            uint cols, rows;
 
-            /* it was sent from inside CreateWindowEx */
-            if (!td->w) return 1;
-
-            /* was sent from inside WM_SIZE */
-            if (td->size_hack) return 1;
+            if (!td)    return 1; // this message was sent before WM_NCCREATE
+            if (!td->w) return 1; // this message was sent from inside CreateWindowEx
+            if (td->size_hack) return 1; // this message was sent from inside WM_SIZE
 
             td->size_hack = TRUE;
 
@@ -4139,9 +4089,8 @@ LRESULT FAR PASCAL AngbandListProc(HWND hWnd, UINT uMsg,
         {
             /* ignore if palette change caused by itself */
             if ((HWND)wParam == hWnd) return FALSE;
-            /* otherwise, fall through!!! */
         }
-
+		// fall through
         case WM_QUERYNEWPALETTE:
         {
             if (!paletted) return 0;
@@ -4229,8 +4178,8 @@ LRESULT FAR PASCAL AngbandSaverProc(HWND hWnd, UINT uMsg,
         {
             if (iMouse)
             {
-                dx = GET_X_LPARAM(lParam) - xMouse;
-                dy = GET_Y_LPARAM(lParam) - yMouse;
+                dx = LOWORD(lParam) - xMouse;
+                dy = HIWORD(lParam) - yMouse;
 
                 if (dx < 0) dx = -dx;
                 if (dy < 0) dy = -dy;
@@ -4243,8 +4192,8 @@ LRESULT FAR PASCAL AngbandSaverProc(HWND hWnd, UINT uMsg,
 
             /* Save last location */
             iMouse = 1;
-            xMouse = GET_X_LPARAM(lParam);
-            yMouse = GET_Y_LPARAM(lParam);
+            xMouse = LOWORD(lParam);
+            yMouse = HIWORD(lParam);
 
             return 0;
         }
@@ -4559,7 +4508,6 @@ int FAR PASCAL WinMain(HINSTANCE hInst, HINSTANCE hPrevInst,
         if (!RegisterClass(&wc)) exit(2);
 
 #ifdef USE_SAVER
-
         wc.style          = CS_VREDRAW | CS_HREDRAW | CS_SAVEBITS | CS_DBLCLKS;
         wc.lpfnWndProc    = AngbandSaverProc;
         wc.hCursor        = NULL;
@@ -4567,9 +4515,7 @@ int FAR PASCAL WinMain(HINSTANCE hInst, HINSTANCE hPrevInst,
         wc.lpszClassName  = "WindowsScreenSaverClass";
 
         if (!RegisterClass(&wc)) exit(3);
-
 #endif
-
     }
 
     /* Temporary hooks */

@@ -1983,6 +1983,7 @@ A:25/1
 P:14:1d4:-5:0:-8
 D:Each link of this suit is brittle with rust, and the corroded rings
 D:are stiff and weakened.
+D:This armor might offer more protection in appearance than in practice.
 
 N:*:Ring Mail~
 G:[:s
@@ -1991,6 +1992,8 @@ W:20:0:0:200:500
 A:20/1
 F:TOWN
 P:12:1d4:-2:0:0
+D:A simple cuirass made of interlinked metal rings sewn to leather or cloth.
+D:Often worn by new adventurers or mercenaries on a budget.
 
 N:*:Metal Scale Mail~
 G:[:s
@@ -2020,6 +2023,8 @@ W:25:0:0:230:700
 A:25/1
 F:TOWN
 P:15:1d4:-2:0:0
+D:This mail features two interlinked rings at each junction, providing
+D:additional resistance to piercing at the cost of extra weight.
 
 N:*:Augmented Chain Mail~
 G:[:s
@@ -2031,6 +2036,7 @@ P:16:1d4:-2:0:0
 D:A hauberk, leggings, and sleeves of interlocking steel rings,
 D:strategically reinforced at vital locations with a second layer
 D:of chain, all over a layer of heavy padding.
+D:Built for brutal conflict, this armor shrugs off glancing blows with ease.
 
 N:*:Double Chain Mail~
 G:[:s
@@ -2039,6 +2045,8 @@ W:30:0:0:250:1000
 A:30/1
 F:TOWN
 P:16:1d4:-2:0:0
+D:Every ring in this mail is doubled and layered for maximum protection.
+D:Heavier and stiffer than standard chain, but much harder to pierce.
 
 N:*:Bar Chain Mail~
 G:[:s
@@ -2047,6 +2055,8 @@ W:35:0:0:280:1020
 A:35/1
 F:TOWN
 P:18:1d4:-2:0:0
+D:Chain reinforced with steel bars for extra rigidity across the chest and back.
+D:Restricts movement somewhat, but can turn aside a solid blow.
 
 N:*:Metal Brigandine Armour~
 G:[:s
@@ -2055,6 +2065,8 @@ W:35:0:0:290:1100
 A:35/1
 F:TOWN
 P:19:1d4:-3:0:0
+D:Steel plates riveted between layers of cloth and leather.
+D:A compromise between stealth, comfort, and protection.
 
 N:*:Splint Mail~
 G:[:D
@@ -2063,6 +2075,8 @@ W:35:0:0:250:1300
 A:35/1
 F:TOWN
 P:19:1d4:-2:0:0
+D:Long strips of metal are sewn over a backing of chain and padding.
+D:Good defense for limbs and joints, though a bit cumbersome.
 
 N:*:Do-maru~
 G:[:s
@@ -2071,6 +2085,7 @@ W:40:0:0:290:1250
 A:40/2
 F:TOWN
 P:20:1d4:-2:0:0
+D:A Japanese-style cuirass made from iron plates laced together with silk cord.
 
 N:*:Partial Plate Armour~
 G:[:W
@@ -2080,6 +2095,7 @@ A:45/1
 F:TOWN
 P:22:1d6:-3:0:0
 D:A steel corselet and vambraces over a skirt and leggings of chain.
+D:Designed for coverage of vital areas without overly sacrificing agility.
 
 N:*:Metal Lamellar Armour~
 G:[:W
@@ -2088,6 +2104,9 @@ W:45:0:0:340:1150
 A:45/1
 F:TOWN
 P:23:1d6:-3:0:0
+D:Rows of small metal plates laced together horizontally, giving
+D:both flexibility and strong defense.
+D:A common choice among eastern and steppe warriors.
 
 N:*:Haramakido~
 G:[:D
@@ -2096,6 +2115,8 @@ W:32:0:0:280:920
 A:32/2
 F:TOWN
 P:17:1d4:-2:0:0
+D:A Japanese under-armor wrap protecting the abdomen and lower torso.
+D:Often paired with lighter outer garments for increased agility.
 
 N:*:Full Plate Armour~
 G:[:W
@@ -2106,6 +2127,7 @@ F:TOWN
 P:25:2d4:-3:0:0
 D:A full suit of carefully fitted plates, with hinged joints backed
 D:by chain, and light padding underneath.
+D:The hallmark of a noble knight, offering unmatched protection.
 
 N:*:O-yoroi~
 G:[:D
@@ -2114,6 +2136,9 @@ W:45:0:0:320:1300
 A:45/2
 F:TOWN
 P:24:1d4:-2:0:0
+D:A full set of traditional Japanese armor with shoulder guards,
+D:large skirt, and laced plates for both defense and decoration.
+D:Favored by samurai in open-field warfare.
 
 N:*:Ribbed Plate Armour~
 G:[:W
@@ -2122,6 +2147,8 @@ W:50:0:0:380:1500
 A:50/1
 F:TOWN
 P:28:2d4:-3:0:0
+D:Thick plates with raised ribs provide extra structural strength.
+D:Extremely heavy, but ideal for frontline combat.
 
 N:*:Mithril Chain Mail~
 G:[:B
@@ -2132,6 +2159,7 @@ P:35:1d4:-1:0:0
 F:IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD
 D:Rare and wondrous is chain mail made of true-silver, for it offers more
 D:protection for the weight than any other armour.
+D:The rings shimmer with an ethereal luster and never tarnish.
 
 N:*:Mithril Plate Mail~
 G:[:B
@@ -2142,6 +2170,7 @@ P:40:2d4:-3:0:0
 F:IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD
 D:A shimmering suit of true-silver, forged long ago by dwarven smiths of
 D:legend.  It gleams with purest white as you gaze upon it.
+D:Despite its strength, this armor is incredibly lightweight.
 
 N:*:Adamantite Plate Mail~
 G:[:G
@@ -2152,6 +2181,7 @@ P:50:2d4:-4:0:0
 F:IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD
 D:Adamantite, hard as diamonds, forms this exquisite suit; nothing else
 D:in Middle Earth gives as much protection.
+D:Black and unyielding, it bears the weight of countless battles and endures.
 
 ########################################################################
 #  Dragon Armor (TV_DRAG_ARMOR)

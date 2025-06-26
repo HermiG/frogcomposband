@@ -242,6 +242,7 @@ pip-log.txt
 # Build output
 *.o
 *.o.x86_64
+*.res
 /src/frogcomposband
 /frogcomposband
 /src/tags

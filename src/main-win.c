@@ -3487,91 +3487,95 @@ static void process_menus(WORD wCmd)
 
 static bool process_keydown(WPARAM wParam, LPARAM lParam)
 {
-    int i;
-    bool mc = FALSE;
-    bool ms = FALSE;
-    bool ma = FALSE;
-
-    /* Extract the modifiers */
-    if (GetKeyState(VK_CONTROL) & 0x8000) mc = TRUE;
-    if (GetKeyState(VK_SHIFT)   & 0x8000) ms = TRUE;
-    if (GetKeyState(VK_MENU)    & 0x8000) ma = TRUE;
-
-    /* Handle "special" keys */
-    Term_no_press = FALSE;
-    if (special_key[(byte)(wParam)])
+  Term_no_press = FALSE;
+  
+  // Handle "special" keys
+  if (special_key[(byte)(wParam)])
+  {
+    // Modifier key state
+    bool mc = !! (GetKeyState(VK_CONTROL) & 0x8000);
+    bool ms = !! (GetKeyState(VK_SHIFT)   & 0x8000);
+    bool ma = !! (GetKeyState(VK_MENU)    & 0x8000);
+    
+    bool extended = !! (lParam & 0x01000000L);
+    bool numlock  = GetKeyState(VK_NUMLOCK) & 0x0001;
+    bool numpad   = FALSE;
+    
+    byte scancode = LOBYTE(HIWORD(lParam));
+    
+    // Switch on the virtual key code
+    switch (wParam)
     {
-        bool ext_key = (lParam & 0x1000000L) ? TRUE : FALSE;
-        bool numpad = FALSE;
-
-        /* Begin the macro trigger */
-        Term_keypress(31);
-
-        /* Send the modifiers */
-        if (mc) Term_keypress('C');
-        if (ms) Term_keypress('S');
-        if (ma) Term_keypress('A');
-
-        /* Extract "scan code" */
-        i = LOBYTE(HIWORD(lParam));
-
-        /* Introduce the scan code */
-        Term_keypress('x');
-
-        /* Extended key bit */
-        switch (wParam)
-        {
-            /* Numpad Enter and '/' are extended key */
-        case VK_DIVIDE:
-            Term_no_press = TRUE;
-        case VK_RETURN:    /* Enter */
-            numpad = ext_key;
-            break;
-            /* Other extended keys are on full keyboard */
-        case VK_NUMPAD0:
-        case VK_NUMPAD1:
-        case VK_NUMPAD2:
-        case VK_NUMPAD3:
-        case VK_NUMPAD4:
-        case VK_NUMPAD5:
-        case VK_NUMPAD6:
-        case VK_NUMPAD7:
-        case VK_NUMPAD8:
-        case VK_NUMPAD9:
-        case VK_ADD:
-        case VK_MULTIPLY:
-        case VK_SUBTRACT:
-        case VK_SEPARATOR:
-        case VK_DECIMAL:
-            Term_no_press = TRUE;
-        case VK_CLEAR:
-        case VK_HOME:
-        case VK_END:
-        case VK_PRIOR:    /* Page Up */
-        case VK_NEXT:    /* Page Down */
-        case VK_INSERT:
-        case VK_DELETE:
-        case VK_UP:
-        case VK_DOWN:
-        case VK_LEFT:
-        case VK_RIGHT:
-            numpad = !ext_key;
-        }
-
-        /* Special modifiers for keypad keys */
-        if (numpad) Term_keypress('K');
-
-        /* Encode the hexidecimal scan code */
-        Term_keypress(hexsym[i/16]);
-        Term_keypress(hexsym[i%16]);
-
-        /* End the macro trigger */
-        Term_keypress(13);
-
-        return 1;
+      // Numpad keys which are extended
+      case VK_DIVIDE: // Numpad /
+        Term_no_press = TRUE;
+      case VK_RETURN: // Numpad Enter if extended else Return
+        numpad = extended;
+        break;
+      
+      // Numpad keys which are not extended
+      case VK_NUMPAD0:
+      case VK_NUMPAD1:
+      case VK_NUMPAD2:
+      case VK_NUMPAD3:
+      case VK_NUMPAD4:
+      case VK_NUMPAD5:
+      case VK_NUMPAD6:
+      case VK_NUMPAD7:
+      case VK_NUMPAD8:
+      case VK_NUMPAD9:
+      case VK_DECIMAL:
+      
+      // Numpad keys which are never extended and always on the numpad
+      case VK_MULTIPLY:
+      case VK_SUBTRACT:
+      case VK_ADD:
+      case VK_SEPARATOR:
+        Term_no_press = TRUE;
+      numpad = !extended;
+      break;
+      
+      // When extended is true these are the real special keys
+      // When extended is false these are numpad keys
+      case VK_INSERT: // Numpad 0
+      case VK_END:    // Numpad 1
+      case VK_DOWN:   // Numpad 2
+      case VK_NEXT:   // Numpad 3
+      case VK_LEFT:   // Numpad 4
+      case VK_CLEAR:  // Numpad 5
+      case VK_RIGHT:  // Numpad 6
+      case VK_HOME:   // Numpad 7
+      case VK_UP:     // Numpad 8
+      case VK_PRIOR:  // Numpad 9
+      case VK_DELETE: // Numpad .
+        numpad = !extended;
+        
+        // Windows masks the shift key for numeric keypad keys when numlock is enabled
+        // If the key on on the numpad (!extended), then a special key means the shift key was masked
+        ms |= numlock && numpad;
+        break;
     }
-
-    return 0;
+    
+    Term_keypress(31); // Begin the macro trigger
+    
+    // Send the modifiers
+    if (mc) Term_keypress('C');
+    if (ms) Term_keypress('S');
+    if (ma) Term_keypress('A');
+    
+    Term_keypress('x'); // Introduce the scan code
+    
+    if (numpad) Term_keypress('K'); // Specify that this was a numpad key
+    
+    Term_keypress(hexsym[scancode / 16]);
+    Term_keypress(hexsym[scancode % 16]);
+    
+    Term_keypress(13); // End the macro trigger
+    
+    return 1;
+  }
+  
+  return 0;
 }
 
 

@@ -455,7 +455,7 @@ P:^_Sx4A\r
 A:\e\e\\.4
 P:^_Sx4B\r
 
-A:^V
+A:\e\e*(
 P:^_Sx4C\r
 
 A:\e\e\\.6
@@ -500,7 +500,7 @@ P:^_SxK4A\r
 A:\e\e\\.4
 P:^_SxK4B\r
 
-A:^V
+A:\e\e*(
 P:^_SxK4C\r
 
 A:\e\e\\.6
@@ -550,7 +550,7 @@ P:^_Cx4A\r
 A:\e\e\\+4
 P:^_Cx4B\r
 
-A:\e\e\\+5
+A:^V
 P:^_Cx4C\r
 
 A:\e\e\\+6
@@ -595,7 +595,7 @@ P:^_CxK4A\r
 A:\e\e\\+4
 P:^_CxK4B\r
 
-A:\e\e\\+5
+A:^V
 P:^_CxK4C\r
 
 A:\e\e\\+6
@@ -645,7 +645,7 @@ P:^_Cx8E\r
 A:\e\e\\+4
 P:^_Cx73\r
 
-A:\e\e\\+5
+A:^V
 P:^_Cx8F\r
 
 A:\e\e\\+6
@@ -690,7 +690,7 @@ P:^_CxK8E\r
 A:\e\e\\+4
 P:^_CxK73\r
 
-A:\e\e\\+5
+A:^V
 P:^_CxK8F\r
 
 A:\e\e\\+6

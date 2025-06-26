@@ -1573,7 +1573,7 @@ void Term_inversed_area(HWND hWnd, int x, int y, int w, int h)
     HPEN oldPen;
     HBRUSH myBrush, oldBrush;
 
-    term_data *td = (term_data *)GetWindowLong(hWnd, 0);
+    term_data *td = (term_data*)GetWindowLongPtrW(hWnd, GWLP_USERDATA);
     int tx = td->size_ow1 + x * td->tile_wid;
     int ty = td->size_oh1 + y * td->tile_hgt;
     int tw = w * td->tile_wid - 1;
@@ -3582,16 +3582,15 @@ LRESULT FAR PASCAL AngbandWndProc(HWND hWnd, UINT uMsg,
     HDC hdc;
     int i;
 
-    /* Acquire proper "term_data" info */
-	term_data *td = (term_data*)GetWindowLongPtrW(hWnd, GWLP_USERDATA);
+    term_data *td = (term_data*)GetWindowLongPtrW(hWnd, GWLP_USERDATA);
 
     /* Process message */
     switch (uMsg)
     {
         case WM_NCCREATE:
         {
-			CREATESTRUCT *cs = (CREATESTRUCT*)lParam;
-			SetWindowLongPtrW(hWnd, GWLP_USERDATA, (LONG_PTR)cs->lpCreateParams);
+            CREATESTRUCT *cs = (CREATESTRUCT*)lParam;
+            SetWindowLongPtrW(hWnd, GWLP_USERDATA, (LONG_PTR)cs->lpCreateParams);
             break;
         }
 
@@ -3972,16 +3971,15 @@ LRESULT FAR PASCAL AngbandListProc(HWND hWnd, UINT uMsg,
     HDC hdc;
     int i;
 
-    /* Acquire proper "term_data" info */
-	term_data *td = (term_data*)GetWindowLongPtrW(hWnd, GWLP_USERDATA);
+	  term_data *td = (term_data*)GetWindowLongPtrW(hWnd, GWLP_USERDATA);
 
     /* Process message */
     switch (uMsg)
     {
         case WM_NCCREATE:
         {
-			CREATESTRUCT *cs = (CREATESTRUCT*)lParam;
-			SetWindowLongPtrW(hWnd, GWLP_USERDATA, (LONG_PTR)cs->lpCreateParams);
+            CREATESTRUCT *cs = (CREATESTRUCT*)lParam;
+            SetWindowLongPtrW(hWnd, GWLP_USERDATA, (LONG_PTR)cs->lpCreateParams);
             break;
         }
 
@@ -4153,7 +4151,6 @@ LRESULT FAR PASCAL AngbandSaverProc(HWND hWnd, UINT uMsg,
     /* Process */
     switch (uMsg)
     {
-        /* XXX XXX XXX */
         case WM_NCCREATE:
         {
             break;
@@ -4526,12 +4523,10 @@ int FAR PASCAL WinMain(HINSTANCE hInst, HINSTANCE hPrevInst,
     /* Prepare the filepaths */
     init_stuff();
 
-    /* Initialize the keypress analyzer */
     for (i = 0; special_key_list[i]; ++i)
     {
         special_key[special_key_list[i]] = TRUE;
     }
-    /* Initialize the keypress analyzer */
     for (i = 0; ignore_key_list[i]; ++i)
     {
         ignore_key[ignore_key_list[i]] = TRUE;

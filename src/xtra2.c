@@ -4643,9 +4643,9 @@ bool target_set(int mode)
     /* Cancel tracking */
     /* health_track(0); */
   
-    if(mouse_cursor_targeting_state == 2) flag = FALSE;
-    if(mouse_cursor_targeting_state == 0) {
-        mouse_cursor_targeting_state = 1;
+    if(mouse_cursor_targeting_state & MOUSE_CLICK_LEFT) flag = FALSE;
+    if(!mouse_cursor_targeting_state) {
+        mouse_cursor_targeting_state = MOUSE_CLICK_READY;
         mouse_cursor_x = -1;
         mouse_cursor_y = -1;
     }
@@ -4713,7 +4713,7 @@ bool target_set(int mode)
                     break;
                 }
                 
-                case '|': // Target cursor
+                case '`': // Target cursor
                     flag = FALSE;
                     break;
                 
@@ -4925,8 +4925,8 @@ bool target_set(int mode)
             bool move_fast = FALSE;
             bool double_clicked = FALSE;
 
-            if(mouse_cursor_targeting_state == 2) {
-              mouse_cursor_targeting_state = 1;
+            if(mouse_cursor_targeting_state & MOUSE_CLICK_LEFT) {
+              mouse_cursor_targeting_state = MOUSE_CLICK_READY;
               
               point_t pt = ui_xy_to_cave_pt(mouse_cursor_x, mouse_cursor_y);
               
@@ -4992,7 +4992,7 @@ bool target_set(int mode)
                     break;
                 }
                 
-                case '|': // Target cursor
+                case '`': // Target cursor
                     break;
 
                 case 't':
@@ -5267,8 +5267,8 @@ bool get_aim_dir_aux(int *dp, int target_mode)
     /* Global direction */
     dir = command_dir;
 
-    if(mouse_cursor_targeting_state == 0) {
-      mouse_cursor_targeting_state = 1;
+    if(!mouse_cursor_targeting_state) {
+      mouse_cursor_targeting_state = MOUSE_CLICK_READY;
       mouse_cursor_x = -1;
       mouse_cursor_y = -1;
     }
@@ -5330,9 +5330,8 @@ bool get_aim_dir_aux(int *dp, int target_mode)
                 break;
             }
             
-            case '|':
-            case '`':
-              if(mouse_cursor_targeting_state == 2) {
+            case '`': // Target cursor
+              if(mouse_cursor_targeting_state & (MOUSE_CLICK_LEFT|MOUSE_CLICK_RIGHT)) {
                 point_t pt = ui_xy_to_cave_pt(mouse_cursor_x, mouse_cursor_y);
                 
                 if (panel_contains(pt.y, pt.x)) {
@@ -5724,8 +5723,8 @@ bool tgt_pt(int *x_ptr, int *y_ptr, int rng)
     x = px;
     y = py;
     
-    if(mouse_cursor_targeting_state == 0) {
-        mouse_cursor_targeting_state = 1;
+    if(!mouse_cursor_targeting_state) {
+        mouse_cursor_targeting_state = MOUSE_CLICK_READY;
         mouse_cursor_x = -1;
         mouse_cursor_y = -1;
     }
@@ -5743,7 +5742,7 @@ bool tgt_pt(int *x_ptr, int *y_ptr, int rng)
         bool move_fast = FALSE;
 
         move_cursor_relative(y, x);
-        ch = (mouse_cursor_targeting_state == 2) ? '`' : inkey();
+        ch = (mouse_cursor_targeting_state & (MOUSE_CLICK_LEFT|MOUSE_CLICK_RIGHT)) ? '`' : inkey(); // Target cursor
         switch (ch)
         {
         case ESCAPE:
@@ -5757,10 +5756,9 @@ bool tgt_pt(int *x_ptr, int *y_ptr, int rng)
             else success = TRUE;
             break;
 
-		    /* Composband: Move cursor to mouse cursor coordinate */
-        case '`':
-            if(mouse_cursor_targeting_state == 2) {
-                mouse_cursor_targeting_state = 1;
+        case '`': // Target cursor
+            if(mouse_cursor_targeting_state & (MOUSE_CLICK_LEFT|MOUSE_CLICK_RIGHT)) {
+                mouse_cursor_targeting_state = MOUSE_CLICK_READY;
                 
                 point_t pt = ui_xy_to_cave_pt(mouse_cursor_x, mouse_cursor_y);
                 

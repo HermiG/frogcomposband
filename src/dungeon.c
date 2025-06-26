@@ -4214,21 +4214,6 @@ static void _dispatch_command(int old_now_turn)
             break;
         }
 
-        /* Look around */
-        case 'l':
-        {
-            mouse_cursor_targeting_state = 0;
-            do_cmd_look();
-            break;
-        }
-        
-        // Look at cursor click
-        case '|':
-        {
-            if(mouse_cursor_targeting_state) do_cmd_look();
-            break;
-        }
-
         case 'Y':
         case '[':
             if (!p_ptr->image)
@@ -4424,11 +4409,20 @@ static void _dispatch_command(int old_now_turn)
             do_cmd_save_screen();
             break;
         }
-
-        case '`':
+        
+        /* Look around */
+        case 'l':
         {
-            if (!p_ptr->wild_mode) do_cmd_travel();
-            break;
+          mouse_cursor_targeting_state = 0;
+          do_cmd_look();
+          break;
+        }
+
+        case '`': // Travel or look at cursor
+        {
+          if(mouse_cursor_targeting_state & MOUSE_CLICK_LEFT) do_cmd_look();
+          else if (!p_ptr->wild_mode) do_cmd_travel();
+          break;
         }
 
         case 'J':

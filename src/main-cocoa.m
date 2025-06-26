@@ -855,17 +855,11 @@ static int compare_advances(const void *ap, const void *bp)
     /* Handle pending events (most notably update) and flush input */
     Term_flush();
     
-    /*
-     * Play a game -- "new_game" is set by "new", "open" or the open document
-     * even handler as appropriate
-     */
-        
     [pool drain];
     
-    /* Wait for response */
-    prt("[Choose 'New' or 'Open' from the 'File' menu]", 23, 17);
-    while (!game_in_progress) (check_events(CHECK_EVENTS_WAIT)); 
-
+    prt("[Choose 'New', 'Open', or 'Resume' from the 'File' menu]", 23, 17);
+    while (!game_in_progress) (check_events(CHECK_EVENTS_WAIT));
+    
     /* Play the game */
     play_game(new_game);
 }
@@ -2343,32 +2337,29 @@ static BOOL send_event(NSEvent *event)
         case NSLeftMouseUp:
         case NSRightMouseUp:
         {
-          if (mouse_cursor_targeting_state == 1 || 1)
-          {
             AngbandContext *angbandContext = [[[event window] contentView] angbandContext];
             AngbandContext *mainAngbandContext = angband_term[0]->data;
-
+            
             if (mainAngbandContext->primaryWindow && [[event window] windowNumber] == [mainAngbandContext->primaryWindow windowNumber])
             {
               int cols, rows, x, y;
               Term_get_size(&cols, &rows);
-
+              
               NSPoint p = [event locationInWindow];
               NSSize tileSize = angbandContext->tileSize;
               NSRect contentRect = [[event window] contentRectForFrameRect:[[event window] frame]];
-
+              
               // Coordinate conversion: Cocoa origin is bottom-left, Angband is top-left
               x = (p.x - angbandContext->borderSize.width) / tileSize.width;
               y = ((contentRect.size.height - p.y) - angbandContext->borderSize.height) / tileSize.height;
-
+              
               // Clamp to bounds
               mouse_cursor_x = MAX(0, MIN(x, cols - 1));
               mouse_cursor_y = MAX(0, MIN(y, rows - 1));
-              mouse_cursor_targeting_state = 2;
               
-              if([event type] == NSLeftMouseUp)  Term_keypress('|');
-              if([event type] == NSRightMouseUp) Term_keypress('`');
-            }
+              if([event type] == NSLeftMouseUp)  mouse_cursor_targeting_state = MOUSE_CLICK_LEFT;
+              if([event type] == NSRightMouseUp) mouse_cursor_targeting_state = MOUSE_CLICK_RIGHT;
+              Term_keypress('`');
           }
           
           [NSApp sendEvent:event]; // Pass event through so other UI continues to work

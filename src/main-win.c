@@ -3652,12 +3652,12 @@ LRESULT FAR PASCAL AngbandWndProc(HWND hWnd, UINT uMsg,
         case WM_RBUTTONUP:
         {
             if (td && hWnd == data[0].w) {
-                mouse_cursor_targeting_state = 2;
                 mouse_cursor_x = MAX(0, MIN(LOWORD(lParam) / td->tile_wid, td->cols - 1));
                 mouse_cursor_y = MAX(0, MIN(HIWORD(lParam) / td->tile_hgt, td->rows - 1));
                 
-                if(uMsg == WM_LBUTTONUP) Term_keypress('|');
-                if(uMsg == WM_RBUTTONUP) Term_keypress('`');
+                if(uMsg == WM_LBUTTONUP) mouse_cursor_targeting_state = MOUSE_CLICK_LEFT;
+                if(uMsg == WM_RBUTTONUP) mouse_cursor_targeting_state = MOUSE_CLICK_RIGHT;
+                Term_keypress('`');
             }
             return 0;
         }

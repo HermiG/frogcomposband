@@ -1366,18 +1366,17 @@ int display_weapon_mode = 0;
 static void _display_weapon_slay(int base_mult, int slay_mult, bool force, int blows,
                                  int dd, int ds, int to_d, cptr name, int color, doc_ptr doc)
 {
-    int mult, min, max, div = 100;
+    float mult, min, max, div = 100;
 
-    mult = MIN(slay_mult, 1500);
-    if (force)
-        mult = mult * 3/2 + 140;
-    mult = mult * base_mult / 100;
+    mult = MIN(slay_mult, 1500.0f);
+    if (force) mult = mult * 1.5f + 140.0f;
+    mult *= base_mult / 100.0f;
 
     if (display_weapon_mode == HISSATSU_SUTEMI || display_weapon_mode == HISSATSU_3DAN) div /= 2;
     else if (display_weapon_mode == HISSATSU_SEKIRYUKA && !p_ptr->cut) div *= 2;
 
-    min = blows * (mult*dd/100 + to_d) / div;
-    max = blows * (mult*dd*ds/100 + to_d) / div;
+    min = 100.0f * (mult*dd*0.01f + to_d) / div;
+    max = 100.0f * (mult*dd*ds*0.01f + to_d) / div;
 
     if ((p_ptr->pclass == CLASS_DUELIST) && (!duelist_equip_error()))
     {
@@ -1399,21 +1398,20 @@ static void _display_weapon_slay(int base_mult, int slay_mult, bool force, int b
         }
     }
 
-    min = ((min * (class_melee_mult() * race_melee_mult(FALSE) / 100)) + 50) / 100;
-    max = ((max * (class_melee_mult() * race_melee_mult(FALSE) / 100)) + 50) / 100;
+    min = ((min * (class_melee_mult() * race_melee_mult(FALSE) / 100.0f)) + 50.0f) / 100.0f;
+    max = ((max * (class_melee_mult() * race_melee_mult(FALSE) / 100.0f)) + 50.0f) / 100.0f;
 
     if (p_ptr->stun)
     {
-        min -= min * MIN(100, p_ptr->stun) / 150;
-        max -= max * MIN(100, p_ptr->stun) / 150;
+        min -= min * MIN(100, p_ptr->stun) / 150.0f;
+        max -= max * MIN(100, p_ptr->stun) / 150.0f;
     }
     if (weaponmaster_get_toggle() == TOGGLE_ORDER_BLADE)
         min = max;
 
+    float dam = (min + max) * 0.5f;
     doc_printf(doc, "<color:%c> %-7.7s</color>", attr_to_attr_char(color), format("%^s", name));
-    doc_printf(doc, ": %d [%d.%02dx]\n",
-                    (min + max)/2,
-                    mult/100, mult%100);
+    doc_printf(doc, ": %.0f (%.0f per round) [%.2fx]\n", dam, dam * blows/100.0f, mult/100.0f);
 }
 
 /* Certified 100% fake math
@@ -2116,20 +2114,22 @@ static void _display_missile_slay(int bow_mult, int slay_mult, int crit_mult,
                                   int dd, int ds, int to_d, int to_d_xtra,
                                   cptr name, int color, doc_ptr doc)
 {
-    int dam = dd*(ds + 1)/2 + to_d;
-
-    if (force) slay_mult += 50;
-    dam = dam * slay_mult / 100;
-    dam = dam * crit_mult / 100;
-    if (p_ptr->concent) dam = boost_concentration_damage(dam);
-    dam = dam * bow_mult / 100;
-
-    dam += to_d_xtra;
-    if (p_ptr->stun)
-        dam -= dam * MIN(100, p_ptr->stun) / 150;
-
-    doc_printf(doc, " <color:%c>%-8.8s</color>", attr_to_attr_char(color), format("%^s", name));
-    doc_printf(doc, ": %d/%d\n", dam, shots * dam / 100);
+  float dam = dd*(ds+1)*0.5f + to_d;
+  
+  if (force) slay_mult += 50;
+  dam *= slay_mult / 100.0f;
+  dam *= crit_mult / 100.0f;
+  if (p_ptr->concent) dam = boost_concentration_damage((int)(dam + 0.5f));
+  dam *= bow_mult / 100.0f;
+  
+  float mult = dam / (dd*(ds+1)*0.5f + to_d);
+  
+  dam += to_d_xtra;
+  if (p_ptr->stun)
+    dam -= dam * MIN(100, p_ptr->stun) / 150.0f;
+  
+  doc_printf(doc, " <color:%c>%-8.8s</color>", attr_to_attr_char(color), format("%^s", name));
+  doc_printf(doc, ": %.0f (%.0f per round) [%.2fx]\n", dam, dam * shots/100.0f, mult);
 }
 
 

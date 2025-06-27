@@ -75,6 +75,7 @@ $(EXE): $(EXE).o $(OSX_OBJS)
 
 clean:
 	-rm -f $(OBJS) $(EXE) $(EXE).o.x86_64 $(EXE).o $(OSX_OBJS)
+	-rm -rf $(NIB)
 
 
 #
@@ -82,7 +83,7 @@ clean:
 #
 
 %.nib: %.xib
-	ibtool --compile "$@" "$<"
+	ibtool --compile $@ $< > /dev/null 2>&1
 
 main-cocoa.o : main-cocoa.m
 	@printf "%10s %-20s (objective-c)\n" CC $<

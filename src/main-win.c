@@ -106,7 +106,8 @@
  */
 
 #define IDM_FILE_NEW              100
-#define IDM_FILE_OPEN             101
+#define IDM_FILE_RESUME           101
+#define IDM_FILE_OPEN             102
 #define IDM_FILE_SAVE             110
 #define IDM_FILE_MOVIE            121
 #define IDM_FILE_EXIT             130
@@ -546,6 +547,8 @@ static cptr ANGBAND_DIR_XTRA_MUSIC;
 #endif
 
 
+static char resume_savename[256];
+
 /*
  * The "complex" color values
  */
@@ -954,8 +957,6 @@ static void save_prefs_for_term(int i)
  */
 static void save_prefs(void)
 {
-    int i;
-
     char buf[128];
 
     /* Save the "arg_graphics" flag */
@@ -974,12 +975,13 @@ static void save_prefs(void)
     WritePrivateProfileString("Angband", "ObjListWidth", buf, ini_file);
     wsprintf(buf, "%d", monster_list_width);
     WritePrivateProfileString("Angband", "MonListWidth", buf, ini_file);
+	
+    /* Save the current save file name */
+    const char *savename = strrchr(savefile, '\\');
+    WritePrivateProfileString("Angband", "ResumeSaveName", savename ? savename+1 : "", ini_file);
 
     /* Save window prefs */
-    for (i = 0; i < MAX_TERM_DATA; ++i)
-    {
-        save_prefs_for_term(i);
-    }
+    for (int i = 0; i < MAX_TERM_DATA; ++i) save_prefs_for_term(i);
 }
 
 
@@ -1058,8 +1060,6 @@ static void load_prefs_for_term(int i)
  */
 static void load_prefs(void)
 {
-    int i;
-
     /* Extract the "arg_graphics" flag */
     arg_graphics = GetPrivateProfileInt("Angband", "Graphics", GRAPHICS_NONE, ini_file);
 
@@ -1073,11 +1073,10 @@ static void load_prefs(void)
     object_list_width = MAX(24, GetPrivateProfileInt("Angband", "ObjListWidth", object_list_width, ini_file));
     monster_list_width = MAX(24, GetPrivateProfileInt("Angband", "MonListWidth", monster_list_width, ini_file));
 
+    GetPrivateProfileString("Angband", "ResumeSaveName", NULL, resume_savename, sizeof(resume_savename), ini_file));
+
     /* Load window prefs */
-    for (i = 0; i < MAX_TERM_DATA; ++i)
-    {
-        load_prefs_for_term(i);
-    }
+    for (int i = 0; i < MAX_TERM_DATA; ++i) load_prefs_for_term(i);
 }
 
 #ifdef USE_SOUND
@@ -2567,6 +2566,7 @@ static void setup_menus(void)
 
     /* Menu "File", Disable all except Exit */
     EnableMenuItem(hm, IDM_FILE_NEW,    MF_BYCOMMAND | MF_DISABLED | MF_GRAYED);
+    EnableMenuItem(hm, IDM_FILE_RESUME, MF_BYCOMMAND | MF_DISABLED | MF_GRAYED);
     EnableMenuItem(hm, IDM_FILE_OPEN,   MF_BYCOMMAND | MF_DISABLED | MF_GRAYED);
     EnableMenuItem(hm, IDM_FILE_SAVE,   MF_BYCOMMAND | MF_DISABLED | MF_GRAYED);
     EnableMenuItem(hm, IDM_FILE_EXIT,   MF_BYCOMMAND | MF_ENABLED);
@@ -2577,6 +2577,8 @@ static void setup_menus(void)
      } else {
         EnableMenuItem(hm, IDM_FILE_NEW, MF_BYCOMMAND | MF_ENABLED);
         EnableMenuItem(hm, IDM_FILE_OPEN, MF_BYCOMMAND | MF_ENABLED);
+
+        if(strlen(resume_savename) > 0) EnableMenuItem(hm, IDM_FILE_RESUME, MF_BYCOMMAND | MF_ENABLED);
     }
 
     /* Menu "Window::Visibility" */
@@ -2691,8 +2693,9 @@ static void check_for_save_file(LPSTR cmd_line)
     }
 
     game_in_progress = TRUE;
-
     play_game(FALSE);
+
+    quit(NULL);
 }
 
 
@@ -2725,7 +2728,13 @@ static void process_menus(WORD wCmd)
             break;
         }
 
-        /* Open game */
+        case IDM_FILE_RESUME:
+        {
+            if      (!initialized)     plog("You cannot do that yet...");
+            else if (game_in_progress) plog("You can't open a new game while you're still playing!");
+            else if (strlen(resume_savename)) check_for_save_file(resume_savename);
+            break;
+        }
         case IDM_FILE_OPEN:
         {
             if (!initialized)

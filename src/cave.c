@@ -74,10 +74,7 @@ bool is_trap(int feat)
  */
 bool is_known_trap(cave_type *c_ptr)
 {
-    if (!c_ptr->mimic && !cave_have_flag_grid(c_ptr, FF_SECRET) &&
-        is_trap(c_ptr->feat)) return TRUE;
-    else
-        return FALSE;
+    return !c_ptr->mimic && !cave_have_flag_grid(c_ptr, FF_SECRET) && is_trap(c_ptr->feat);
 }
 
 
@@ -88,30 +85,23 @@ bool is_closed_door(int feat)
 {
     feature_type *f_ptr = &f_info[feat];
 
-    return (have_flag(f_ptr->flags, FF_OPEN) || have_flag(f_ptr->flags, FF_BASH)) &&
-           !have_flag(f_ptr->flags, FF_MOVE);
+    return (have_flag(f_ptr->flags, FF_OPEN) || have_flag(f_ptr->flags, FF_BASH)) && !have_flag(f_ptr->flags, FF_MOVE);
 }
+
 
 bool is_jammed_door(int feat)
 {
     feature_type *f_ptr = &f_info[feat];
-
-    if (have_flag(f_ptr->flags, FF_DOOR) && !have_flag(f_ptr->flags, FF_OPEN) && have_flag(f_ptr->flags, FF_BASH))
-        return TRUE;
-
-    return FALSE;
+    return have_flag(f_ptr->flags, FF_DOOR) && !have_flag(f_ptr->flags, FF_OPEN) && have_flag(f_ptr->flags, FF_BASH);
 }
+
 
 /*
  * Return TRUE if the given grid is a hidden closed door
  */
 bool is_hidden_door(cave_type *c_ptr)
 {
-    if ((c_ptr->mimic || cave_have_flag_grid(c_ptr, FF_SECRET)) &&
-        is_closed_door(c_ptr->feat))
-        return TRUE;
-    else
-        return FALSE;
+    return (c_ptr->mimic || cave_have_flag_grid(c_ptr, FF_SECRET)) && is_closed_door(c_ptr->feat);
 }
 
 

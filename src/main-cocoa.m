@@ -86,7 +86,8 @@ static NSFont *default_font;
 
 @class AngbandView;
 
-/* An AngbandContext represents a logical Term (i.e. what Angband thinks is a window). This typically maps to one NSView, but may map to more than one NSView (e.g. the Test and real screen saver view). */
+/* An AngbandContext represents a logical Term (i.e. what Angband thinks is a window).
+ * This typically maps to one NSView, but may map to more than one NSView (e.g. the Test and real screen saver view). */
 @interface AngbandContext : NSObject <NSWindowDelegate>
 {
 @public
@@ -268,6 +269,24 @@ static void AngbandUpdateWindowVisibility(void)
     // make the main window key so that user events go to the right spot
     AngbandContext *mainWindow = angband_term[0]->data;
     [mainWindow->primaryWindow makeKeyAndOrderFront: nil];
+}
+
+/**
+ *  Update the terminal sizes to match the actual window content dimensions.
+ *  This must be called after window creation and layout are complete, since the
+ *  initial terminal size is based on saved defaults that may no longer match the
+ *  actual displayable area (e.g., after exiting fullscreen). Without this call,
+ *  the terminal may be too large for the window, leading to clipped or hidden content.
+ */
+static void UpdateTermSizes(void)
+{
+  for( int i = 0; i < ANGBAND_TERM_MAX; i++ ) {
+    AngbandContext *angbandContext = angband_term[i]->data;
+    if( angbandContext == nil ) continue;
+    
+    NSRect contentRect = [angbandContext->primaryWindow contentRectForFrameRect: [angbandContext->primaryWindow frame]];
+    [angbandContext resizeTerminalWithContentRect: contentRect saveToDefaults: NO];
+  }
 }
 
 /* To indicate that a grid element contains a picture, we store 0xFFFF. */
@@ -490,16 +509,13 @@ static int compare_advances(const void *ap, const void *bp)
     AngbandView *activeView = [self activeView];
     if (activeView)
     {
-        /* If we are in live resize, draw as big as the screen, so we can scale nicely to any size. If we are not in live resize, then use the bounds of the active view. */
+        /* If we are in live resize, draw as big as the screen so we can scale nicely to any size.
+         * If we are not in live resize, then use the bounds of the active view. */
         NSScreen *screen;
         if ([self useLiveResizeOptimization] && (screen = [[activeView window] screen]) != NULL)
-        {
-            size = [screen frame].size;
-        }
+          size = [screen frame].size;
         else
-        {
-            size = [activeView bounds].size;
-        }
+          size = [activeView bounds].size;
     }
     
     size.width = fmax(1, ceil(size.width));
@@ -509,7 +525,7 @@ static int compare_advances(const void *ap, const void *bp)
     
     // make a bitmap context as an example for our layer
     CGColorSpaceRef cs = CGColorSpaceCreateDeviceRGB();
-    CGContextRef exampleCtx = CGBitmapContextCreate(NULL, 1, 1, 8 /* bits per component */, 48 /* bytesPerRow */, cs, kCGImageAlphaNoneSkipFirst | kCGBitmapByteOrder32Host);
+    CGContextRef exampleCtx = CGBitmapContextCreate(NULL, 1, 1, 8, 48, cs, kCGImageAlphaNoneSkipFirst | kCGBitmapByteOrder32Host);
     CGColorSpaceRelease(cs);
     angbandLayer = CGLayerCreateWithContext(exampleCtx, *(CGSize *)&size, NULL);
     CFRelease(exampleCtx);
@@ -821,46 +837,32 @@ static int compare_advances(const void *ap, const void *bp)
 {
     NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
     
+    ANGBAND_SYS = "mac";
+    
     /* Hooks in some "z-util.c" hooks */
     plog_aux = hook_plog;
     quit_aux = hook_quit;
+    //sound_hook = play_sound;
     
-    // initialize file paths
     [self prepareFilePathsAndDirectories];
-
-    // load preferences
+    
     load_prefs();
-    
-    // load sounds
     load_sounds();
-    
-    /* Prepare the windows */
     init_windows();
-    
-    /* Set up game event handlers */
     //init_display();
-    
-	  /* Register the sound hook */
-	  //sound_hook = play_sound;
-    
-    /* Set the "system" type */
-    ANGBAND_SYS = "mac";
-    
-    /* Initialize */
     init_angband();
-
-    /* Initialize some save file stuff */
-    player_egid = getegid();
     
-    /* Handle pending events (most notably update) and flush input */
-    Term_flush();
+    player_egid = getegid(); // Record effective group ID for file permissions and security
+    
+    UpdateTermSizes(); // Sync terminal dimensions with actual window sizes after layout (e.g., to correct fullscreen mismatches)
+    
+    Term_flush(); // Process any pending terminal updates and clear input buffer
     
     [pool drain];
     
     prt("[Choose 'New', 'Open', or 'Resume' from the 'File' menu]", 23, 17);
     while (!game_in_progress) (check_events(CHECK_EVENTS_WAIT));
     
-    /* Play the game */
     play_game(new_game);
 }
 
@@ -1087,43 +1089,43 @@ static NSMenuItem *superitem(NSMenuItem *self)
 
 - (void)resizeTerminalWithContentRect: (NSRect)contentRect saveToDefaults: (BOOL)saveToDefaults
 {
-    CGFloat newRows = floor( (contentRect.size.height - (borderSize.height * 2.0)) / tileSize.height );
-    CGFloat newColumns = floor( (contentRect.size.width - (borderSize.width * 2.0)) / tileSize.width );
-
-    self->cols = newColumns;
-    self->rows = newRows;
-    [self resizeOverdrawCache];
-
-    if( saveToDefaults )
+  CGFloat newRows = floor( (contentRect.size.height - (borderSize.height * 2.0)) / tileSize.height );
+  CGFloat newColumns = floor( (contentRect.size.width - (borderSize.width * 2.0)) / tileSize.width );
+  
+  self->cols = newColumns;
+  self->rows = newRows;
+  [self resizeOverdrawCache];
+  
+  if( saveToDefaults )
+  {
+    int termIndex = 0;
+    for( termIndex = 0; termIndex < ANGBAND_TERM_MAX; termIndex++ )
+      if( angband_term[termIndex] == self->terminal ) break;
+    
+    NSArray *terminals = [[NSUserDefaults standardUserDefaults] valueForKey: AngbandTerminalsDefaultsKey];
+    
+    if( termIndex < (int)[terminals count] )
     {
-        int termIndex = 0;
-        for( termIndex = 0; termIndex < ANGBAND_TERM_MAX; termIndex++ )
-        {
-            if( angband_term[termIndex] == self->terminal ) break;
-        }
+      NSMutableDictionary *mutableTerm = [[NSMutableDictionary alloc] initWithDictionary: [terminals objectAtIndex: termIndex]];
+      [mutableTerm setValue: @(self->cols) forKey: AngbandTerminalColumnsDefaultsKey];
+      [mutableTerm setValue: @(self->rows) forKey: AngbandTerminalRowsDefaultsKey];
 
-        NSArray *terminals = [[NSUserDefaults standardUserDefaults] valueForKey: AngbandTerminalsDefaultsKey];
+      NSMutableArray *mutableTerminals = [[NSMutableArray alloc] initWithArray: terminals];
+      [mutableTerminals replaceObjectAtIndex: termIndex withObject: mutableTerm];
 
-        if( termIndex < (int)[terminals count] )
-        {
-            NSMutableDictionary *mutableTerm = [[NSMutableDictionary alloc] initWithDictionary: [terminals objectAtIndex: termIndex]];
-            [mutableTerm setValue: @(self->cols) forKey: AngbandTerminalColumnsDefaultsKey];
-            [mutableTerm setValue: @(self->rows) forKey: AngbandTerminalRowsDefaultsKey];
-
-            NSMutableArray *mutableTerminals = [[NSMutableArray alloc] initWithArray: terminals];
-            [mutableTerminals replaceObjectAtIndex: termIndex withObject: mutableTerm];
-
-            [[NSUserDefaults standardUserDefaults] setValue: mutableTerminals forKey: AngbandTerminalsDefaultsKey];
-            [mutableTerminals release];
-            [mutableTerm release];
-        }
+      [[NSUserDefaults standardUserDefaults] setValue: mutableTerminals forKey: AngbandTerminalsDefaultsKey];
+      [mutableTerminals release];
+      [mutableTerm release];
     }
-
+  }
+  
+  if(Term && self->terminal) {
     term *old = Term;
     Term_activate( self->terminal );
     Term_resize(MIN((int)newColumns, 255), MIN((int)newRows, 255));
     Term_redraw();
     Term_activate( old );
+  }
 }
 
 #pragma mark -
@@ -1367,7 +1369,10 @@ static void Term_init_cocoa(term *t)
         [window setTitle:[NSString stringWithFormat:@"Term %d", termIdx]];
     }
     
-    /* If this is the first term, and we support full screen (Mac OS X Lion or later), then allow it to go full screen (sweet). Allow other terms to be FullScreenAuxilliary, so they can at least show up. Unfortunately in Lion they don't get brought to the full screen space; but they would only make sense on multiple displays anyways so it's not a big loss. */
+    /* If this is the first term, and we support full screen (Mac OS X Lion or later), then allow it to go full screen (sweet).
+      * Allow other terms to be FullScreenAuxilliary, so they can at least show up.
+      * Unfortunately in Lion they don't get brought to the full screen space;
+      * but they would only make sense on multiple displays anyways so it's not a big loss. */
     if ([window respondsToSelector:@selector(toggleFullScreen:)])
     {
         NSWindowCollectionBehavior behavior = [window collectionBehavior];
@@ -1381,13 +1386,12 @@ static void Term_init_cocoa(term *t)
         [window setRestorable:NO];
     }
     
-    /* And maybe that's all for naught */
     if (autosaveName) [window setFrameAutosaveName:autosaveName];
     
-    /* Tell it about its term. Do this after we've sized it so that the sizing doesn't trigger redrawing and such. */
     [context setTerm:t];
     
-    /* Only order front if it's the first term. Other terms will be ordered front from update_term_visibility(). This is to work around a problem where Angband aggressively tells us to initialize terms that don't do anything! */
+    /* Only order front if it's the first term. Other terms will be ordered front from update_term_visibility().
+     * This is to work around a problem where Angband aggressively tells us to initialize terms that don't do anything! */
     if (t == angband_term[0]) [context orderFront];
     
     NSEnableScreenUpdates();
@@ -1503,7 +1507,6 @@ static errr Term_xtra_cocoa(int n, int v)
     
     errr result = 0;
     
-    /* Analyze */
     switch (n)
     {
         case TERM_XTRA_NOISE:
@@ -1683,7 +1686,6 @@ static errr Term_pict_cocoa(int x, int y, int n, const int *ap,
                             const wchar_t *cp, const int *tap,
                             const wchar_t *tcp)
 {
-    
     /* Paranoia: Bail if we don't have a current graphics mode */
     if (! current_graphics_mode) return -1;
     
@@ -1705,30 +1707,23 @@ static errr Term_pict_cocoa(int x, int y, int n, const int *ap,
     destinationRect = crack_rect(destinationRect, AngbandScaleIdentity, push_options(x, y));
     
     /* Scan the input */
-    int i;
     int graf_width = current_graphics_mode->cell_width;
     int graf_height = current_graphics_mode->cell_height;
 
-    for (i = 0; i < n; i++)
+    for (int i = 0; i < n; i++)
     {
-        
         int a = *ap++;
         wchar_t c = *cp++;
         
         int ta = *tap++;
         wchar_t tc = *tcp++;
         
-        
         /* Graphics -- if Available and Needed */
         if (use_graphics && (a & 0x80) && (c & 0x80))
         {
-            int col, row;
-            int t_col, t_row;
-            
-
             /* Primary Row and Col */
-            row = ((byte)a & 0x7F) % pict_rows;
-            col = ((byte)c & 0x7F) % pict_cols;
+            int row = ((byte)a & 0x7F) % pict_rows;
+            int col = ((byte)c & 0x7F) % pict_cols;
             
             NSRect sourceRect;
             sourceRect.origin.x = col * graf_width;
@@ -1737,8 +1732,8 @@ static errr Term_pict_cocoa(int x, int y, int n, const int *ap,
             sourceRect.size.height = graf_height;
             
             /* Terrain Row and Col */
-            t_row = ((byte)ta & 0x7F) % pict_rows;
-            t_col = ((byte)tc & 0x7F) % pict_cols;
+            int t_row = ((byte)ta & 0x7F) % pict_rows;
+            int t_col = ((byte)tc & 0x7F) % pict_cols;
             
             NSRect terrainRect;
             terrainRect.origin.x = t_col * graf_width;
@@ -1757,7 +1752,7 @@ static errr Term_pict_cocoa(int x, int y, int n, const int *ap,
             {
                 draw_image_tile(pict_image, sourceRect, destinationRect, NSCompositeCopy);
             }
-        }        
+        }
     }
     
     [angbandContext unlockFocus];
@@ -1765,7 +1760,7 @@ static errr Term_pict_cocoa(int x, int y, int n, const int *ap,
     
     [pool drain];
     
-    return (0);
+    return 0;
 }
 #endif
 
@@ -1901,17 +1896,12 @@ static term *term_data_link(int i)
     /* Initialize the term */
     term_init(newterm, MIN(columns, 255), MIN(rows, 255), 256 /* keypresses, for some reason? */);
     
-    /* Differentiate between BS/^h, Tab/^i, etc. */
-    //newterm->complex_input = TRUE;
-
-    /* Use a "software" cursor */
     newterm->soft_cursor = TRUE;
     
     /* Erase with "white space" */
     newterm->attr_blank = TERM_WHITE;
     newterm->char_blank = ' ';
     
-    /* Prepare the init/nuke hooks */
     newterm->init_hook = Term_init_cocoa;
     newterm->nuke_hook = Term_nuke_cocoa;
     
@@ -1960,16 +1950,12 @@ static void load_prefs()
     [defaults release];
     [defaultTerms release];
     
-    /* preferred graphics mode */
     graf_mode_req = [defs integerForKey:@"GraphicsID"];
     
-    /* use sounds */
     allow_sounds = [defs boolForKey:@"AllowSound"];
     
-    /* fps */
     frames_per_second = [[NSUserDefaults angbandDefaults] integerForKey:@"FramesPerSecond"];
     
-    /* font */
     default_font = [[NSFont fontWithName:[defs valueForKey:@"FontName-0"] size:[defs floatForKey:@"FontSize-0"]] retain];
     if (! default_font) default_font = [[NSFont fontWithName:@"Menlo" size:14.f] retain];
 }

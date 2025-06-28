@@ -4053,6 +4053,7 @@ A:1/1
 P:0:1d1:0:0:0
 F:TOWN
 M:100:1d5
+D:A rough timber wrapped in pitch-soaked cloth. Its flame is faint and sputtering, yet in the blackest depths, even this feeble light brings comfort.
 
 N:*:& Brass Lantern~
 G:~:U
@@ -4062,6 +4063,7 @@ A:3/1
 P:0:1d1:0:0:0
 F:IGNORE_FIRE
 F:TOWN
+D:A sturdy lantern with polished mirrors and a thick glass chimney. Burns brighter and longer than a torch.
 
 N:*:& Flask~ of oil
 G:!:y
@@ -4071,6 +4073,7 @@ A:1/1
 P:0:2d6:0:0:0
 F:TOWN
 M:100:1d5
+D:A small sealed flask containing lamp oil. Useful for fueling lanterns or starting fires.
 
 N:*:& Feanorian Lamp~
 G:~:o
@@ -4079,6 +4082,7 @@ W:15:40:0:60:450
 A:15/1
 P:0:1d1:0:0:0
 F:IGNORE_FIRE
+D:A masterwork of ancient Elven crasfsmanship, this lamp shines with a cool, eternal light.
 
 N:*:& Incandescent Light~
 G:!:y
@@ -4086,6 +4090,7 @@ I:39:3:0
 W:20:10:0:5:20000
 P:0:1d1:0:0:0
 F:INSTA_ART
+D:An object of ancient manufacture, glowing bright without flame or wick-its workings long forgotten.
 
 N:*:& Phial~
 G:!:y
@@ -4093,6 +4098,7 @@ I:39:4:0
 W:30:0:0:10:10000
 P:0:1d1:0:0:0
 F:INSTA_ART
+D:A crystal phial filled with light. Its glow brings comfort in the deepest dark.
 
 N:*:& Star~
 G:*:y
@@ -4522,6 +4528,7 @@ W:32:0:0:50:100
 A:15/6:30/3:65/1
 P:0:1d1:0:0:0
 F:TOWN
+D:A tiny but lifelike carving of a creature. It watches with unblinking eyes, as though dreaming of motion.
 
 N:*:& Wooden Statue~ of #
 G:`:u
@@ -4529,6 +4536,7 @@ I:9:0:0
 W:5:0:0:200:75
 A:5/3
 P:0:1d1:0:0:0
+D:A crude wooden figure carved from a single block of wood, its surface marked by age and the lines of living grain.
 
 N:*:& Clay Statue~ of #
 G:`:U
@@ -4536,6 +4544,7 @@ I:9:1:0
 W:10:0:0:500:50
 A:10/3
 P:0:1d1:0:0:0
+D:A rough figure of hardened earth. It feels older than its shape suggests, as if molded by forgotten hands.
 
 N:*:& Stone Statue~ of #
 G:`:s
@@ -4543,6 +4552,7 @@ I:9:2:0
 W:15:0:0:500:100
 A:15/3
 P:0:1d1:0:0:0
+D:A carved likeness rendered in stone. The eyes seem to follow you.
 
 N:*:& Iron Statue~ of #
 G:`:D
@@ -4550,6 +4560,7 @@ I:9:3:0
 W:20:0:0:500:200
 A:20/3
 P:0:1d1:0:0:0
+D:A weighty, rust-flecked figure forged in iron. Cold to the touch and unnervingly silent.
 
 N:*:& Copper Statue~ of #
 G:`:o
@@ -4557,6 +4568,7 @@ I:9:4:0
 W:25:0:0:500:500
 A:25/3
 P:0:1d1:0:0:0
+D:A reddish figure with a faint green patina. Time and touch have added character to its surface.
 
 N:*:& Silver Statue~ of #
 G:`:W
@@ -4564,6 +4576,7 @@ I:9:5:0
 W:30:0:0:500:1000
 A:30/3
 P:0:1d1:0:0:0
+D:Polished to a mirror shine, this statue glints with cold grace. Its stance seems frozen mid-motion.
 
 N:*:& Golden Statue~ of #
 G:`:y
@@ -4571,6 +4584,7 @@ I:9:6:0
 W:40:0:0:500:2500
 A:40/3
 P:0:1d1:0:0:0
+D:A figure cast in gold, minutely detailed. Its polished surface reveals no flaws-and nothing of its origin.
 
 N:*:& Ivory Statue~ of #
 G:`:w
@@ -4578,6 +4592,7 @@ I:9:7:0
 W:45:0:0:500:2000
 A:45/3
 P:0:1d1:0:0:0
+D:Smooth and pale, this statue radiates quiet dignity. The surface is soft to the eye but hard to the touch.
 
 N:*:& Mithril Statue~ of #
 G:`:B
@@ -4585,6 +4600,7 @@ I:9:8:0
 W:80:0:0:500:10000
 A:80/3
 P:0:1d1:0:0:0
+D:A gleaming image wrought of true-silver. Light dances on its flawless surface with unnatural clarity.
 
 N:*:& Ornate Statue~ of #
 G:`:v
@@ -4592,6 +4608,7 @@ I:9:9:0
 W:50:0:0:500:5000
 A:50/3
 P:0:1d1:0:0:0
+D:An elaborate sculpture detailed with intricate engravings and precious inlays. Its craftsmanship defies belief.
 
 ########################################################################
 # Miscellaneous (TV_JUNK and others)

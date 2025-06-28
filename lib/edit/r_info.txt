@@ -3377,7 +3377,7 @@ P:Copy:Kutar:Rogue
 P:Skills:0:-7:0:0:0:0:0:0
 P:ExtraSkills:0:-4:0:0:0:0:0:0
 P:Body:Hound
-D:It is as large as a tiger, its yellow eyes are pupilless.
+D:It is as large as a tiger, with yellow, pupilless eyes.
 
 N:223:Moon beast
 G:q:W

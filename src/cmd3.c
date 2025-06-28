@@ -1272,6 +1272,7 @@ static void _list_monsters_aux(_mon_list_ptr list, rect_t display_rect, int mode
     bool done = FALSE;
     bool redraw = TRUE;
     bool show_object_location = TRUE;
+    bool switch_to_list_objects = FALSE;
     int  cmd_queue[10]; /* A worthy hack!! */
     int  q_pos = 0;
     int  q_ct = 0;
@@ -1595,6 +1596,8 @@ static void _list_monsters_aux(_mon_list_ptr list, rect_t display_rect, int mode
             handled = TRUE;
             break;
         /* Exit */
+        case ']':
+            switch_to_list_objects = TRUE;
         case ESCAPE:
         case 'Q':
         case '\n':
@@ -1675,9 +1678,10 @@ static void _list_monsters_aux(_mon_list_ptr list, rect_t display_rect, int mode
             }
           }
         }
-      
     }
     screen_load();
+
+    if(switch_to_list_objects) do_cmd_list_objects();
 }
 
 void do_cmd_list_monsters(int mode)
@@ -1685,15 +1689,10 @@ void do_cmd_list_monsters(int mode)
     _mon_list_ptr list = _create_monster_list(mode);
     rect_t display_rect = ui_menu_rect();
 
-    display_rect.cy -= 8; // I have no idea why this is oversized by 8 lines
+    if (display_rect.cx > monster_list_width) display_rect.cx = monster_list_width;
 
-    if (display_rect.cx > monster_list_width)
-        display_rect.cx = monster_list_width;
-
-    if (list->ct_total)
-        _list_monsters_aux(list, display_rect, mode);
-    else
-        msg_print("You see no visible monsters.");
+    if (list->ct_total) _list_monsters_aux(list, display_rect, mode);
+    else msg_print("You see no visible monsters.");
 
     _mon_list_free(list);
 }
@@ -2051,14 +2050,12 @@ void do_cmd_list_objects(void)
     _obj_list_ptr list = _create_obj_list();
     rect_t display_rect = ui_menu_rect();
 
-    display_rect.cy -= 8; // I have no idea why this is oversized by 8 lines
-  
-    if (display_rect.cx > object_list_width)
-        display_rect.cx = object_list_width;
+    if (display_rect.cx > object_list_width) display_rect.cx = object_list_width;
 
     bool stairs_on = list_stairs;
     bool disable_toggling = FALSE;
     bool show_object_location = TRUE;
+    bool switch_to_list_monsters = FALSE;
 
     if (((list->ct_total + list->ct_feature) < 1) && (!stairs_on))
     {
@@ -2133,6 +2130,8 @@ void do_cmd_list_objects(void)
                 screen_save();
                 redraw = TRUE;
                 break;
+            case '[':
+                switch_to_list_monsters = TRUE;
             case ESCAPE:
             case 'Q':
             case '\n':
@@ -2140,7 +2139,7 @@ void do_cmd_list_objects(void)
             case ']':
                 done = TRUE;
                 break;
-                
+            
             case '<':
             case '>':
             case 'S':
@@ -2370,6 +2369,8 @@ void do_cmd_list_objects(void)
 
     _obj_list_free(list);
     list_stairs = stairs_on; /* Keep old default */
+
+    if(switch_to_list_monsters) do_cmd_list_monsters(0);
 }
 
 void _fix_object_list_aux(void)

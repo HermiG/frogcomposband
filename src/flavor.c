@@ -949,7 +949,6 @@ static void get_inscription(char *buff, object_type *o_ptr)
 
 char attr_to_attr_char(byte a)
 {
-    //char hack[30] = "dwsorgbuDWvyRGBULPiptSmMTOVcn";
     char c = (color_char[a & COLOR_MASK]);
     return c;
 }

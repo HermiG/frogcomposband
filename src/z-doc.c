@@ -667,12 +667,10 @@ cptr doc_parse_tag(cptr pos, doc_tag_ptr tag)
         assert(*seek == '>');
         seek++;
 
-        if (!result.arg_size)
-            return pos;
+        if (!result.arg_size) return pos;
         else if (result.type == DOC_TAG_COLOR)
         {
-            if ( result.arg_size == 1 && result.arg[0] != '*'
-              && !strchr(color_char, result.arg[0]) )
+            if ( result.arg_size == 1 && result.arg[0] != '*' && !strchr(color_char, result.arg[0]) )
             {
                 return pos;
             }
@@ -965,8 +963,7 @@ doc_pos_t doc_insert(doc_ptr doc, cptr text)
             {
                 cb += token.size;
             }
-            else if ( token.type == DOC_TOKEN_TAG
-                   && (token.tag.type == DOC_TAG_COLOR || token.tag.type == DOC_TAG_CLOSE_COLOR) )
+            else if ( token.type == DOC_TOKEN_TAG && (token.tag.type == DOC_TAG_COLOR || token.tag.type == DOC_TAG_CLOSE_COLOR) )
             {
             }
             else /* whitespace or newline */

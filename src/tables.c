@@ -84,7 +84,7 @@ char listsym[] =
 /*
  * Encode the screen colors
  */
-char color_char[] = "dwsorgbuDWvyRGBULPICtSmMTOVcnKpi";
+char color_char[] = "dwsorgbuDWvyRGBULPICtSmMTOVcnKph";
 
 /*
  * Global mixed-case alphanumeric array

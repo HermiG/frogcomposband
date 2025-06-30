@@ -22,7 +22,7 @@
    as you type in new content.
 
    We support tags to control output and provide help features:
-     <color:x> where x is one of the color codes:dwsorgbuDWvyRGBU*
+     <color:x> where x is one of the color codes:dwsorgbuDWvyRGBULPICtSmMTOVcnKph
      <style:name>
      <topic:name>
      <link:file#topic>

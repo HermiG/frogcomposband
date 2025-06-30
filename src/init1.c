@@ -949,7 +949,7 @@ static bool add_tag(s16b *offset, header *head, cptr buf)
 
 /*
  * Convert a "color letter" into an "actual" color
- * The colors are: dwsorgbuDWvyRGBU, as shown below
+ * The colors are: dwsorgbuDWvyRGBULPICtSmMTOVcnKph, as shown below
  */
 byte color_char_to_attr(char c)
 {

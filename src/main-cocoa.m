@@ -1276,12 +1276,9 @@ Boolean open_when_ready = FALSE;
 /* Sets an Angband color at a given index */
 static void set_color_for_index(int idx)
 {
-  CGFloat rv, gv, bv;
-  CGFloat gamma = 1.4f;
-  
-  rv = powf(angband_color_table[idx][1]/255.0f, 1.0f/gamma);
-  gv = powf(angband_color_table[idx][2]/255.0f, 1.0f/gamma);
-  bv = powf(angband_color_table[idx][3]/255.0f, 1.0f/gamma);
+  CGFloat rv = angband_color_table[idx][1]/255.0f;
+  CGFloat gv = angband_color_table[idx][2]/255.0f;
+  CGFloat bv = angband_color_table[idx][3]/255.0f;
   
   CGContextSetRGBFillColor([[NSGraphicsContext currentContext] graphicsPort], rv, gv, bv, 1.0f);
 }

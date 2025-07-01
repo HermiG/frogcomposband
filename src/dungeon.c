@@ -3575,7 +3575,7 @@ static void _dispatch_command(int old_now_turn)
         {
             if (!p_ptr->wild_mode) equip_wield_ui();
             break;
-        }        
+        }
 
         /* Take off equipment */
         case 't':
@@ -3629,7 +3629,7 @@ static void _dispatch_command(int old_now_turn)
         }
 
         /* Hack -- toggle windows */
-        case KTRL('I'):
+        case KTRL('I'): // TAB maps to ^I
         {
             toggle_inven_equip();
             toggle_mon_obj_lists();

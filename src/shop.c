@@ -2343,7 +2343,7 @@ bool shop_common_cmd_handler(int cmd)
     case 'I':
         obj_inspect_ui();
         return TRUE;
-    case KTRL('I'):
+    case KTRL('I'): // TAB key maps to ^I
         toggle_inven_equip();
         return TRUE;
     case '{':

@@ -4,7 +4,7 @@ Objects are a big part of playing <color:keyword>FrogComposband</color>. Many co
 
 <topic:Sample><style:heading>An Example</style>
 
-To view your gear, you press <color:keypress>i</color> for inventory or <color:keypress>e</color> for equipment. Both keys bring up the same dialog but select the appropriate tab for you:
+To view your gear, you press <color:keypress>i</color> for inventory, <color:keypress>e</color> for equipment, or <color:keypress>b</color> for bag. All three keys bring up the same dialog but select the appropriate tab for you:
 <style:screenshot>
 <color:D>Inventory</color> <color:b>|</color> <color:G>Equipment</color> <color:b>|</color> <color:D>Quiver</color>                                                  
  a) Right Hand: a Broad Sword (2d6) (+0,+0)                 15.0 lb LEVEL <color:G>     1</color>
@@ -31,7 +31,7 @@ Carrying 113.9 pounds (<color:G>81%</color> capacity).
 <color:U>#####</color>.......................................................<color:U>#######</color>             
 Outpost                                                                         
 </style>
-The first thing you should notice is that your objects are grouped into tabs depending on their location. The top line shows the available tabs (Inventory, Equipment and Quiver in this case) and the active tab is displayed in <color:G>color</color> while the inactive tabs are <color:D>grayed out</color>. You can switch tabs by pressing <color:keypress>/</color>.
+The first thing you should notice is that your objects are grouped into tabs depending on their location. The top line shows the available tabs (Inventory, Equipment, and Quiver in this case) and the active tab is displayed in <color:G>green</color> while the inactive tabs are <color:D>grayed out</color>. You can switch tabs by pressing <color:keypress>/</color>, <color:keypress>Tab</color>, or the <color:keypress>Left</color> and <color:keypress>Right</color> arrow keys.
 <style:screenshot>
 <color:D>Inventory</color> <color:b>|</color> <color:D>Equipment</color> <color:b>|</color> <color:G>Quiver</color>                                                  
  a) <color:U>25 Arrows (3d4) (+0,+0)</color>                                  5.0 lb LEVEL <color:G>     1</color>
@@ -66,7 +66,7 @@ To choose an object, simply press the indicated letter. What happens next depend
                                                                     EXP <color:G>      10</color>
   <color:B>Score:</color> <color:D>2</color>                                                          AU  <color:G>   5.31k</color>
                                                                     <color:W>|</color><color:U>)}~</color><color:d>   </color><color:u>~</color><color:s>[</color><color:g>(</color><color:s>]</color><color:U>]</color>
-<color:B>[Press </color><color:y>Any Key</color><color:B> to Continue]</color>                                         STR : <color:G> 18/30</color>
+<color:B>[Press </color><color:y>Arrow Keys</color><color:B> to Browse; </color><color:y>Any Key</color><color:B> to Continue]</color>                   STR : <color:G> 18/30</color>
                                                                     INT : <color:G>     6</color>
 </style>
 
@@ -83,13 +83,14 @@ You'll notice that selecting an object in this case did not dismiss the dialog. 
 <color:keypress>Esc</color>       Cancel the Prompt
 
 <color:G>Tab Navigation</color>
-<color:keypress>/</color>         Next Tab
-<color:keypress>\</color>         Previous Tab
+<color:keypress>/ 6 Tab</color>   Next Tab
+<color:keypress>\ 4</color>       Previous Tab
 <color:keypress>^P</color>        Switch to Pack (Inventory) Tab
 <color:keypress>^E</color>        Switch to Equipment Tab
 <color:keypress>^Q</color>        Switch to Quiver Tab
+<color:keypress>^B</color>        Switch to Bag Tab
 <color:keypress>^F</color>        Switch to Floor Tab
-<color:keypress>- </color>        <indent>Switch to Floor Tab. Select Floor Object if there is only one.</indent>
+<color:keypress>-</color>         <indent>Switch to Floor Tab; if there's only one object, pick it.</indent>
 
 <color:G>Display Options</color>
 <color:keypress>^W</color>        Toggle Weights (see <link:option.txt#show_weights>)

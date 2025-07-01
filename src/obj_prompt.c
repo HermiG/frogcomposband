@@ -85,8 +85,8 @@ void obj_prompt_add_special_packs(obj_prompt_ptr prompt)
 int obj_prompt(obj_prompt_ptr prompt)
 {
     obj_prompt_context_t context = {0};
-    int                  tmp;
-    int                  result = 0;
+    int tmp;
+    int result = 0;
 
     assert(!prompt->obj);
 
@@ -96,8 +96,7 @@ int obj_prompt(obj_prompt_ptr prompt)
 
     if (!vec_length(context.tabs))
     {
-        if (prompt->error)
-            msg_format("<color:R>%s</color>", prompt->error);
+        if (prompt->error) msg_format("<color:R>%s</color>", prompt->error);
         _context_unmake(&context);
         return OP_NO_OBJECTS;
     }
@@ -108,8 +107,7 @@ int obj_prompt(obj_prompt_ptr prompt)
         if (repeat_tab < 0)
         {
             /* XXX This might need further thought ... tested for force-trainers */
-            if ( prompt->cmd_handler
-              && prompt->cmd_handler(&context, tmp) == OP_CMD_DISMISS )
+            if ( prompt->cmd_handler && prompt->cmd_handler(&context, tmp) == OP_CMD_DISMISS )
             {
                 _context_unmake(&context);
                 return OP_CUSTOM;
@@ -118,10 +116,9 @@ int obj_prompt(obj_prompt_ptr prompt)
         else if (repeat_tab >= 0 && REPEAT_PULL(&tmp))
         {
             obj_prompt_tab_ptr tab = vec_get(context.tabs, repeat_tab);
-            slot_t             slot;
 
             inv_calculate_labels(tab->inv, 1, context.page_size, prompt->flags);
-            slot = inv_label_slot(tab->inv, tmp);
+            slot_t slot = inv_label_slot(tab->inv, tmp);
             if (slot)
             {
                 prompt->obj = inv_obj(tab->inv, slot);
@@ -181,8 +178,7 @@ int obj_prompt(obj_prompt_ptr prompt)
             result = OP_SUCCESS;
             REPEAT_PUSH(inv_loc(tab->inv));
             /* repeat can be dangerous if the pack shuffles */
-            if (tab->page == 0 && object_is_aware(obj))
-                REPEAT_PUSH(cmd);
+            if (tab->page == 0 && object_is_aware(obj)) REPEAT_PUSH(cmd);
             break;
         }
         else if (isupper(cmd))
@@ -422,12 +418,13 @@ static int _basic_cmd(obj_prompt_context_ptr context, int cmd)
             }
         }
         return OP_CMD_HANDLED; }
-    case '/':
+    
+    case '/': case '6': case SKEY_RIGHT: case KTRL('I'): // TAB maps to ^I
         context->tab++;
         if (context->tab == vec_length(context->tabs))
             context->tab = 0;
         return OP_CMD_HANDLED;
-    case '\\':
+    case '\\': case '4': case SKEY_LEFT:
         context->tab--;
         if (context->tab < 0)
             context->tab = vec_length(context->tabs) - 1;
@@ -438,7 +435,7 @@ static int _basic_cmd(obj_prompt_context_ptr context, int cmd)
         else
             context->prompt->flags |= INV_IGNORE_INSCRIPTIONS;
         break;
-    case KTRL('I'): case KTRL('P'): { /* fyi, TAB is ^I in current encoding scheme ... */
+    case KTRL('P'): { // We could have used ^I, but TAB moving to the next tab was too good to pass up
         int tab = _find_tab(context->tabs, INV_PACK);
         if (tab >= 0)
             context->tab = tab;

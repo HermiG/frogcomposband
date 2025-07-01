@@ -4630,6 +4630,7 @@ W:0:0:10:2:1
 A:0/1
 P:0:1d1:0:0:0
 M:100:1d5
+D:A discarded glass bottle, dry and stoppered. Could be reused-or hurled in desperation.
 
 N:*:& Shard~ of Pottery
 G:~:r
@@ -4669,6 +4670,7 @@ I:4:1:0
 W:15:0:60:3:1000
 A:15/2
 E:RETURN_PETS:15:150
+D:A finely-tuned whistle that, when blown, emits a sound only loyal companions can hear.
 
 N:*:Rune
 G:*:B

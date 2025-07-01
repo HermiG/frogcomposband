@@ -117,13 +117,11 @@ static obj_p _accept[EQUIP_SLOT_MAX] = {
 
 static int _slot_count(obj_ptr obj)
 {
-    int     ct = 0;
-    slot_t  slot;
-    for (slot = 1; slot <= _template->max; slot++)
+    int ct = 0;
+    for (slot_t slot = 1; slot <= _template->max; slot++)
     {
         obj_p p = _accept[_template->slots[slot].type];
-        if (p(obj))
-            ct++;
+        if (p(obj)) ct++;
     }
     return ct;
 }
@@ -453,13 +451,7 @@ void equip_ui(void)
 
 void equip_display(doc_ptr doc, obj_p p, int flags)
 {
-    inv_display(
-        _inv,
-        1, equip_max(),
-        p,
-        doc,
-        flags
-    );
+    inv_display(_inv, 1, equip_max(), p, doc, flags);
 }
 
 /************************************************************************
@@ -477,7 +469,6 @@ static void    _wield_after(slot_t slot);
 
 void equip_wield_ui(void)
 {
-    slot_t  slot;
     obj_ptr obj = _wield_get_obj();
 
     if (!obj) return;
@@ -500,13 +491,14 @@ void equip_wield_ui(void)
 
     if (obj_is_ammo(obj))
     {
-        int amt = obj->number;
         assert(equip_find_obj(TV_QUIVER, SV_ANY));
-        if (quiver_capacity() <= quiver_count(NULL))
+        if (quiver_count(NULL) >= quiver_capacity())
         {
             msg_print("Your quiver is full.");
             return;
         }
+
+        int amt = obj->number;
         if (amt == 1 || msg_input_num("Quantity", &amt, 1, obj->number))
         {
             obj_t copy = *obj;
@@ -522,7 +514,7 @@ void equip_wield_ui(void)
     {
         if (!_wield_verify(obj)) return;
 
-        slot = _wield_get_slot(obj);
+        slot_t slot = _wield_get_slot(obj);
         if (!slot) return;
         if (!_wield_confirm(obj, slot)) return;
 
@@ -531,7 +523,7 @@ void equip_wield_ui(void)
         energy_use = weaponmaster_wield_hack(obj);
         _wield(obj, slot);
 
-        if ((!obj) || (!obj->k_idx)) return;
+        if (!obj || !obj->k_idx) return;
 
         _wield_after(slot);
         obj_release(obj, OBJ_RELEASE_QUIET);
@@ -573,7 +565,7 @@ static bool _wield_verify(obj_ptr obj)
     if (obj->tval == TV_QUIVER && quiver_count(NULL) > obj->xtra4)
     {
         msg_format("Failed! Your current quiver holds %d missiles but this quiver "
-            "only has a capacity for %d missiles.", quiver_count(NULL), obj->xtra4);
+                   "only has a capacity for %d missiles.", quiver_count(NULL), obj->xtra4);
         return FALSE;
     }
     return TRUE;
@@ -662,8 +654,7 @@ static bool _wield_confirm(obj_ptr obj, slot_t slot)
 
 static void _wield_before(obj_ptr obj, slot_t slot)
 {
-    if (p_ptr->special_defense & KATA_MUSOU)
-        set_action(ACTION_NONE);
+    if (p_ptr->special_defense & KATA_MUSOU) set_action(ACTION_NONE);
 
     quests_on_get_obj(obj);
 }
@@ -674,11 +665,11 @@ static void _wield(obj_ptr obj, slot_t slot)
 {
     obj_ptr old_obj = inv_obj(_inv, slot);
 
-    object_mitze(obj, MITZE_PICKUP);
-    if ((!obj) || (!obj->k_idx)) return;
+    if (!obj || !obj->k_idx) return;
 
-    if (old_obj)
-        equip_takeoff(slot);
+    object_mitze(obj, MITZE_PICKUP);
+
+    if (old_obj) equip_takeoff(slot);
 
     stats_on_use(obj, 1);
     inv_add_at(_inv, obj, slot);
@@ -686,7 +677,7 @@ static void _wield(obj_ptr obj, slot_t slot)
 
 static void _wield_after(slot_t slot)
 {
-    char    o_name[MAX_NLEN];
+    char o_name[MAX_NLEN];
     obj_ptr obj = inv_obj(_inv, slot);
     u32b flgs[OF_ARRAY_SIZE];
 

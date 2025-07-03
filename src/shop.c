@@ -1830,7 +1830,7 @@ static void _examine(_ui_context_ptr context)
 
 static void _reserve_aux(shop_ptr shop, obj_ptr obj)
 {
-    int        cost = _sell_price(shop, MIN(10000, obj_value(obj) / 2));
+    int        cost = _sell_price(shop, MIN(10000, obj_value(obj) / 10));
     string_ptr s;
     char       c;
     char       name[MAX_NLEN];
@@ -1849,11 +1849,10 @@ static void _reserve_aux(shop_ptr shop, obj_ptr obj)
 
     if (maks > 0)
     {
-        int mode = (OD_OMIT_PREFIX | OD_COLOR_CODED);
-        if (amt == 1) mode |= OD_SINGULAR;
-        object_desc(name, obj, mode);
         cost *= amt;
-        s = string_alloc_format("Reserve <color:%c>%d</color> %s for <color:R>%d</color> gp? <color:y>[y/n]</color>", tval_to_attr_char(obj->tval), amt, name, cost);
+        object_desc(name, obj, OD_OMIT_PREFIX | OD_COLOR_CODED | (amt == 1 ? OD_SINGULAR : 0));
+        s = string_alloc_format("Reserve <color:%c>%d</color> %s for <color:R>%d</color> gp? <color:y>[y/n]</color>",
+                                tval_to_attr_char(obj->tval), amt, name, cost);
     }
     else if (maks < 0)
     {
@@ -1877,8 +1876,7 @@ static void _reserve_aux(shop_ptr shop, obj_ptr obj)
     stats_on_gold_services(cost);
 
     p_ptr->redraw |= PR_GOLD;
-    if (prace_is_(RACE_MON_LEPRECHAUN))
-        p_ptr->update |= (PU_BONUS | PU_HP | PU_MANA);
+    if (prace_is_(RACE_MON_LEPRECHAUN)) p_ptr->update |= (PU_BONUS | PU_HP | PU_MANA);
 
     obj->number = amt;
     object_desc(name, obj, OD_COLOR_CODED);

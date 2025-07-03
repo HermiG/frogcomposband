@@ -240,14 +240,9 @@ static void _do_identify_aux(obj_ptr obj)
         msg_format("%^s: %s (%c).", equip_describe_slot(obj->loc.slot),
                 name, slot_label(obj->loc.slot));
         break;
-/* case INV_PACK:
-        msg_format("In your pack: %s.", name);
-        break;
-    case INV_QUIVER:
-        msg_format("In your quiver: %s.", name);
-        break;*/
     case INV_PACK:
     case INV_QUIVER:
+    case INV_BAG:
         obj->marked |= OM_DELAYED_MSG;
         p_ptr->notice |= PN_CARRY;
         break;
@@ -269,6 +264,7 @@ void mass_identify(bool use_charges) /* shared with Sorcery spell */
     pack_for_each_that(_do_identify_aux, obj_is_unknown);
     equip_for_each_that(_do_identify_aux, obj_is_unknown);
     quiver_for_each_that(_do_identify_aux, obj_is_unknown);
+    bag_for_each_that(_do_identify_aux, obj_is_unknown);
     inv_for_each_that(floor, _do_identify_aux, obj_is_unknown);
     _multi_charge_lock = FALSE;
 
@@ -294,7 +290,8 @@ static bool _do_identify(void)
     prompt.where[0] = INV_PACK;
     prompt.where[1] = INV_EQUIP;
     prompt.where[2] = INV_QUIVER;
-    prompt.where[3] = INV_FLOOR;
+    prompt.where[3] = INV_BAG;
+    prompt.where[4] = INV_FLOOR;
     prompt.cmd_handler = _cmd_handler;
     obj_prompt_add_special_packs(&prompt);
 
@@ -2063,8 +2060,7 @@ bool effect_use(effect_t *effect, int boost)
     device_noticed = FALSE;
     device_used_charges = 0;
     device_available_charges = 1;
-    if (do_effect(effect, SPELL_CAST, boost))
-        return TRUE;
+    if (do_effect(effect, SPELL_CAST, boost)) return TRUE;
     return FALSE;
 }
 
@@ -2072,8 +2068,7 @@ int effect_value(effect_t *effect)
 {
     int  result = 0;
     cptr hack = do_effect(effect, SPELL_VALUE, 0);
-    if (hack)
-        result = atoi(hack);
+    if (hack) result = atoi(hack);
     return result;
 }
 
@@ -2081,8 +2076,7 @@ int effect_cost_extra(effect_t *effect)
 {
     int  result = 0;
     cptr hack = do_effect(effect, SPELL_COST_EXTRA, 0);
-    if (hack)
-        result = atoi(hack);
+    if (hack) result = atoi(hack);
     return result;
 }
 
@@ -2090,8 +2084,7 @@ byte effect_color(effect_t *effect)
 {
     byte result = TERM_WHITE;
     cptr hack = do_effect(effect, SPELL_COLOR, 0);
-    if (hack && strlen(hack))
-        result = atoi(hack);
+    if (hack && strlen(hack)) result = atoi(hack);
     return result;
 }
 
@@ -2297,8 +2290,8 @@ static _effect_info_t _effect_info[] =
     {"BREATHE_SHARDS",  EFFECT_BREATHE_SHARDS,      70, 200,  4, BIAS_LAW},
     {"BREATHE_CHAOS",   EFFECT_BREATHE_CHAOS,       75, 250,  4, BIAS_CHAOS},
     {"BREATHE_DISEN",   EFFECT_BREATHE_DISEN,       60, 150,  8, 0},
-	{"BREATHE_INERTIA", EFFECT_BREATHE_INERTIA,     60, 200,  8, 0},
-	{"BREATHE_WATER",   EFFECT_BREATHE_WATER,       65, 150,  8, BIAS_MAGE },
+    {"BREATHE_INERTIA", EFFECT_BREATHE_INERTIA,     60, 200,  8, 0},
+    {"BREATHE_WATER",   EFFECT_BREATHE_WATER,       65, 150,  8, BIAS_MAGE },
     {"BREATHE_TIME",    EFFECT_BREATHE_TIME,        90, 500, 32, 0},
     {"BREATHE_ELEMENTS", EFFECT_BREATHE_ELEMENTS,   60, 100, 64, 0},
 
@@ -2349,6 +2342,7 @@ static _effect_info_t _effect_info[] =
     {"STARLITE",        EFFECT_STARLITE,            20, 100,  2, 0},
     {"NOTHING",         EFFECT_NOTHING,              1,   1,  0, 0},
     {"ENDLESS_QUIVER",  EFFECT_ENDLESS_QUIVER,      50, 150,  0, BIAS_ARCHER},
+    {"BOTTOMLESS_BAG",  EFFECT_BOTTOMLESS_BAG,      50, 150,  0, 0},
 
     /* Bad Effects                                  Lv    T   R  Bias */
     {"AGGRAVATE",       EFFECT_AGGRAVATE,           10, 100,  1, BIAS_DEMON},
@@ -3474,14 +3468,14 @@ static int _power_curve_offset(int amt, int lvl, int start)
 #define _BOOST(n) (_boost((n), boost))
 cptr do_effect(effect_t *effect, int mode, int boost)
 {
-    bool name = (mode == SPELL_NAME);
-    bool desc = (mode == SPELL_DESC);
-    bool info = (mode == SPELL_INFO);
-    bool cast = (mode == SPELL_CAST);
+    bool name  = (mode == SPELL_NAME);
+    bool desc  = (mode == SPELL_DESC);
+    bool info  = (mode == SPELL_INFO);
+    bool cast  = (mode == SPELL_CAST);
     bool value = (mode == SPELL_VALUE);
     bool color = (mode == SPELL_COLOR);
-    bool cost = (mode == SPELL_COST_EXTRA);
-    int  dir = 0;
+    bool cost  = (mode == SPELL_COST_EXTRA);
+    int  dir   = 0;
 
     switch (effect->type)
     {
@@ -3986,8 +3980,7 @@ cptr do_effect(effect_t *effect, int mode, int boost)
         if (color) return format("%d", TERM_ORANGE);
         if (cast)
         {
-            int i;
-            for (i = 1; i < o_max; i++)
+            for (int i = 1; i < o_max; i++)
             {
                 object_type *o_ptr = &o_list[i];
                 if (!o_ptr->k_idx) continue;
@@ -4764,8 +4757,7 @@ cptr do_effect(effect_t *effect, int mode, int boost)
         if (cast)
         {
             /* TODO: This is handled elsewhere in cm6.c, since we need the object_type
-               for the capture ball in order to "reconstitute" the captured pet.
-             */
+               for the capture ball in order to "reconstitute" the captured pet. */
         }
         break;
 
@@ -6805,7 +6797,7 @@ cptr do_effect(effect_t *effect, int mode, int boost)
             device_known = TRUE;
         }
         break;
-    case EFFECT_ENDLESS_QUIVER: /* should only be on a quiver ... */
+    case EFFECT_ENDLESS_QUIVER: /* should only be on a quiver */
         if (name) return "Endless Quiver";
         if (desc) return "Your quiver will refill with average ammo.";
         if (value) return format("%d", 1500);
@@ -6830,6 +6822,27 @@ cptr do_effect(effect_t *effect, int mode, int boost)
                 msg_print("Your quiver refills.");
                 quiver_carry(&forge);
             }
+        }
+        break;
+    case EFFECT_BOTTOMLESS_BAG: /* should only be on a potion belt or scroll case */
+        if (name && boost == SV_BAG_POTION_BELT) return "Bottomless Potion Belt";
+        if (name && boost == SV_BAG_SCROLL_CASE) return "Curious Scroll Case";
+        if (name) return "Error, invalid Bag type.";
+        
+        if (desc && boost == SV_BAG_POTION_BELT) return "You occasionally find potions you swear weren't there before.";
+        if (desc && boost == SV_BAG_SCROLL_CASE) return "You occasionally find scrolls you swear weren't there before.";
+        if (desc) return "Error, invalid Bag type.";
+        if (value) return format("%d", 1500);
+        if (color) return format("%d", TERM_L_RED);
+        if (cast && boost) // Use boost value to determine the bag type
+        {
+          obj_t forge = {0};
+          if(boost == SV_BAG_POTION_BELT) object_prep(&forge, lookup_kind(TV_POTION, SV_ANY));
+          if(boost == SV_BAG_SCROLL_CASE) object_prep(&forge, lookup_kind(TV_SCROLL, SV_ANY));
+          forge.number = MAX(0, MIN(1, bag_capacity() - bag_count(NULL)));
+          object_origins(&forge, ORIGIN_BOTTOMLESS);
+          
+          if (forge.number) bag_carry(&forge);
         }
         break;
     case EFFECT_WALL_BUILDING:
@@ -6943,8 +6956,7 @@ cptr do_effect(effect_t *effect, int mode, int boost)
                     if (!cave_have_flag_bold(y, x, FF_PROJECT)) continue;
                     if (!player_bold(y, x)) break;
                 }
-                project(0, 0, y, x, _BOOST(damroll(dd, 10)), GF_LITE_WEAK,
-                          PROJECT_BEAM | PROJECT_THRU | PROJECT_GRID | PROJECT_KILL);
+                project(0, 0, y, x, _BOOST(damroll(dd, 10)), GF_LITE_WEAK, PROJECT_BEAM | PROJECT_THRU | PROJECT_GRID | PROJECT_KILL);
             }
             device_noticed = TRUE;
         }

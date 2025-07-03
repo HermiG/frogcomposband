@@ -29,7 +29,7 @@ enum {
 };
 
 /* Parameters to obj_prompt */
-#define MAX_LOC 7
+#define MAX_LOC 8
 struct obj_prompt_s
 {
     /* input */
@@ -42,8 +42,7 @@ struct obj_prompt_s
     int     top_loc;
 
     /* customize */
-    obj_prompt_cmd_f
-            cmd_handler;
+    obj_prompt_cmd_f cmd_handler;
 
     /* output */
     obj_ptr obj;

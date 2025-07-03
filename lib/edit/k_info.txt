@@ -458,7 +458,7 @@ A:10/2
 P:0:2d5:0:0:0
 F:SHOW_MODS | TOWN
 D:An ancient sickle-sword with a forward-hooking blade.
-D:Designed to catch and wrench an enemy’s shield or limbs.
+D:Designed to catch and wrench an enemy's shield or limbs.
 
 N:*:& Tulwar~
 G:|:W
@@ -644,7 +644,7 @@ P:0:1d1:0:0:0
 F:SHOW_MODS
 F:IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD
 D:A deceptively tiny needle coated with fatal venom.
-D:It pierces the weakest point, delivering instant death - if you’re lucky.
+D:It pierces the weakest point, delivering instant death - if you're lucky.
 
 N:*:& Falcon Sword~
 G:|:y
@@ -1969,7 +1969,7 @@ I:36:63:0
 W:1:0:0:10:1000000
 F:INSTA_ART
 D:A one-of-a-kind outfit tailored for showmanship and flair.
-D:You’re not sure whether to fight in it or perform on stage.
+D:You're not sure whether to fight in it or perform on stage.
 
 ########################################################################
 #  Hard Armor (TV_HARD_ARMOR)
@@ -4733,4 +4733,96 @@ I:10:8:0
 W:0:0:0:10:0
 P:0:1d1:0:0:0
 F:PLURAL
+
+########################################################################
+# Bags (TV_BAG)
+########################################################################
+N:*:& Linen Bag~
+G:&:U
+I:47:1:10
+W:20:0:40:10:30
+A:20/3
+F:TOWN
+D:A small sack of coarse fabric tied shut with a length of twine.
+
+N:*:& Woolen Sack~
+G:&:U
+I:47:1:15
+W:20:0:40:10:30
+A:20/3
+
+
+N:*:& Drawstring Pouch~
+G:&:U
+I:47:1:20
+W:20:0:40:10:30
+A:20/3
+D:A modest cloth pouch with a simple drawstring closure.
+
+N:*:& Canvas Satchel~
+G:&:U
+I:47:1:25
+W:20:0:40:10:30
+A:20/3
+D:A well-made satchel of waxed canvas, with a sturdy strap and dependable stitching.
+D:Weatherproof and widely used among messengers and scouts.
+
+N:*:& Studded Leather Pouch~
+G:&:U
+I:47:1:30
+W:20:0:40:10:30
+A:20/3
+D:Crafted from thick leather and reinforced with metal studs, this pouch is built to endure rough travel and careless handling alike.
+
+N:*:& Hide Satchel~
+G:&:U
+I:47:1:40
+W:20:0:40:10:30
+A:20/3
+D:A rugged pouch of worn leather, cinched with a rawhide cord.
+D:A broad-shouldered satchel cut from heavy hide and worn crosswise.
+
+N:*:& Traveler's Pouch~
+G:&:U
+I:47:1:50
+W:20:0:40:10:30
+A:20/3
+D:Balanced and comfortably worn, this pouch is favored by seasoned adventurers.
+
+N:*:& Oiled Leather Knapsack~
+G:&:U
+I:47:1:60
+W:20:0:40:10:30
+A:20/3
+D:Sturdy and water-resistant, this knapsack gleams faintly from repeated oiling. Holds a surprising amount while keeping contents dry.
+
+N:*:& Fur-lined Pack~
+G:&:U
+I:47:1:80
+W:20:0:40:10:30
+A:20/3
+
+
+N:*:& Dwarven Rucksack~
+G:&:U
+I:47:1:100
+W:20:0:40:10:30
+A:20/3
+D:A sturdy, iron-studded pack crafted from thick boarhide and banded with bronze straps.
+
+N:*:& Potion Belt~
+G:&:g
+I:47:2:8
+W:0:0:0:10:100
+A:0/1:5/1:10/1:20/1
+F:TOWN
+D:A potion belt, designed to prevent breakage.
+
+N:*:& Scroll Case~
+G:&:g
+I:47:3:8
+W:0:0:0:10:100
+A:0/1:5/1:10/1:20/1
+F:TOWN
+D:A scroll case, with a tight clasp to keep delicate parchment safe.
 

@@ -680,7 +680,7 @@ static cptr k_info_flags[OF_COUNT] =
     "ESP_EVIL",
     "ESP_GOOD",
     "ESP_NONLIVING",
-	"ESP_LIVING",
+    "ESP_LIVING",
     "ESP_UNIQUE",
     "ESP_DRAGON",
     "ESP_DEMON",
@@ -702,8 +702,8 @@ static cptr k_info_flags[OF_COUNT] =
     "SLAY_TROLL",
     "SLAY_GIANT",
     "KILL_EVIL",
-	"KILL_GOOD",
-	"KILL_LIVING",
+    "KILL_GOOD",
+    "KILL_LIVING",
     "KILL_DRAGON",
     "KILL_DEMON",
     "KILL_UNDEAD",
@@ -744,6 +744,17 @@ static cptr k_info_flags[OF_COUNT] =
     "NIGHT_VISION",
     "BRAND_DARK",
     "REGEN_MANA",
+    "HOLDING",
+    "PROTECTION",
+    "ETHEREAL",
+    "BULKY",
+    "SECURE",
+    "AVARICE",
+    "LEAKY",
+    "CONSERVATION",
+    "BOTTOMLESS",
+    "ORGANIZED",
+    "TANGLED",
 };
 
 
@@ -1002,8 +1013,7 @@ byte color_char_to_attr(char c)
 /*
  * Initialize an "*_info" array, by parsing an ascii "template" file
  */
-errr init_info_txt(FILE *fp, char *buf, header *head,
-           parse_info_txt_func parse_info_txt_line)
+errr init_info_txt(FILE *fp, char *buf, header *head, parse_info_txt_func parse_info_txt_line)
 {
     errr err;
 
@@ -2801,30 +2811,25 @@ void retouch_f_info(header *head)
  */
 static errr grab_one_kind_flag(object_kind *k_ptr, cptr what)
 {
-    int i;
-
     /* We really should check this someplace :) */
-    assert((OF_COUNT + 31)/32 == OF_ARRAY_SIZE);
+    assert((OF_COUNT + 31)/32 <= OF_ARRAY_SIZE);
 
     /* Check flags */
-    for (i = 0; i < OF_COUNT; i++)
+    for (int i = 0; i < OF_COUNT; i++)
     {
         if (streq(what, k_info_flags[i]))
         {
             add_flag(k_ptr->flags, i);
-            return (0);
+            return 0;
         }
     }
 
-    if (grab_one_flag(&k_ptr->gen_flags, k_info_gen_flags, what) == 0)
-        return 0;
+    if (grab_one_flag(&k_ptr->gen_flags, k_info_gen_flags, what) == 0) return 0;
 
-    /* Oops */
     msg_format("Unknown object flag '%s'.", what);
 
-
     /* Error */
-    return (1);
+    return 1;
 }
 
 
@@ -3032,16 +3037,14 @@ errr parse_k_info(char *buf, header *head)
 
         if (k_ptr->tval == TV_BOW)
         {
-            if (6 != sscanf(buf+2, "%d:x%d.%d:%d:%d:%d",
-                    &ac, &hd1, &hd2, &th, &td, &ta)) return (1);
+            if (6 != sscanf(buf+2, "%d:x%d.%d:%d:%d:%d", &ac, &hd1, &hd2, &th, &td, &ta)) return (1);
             mult = hd1 * 100 + hd2; /* x3.25 -> 325 (alas, x3.2 -> 302 so use x3.20 instead) */
             hd1 = 0;
             hd2 = 0;
         }
         else
         {
-            if (6 != sscanf(buf+2, "%d:%dd%d:%d:%d:%d",
-                    &ac, &hd1, &hd2, &th, &td, &ta)) return (1);
+            if (6 != sscanf(buf+2, "%d:%dd%d:%d:%d:%d", &ac, &hd1, &hd2, &th, &td, &ta)) return (1);
         }
         k_ptr->ac = ac;
         k_ptr->dd = hd1;
@@ -3058,20 +3061,19 @@ errr parse_k_info(char *buf, header *head)
         /* Parse every entry textually */
         for (s = buf + 2; *s; )
         {
-                /* Find the end of this entry */
+            /* Find the end of this entry */
             for (t = s; *t && (*t != ' ') && (*t != '|'); ++t) /* loop */;
 
-                /* Nuke and skip any dividers */
+            /* Nuke and skip any dividers */
             if (*t)
             {
                 *t++ = '\0';
                 while (*t == ' ' || *t == '|') t++;
             }
-
-                /* Parse this entry */
+            /* Parse this entry */
             if (0 != grab_one_kind_flag(k_ptr, s)) return (5);
 
-                /* Start the next entry */
+            /* Start the next entry */
             s = t;
         }
     }
@@ -3326,26 +3328,27 @@ static bool grab_one_ego_item_flag(ego_type *e_ptr, cptr what)
 
 static bool grab_one_ego_type_flag(ego_type *e_ptr, cptr what)
 {
-    if (streq(what, "AMMO")) e_ptr->type |= EGO_TYPE_AMMO;
-    else if (streq(what, "WEAPON")) e_ptr->type |= EGO_TYPE_WEAPON;
-    else if (streq(what, "SHIELD")) e_ptr->type |= EGO_TYPE_SHIELD;
-    else if (streq(what, "BOW")) e_ptr->type |= EGO_TYPE_BOW;
-    else if (streq(what, "RING")) e_ptr->type |= EGO_TYPE_RING;
-    else if (streq(what, "AMULET")) e_ptr->type |= EGO_TYPE_AMULET;
-    else if (streq(what, "LITE")) e_ptr->type |= EGO_TYPE_LITE;
-    else if (streq(what, "BODY_ARMOR")) e_ptr->type |= EGO_TYPE_BODY_ARMOR;
-    else if (streq(what, "CLOAK")) e_ptr->type |= EGO_TYPE_CLOAK;
-    else if (streq(what, "HELMET")) e_ptr->type |= EGO_TYPE_HELMET;
-    else if (streq(what, "GLOVES")) e_ptr->type |= EGO_TYPE_GLOVES;
-    else if (streq(what, "BOOTS")) e_ptr->type |= EGO_TYPE_BOOTS;
-    else if (streq(what, "DIGGER")) e_ptr->type |= EGO_TYPE_DIGGER;
-    else if (streq(what, "CROWN")) e_ptr->type |= EGO_TYPE_CROWN;
-    else if (streq(what, "HARP")) e_ptr->type |= EGO_TYPE_HARP;
-    else if (streq(what, "ROBE")) e_ptr->type |= EGO_TYPE_ROBE;
-    else if (streq(what, "SPECIAL")) e_ptr->type |= EGO_TYPE_SPECIAL;
-    else if (streq(what, "DEVICE")) e_ptr->type |= EGO_TYPE_DEVICE;
+    if      (streq(what, "AMMO"))         e_ptr->type |= EGO_TYPE_AMMO;
+    else if (streq(what, "WEAPON"))       e_ptr->type |= EGO_TYPE_WEAPON;
+    else if (streq(what, "SHIELD"))       e_ptr->type |= EGO_TYPE_SHIELD;
+    else if (streq(what, "BOW"))          e_ptr->type |= EGO_TYPE_BOW;
+    else if (streq(what, "RING"))         e_ptr->type |= EGO_TYPE_RING;
+    else if (streq(what, "AMULET"))       e_ptr->type |= EGO_TYPE_AMULET;
+    else if (streq(what, "LITE"))         e_ptr->type |= EGO_TYPE_LITE;
+    else if (streq(what, "BODY_ARMOR"))   e_ptr->type |= EGO_TYPE_BODY_ARMOR;
+    else if (streq(what, "CLOAK"))        e_ptr->type |= EGO_TYPE_CLOAK;
+    else if (streq(what, "HELMET"))       e_ptr->type |= EGO_TYPE_HELMET;
+    else if (streq(what, "GLOVES"))       e_ptr->type |= EGO_TYPE_GLOVES;
+    else if (streq(what, "BOOTS"))        e_ptr->type |= EGO_TYPE_BOOTS;
+    else if (streq(what, "DIGGER"))       e_ptr->type |= EGO_TYPE_DIGGER;
+    else if (streq(what, "CROWN"))        e_ptr->type |= EGO_TYPE_CROWN;
+    else if (streq(what, "HARP"))         e_ptr->type |= EGO_TYPE_HARP;
+    else if (streq(what, "ROBE"))         e_ptr->type |= EGO_TYPE_ROBE;
+    else if (streq(what, "SPECIAL"))      e_ptr->type |= EGO_TYPE_SPECIAL;
+    else if (streq(what, "DEVICE"))       e_ptr->type |= EGO_TYPE_DEVICE;
     else if (streq(what, "DRAGON_ARMOR")) e_ptr->type |= EGO_TYPE_DRAGON_ARMOR;
-    else if (streq(what, "QUIVER")) e_ptr->type |= EGO_TYPE_QUIVER;
+    else if (streq(what, "QUIVER"))       e_ptr->type |= EGO_TYPE_QUIVER;
+    else if (streq(what, "BAG"))          e_ptr->type |= EGO_TYPE_BAG;
     else
     {
         msg_format("Unknown ego type flag: '%s'.", what);
@@ -3555,6 +3558,7 @@ static cptr b_info_slots[] =
     "WEAPON",
     "CAPTURE_BALL",
     "QUIVER",
+    "BAG",
 };
 
 errr parse_b_info(char *buf, header *head)

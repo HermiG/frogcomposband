@@ -20,25 +20,25 @@ Press <color:keypress>?</color> for commands to use in the help interface itself
        1  2  3</color>
 
    <color:y>a  Aim a wand</color>                           A  Activate equipment
-   b  Browse magic list                    B  Bash a door
+   b  Bag view                             B  Browse magic spells
    c  Close a door                         <color:y>C  Character description</color>
    d  Drop an item                         <color:y>D  Disarm a trap</color>
-   <color:y>e  Equipment list</color>                       <color:y>E  Eat some food</color>
+   <color:y>e  Equipment view</color>                       <color:y>E  Eat some food</color>
    <color:y>f  Fire an arrow etc.</color>                   <color:y>F  Fuel your lantern/torch</color>
    <color:y>g  Pick up objects (Get)</color>                <color:y>G  Gain new spells/prayers</color>
    <color:D>h  (unused)</color>                             H  Travel to interesting item
-   <color:y>i  Inventory list</color>                       <color:y>I  Inspect an item</color>
+   <color:y>i  Inventory view</color>                       <color:y>I  Inspect an item</color>
    j  Jam a door                           J  Resume travelling
    k  Destroy an item                      <color:D>K  (unused)</color>
    <color:y>l  Look around</color>                          L  Locate player on map
    <color:y>m  Cast a spell / use mental power</color>      M  Full dungeon map
    <color:y>n  Repeat last command</color>                  <color:D>N  (unused)</color>
    <color:y>o  Open a door or chest</color>                 <color:y>O  Display object list</color>
-   p  Command your pets                    <color:D>P  (unused)</color>
+   p  Command your pets                    P  Place an item into your bag
    <color:y>q  Quaff a potion</color>                       Q  Quit (commit suicide)
    <color:y>r  Read a scroll</color>                        <color:y>R  Rest for a period</color>
    <color:y>s  Search for traps/doors</color>               S  Toggle search mode
-   t  Take off equipment                   T  Dig a tunnel
+   t  Take off equipment / out of bag      T  Dig a tunnel
    <color:y>u  Use a staff</color>                          <color:y>U  Use racial/bonus power</color>
    v  Throw an item                        V  Version info
    <color:y>w  Wear/wield equipment</color>                 W  Switch ring fingers
@@ -46,20 +46,20 @@ Press <color:keypress>?</color> for commands to use in the help interface itself
    <color:D>y  (unused)</color>                             <color:y>Y  Display monster list</color>
    <color:y>z  Zap a rod</color>                            Z  Inscribe an object
    !  Enter a user pref command           ^A  (special - wizard command)
-   @  Interact with macros                <color:D>^B  (unused)</color>
+   @  Interact with macros                ^B  Bash a door
    <color:D>#  (unused)</color>                            ^C  (special - break)
    $  Reload Mogaminator prefs            <color:D>^D  (unused)</color>
    %  Interact with visuals               ^E  Interact with macros
    ^  (special - control key)             ^F  Repeat level feeling
    &  Interact with colors                ^G  Auto-Get nearby objects
    <color:y>*  Target monster or location</color>          <color:D>^H  (unused)</color>
-   <color:D>(  (unused)</color>                            ^I  Toggle choice window
+   <color:D>(  (unused)</color>                            ^I  (Tab) Toggle choice window
    )  Create screen dump                  ^J  (special - linefeed)
    {  Inscribe an object                  <color:D>^K  (unused)</color>
    }  Uninscribe an object                <color:D>^L  (unused)</color>
    [  Display monster list                ^M  (special - return)
    ]  Display object list                 <color:D>^N  (unused)</color>
-   -  Walk (flip pickup)                  ^O  Display object list
+   -  Walk (flip pickup)                  <color:D>^O  (unused)</color>
    _  Edit/activate Mogaminator prefs     ^P  Show previous messages
    <color:y>+  Alter adjacent grid</color>                 <color:y>^Q  Display quest info</color>
    =  Set options                         ^R  Redraw the screen

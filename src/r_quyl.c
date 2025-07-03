@@ -2,8 +2,7 @@
 
 static cptr _mon_name(int r_idx)
 {
-    if (r_idx)
-        return r_name + r_info[r_idx].name;
+    if (r_idx) return r_name + r_info[r_idx].name;
     return ""; /* Birth Menu */
 }
 

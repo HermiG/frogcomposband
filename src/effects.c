@@ -6036,10 +6036,10 @@ static void _forget(obj_ptr obj)
         obj->ident &= ~(IDENT_TRIED);
         obj->ident &= ~(IDENT_KNOWN);
         obj->ident &= ~(IDENT_SENSE);
-        if ((p_ptr->auto_pseudo_id) && ((obj_can_sense1(obj)) || (obj_can_sense2(obj))))
+        if (p_ptr->auto_pseudo_id && (obj_can_sense1(obj) || obj_can_sense2(obj)))
         {
             obj->feeling = value_check_aux1(obj, TRUE);
-            if (!(obj->ident & (IDENT_KNOWN))) obj->ident |= IDENT_SENSE;
+            if (!(obj->ident & IDENT_KNOWN)) obj->ident |= IDENT_SENSE;
         }
     }
 }
@@ -6060,6 +6060,7 @@ bool lose_all_info(void)
         pack_for_each(_forget);
         equip_for_each(_forget);
         quiver_for_each(_forget);
+        bag_for_each(_forget);
 
         p_ptr->update |= PU_BONUS;
         p_ptr->notice |= PN_OPTIMIZE_PACK;

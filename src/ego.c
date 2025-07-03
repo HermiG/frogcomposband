@@ -3603,21 +3603,18 @@ void obj_create_armor(object_type *o_ptr, int level, int power, int mode)
         if (power == -1)
         {
             o_ptr->to_a -= toac1;
-            if (power < -1)
-                o_ptr->to_a -= toac2;
+            if (power < -1) o_ptr->to_a -= toac2;
 
             if (o_ptr->to_a < 0) o_ptr->curse_flags |= OFC_CURSED;
         }
         else if (power)
         {
             o_ptr->to_a += toac1;
-            if (power > 1 || power < -1)
-                o_ptr->to_a += toac2;
+            if (power > 1 || power < -1) o_ptr->to_a += toac2;
         }
     }
 
-    if (-1 <= power && power <= 1)
-        return;
+    if (-1 <= power && power <= 1) return;
 
     if (mode & AM_FORCE_EGO)
         crafting = TRUE; /* Hack to prevent artifacts */
@@ -3712,6 +3709,67 @@ void obj_create_quiver(object_type *o_ptr, int level, int power, int mode)
     }
     else if (power == 1)
         o_ptr->xtra4 += 20;
+}
+
+/*************************************************************************
+ * Bags
+ *************************************************************************/
+void obj_create_bag(object_type *o_ptr, int level, int power, int mode)
+{
+  // Baseline bags should be conservative (these are free inventory slots, after all)
+  if(o_ptr->sval == SV_BAG_POTION_BELT || o_ptr->sval == SV_BAG_SCROLL_CASE) {
+    o_ptr->xtra4 = o_ptr->pval * 10; // item capacity
+    o_ptr->xtra5 = o_ptr->pval *  5; // weight capacity (pounds)
+    
+    // A basic potion belt or scroll case holds just 10 items (potions/scrolls weigh ~0.5lb each)
+    // Potion Belt [10] => 5 lbs
+    
+    //                                         Frequency:  50%   25%   12%    6%    3%
+    //                                       Improvement:   -   +20%  +40%  +60%  +80%
+    while (one_in_(2)) o_ptr->xtra4 += o_ptr->pval * 2; // 10 -> 12 -> 14 -> 16 -> 18
+    while (one_in_(2)) o_ptr->xtra5 += o_ptr->pval * 1; //  5 ->  6 ->  7 ->  8 ->  9
+  } else {
+    o_ptr->xtra4 = o_ptr->pval *  5; // item capacity
+    o_ptr->xtra5 = o_ptr->pval * 10; // weight capacity (pounds)
+    
+    // A basic Linen Bag (half of all bags) can hold up to 5 items weighing up to 10 pounds total
+    // Linen Bag [10 lbs] => 5 items
+    
+    // A twice-upgraded Linen Bag (12.5%) can hold up to 7 items weighing up to 14 pounds total
+    // Linen Bag [10 lbs] => 5 items
+    
+    //                                         Frequency:  50%   25%   12%    6%    3%
+    //                                       Improvement:   -   +20%  +40%  +60%  +80%
+    while (one_in_(2)) o_ptr->xtra4 += o_ptr->pval * 1; //  5 ->  6 ->  7 ->  8 ->  9
+    while (one_in_(2)) o_ptr->xtra5 += o_ptr->pval * 2; // 10 -> 12 -> 14 -> 16 -> 18
+  }
+
+  /* egos */
+  if (power > 1)
+  {
+    o_ptr->name2 = ego_choose_type(EGO_TYPE_BAG, level);
+    
+    switch (o_ptr->name2)
+    {
+      case EGO_BAG_HOLDING:
+        o_ptr->xtra4 *= 1.5;
+        o_ptr->xtra5 *= 1.5;
+        break;
+      case EGO_BAG_ETHEREAL:
+        o_ptr->weight = 0;
+        break;
+    }
+    o_ptr->xtra4 *= 1.2;
+    o_ptr->xtra5 *= 1.2;
+  }
+  else if (power == 1) {
+    o_ptr->xtra4 *= 1.1;
+    o_ptr->xtra5 *= 1.1;
+  }
+  
+  o_ptr->xtra4 = (o_ptr->xtra4 + 5) / 10;
+  o_ptr->xtra5 = (o_ptr->xtra5 + 5) / 10;
+  o_ptr->xtra5 *= 10; // convert pounds to decipounds
 }
 
 /*************************************************************************

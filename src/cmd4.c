@@ -385,18 +385,13 @@ int delay_time(void)
 bool redraw_hack;
 void do_cmd_redraw(void)
 {
-    int j;
-
     term *old = Term;
-
 
     /* Hack -- react to changes */
     Term_xtra(TERM_XTRA_REACT, 0);
 
-
     /* Combine and Reorder the pack (later) */
-    p_ptr->notice |= (PN_OPTIMIZE_PACK | PN_OPTIMIZE_QUIVER);
-
+    p_ptr->notice |= (PN_OPTIMIZE_PACK | PN_OPTIMIZE_QUIVER | PN_OPTIMIZE_BAG);
 
     /* Update torch */
     p_ptr->update |= (PU_TORCH);
@@ -420,8 +415,7 @@ void do_cmd_redraw(void)
     p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_SPELL);
 
     /* Window stuff */
-    p_ptr->window |= (PW_MESSAGE | PW_OVERHEAD | PW_DUNGEON |
-        PW_MONSTER | PW_MONSTER_LIST | PW_OBJECT_LIST | PW_OBJECT);
+    p_ptr->window |= (PW_MESSAGE | PW_OVERHEAD | PW_DUNGEON | PW_MONSTER | PW_MONSTER_LIST | PW_OBJECT_LIST | PW_OBJECT);
 
     update_playtime();
 
@@ -432,23 +426,14 @@ void do_cmd_redraw(void)
 
     if (p_ptr->prace == RACE_ANDROID) android_calc_exp();
 
-
     /* Redraw every window */
-    for (j = 0; j < 8; j++)
+    for (int i = 0; i < 8; i++)
     {
-        /* Dead window */
-        if (!angband_term[j]) continue;
+        if (!angband_term[i]) continue;
 
-        /* Activate */
-        Term_activate(angband_term[j]);
-
-        /* Redraw */
+        Term_activate(angband_term[i]);
         Term_redraw();
-
-        /* Refresh */
         Term_fresh();
-
-        /* Restore */
         Term_activate(old);
     }
 }

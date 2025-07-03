@@ -1396,6 +1396,8 @@ extern void obj_identify(object_type *o_ptr);
 extern void obj_identify_fully(object_type *o_ptr);
 extern void obj_learn_store(object_type *o_ptr);
 
+
+
 /* obj_learn_*() methods return TRUE if the flag is present and unknown (hence learned)
    and FALSE otherwise. So FALSE means either the flag is not applicable, or that
    the user already knew about it. Generally, TRUE indicates the need to display
@@ -1423,6 +1425,7 @@ extern void obj_create_weapon(object_type *o_ptr, int level, int power, int mode
 extern void obj_create_armor(object_type *o_ptr, int level, int power, int mode);
 extern void obj_create_lite(object_type *o_ptr, int level, int power, int mode);
 extern void obj_create_quiver(object_type *o_ptr, int level, int power, int mode);
+extern void obj_create_bag(object_type *o_ptr, int level, int power, int mode);
 extern int  ego_choose_type(int type, int level);
 extern void ego_weapon_adjust_weight(object_type *o_ptr);
 extern void ego_brand_weapon(object_type *o_ptr, int which);
@@ -1517,6 +1520,7 @@ extern s32b armor_cost(object_type *o_ptr, int options);
 extern s32b jewelry_cost(object_type *o_ptr, int options);
 extern s32b lite_cost(object_type *o_ptr, int options);
 extern s32b quiver_cost(object_type *o_ptr, int options);
+extern s32b bag_cost(object_type *o_ptr, int options);
 extern s32b new_object_cost(object_type *o_ptr, int options);
 
 /* racial.c */

@@ -177,8 +177,7 @@ static obj_ptr _get_ammo(bool allow_floor)
     prompt.filter = obj_can_shoot;
     prompt.where[0] = INV_QUIVER;
     prompt.where[1] = INV_PACK;
-    if (allow_floor)
-        prompt.where[2] = INV_FLOOR;
+    if (allow_floor) prompt.where[2] = INV_FLOOR;
 
     obj_prompt(&prompt);
     return prompt.obj;
@@ -3581,23 +3580,21 @@ static void _process_player(void)
 static obj_ptr _relocate_ammo(obj_loc_t loc)
 {
     obj_ptr ammo = NULL;
-    if (loc.where == INV_QUIVER && loc.slot)
-        ammo = quiver_obj(loc.slot);
-    else if (loc.where == INV_PACK && loc.slot)
-        ammo = pack_obj(loc.slot);
-    if (ammo && obj_can_shoot(ammo))
-        return ammo;
+    if      (loc.where == INV_QUIVER && loc.slot) ammo = quiver_obj(loc.slot);
+    else if (loc.where == INV_PACK   && loc.slot) ammo =   pack_obj(loc.slot);
+
+    if (ammo && obj_can_shoot(ammo)) return ammo;
     return NULL;
 }
 
 static obj_ptr _find_ammo(void)
 {
     slot_t slot = quiver_find_first(obj_can_shoot);
-    if (slot)
-        return quiver_obj(slot);
+    if (slot) return quiver_obj(slot);
+
     slot = pack_find_first(obj_can_shoot);
-    if (slot)
-        return pack_obj(slot);
+    if (slot) return pack_obj(slot);
+
     return NULL;
 }
 

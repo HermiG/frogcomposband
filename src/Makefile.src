@@ -45,9 +45,9 @@ ANGFILES = \
     load.o mage.o magic_eater.o mauler.o melee1.o melee2.o menu.o message.o mindcrafter.o mirror_master.o \
     mon.o mon_info.o monk.o monspell.o monster.o monster1.o monster2.o mspells1.o mspells2.o mut.o \
     mut_a.o mystic.o necromancer.o ninja.o ninjalaw.o obj.o obj_info.o obj_prompt.o \
-	object1.o object2.o object3.o obj_kind.o pack.o paladin.o personality.o \
-    polly.o priest.o psion.o py_birth.o py_info.o py_throw.o quest.o quiver.o \
-	races.o races_a.o races_k.o races_mf.o r_angel.o \
+    object1.o object2.o object3.o obj_kind.o pack.o paladin.o personality.o \
+    polly.o priest.o psion.o py_birth.o py_info.o py_throw.o quest.o quiver.o bag.o \
+    races.o races_a.o races_k.o races_mf.o r_angel.o \
     r_centip.o r_demon.o r_dragon.o r_elem.o r_eye.o r_giant.o r_golem.o \
     r_hound.o r_hydra.o r_jelly.o r_leprec.o r_lich.o r_mimic.o r_mummy.o \
     r_orc.o r_poss.o r_pump.o r_quyl.o r_rag.o r_spider.o \

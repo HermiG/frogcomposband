@@ -418,8 +418,7 @@ static void init_header(header *head, int num, int len)
  * Tags, Text and Name should just be malloc'd strings. Room templates
  * should support a variable number of custom 'letters', etc.
  */
-static errr init_info(cptr filename, header *head,
-              void **info, char **name, char **text, char **tag)
+static errr init_info(cptr filename, header *head, void **info, char **name, char **text, char **tag)
 {
     errr err = 1;
     FILE *fp;
@@ -530,8 +529,7 @@ static errr init_k_info(void)
 
 #endif /* ALLOW_TEMPLATES */
 
-    return init_info("k_info", &k_head,
-             (void*)&k_info, &k_name, &k_text, NULL);
+    return init_info("k_info", &k_head, (void*)&k_info, &k_name, &k_text, NULL);
 }
 
 

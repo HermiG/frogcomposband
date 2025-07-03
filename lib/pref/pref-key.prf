@@ -147,10 +147,6 @@ C:1:^D
 A:L
 C:1:W
 
-# Browse a book (Peruse)
-A:b
-C:1:P
-
 # Jam a door (Spike)
 A:j
 C:1:S
@@ -158,10 +154,6 @@ C:1:S
 # Toggle search mode
 A:S
 C:1:#
-
-# Use a staff (Zap)
-A:u
-C:1:Z
 
 # Take off equipment
 A:t

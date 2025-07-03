@@ -248,15 +248,13 @@ static void _tab_free(obj_prompt_tab_ptr tab)
 
 static void _context_make(obj_prompt_context_ptr context)
 {
-    int i;
     obj_p filter = context->prompt->filter;
 
-    if (!filter)
-        filter = obj_exists;
+    if (!filter) filter = obj_exists;
 
     context->tabs = vec_alloc((vec_free_f)_tab_free);
 
-    for (i = 0; i < MAX_LOC; i++)
+    for (int i = 0; i < MAX_LOC; i++)
     {
         inv_ptr inv = NULL;
         switch (context->prompt->where[i])
@@ -273,13 +271,15 @@ static void _context_make(obj_prompt_context_ptr context)
             break;
         case INV_PACK:
             inv = pack_filter(filter);
-            if (!use_pack_slots)
-                inv_sort(inv);
+            if (!use_pack_slots) inv_sort(inv);
             break;
         case INV_QUIVER:
             inv = quiver_filter(filter);
-            if (!use_pack_slots) /* quiver might contain non-matching ammo */
-                inv_sort(inv);
+            if (!use_pack_slots) inv_sort(inv); // Quiver might contain non-matching ammo
+            break;
+        case INV_BAG:
+            inv = bag_filter(filter);
+            if (!use_pack_slots) inv_sort(inv);
             break;
         case INV_SPECIAL1:
             inv = _racial_pack_filter(filter);
@@ -322,20 +322,17 @@ static void _sync_doc(doc_ptr doc)
 static void _display(obj_prompt_context_ptr context)
 {
     obj_prompt_tab_ptr tab;
-    int                i, start, stop;
+    int                start, stop;
     obj_p              filter = context->prompt->filter;
 
     doc_clear(context->doc);
     doc_insert(context->doc, "<style:table>");
     /* Tab Headers */
-    for (i = 0; i < vec_length(context->tabs); i++)
+    for (int i = 0; i < vec_length(context->tabs); i++)
     {
         tab = vec_get(context->tabs, i);
-        if (i)
-            doc_insert(context->doc, " <color:b>|</color> ");
-        doc_printf(context->doc, "<color:%c>%s</color>",
-            i == context->tab ? 'G' : 'D',
-            inv_name(tab->inv));
+        if (i) doc_insert(context->doc, " <color:b>|</color> ");
+        doc_printf(context->doc, "<color:%c>%s</color>", i == context->tab ? 'G' : 'D', inv_name(tab->inv));
     }
     if (context->prompt->flags & INV_SHOW_FAIL_RATES)
         doc_printf(context->doc, "<tab:%d><color:r>Fail</color>", doc_width(context->doc) - 5);
@@ -364,12 +361,13 @@ static void _display(obj_prompt_context_ptr context)
         if (show_weights)
         {
             int wgt = inv_weight(tab->inv, NULL);
-            doc_printf(context->doc, "<tab:%d><color:R> %3d.%d lbs</color>",
-                doc_width(context->doc) - 9, wgt/10, wgt%10);
+            doc_printf(context->doc, "<tab:%d><color:R> %3d.%d lbs</color>", doc_width(context->doc) - 9, wgt/10, wgt%10);
         }
     }
     doc_newline(context->doc);
-    if (context->prompt->prompt)
+    if (context->prompt->custom && inv_loc(tab->inv) == INV_BAG)
+        doc_printf(context->doc, "<color:y>%s</color> ", context->prompt->custom);
+    else if(context->prompt->prompt)
         doc_printf(context->doc, "<color:y>%s</color> ", context->prompt->prompt);
     else
         doc_insert(context->doc, "<color:y>Choice</color>: ");
@@ -421,43 +419,38 @@ static int _basic_cmd(obj_prompt_context_ptr context, int cmd)
     
     case '/': case '6': case SKEY_RIGHT: case KTRL('I'): // TAB maps to ^I
         context->tab++;
-        if (context->tab == vec_length(context->tabs))
-            context->tab = 0;
+        if (context->tab == vec_length(context->tabs)) context->tab = 0;
         return OP_CMD_HANDLED;
     case '\\': case '4': case SKEY_LEFT:
         context->tab--;
-        if (context->tab < 0)
-            context->tab = vec_length(context->tabs) - 1;
+        if (context->tab < 0) context->tab = vec_length(context->tabs) - 1;
         return OP_CMD_HANDLED;
     case '@':
-        if (context->prompt->flags & INV_IGNORE_INSCRIPTIONS)
-            context->prompt->flags &= ~INV_IGNORE_INSCRIPTIONS;
-        else
-            context->prompt->flags |= INV_IGNORE_INSCRIPTIONS;
+        if (context->prompt->flags & INV_IGNORE_INSCRIPTIONS) context->prompt->flags &= ~INV_IGNORE_INSCRIPTIONS;
+        else                                                  context->prompt->flags |=  INV_IGNORE_INSCRIPTIONS;
         break;
     case KTRL('P'): { // We could have used ^I, but TAB moving to the next tab was too good to pass up
         int tab = _find_tab(context->tabs, INV_PACK);
-        if (tab >= 0)
-            context->tab = tab;
+        if (tab >= 0) context->tab = tab;
         return OP_CMD_HANDLED; }
     case KTRL('E'): {
         int tab = _find_tab(context->tabs, INV_EQUIP);
-        if (tab >= 0)
-            context->tab = tab;
+        if (tab >= 0) context->tab = tab;
         return OP_CMD_HANDLED; }
     case KTRL('Q'): {
         int tab = _find_tab(context->tabs, INV_QUIVER);
-        if (tab >= 0)
-            context->tab = tab;
+        if (tab >= 0) context->tab = tab;
+        return OP_CMD_HANDLED; }
+    case KTRL('B'): {
+        int tab = _find_tab(context->tabs, INV_BAG);
+        if (tab >= 0) context->tab = tab;
         return OP_CMD_HANDLED; }
     case KTRL('F'): {
         int tab = _find_tab(context->tabs, INV_FLOOR);
-        if (tab >= 0)
-            context->tab = tab;
+        if (tab >= 0) context->tab = tab;
         return OP_CMD_HANDLED; }
     case KTRL('W'):
-        if (!(context->prompt->flags & (INV_SHOW_FAIL_RATES | INV_SHOW_VALUE)))
-            show_weights = !show_weights;
+        if (!(context->prompt->flags & (INV_SHOW_FAIL_RATES | INV_SHOW_VALUE))) show_weights = !show_weights;
         return OP_CMD_HANDLED;
     case KTRL('G'):
         show_item_graph = !show_item_graph;
@@ -467,23 +460,17 @@ static int _basic_cmd(obj_prompt_context_ptr context, int cmd)
         return OP_CMD_HANDLED;
     case SKEY_PGDOWN: case '3': case ' ': {
         obj_prompt_tab_ptr tab = vec_get(context->tabs, context->tab);
-        if (tab->page < tab->page_ct - 1)
-            tab->page++;
-        else if (tab->page_ct > 1) /* wrap */
-            tab->page = 0;
+        if (tab->page < tab->page_ct - 1) tab->page++;
+        else if (tab->page_ct > 1) tab->page = 0; // wrap
         return OP_CMD_HANDLED; }
     case SKEY_PGUP: case '9': {
         obj_prompt_tab_ptr tab = vec_get(context->tabs, context->tab);
-        if (tab->page > 0)
-            tab->page--;
-        else if (tab->page_ct > 1) /* wrap */
-            tab->page = tab->page_ct - 1;
+        if (tab->page > 0) tab->page--;
+        else if (tab->page_ct > 1) tab->page = tab->page_ct - 1; // wrap
         return OP_CMD_HANDLED; }
     case '?':
-        if (context->prompt->help)
-            doc_display_help(context->prompt->help, NULL);
-        else
-            doc_display_help("context_obj_prompt.txt", "QuickRef");
+        if (context->prompt->help) doc_display_help(context->prompt->help, NULL);
+        else                       doc_display_help("context_obj_prompt.txt", "QuickRef");
         return OP_CMD_HANDLED;
     }
     return OP_CMD_SKIPPED;

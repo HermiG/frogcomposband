@@ -109,6 +109,7 @@ static void _sense_obj(obj_ptr obj)
     if (obj->ident & IDENT_SENSE) return;
     if (object_is_known(obj)) return;
     if (obj->loc.where == INV_PACK && !one_in_(3)) return;
+    if (obj->loc.where == INV_BAG && !one_in_(10)) return;
 
     if (!strong && p_ptr->good_luck && !randint0(13))
         strong = TRUE;
@@ -121,18 +122,14 @@ static void _sense_obj(obj_ptr obj)
     msg_boundary();
     if (obj->loc.where == INV_EQUIP)
     {
-        msg_format("You feel the %s (%c) you are wearing %s %s...",
-               name, slot_label(obj->loc.slot),
-               !object_plural(obj) ? "is" : "are",
-                   game_inscriptions[feel]);
+        msg_format("You feel the %s (%c) you are wearing %s %s...", name, slot_label(obj->loc.slot),
+                   object_plural(obj) ? "are" : "is",  game_inscriptions[feel]);
     }
     else
     {
-        msg_format("You feel the %s (%c) in your %s %s %s...",
-               name, slot_label(obj->loc.slot),
-               obj->loc.where == INV_QUIVER ? "quiver" : "pack", 
-               !object_plural(obj) ? "is" : "are",
-                   game_inscriptions[feel]);
+        msg_format("You feel the %s (%c) in your %s %s %s...", name, slot_label(obj->loc.slot),
+                   obj->loc.where == INV_QUIVER ? "quiver" : obj->loc.where == INV_BAG ? "bag" : "pack",
+                   object_plural(obj) ? "are" : "is", game_inscriptions[feel]);
     }
 
     if (!(obj->ident & IDENT_KNOWN))
@@ -183,32 +180,27 @@ static void sense_inventory1(void)
 
     if (p_ptr->confused) return;
 
-	if (easy_id)
-        strong = TRUE;
-	else
+  	if (easy_id) strong = TRUE;
+  	else
     {
-		int flags = _get_pseudo_id_flags();
-		if (flags & CLASS_SENSE1_STRONG)
-			strong = TRUE;
-		else if (!(flags & CLASS_SENSE1_WEAK))
-            return;
-		if (flags & CLASS_SENSE1_FAST)
-			{
-			if (0 != randint0(_adj_pseudo_id(9000) / (plev * plev + 40)))
-				return;
-			}
-		else if (flags & CLASS_SENSE1_MED)
-			{
-			if (0 != randint0(_adj_pseudo_id(20000) / (plev * plev + 40)))
-				return;
-			}
-		else if (flags & CLASS_SENSE1_SLOW)
-			{
-			if (0 != randint0(_adj_pseudo_id(80000) / (plev * plev + 40)))
-				return;
-			}
-		if (virtue_current(VIRTUE_KNOWLEDGE) >= 100)
-			strong = TRUE;
+      int flags = _get_pseudo_id_flags();
+      
+      if (flags & CLASS_SENSE1_STRONG) strong = TRUE;
+      else if (!(flags & CLASS_SENSE1_WEAK)) return;
+      
+      if (flags & CLASS_SENSE1_FAST)
+      {
+        if (0 != randint0(_adj_pseudo_id(9000) / (plev * plev + 40))) return;
+      }
+      else if (flags & CLASS_SENSE1_MED)
+      {
+        if (0 != randint0(_adj_pseudo_id(20000) / (plev * plev + 40))) return;
+      }
+      else if (flags & CLASS_SENSE1_SLOW)
+      {
+          if (0 != randint0(_adj_pseudo_id(80000) / (plev * plev + 40))) return;
+      }
+      if (virtue_current(VIRTUE_KNOWLEDGE) >= 100) strong = TRUE;
     }
 
     /*** Sense everything ***/
@@ -216,6 +208,7 @@ static void sense_inventory1(void)
     pack_for_each_that(_sense_obj, obj_can_sense1);
     equip_for_each_that(_sense_obj, obj_can_sense1);
     quiver_for_each_that(_sense_obj, obj_can_sense1);
+    //bag_for_each_that(_sense_obj, obj_can_sense1); // exclude items in bags from pseudo-id as a drawback
 }
 
 
@@ -223,11 +216,11 @@ static void sense_inventory2(void)
 {
     int  plev = p_ptr->lev + 10;
     bool strong = FALSE;
-//    int  flags = _get_pseudo_id_flags();
 
     if (p_ptr->confused) return;
-	if (easy_id)
-	{
+    
+    if (easy_id)
+    {
         strong = TRUE;
     }
     else
@@ -1068,7 +1061,8 @@ bool psychometry(void)
     prompt.where[0] = INV_PACK;
     prompt.where[1] = INV_EQUIP;
     prompt.where[2] = INV_QUIVER;
-    prompt.where[3] = INV_FLOOR;
+    prompt.where[3] = INV_BAG;
+    prompt.where[4] = INV_FLOOR;
 
     obj_prompt(&prompt);
     if (!prompt.obj) return FALSE;
@@ -1077,7 +1071,6 @@ bool psychometry(void)
     if (object_is_known(prompt.obj))
     {
         msg_print("You cannot find out anything more about that.");
-
         return TRUE;
     }
 
@@ -1091,20 +1084,17 @@ bool psychometry(void)
     if (!feel)
     {
         msg_format("You do not perceive anything unusual about the %s.", o_name);
-
         return TRUE;
     }
 
-    msg_format("You feel that the %s %s %s...",
-               o_name, ((!object_plural(prompt.obj)) ? "is" : "are"),
-               game_inscriptions[feel]);
+    msg_format("You feel that the %s %s %s...", o_name,
+               object_plural(prompt.obj) ? "are" : "is", game_inscriptions[feel]);
 
-
-    if (prompt.obj->ident & (IDENT_KNOWN)) feel = FEEL_NONE;
+    if (prompt.obj->ident & IDENT_KNOWN) feel = FEEL_NONE;
     else
     {
         /* We have "felt" it */
-        prompt.obj->ident |= (IDENT_SENSE);
+        prompt.obj->ident |= IDENT_SENSE;
         /* "Inscribe" it */
         prompt.obj->feeling = feel;
     }
@@ -1145,7 +1135,7 @@ bool psychometry(void)
     obj_release(prompt.obj, OBJ_RELEASE_ID | OBJ_RELEASE_QUIET);
 
     /* Something happened */
-    return (TRUE);
+    return TRUE;
 }
 
 
@@ -1159,10 +1149,9 @@ void recharged_notice(object_type *o_ptr, unsigned char neula)
 
     cptr s;
 
-    /* No inscription */
     if (!o_ptr->inscription) return;
 
-    /* Find a '!' */
+    /* Find first '!' */
     s = my_strchr(quark_str(o_ptr->inscription), '!');
 
     /* Process notification request. */
@@ -1213,9 +1202,7 @@ static object_type *choose_cursed_obj_name(u32b flag)
 
 void do_alter_reality(void)
 {
-    /* Disturbing! */
     disturb(0, 0);
-
 
     /* Determine the level */
     if ((only_downward()) || (p_ptr->inside_arena) || ((!dungeon_type) && (quests_get_current())))
@@ -1242,14 +1229,12 @@ void do_alter_reality(void)
         p_ptr->oldpx = px;
         p_ptr->oldpy = py;
 
-        /* Leaving */
         p_ptr->leaving = TRUE;
         if (quests_get_current()) quests_on_leave();
 
         if (p_ptr->no_air) set_no_air(0, TRUE);
     }
 
-    /* Sound */
     sound(SOUND_TPLEVEL);
 }
 
@@ -3636,6 +3621,20 @@ static void _dispatch_command(int old_now_turn)
             break;
         }
 
+        /* Place in bag */
+        case 'P':
+        {
+            //bag_store_ui();
+            if (!p_ptr->wild_mode) place_in_bag_ui();
+            break;
+        }
+        
+        /* Bag access */
+        case 'b':
+        {
+            bag_ui();
+            break;
+        }
 
         /*** Standard "Movement" Commands ***/
 
@@ -3808,7 +3807,7 @@ static void _dispatch_command(int old_now_turn)
         }
 
         /* Bash a door */
-        case 'B':
+        case KTRL('B'):
         {
             if (!p_ptr->wild_mode) do_cmd_bash();
             break;
@@ -3849,7 +3848,7 @@ static void _dispatch_command(int old_now_turn)
         }
 
         /* Browse a book */
-        case 'b':
+        case 'B':
         {
             if (p_ptr->prace == RACE_MON_RING)
                 ring_browse();
@@ -4220,7 +4219,6 @@ static void _dispatch_command(int old_now_turn)
                 do_cmd_list_monsters(MON_LIST_NORMAL);
             break;
 
-        case KTRL('O'):
         case 'O':
         case ']':
             if (!p_ptr->image)
@@ -5357,7 +5355,7 @@ static void dungeon(bool load_game)
     p_ptr->update |= (PU_BONUS | PU_HP | PU_MANA | PU_SPELLS);
 
     /* Combine / Reorder the pack */
-    p_ptr->notice |= (PN_OPTIMIZE_PACK | PN_OPTIMIZE_QUIVER);
+    p_ptr->notice |= (PN_OPTIMIZE_PACK | PN_OPTIMIZE_QUIVER | PN_OPTIMIZE_BAG);
 
     /* Handle "p_ptr->notice" */
     notice_stuff();

@@ -502,6 +502,10 @@ static bool _general_will_buy(obj_ptr obj)
 {
     switch (obj->tval)
     {
+    case TV_BAG:
+        if (obj->sval == SV_BAG_POTION_BELT) return FALSE;
+        if (obj->sval == SV_BAG_SCROLL_CASE) return FALSE;
+        break;
     case TV_POTION:
         if (obj->sval != SV_POTION_WATER) return FALSE;
     case TV_WHISTLE:
@@ -851,6 +855,9 @@ static bool _alchemist_will_buy(obj_ptr obj)
 {
     switch (obj->tval)
     {
+    case TV_BAG:
+        if (obj->sval != SV_BAG_POTION_BELT &&
+            obj->sval != SV_BAG_SCROLL_CASE) return FALSE;
     case TV_POTION:
     case TV_SCROLL:
         break;
@@ -1739,6 +1746,7 @@ static void _buy(_ui_context_ptr context)
     prompt.filter = context->shop->type->buy_p;
     prompt.where[0] = INV_PACK;
     prompt.where[1] = INV_QUIVER;
+    prompt.where[2] = INV_BAG;
 
     command_cmd = 's'; /* Hack for !s inscriptions */
     obj_prompt(&prompt);
@@ -1770,10 +1778,11 @@ static void _buy(_ui_context_ptr context)
             if (vakuutettu) obj_dec_insured(prompt.obj, vakuutettu);
             prompt.obj->marked |= OM_DELAYED_MSG;
             p_ptr->notice |= PN_CARRY;
-            if (prompt.obj->loc.where == INV_QUIVER)
-                p_ptr->notice |= PN_OPTIMIZE_QUIVER;
-            else if (prompt.obj->loc.where == INV_PACK)
-                p_ptr->notice |= PN_OPTIMIZE_PACK;
+            
+            if      (prompt.obj->loc.where == INV_PACK)   p_ptr->notice |= PN_OPTIMIZE_PACK;
+            else if (prompt.obj->loc.where == INV_QUIVER) p_ptr->notice |= PN_OPTIMIZE_QUIVER;
+            else if (prompt.obj->loc.where == INV_BAG)    p_ptr->notice |= PN_OPTIMIZE_BAG;
+            
             if (!tunnettu) autopick_alter_obj(prompt.obj, ((destroy_identify) && (obj_value(prompt.obj) < 1)));
         }
     }
@@ -2672,10 +2681,10 @@ void towns_on_turn_overflow(int rollback_turns)
 void _town_add_shop_item(town_ptr town, int which, int k_idx, int ct)
 {
     shop_ptr shop = town_get_shop(town, which);
-    int i;
     if (!k_idx) return;
     if (!inv_count_slots(shop->inv, obj_exists)) _restock(shop, _stock_base(shop), TRUE);
-    for (i = 0; i < ct; i++)
+
+    for (int i = 0; i < ct; i++)
     {
         obj_t forge = {0};
         if (_create(&forge, k_idx, _mod_lvl(rand_range(1, 15)), AM_STOCK_TOWN))
@@ -2694,6 +2703,9 @@ void birth_shop_items(void)
     _town_add_shop_item(town, SHOP_ALCHEMIST, lookup_kind(TV_SCROLL, SV_SCROLL_PHASE_DOOR), 1);
     _town_add_shop_item(town, SHOP_ALCHEMIST, lookup_kind(TV_SCROLL, SV_SCROLL_TELEPORT), 1);
     _town_add_shop_item(town, SHOP_WEAPON, lookup_kind(TV_QUIVER, 0), 1);
+
+    _town_add_shop_item(town, SHOP_GENERAL, lookup_kind(TV_BAG, SV_BAG_POUCH), 1);
+
     if ((p_ptr->pclass == CLASS_SKILLMASTER) || /* (p_ptr->pclass == CLASS_SORCERER) || */
         (p_ptr->pclass == CLASS_GRAY_MAGE) || (p_ptr->pclass == CLASS_RED_MAGE))
     {

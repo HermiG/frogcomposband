@@ -52,25 +52,25 @@ Original Keyset
        1  2  3
 
    a  Aim a wand                           A  Activate equipment
-   b  Browse magic list                    B  Bash a door
+   b  Bag view                             B  Browse magic spells
    c  Close a door                         C  Character description
    d  Drop an item                         D  Disarm a trap
-   e  Equipment list                       E  Eat some food
+   e  Equipment view                       E  Eat some food
    f  Fire an arrow etc.                   F  Fuel your lantern/torch
    g  Pick up objects (Get)                G  Gain new spells/prayers
    h  (unused)                             H  Travel to interesting item
-   i  Inventory list                       I  Inspect an item
+   i  Inventory view                       I  Inspect an item
    j  Jam a door                           J  Resume travelling
    k  Destroy an item                      K  (unused)
    l  Look around                          L  Locate player on map
    m  Cast a spell / use mental power      M  Full dungeon map
    n  Repeat last command                  N  (unused)
    o  Open a door or chest                 O  Display object list
-   p  Command your pets                    P  (unused)
+   p  Command your pets                    P  Place an item into your bag
    q  Quaff a potion                       Q  Quit (commit suicide)
    r  Read a scroll                        R  Rest for a period
    s  Search for traps/doors               S  Toggle search mode
-   t  Take off equipment                   T  Dig a tunnel
+   t  Take off equipment / out of bag      T  Dig a tunnel
    u  Use a staff                          U  Use racial/bonus power
    v  Throw an item                        V  Version info
    w  Wear/wield equipment                 W  Switch ring fingers
@@ -78,20 +78,20 @@ Original Keyset
    y  (unused)                             Y  Display monster list
    z  Zap a rod                            Z  Inscribe an object
    !  Enter a user pref command           ^A  (special - wizard command)
-   @  Interact with macros                ^B  (unused)
+   @  Interact with macros                ^B  Bash a door
    #  (unused)                            ^C  (special - break)
    $  Reload Mogaminator prefs            ^D  (unused)
    %  Interact with visuals               ^E  Interact with macros
    ^  (special - control key)             ^F  Repeat level feeling
    &  Interact with colors                ^G  Auto-Get nearby objects
    *  Target monster or location          ^H  (unused)
-   (  (unused)                            ^I  Toggle choice window
+   (  (unused)                            ^I  (Tab) Toggle choice window
    )  Create screen dump                  ^J  (special - linefeed)
    {  Inscribe an object                  ^K  (unused)
    }  Uninscribe an object                ^L  (unused)
    [  Display monster list                ^M  (special - return)
    ]  Display object list                 ^N  (unused)
-   -  Walk (flip pickup)                  ^O  Display object list
+   -  Walk (flip pickup)                  ^O  (unused)
    _  Edit/activate Mogaminator prefs     ^P  Show previous messages
    +  Alter adjacent grid                 ^Q  Display quest info
    =  Set options                         ^R  Redraw the screen

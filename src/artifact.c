@@ -2136,6 +2136,7 @@ s32b create_artifact(object_type *o_ptr, u32b mode)
     if (no_artifacts) return 0;
     if (have_flag(o_ptr->flags, OF_NO_REMOVE)) return 0;
     if (o_ptr->tval == TV_QUIVER) return 0;
+    if (o_ptr->tval == TV_BAG) return 0; // Disable artifact bag creation for now
 
     if (o_ptr->tval == TV_SWORD && o_ptr->sval == SV_HAYABUSA)
         is_falcon_sword = TRUE;

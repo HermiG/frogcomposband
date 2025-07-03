@@ -413,6 +413,7 @@ static void _drop(_ui_context_ptr context)
     prompt.where[0] = INV_PACK;
     prompt.where[1] = INV_EQUIP;
     prompt.where[2] = INV_QUIVER;
+    prompt.where[3] = INV_BAG;
     obj_prompt_add_special_packs(&prompt);
 
     obj_prompt(&prompt);
@@ -423,6 +424,11 @@ static void _drop(_ui_context_ptr context)
         if (prompt.obj->tval == TV_QUIVER && quiver_count(NULL))
         {
             msg_print("Your quiver still holds ammo. Remove all the ammo from your quiver first.");
+            return;
+        }
+        if (prompt.obj->tval == TV_BAG && bag_count(NULL))
+        {
+            msg_print("Your bag still contains items. Empty your bag first.");
             return;
         }
         if (!equip_can_takeoff(prompt.obj)) return;

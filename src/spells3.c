@@ -1368,7 +1368,8 @@ bool brand_weapon(int brand_type)
     prompt.where[0] = INV_PACK;
     prompt.where[1] = INV_EQUIP;
     prompt.where[2] = INV_QUIVER;
-    prompt.where[3] = INV_FLOOR;
+    prompt.where[3] = INV_BAG;
+    prompt.where[4] = INV_FLOOR;
 
     obj_prompt(&prompt);
     if (!prompt.obj) return FALSE;
@@ -1920,6 +1921,7 @@ void identify_pack(void)
     pack_for_each(_identify_obj);
     equip_for_each(_identify_obj);
     quiver_for_each(_identify_obj);
+    bag_for_each(_identify_obj);
 }
 
 
@@ -2283,7 +2285,8 @@ bool enchant_spell(int num_hit, int num_dam, int num_ac)
     prompt.where[0] = INV_PACK;
     prompt.where[1] = INV_EQUIP;
     prompt.where[2] = INV_QUIVER;
-    prompt.where[3] = INV_FLOOR;
+    prompt.where[3] = INV_BAG;
+    prompt.where[4] = INV_FLOOR;
     obj_prompt_add_special_packs(&prompt);
 
     obj_prompt(&prompt);
@@ -2299,7 +2302,7 @@ bool enchant_spell(int num_hit, int num_dam, int num_ac)
 
     if (enchant(prompt.obj, num_hit, ENCH_TOHIT)) okay = TRUE;
     if (enchant(prompt.obj, num_dam, ENCH_TODAM)) okay = TRUE;
-    if (enchant(prompt.obj, num_ac, ENCH_TOAC)) okay = TRUE;
+    if (enchant(prompt.obj, num_ac,  ENCH_TOAC))  okay = TRUE;
 
     if (!okay)
     {
@@ -2351,7 +2354,8 @@ bool artifact_scroll(void)
     prompt.where[0] = INV_PACK;
     prompt.where[1] = INV_EQUIP;
     prompt.where[2] = INV_QUIVER;
-    prompt.where[3] = INV_FLOOR;
+    prompt.where[3] = INV_BAG;
+    prompt.where[4] = INV_FLOOR;
 
     obj_prompt(&prompt);
     if (!prompt.obj) return FALSE;
@@ -2495,7 +2499,8 @@ bool ident_spell(object_p p)
     prompt.where[0] = INV_PACK;
     prompt.where[1] = INV_EQUIP;
     prompt.where[2] = INV_QUIVER;
-    prompt.where[3] = INV_FLOOR;
+    prompt.where[3] = INV_BAG;
+    prompt.where[4] = INV_FLOOR;
     obj_prompt_add_special_packs(&prompt); 
 
     obj_prompt(&prompt);
@@ -2525,12 +2530,12 @@ bool mundane_spell(bool only_equip)
 
     prompt.prompt = "Use which item?";
     prompt.error = "You have nothing you can use.";
-    if (only_equip)
-        prompt.filter = object_is_weapon_armour_ammo;
+    if (only_equip) prompt.filter = object_is_weapon_armour_ammo;
     prompt.where[0] = INV_PACK;
     prompt.where[1] = INV_EQUIP;
     prompt.where[2] = INV_QUIVER;
-    prompt.where[3] = INV_FLOOR;
+    prompt.where[3] = INV_BAG;
+    prompt.where[4] = INV_FLOOR;
     obj_prompt_add_special_packs(&prompt); 
 
     obj_prompt(&prompt);
@@ -2631,7 +2636,8 @@ bool identify_fully(object_p p)
     prompt.where[0] = INV_PACK;
     prompt.where[1] = INV_EQUIP;
     prompt.where[2] = INV_QUIVER;
-    prompt.where[3] = INV_FLOOR;
+    prompt.where[3] = INV_BAG;
+    prompt.where[4] = INV_FLOOR;
     obj_prompt_add_special_packs(&prompt); 
 
     obj_prompt(&prompt);
@@ -3951,9 +3957,8 @@ void inven_damage(int who, inven_func typ, int p1, int which)
     {
         obj_ptr obj = pack_obj(slot);
 
-        if (!obj) continue;
+        if (!obj || !typ(obj)) continue;
         if (object_is_artifact(obj)) continue;
-        if (!typ(obj)) continue;
 
         if (_damage_obj(obj, p1, p2, which, (who > 0))) varoita = TRUE;
     }
@@ -3969,9 +3974,32 @@ void inven_damage(int who, inven_func typ, int p1, int which)
             {
                 obj_ptr obj = quiver_obj(slot);
 
-                if (!obj) continue;
+                if (!obj || !typ(obj)) continue;
                 if (object_is_artifact(obj)) continue;
-                if (!typ(obj)) continue;
+
+                (void)_damage_obj(obj, p1, p2, which, (who > 0));
+            }
+        }
+    }
+
+    /* Bag */
+    slot = equip_find_obj(TV_BAG, SV_ANY);
+    if (slot)
+    {
+        obj_ptr bag = equip_obj(slot);
+        if (bag->name2 != EGO_BAG_PROTECTION)
+        {
+            for (slot = 1; slot <= bag_max(); slot++)
+            {
+                // Potion Belts and Scroll Cases are better at protecting their contents
+                if(bag->sval == SV_BAG_POTION_BELT || bag->sval == SV_BAG_SCROLL_CASE) {
+                    if(!one_in_(4)) continue; // 75% chance to avoid damage
+                }
+
+                obj_ptr obj = bag_obj(slot);
+
+                if (!obj || !typ(obj)) continue;
+                if (object_is_artifact(obj)) continue;
 
                 (void)_damage_obj(obj, p1, p2, which, (who > 0));
             }

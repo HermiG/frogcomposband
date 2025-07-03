@@ -314,7 +314,7 @@ typedef struct object_type object_type;
 typedef bool (*object_p)(object_type *o_ptr);
 
 struct obj_loc_s {
-    byte where; /* INV_EQUIP, INV_PACK, INV_QUIVER, INV_SHOP or INV_FLOOR */
+    byte where; /* INV_EQUIP, INV_PACK, INV_QUIVER, INV_BAG, INV_SHOP, or INV_FLOOR */
     byte x, y;  /* where == INV_FLOOR */
     int  slot;  /* o_idx if floor, slot otherwise */
 };
@@ -324,50 +324,50 @@ struct object_type
 {
     s16b k_idx;            /* Kind index (zero if "dead") */
 
-    byte tval;            /* Item type (from kind) */
-    byte sval;            /* Item sub-type (from kind) */
+    byte tval;             /* Item type (from kind) */
+    byte sval;             /* Item sub-type (from kind) */
 
-    s16b pval;            /* Item extra-parameter */
+    s16b pval;             /* Item extra-parameter */
 
-    byte discount;        /* Discount (if any) */
+    byte discount;         /* Discount (if any) */
 
-    byte number;        /* Number of items */
+    byte number;           /* Number of items */
 
-    s16b weight;        /* Item weight in decipounds */
+    s16b weight;           /* Item weight in decipounds */
 
     s16b name1;            /* Artifact type, if any */
     s16b name2;            /* Ego-Item type, if any */
-    s16b name3;         /* Random replacement for a fixed art */
+    s16b name3;            /* Random replacement for a fixed art */
 
     byte xtra1;            /* Extra info: Weaponsmith/Politician */
     byte xtra2;            /* Extra info index */
-    byte xtra3;            /* Extra info: Chests and Weaponsmith. Device Power. */
-    s16b xtra4;            /* Extra info: Lights, Capture, Quiver Capacity, Device MaxSP. */
-    s32b xtra5;            /* Extra info: Device CSP */
+    byte xtra3;            /* Extra info: Chests and Weaponsmith. Device Power, Bag Slots */
+    s16b xtra4;            /* Extra info: Lights, Capture, Quiver/Bag Capacity, Device MaxSP. */
+    s32b xtra5;            /* Extra info: Device CSP, Bag Weight Capacity */
 
-    s16b to_h;            /* Plusses to hit */
-    s16b to_d;            /* Plusses to damage */
-    s16b to_a;            /* Plusses to AC */
+    s16b to_h;             /* Plusses to hit */
+    s16b to_d;             /* Plusses to damage */
+    s16b to_a;             /* Plusses to AC */
 
-    s16b ac;            /* Normal AC */
+    s16b ac;               /* Normal AC */
 
-    byte dd, ds;        /* Damage dice/sides */
-    s16b mult;          /* Damage multiplier (scaled by 100) for bows */
+    byte dd, ds;           /* Damage dice/sides */
+    s16b mult;             /* Damage multiplier (scaled by 100) for bows */
 
-    s16b timeout;        /* Timeout Counter */
+    s16b timeout;          /* Timeout Counter */
 
     byte ident;            /* Special flags  */
 
-    u32b marked;        /* Object is marked */
+    u32b marked;           /* Object is marked */
 
-    u16b inscription;    /* Inscription index */
-    u16b art_name;      /* Artifact name (random artifacts) */
+    u16b inscription;      /* Inscription index */
+    u16b art_name;         /* Artifact name (random artifacts) */
 
     byte feeling;          /* Game generated inscription number (eg, pseudo-id) */
 
-    u32b flags[OF_ARRAY_SIZE];        /* Extra Flags for ego and artifacts */
+    u32b flags[OF_ARRAY_SIZE]; /* Extra Flags for ego and artifacts */
 
-    u32b curse_flags;        /* Flags for curse */
+    u32b curse_flags;      /* Flags for curse */
 
     u32b known_flags[OF_ARRAY_SIZE];
     u32b known_curse_flags;

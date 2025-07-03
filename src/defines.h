@@ -1653,6 +1653,7 @@ enum {
 #define TV_AMULET       40
 #define TV_RING         45
 #define TV_QUIVER       46
+#define TV_BAG          47
 #define TV_CARD         50
 #define TV_STAFF        55
 #define TV_WAND         65
@@ -1662,7 +1663,7 @@ enum {
 #define TV_POTION       75
 #define TV_FLASK        77
 #define TV_FOOD         80
-#define TV_RUNE            81
+#define TV_RUNE         81
 #define TV_LIFE_BOOK    90
 #define TV_SORCERY_BOOK 91
 #define TV_NATURE_BOOK  92
@@ -1675,13 +1676,13 @@ enum {
 #define TV_CRUSADE_BOOK 99
 #define TV_NECROMANCY_BOOK 100
 #define TV_ARMAGEDDON_BOOK 101
-#define TV_LAW_BOOK     104
-#define TV_MUSIC_BOOK   105
-#define TV_HISSATSU_BOOK 106
-#define TV_HEX_BOOK     107
-#define TV_RAGE_BOOK    108
-#define TV_BURGLARY_BOOK 109
-#define TV_GOLD         127     /* Gold can only be picked up by players */
+#define TV_LAW_BOOK        104
+#define TV_MUSIC_BOOK      105
+#define TV_HISSATSU_BOOK   106
+#define TV_HEX_BOOK        107
+#define TV_RAGE_BOOK       108
+#define TV_BURGLARY_BOOK   109
+#define TV_GOLD            127     /* Gold can only be picked up by players */
 
 #define TV_EQUIP_BEGIN    TV_SHOT
 #define TV_EQUIP_END      TV_CARD
@@ -1700,22 +1701,22 @@ enum {
 #define SV_ANY                     255
 
 /* The "sval" codes for TV_FIGURINE */
-#define SV_FIGURINE_NORMAL        0
+#define SV_FIGURINE_NORMAL   0
 
-#define SV_CAPTURE_NONE        0
+#define SV_CAPTURE_NONE      0
 
 /* The "sval" codes for TV_STATUE */
-#define SV_WOODEN_STATUE        0
-#define SV_CLAY_STATUE            1
-#define SV_STONE_STATUE            2
-#define SV_IRON_STATUE            3
-#define SV_COPPER_STATUE        4
-#define SV_SILVER_STATUE        5
-#define SV_GOLDEN_STATUE        6
-#define SV_IVORY_STATUE            7
-#define SV_MITHRIL_STATUE        8
-#define SV_ORNATE_STATUE        9
-#define SV_PHOTO            50
+#define SV_WOODEN_STATUE     0
+#define SV_CLAY_STATUE       1
+#define SV_STONE_STATUE      2
+#define SV_IRON_STATUE       3
+#define SV_COPPER_STATUE     4
+#define SV_SILVER_STATUE     5
+#define SV_GOLDEN_STATUE     6
+#define SV_IVORY_STATUE      7
+#define SV_MITHRIL_STATUE    8
+#define SV_ORNATE_STATUE     9
+#define SV_PHOTO             50
 
 /* The "sval" codes for TV_CORPSE */
 #define SV_SKELETON             0
@@ -2191,6 +2192,12 @@ enum {
 /* TV_RUNE */
 #define SV_RUNE        1
 
+/* TV_BAG */
+#define SV_BAG_POUCH        1 // Regular bags have a max carry weight
+#define SV_BAG_POTION_BELT  2 // Potion Belts carry a max number of individual potions (like quivers)
+#define SV_BAG_SCROLL_CASE  3 // Scroll Cases carry a max number of individual scrolls (like quivers)
+#define SV_BAG_BOOK_BAG     4 // Book Bags have a max carry weight
+
 /*
  * Special "sval" limit -- first "normal" food
  */
@@ -2358,19 +2365,19 @@ enum {
 #define USE_INVEN               0x002   /* Allow inven items */
 #define USE_FLOOR               0x004   /* Allow floor items */
 #define USE_QUIVER              0x008
-#define SHOW_FAIL_RATES         0x010
-#define SHOW_VALUE              0x020   /* For Reforging */
-#define OPTION_ALL              0x040   /* Allow user to select all (e.g. identify entire pack) */
-#define OPTION_FORCE            0x080   /* TODO: Remove old hack code ... */
-#define OPTION_UNLIMITED_QUIVER 0x100   /* TODO Remove old hack code ... */
+#define USE_BAG                 0x010
+#define SHOW_FAIL_RATES         0x020
+#define SHOW_VALUE              0x040   /* For Reforging */
+
 
 /*
  * Bit flags for the "p_ptr->notice" variable
  */
 #define PN_OPTIMIZE_PACK   0x0001
 #define PN_OPTIMIZE_QUIVER 0x0002
-#define PN_CARRY           0x0004
-#define PN_EXP             0x0008     /* check_experience() *after* melee, please! */
+#define PN_OPTIMIZE_BAG    0x0004
+#define PN_CARRY           0x0008
+#define PN_EXP             0x0010     /* check_experience() *after* melee, please! */
 /* xxx (many) */
 
 
@@ -2828,9 +2835,9 @@ enum summon_specific_e {
  *  which is just a byte. See A.7.4.7 in K&R.)
  */
 
-#define have_flag(ARRAY, INDEX) !!((ARRAY)[(INDEX)/32] & (1L << ((INDEX)%32)))
-#define add_flag(ARRAY, INDEX) ((ARRAY)[(INDEX)/32] |= (1L << ((INDEX)%32)))
-#define remove_flag(ARRAY, INDEX) ((ARRAY)[(INDEX)/32] &= ~(1L << ((INDEX)%32)))
+#define have_flag(ARRAY, INDEX)   !!((ARRAY)[(INDEX)/32] &   (1L << ((INDEX)%32)))
+#define add_flag(ARRAY, INDEX)      ((ARRAY)[(INDEX)/32] |=  (1L << ((INDEX)%32)))
+#define remove_flag(ARRAY, INDEX)   ((ARRAY)[(INDEX)/32] &= ~(1L << ((INDEX)%32)))
 
 /*
  * Object Flags (OF_*)
@@ -2981,7 +2988,7 @@ enum obj_flags_e {
     OF_ESP_EVIL,
     OF_ESP_GOOD,
     OF_ESP_NONLIVING,
-	OF_ESP_LIVING,
+    OF_ESP_LIVING,
     OF_ESP_UNIQUE,
     OF_ESP_DRAGON,
     OF_ESP_DEMON,
@@ -3006,8 +3013,8 @@ enum obj_flags_e {
     OF_SLAY_GIANT,
 
     OF_KILL_EVIL,
-	OF_KILL_GOOD,
-	OF_KILL_LIVING,
+    OF_KILL_GOOD,
+    OF_KILL_LIVING,
     OF_KILL_DRAGON,
     OF_KILL_DEMON,
     OF_KILL_UNDEAD,
@@ -3065,6 +3072,21 @@ enum obj_flags_e {
 
     /* Mana recovery */
     OF_REGEN_MANA,
+  
+  /* Bag effects */
+  OF_HOLDING,      // Extra capacity
+  OF_PROTECTION,   // Protects contents
+  OF_ETHEREAL,     // Reduced carry weight for contents
+  OF_BULKY,        // Increased carry weight for contents {cursed}
+  OF_SECURE,       // Thievery protection
+  OF_AVARICE,      // Thievery vulnerability {cursed}
+  OF_LEAKY,        // Drops items randomly {cursed}
+  
+  /* Potion Belts and Scroll Cases */
+  OF_CONSERVATION, // Consumables sometimes aren't
+  OF_BOTTOMLESS,   // Generates random items
+  OF_ORGANIZED,    // Faster access (energy_use reduced)
+  OF_TANGLED,      // Slower access (energy_use increased) {cursed}
 
     /* A few places loop from 0 <= i < OF_COUNT ... (init1, race_sword and race_ring) */
     OF_COUNT, /* currently 180 */
@@ -3072,15 +3094,15 @@ enum obj_flags_e {
 #define OF_RES_START OF_RES_ACID
 #define OF_RES_END OF_RES_FEAR
 
-#define OF_ARRAY_SIZE          6
+#define OF_ARRAY_SIZE           16
 /* u32b flgs[OF_ARRAY_SIZE];
    assert((OF_COUNT + 31)/32 == OF_ARRAY_SIZE); is checked during initialization */
 
 /* Extra flags for object lore (OFL_*)
  * cf object_type.known_flags and .known_curse_flags for normal stuff.
  * cf .known_xtra for the following: */
-#define OFL_DEVICE_POWER 0x01
-#define OFL_DEVICE_FAIL  0x02
+#define OFL_DEVICE_POWER        0x01
+#define OFL_DEVICE_FAIL         0x02
 
 /* Object Flags for Generation (OFG_*) */
 #define OFG_INSTA_ART           0x00000001     /* Item must be an artifact */
@@ -5548,9 +5570,10 @@ enum ego_e {
     EGO_TYPE_AMULET       = 0x00010000,
     EGO_TYPE_LITE         = 0x00020000,
     EGO_TYPE_DEVICE       = 0x00040000,
+    EGO_TYPE_BAG          = 0x00080000,
 
     /* (Blasted) */
-    EGO_TYPE_SPECIAL      = 0x00080000,
+    EGO_TYPE_SPECIAL      = 0x00100000,
 };
 
 enum ego_type_e {
@@ -5744,6 +5767,13 @@ enum ego_type_e {
     EGO_QUIVER_PROTECTION,
     EGO_QUIVER_ENDLESS,
     EGO_QUIVER_PHASE,
+
+    /* Bags */
+    EGO_BAG_HOLDING = 285,
+    EGO_BAG_PROTECTION,
+    EGO_BAG_ETHEREAL,
+    EGO_BAG_CLASPED,
+    EGO_BAG_BOTTOMLESS,
 };
 
 #define EGO_DEVICE_START  EGO_DEVICE_RESISTANCE
@@ -5938,8 +5968,8 @@ enum effect_e
     EFFECT_BREATHE_SHARDS,
     EFFECT_BREATHE_CHAOS,
     EFFECT_BREATHE_DISEN,
-	EFFECT_BREATHE_INERTIA,
-	EFFECT_BREATHE_WATER,
+    EFFECT_BREATHE_INERTIA,
+    EFFECT_BREATHE_WATER,
     EFFECT_BREATHE_TIME,
     EFFECT_BREATHE_ONE_MULTIHUED, /* DSM with random breath types ... */
     EFFECT_BREATHE_ONE_CHAOS,
@@ -5991,6 +6021,7 @@ enum effect_e
     EFFECT_STARLITE,
     EFFECT_NOTHING,      /* Food for undead players */
     EFFECT_ENDLESS_QUIVER,
+    EFFECT_BOTTOMLESS_BAG,
 
     /* Bad Effects */
     EFFECT_AGGRAVATE = 900,
@@ -6087,6 +6118,7 @@ enum {
     ORIGIN_WANTED,              /* reward for turning in a wanted monster */ 
     ORIGIN_PATRON,              /* reward from your chaos patron */
     ORIGIN_ENDLESS,             /* created by an endless quiver */
+    ORIGIN_BOTTOMLESS,          /* created by a bottomless potion belt/scroll case */
     ORIGIN_PHOTO,               /* taken with a camera */
     ORIGIN_KAWARIMI,            /* statue left behind by kawarimi */
     ORIGIN_STOLEN,              /* stolen by a pickpocket */

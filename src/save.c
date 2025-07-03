@@ -1321,6 +1321,7 @@ static bool wr_savefile_new(savefile_ptr file)
     equip_save(file);
     pack_save(file);
     quiver_save(file);
+    bag_save(file);
     towns_save(file);
     home_save(file);
     cornucopia_save(file);

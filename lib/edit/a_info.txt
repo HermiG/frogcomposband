@@ -4014,6 +4014,12 @@ F:STEALTH | INFRA | SEARCH | RES_POIS | RES_DARK | RES_BLIND | SEE_INVIS |
 F:VULN_LITE | DARKNESS | ESP_ANIMAL | FULL_NAME | HOLD_LIFE | QUESTITEM
 D:A cloak of darkness; an Unlight which eyes cannot pierce, for it is void.
 
+N:400:Santa's Sack
+I:47:1:10
+W:35:35:15:5000
+F:SEARCH
+D:Santa's Sack Description
+
 # N: serial number : item name
 # I: tval : sval : pval
 # W: depth : rarity : weight : cost

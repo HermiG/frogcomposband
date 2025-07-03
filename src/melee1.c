@@ -113,19 +113,29 @@ static int _aura_dam_p(int taso)
 bool drain_random_object(int who, int drain_amt, bool *drained)
 {
     u32b flgs[OF_ARRAY_SIZE];
-    char buf[MAX_NLEN];
-    int k;
+    char o_name[MAX_NLEN];
 
     /* Find an item */
-    for (k = 0; k < 10; k++)
+    for (int k = 0; k < 10; k++)
     {
-        slot_t  slot = pack_random_slot(NULL);
         obj_ptr obj;
 
-        if (!slot) continue;
-        obj = pack_obj(slot);
-        if (!obj) continue;
-        if (!obj_is_device(obj)) continue;
+        int search_bag_first = one_in_(4);
+        for(int where = search_bag_first; where < 2 + search_bag_first; where++) {
+          if(where % 2) { // search bag
+            slot_t slot = bag_random_slot(one_in_(2) ? obj_exists : NULL);
+            if(!slot) continue;
+            obj = pack_obj(slot);
+            if(obj && obj_is_device(obj)) break;
+          } else { // search pack
+            slot_t slot = pack_random_slot(one_in_(3) ? obj_exists : NULL);
+            if(!slot) continue;
+            obj = pack_obj(slot);
+            if(obj && obj_is_device(obj)) break;
+          }
+        }
+
+        if(!obj || !obj_is_device(obj)) continue;
 
         obj_flags(obj, flgs);
         if (have_flag(flgs, OF_HOLD_LIFE))
@@ -140,30 +150,28 @@ bool drain_random_object(int who, int drain_amt, bool *drained)
             return FALSE;
         }
 
-        if (obj->tval == TV_ROD)
-            drain_amt /= 3;
+        if (obj->tval == TV_ROD) drain_amt /= 3;
 
-        if (drain_amt > device_sp(obj))
-            drain_amt = device_sp(obj);
+        if (drain_amt > device_sp(obj)) drain_amt = device_sp(obj);
+      
+        object_desc(o_name, obj, OD_OMIT_PREFIX | OD_COLOR_CODED);
 
         if (p_ptr->pclass == CLASS_DEVICEMASTER)
         {
             int pl = p_ptr->lev;
             int dl = obj->activation.difficulty;
 
-            if (devicemaster_is_speciality(obj))
-                pl *= 2;
+            if (devicemaster_is_speciality(obj)) pl *= 2;
 
             if (pl >= randint1(dl))
             {
-                msg_print("Energy begins to drain from your pack ... But you pull it back!");
+                msg_format("Energy begins to drain from your %s ... but you stifle the effect!", o_name);
                 *drained = TRUE; /* No food drain! */
                 return TRUE; /* Obvious effect */
             }
         }
 
-        object_desc(buf, obj, OD_OMIT_PREFIX | OD_COLOR_CODED);
-              msg_format("Energy drains from your %s!", buf);
+        msg_format("Energy drains from your %s!", o_name);
         device_decrease_sp(obj, drain_amt);
         *drained = TRUE;
 
@@ -175,7 +183,7 @@ bool drain_random_object(int who, int drain_amt, bool *drained)
         }
 
         /* Window stuff */
-        p_ptr->window |= (PW_INVEN);
+        p_ptr->window |= PW_INVEN;
 
         /* Done */
         return TRUE;
@@ -194,7 +202,7 @@ bool make_attack_normal(int m_idx)
 
     int ap_cnt, ht_cnt;
 
-    int j, k, ac, rlev, skill;
+    int j, ac, rlev, skill;
 
     s32b gold;
 
@@ -555,9 +563,7 @@ bool make_attack_normal(int m_idx)
                     if (r_ptr->flags2 & RF2_THIEF)
                         mon_lore_2(m_ptr, RF2_THIEF);
 
-                    if (!p_ptr->paralyzed &&
-                        (randint0(100) < (adj_dex_safe[p_ptr->stat_ind[A_DEX]] +
-                                  p_ptr->lev)))
+                    if (!p_ptr->paralyzed && (randint0(100) < (adj_dex_safe[p_ptr->stat_ind[A_DEX]] + p_ptr->lev)))
                     {
                         msg_print("You quickly protect your money pouch!");
                         if (randint0(3)) blinked = TRUE;
@@ -609,105 +615,122 @@ bool make_attack_normal(int m_idx)
                     if ((p_ptr->pclass == CLASS_LAWYER) || (p_ptr->pclass == CLASS_NINJA_LAWYER)) 
                     { blinked = TRUE; obvious = TRUE; break; }
 
-                    if (r_ptr->flags2 & RF2_THIEF)
-                        mon_lore_2(m_ptr, RF2_THIEF);
-
-                    if (p_ptr->tim_inven_prot2)
-                    {
-                        msg_print("Your inventory is protected!");
+                    if (r_ptr->flags2 & RF2_THIEF) mon_lore_2(m_ptr, RF2_THIEF);
+                    
+                    for(int use_bag = 0; use_bag < 2; use_bag++) {
+                      slot_t slot = use_bag ? equip_find_obj(TV_BAG, SV_ANY) : 0;
+                      if(use_bag && !slot) continue;
+                      obj_ptr obj_bag = use_bag ? equip_obj(slot) : NULL;
+                      
+                      if (p_ptr->tim_inven_prot2)
+                      {
+                        msg_print("Your belongings are protected!");
                         blinked = TRUE;
                         obvious = TRUE;
                         break;
-                    }
-
-                    if (!p_ptr->paralyzed &&
-                        (randint0(100) < (adj_dex_safe[p_ptr->stat_ind[A_DEX]] +
-                                  p_ptr->lev)))
-                    {
-                        msg_print("You grab hold of your backpack!");
+                      }
+                      
+                      if (!use_bag && !p_ptr->paralyzed && (randint0(200) < (adj_dex_safe[p_ptr->stat_ind[A_DEX]] + p_ptr->lev)))
+                      {
+                        msg_print("You clutch your pack protectively!");
                         blinked = TRUE;
                         obvious = TRUE;
-                        break;
-                    }
-
-                    for (k = 0; k < 10; k++)
-                    {
-                        s16b    o_idx;
-                        slot_t  slot = pack_random_slot(NULL);
-                        obj_ptr obj;
-
+                        continue;
+                      }
+                      
+                      if (use_bag && (obj_bag->name2 == EGO_BAG_CLASPED || have_flag(obj_bag->flags, OF_SECURE)) &&
+                         (randint0(100) < (adj_dex_safe[p_ptr->stat_ind[A_DEX]] + p_ptr->lev)))
+                      {
+                        msg_print("Your bag is tightly secured!");
+                        blinked = TRUE;
+                        obvious = TRUE;
+                        continue;
+                      }
+                      if (use_bag && !p_ptr->paralyzed && (randint0(400) < (adj_dex_safe[p_ptr->stat_ind[A_DEX]] + p_ptr->lev)))
+                      {
+                        msg_print("You clutch your bag tightly!");
+                        blinked = TRUE;
+                        obvious = TRUE;
+                        continue;
+                      }
+                      
+                      for (int k = 0; k < 5; k++)
+                      {
+                        slot_t slot = use_bag ? bag_random_slot(one_in_(5) ? obj_exists : NULL) : pack_random_slot(NULL);
                         if (!slot) continue;
-                        obj = pack_obj(slot);
-
+                        
+                        obj_ptr obj = use_bag ? bag_obj(slot) : pack_obj(slot);
                         if (!obj) continue;
+                        
                         if (object_is_artifact(obj)) continue;
-                        if ((obj->tval == TV_CAPTURE) && (obj->pval > 0) && (r_info[obj->pval].ball_num)) continue;
-
+                        if ((obj->tval == TV_CAPTURE) && (obj->pval > 0) && r_info[obj->pval].ball_num) continue;
+                        
                         object_desc(o_name, obj, OD_OMIT_PREFIX);
-
-                        msg_format("%sour %s %s stolen!",
-                               ((obj->number > 1) ? "One of y" : "Y"),
-                               o_name, have_flag(obj->flags, OF_PLURAL) ? "were" : "was");
-
+                        
+                        msg_format("%sour %s %s stolen!", (obj->number > 1) ? "One of y" : "Y",
+                                   o_name, have_flag(obj->flags, OF_PLURAL) ? "were" : "was");
+                        
                         virtue_add(VIRTUE_SACRIFICE, 1);
-
-                        o_idx = o_pop();
+                        
+                        s16b o_idx = o_pop();
                         if (o_idx)
                         {
-                            object_type *j_ptr;
-                            j_ptr = &o_list[o_idx];
-
-                            object_copy(j_ptr, obj);
-
-                            j_ptr->number = 1;
-                            j_ptr->held_m_idx = m_idx;
-                            j_ptr->next_o_idx = m_ptr->hold_o_idx;
-                            m_ptr->hold_o_idx = o_idx;
+                          object_type *j_ptr = &o_list[o_idx];
+                          object_copy(j_ptr, obj);
+                          
+                          j_ptr->number = 1;
+                          j_ptr->held_m_idx = m_idx;
+                          j_ptr->next_o_idx = m_ptr->hold_o_idx;
+                          m_ptr->hold_o_idx = o_idx;
                         }
-
-                        if (((alert_device_gone) && (object_is_device(obj))) ||
-                           ((alert_insc_gone) && (obj_is_inscribed(obj))))
-                        {
-                            msg_print(NULL); /* -more- prompt */
-                        }
-
+                        
+                        if ((alert_device_gone && object_is_device(obj)) || (alert_insc_gone && obj_is_inscribed(obj)))
+                          msg_print(NULL); /* -more- prompt */
+                        
                         obj->number--;
                         obj_release(obj, OBJ_RELEASE_QUIET);
-
-        
+                        
                         obvious = TRUE;
                         blinked = TRUE;
                         break;
+                      }
                     }
+                    
                     break;
 
                 case RBE_EAT_FOOD:
                     if (p_ptr->is_dead || CHECK_MULTISHADOW()) break;
 
-                    if (r_ptr->flags2 & RF2_THIEF)
-                        mon_lore_2(m_ptr, RF2_THIEF);
+                    if (r_ptr->flags2 & RF2_THIEF) mon_lore_2(m_ptr, RF2_THIEF);
 
-                    for (k = 0; k < 10; k++)
-                    {
-                        slot_t  slot = pack_random_slot(NULL);
-                        obj_ptr obj;
-
+                    for(int use_bag = 0; use_bag < 2; use_bag++) {
+                      slot_t slot = use_bag ? equip_find_obj(TV_BAG, SV_ANY) : 0;
+                      if(use_bag && !slot) continue;
+                      
+                      obj_ptr obj_bag = use_bag ? equip_obj(slot) : NULL;
+                      if(use_bag && (obj_bag->name2 == EGO_BAG_CLASPED || have_flag(obj_bag->flags, OF_SECURE))) continue;
+                      
+                      for (int k = 0; k < 10; k++)
+                      {
+                        slot_t slot = use_bag ? bag_random_slot(one_in_(10) ? obj_exists : NULL) : pack_random_slot(NULL);
                         if (!slot) continue;
-                        obj = pack_obj(slot);
+                        
+                        obj_ptr obj = use_bag ? bag_obj(slot) : pack_obj(slot);
                         if (!obj) continue;
+                        
                         if (obj->tval != TV_FOOD && !(obj->tval == TV_CORPSE && obj->sval)) continue;
                         if (object_is_artifact(obj)) continue;
 
                         object_desc(o_name, obj, OD_OMIT_PREFIX | OD_NAME_ONLY | OD_COLOR_CODED);
-                        msg_format("%sour %s %s eaten!",
-                               ((obj->number > 1) ? "One of y" : "Y"),
-                               o_name, (((obj->number == 1) && (have_flag(obj->flags, OF_PLURAL))) ? "were" : "was"));
-
+                        msg_format("%sour %s %s eaten!", ((obj->number > 1) ? "One of y" : "Y"),
+                                   o_name, (((obj->number == 1) && (have_flag(obj->flags, OF_PLURAL))) ? "were" : "was"));
+                        
                         obj->number--;
                         obj_release(obj, OBJ_RELEASE_QUIET);
 
                         obvious = TRUE;
                         break;
+                      }
                     }
                     break;
 

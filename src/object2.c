@@ -21,31 +21,19 @@
  */
 void excise_object_idx(int o_idx)
 {
-    object_type *j_ptr;
-
-    s16b this_o_idx, next_o_idx = 0;
-
-    s16b prev_o_idx = 0;
-
-
-    /* Object */
-    j_ptr = &o_list[o_idx];
+    s16b next_o_idx = 0, prev_o_idx = 0;
+    object_type *j_ptr = &o_list[o_idx];
 
     /* Monster */
     if (j_ptr->held_m_idx)
     {
-        monster_type *m_ptr;
-
-        /* Monster */
-        m_ptr = &m_list[j_ptr->held_m_idx];
+        monster_type *m_ptr = &m_list[j_ptr->held_m_idx];
 
         /* Scan all objects in the grid */
-        for (this_o_idx = m_ptr->hold_o_idx; this_o_idx; this_o_idx = next_o_idx)
+        for (s16b this_o_idx = m_ptr->hold_o_idx; this_o_idx; this_o_idx = next_o_idx)
         {
-            object_type *o_ptr;
-
             /* Acquire object */
-            o_ptr = &o_list[this_o_idx];
+            object_type *o_ptr = &o_list[this_o_idx];
 
             /* Acquire next object */
             next_o_idx = o_ptr->next_o_idx;
@@ -54,14 +42,8 @@ void excise_object_idx(int o_idx)
             if (this_o_idx == o_idx)
             {
                 /* No previous */
-                if (prev_o_idx == 0)
-                {
-                    /* Remove from list */
-                    m_ptr->hold_o_idx = next_o_idx;
-                }
-
-                /* Real previous */
-                else
+                if (prev_o_idx == 0) m_ptr->hold_o_idx = next_o_idx; // Remove from list
+                else // Real previous
                 {
                     object_type *k_ptr;
 
@@ -87,21 +69,14 @@ void excise_object_idx(int o_idx)
     /* Dungeon */
     else
     {
-        cave_type *c_ptr;
-
-        int y = j_ptr->loc.y;
-        int x = j_ptr->loc.x;
-
         /* Grid */
-        c_ptr = &cave[y][x];
+        cave_type *c_ptr = &cave[j_ptr->loc.y][j_ptr->loc.x];
 
         /* Scan all objects in the grid */
-        for (this_o_idx = c_ptr->o_idx; this_o_idx; this_o_idx = next_o_idx)
+        for (s16b this_o_idx = c_ptr->o_idx; this_o_idx; this_o_idx = next_o_idx)
         {
-            object_type *o_ptr;
-
             /* Acquire object */
-            o_ptr = &o_list[this_o_idx];
+            object_type *o_ptr = &o_list[this_o_idx];
 
             /* Acquire next object */
             next_o_idx = o_ptr->next_o_idx;
@@ -110,14 +85,8 @@ void excise_object_idx(int o_idx)
             if (this_o_idx == o_idx)
             {
                 /* No previous */
-                if (prev_o_idx == 0)
-                {
-                    /* Remove from list */
-                    c_ptr->o_idx = next_o_idx;
-                }
-
-                /* Real previous */
-                else
+                if (prev_o_idx == 0) c_ptr->o_idx = next_o_idx; // Remove from list
+                else // Real previous
                 {
                     object_type *k_ptr;
 
@@ -152,26 +121,13 @@ void excise_object_idx(int o_idx)
  */
 void delete_object_idx(int o_idx)
 {
-    object_type *j_ptr;
-
     /* Excise */
     excise_object_idx(o_idx);
 
-    /* Object */
-    j_ptr = &o_list[o_idx];
+    object_type *j_ptr = &o_list[o_idx];
 
     /* Dungeon floor */
-    if (!(j_ptr->held_m_idx))
-    {
-        int y, x;
-
-        /* Location */
-        y = j_ptr->loc.y;
-        x = j_ptr->loc.x;
-
-        /* Visual update */
-        lite_spot(y, x);
-    }
+    if (!(j_ptr->held_m_idx)) lite_spot(j_ptr->loc.y, j_ptr->loc.x); // Visual update
 
     /* Wipe the object */
     object_wipe(j_ptr);
@@ -188,25 +144,19 @@ void delete_object_idx(int o_idx)
  */
 void delete_object(int y, int x)
 {
-    cave_type *c_ptr;
-
-    s16b this_o_idx, next_o_idx = 0;
-
+    s16b next_o_idx = 0;
 
     /* Refuse "illegal" locations */
     if (!in_bounds(y, x)) return;
 
-
     /* Grid */
-    c_ptr = &cave[y][x];
+    cave_type *c_ptr = &cave[y][x];
 
     /* Scan all objects in the grid */
-    for (this_o_idx = c_ptr->o_idx; this_o_idx; this_o_idx = next_o_idx)
+    for (s16b this_o_idx = c_ptr->o_idx; this_o_idx; this_o_idx = next_o_idx)
     {
-        object_type *o_ptr;
-
         /* Acquire object */
-        o_ptr = &o_list[this_o_idx];
+        object_type *o_ptr = &o_list[this_o_idx];
 
         /* Acquire next object */
         next_o_idx = o_ptr->next_o_idx;
@@ -214,7 +164,6 @@ void delete_object(int y, int x)
         /* Tell Cornucopia not to track the item anymore */
         if (o_ptr->insured) cornucopia_mark_destroyed(cornucopia_item_policy(o_ptr), o_ptr->number);
 
-        /* Wipe the object */
         object_wipe(o_ptr);
 
         /* Count objects */
@@ -236,74 +185,43 @@ void delete_object(int y, int x)
  */
 static void compact_objects_aux(int i1, int i2)
 {
-    int i;
-
-    cave_type *c_ptr;
-
-    object_type *o_ptr;
-
-
-    /* Do nothing */
-    if (i1 == i2) return;
-
-
+    if (i1 == i2) return; // Do nothing
+  
     /* Repair objects */
-    for (i = 1; i < o_max; i++)
+    for (int i = 1; i < o_max; i++)
     {
         /* Acquire object */
-        o_ptr = &o_list[i];
+        object_type *o_ptr = &o_list[i];
 
         /* Skip "dead" objects */
         if (!o_ptr->k_idx) continue;
 
         /* Repair "next" pointers */
-        if (o_ptr->next_o_idx == i1)
-        {
-            /* Repair */
-            o_ptr->next_o_idx = i2;
-        }
+        if (o_ptr->next_o_idx == i1) o_ptr->next_o_idx = i2;
     }
 
-
     /* Acquire object */
-    o_ptr = &o_list[i1];
+    object_type *o_ptr = &o_list[i1];
 
     /* Monster */
     if (o_ptr->held_m_idx)
     {
-        monster_type *m_ptr;
-
         /* Acquire monster */
-        m_ptr = &m_list[o_ptr->held_m_idx];
+        monster_type *m_ptr = &m_list[o_ptr->held_m_idx];
 
         /* Repair monster */
-        if (m_ptr->hold_o_idx == i1)
-        {
-            /* Repair */
-            m_ptr->hold_o_idx = i2;
-        }
+        if (m_ptr->hold_o_idx == i1) m_ptr->hold_o_idx = i2;
     }
 
     /* Dungeon */
     else
     {
-        int y, x;
-
-        /* Acquire location */
-        y = o_ptr->loc.y;
-        x = o_ptr->loc.x;
-
         /* Acquire grid */
-        c_ptr = &cave[y][x];
+        cave_type *c_ptr = &cave[o_ptr->loc.y][o_ptr->loc.x];
 
         /* Repair grid */
-        if (c_ptr->o_idx == i1)
-        {
-            /* Repair */
-            c_ptr->o_idx = i2;
-        }
+        if (c_ptr->o_idx == i1) c_ptr->o_idx = i2;
     }
-
 
     /* Structure copy */
     o_list[i2] = o_list[i1];
@@ -328,17 +246,13 @@ static void compact_objects_aux(int i1, int i2)
  */
 void compact_objects(int size)
 {
-    int i, y, x, num, cnt;
-    int cur_lev, cur_dis, chance;
-    object_type *o_ptr;
-
+    int cur_lev, cur_dis;
 
     /* Compact */
     if (size)
     {
         /* Message */
         msg_print("Compacting objects...");
-
 
         /* Redraw map */
         p_ptr->redraw |= (PR_MAP);
@@ -347,9 +261,8 @@ void compact_objects(int size)
         p_ptr->window |= (PW_OVERHEAD | PW_DUNGEON);
     }
 
-
     /* Compact at least 'size' objects */
-    for (num = 0, cnt = 1; num < size; cnt++)
+    for (int num = 0, cnt = 1; num < size; cnt++)
     {
         /* Get more vicious each iteration */
         cur_lev = 5 * cnt;
@@ -358,9 +271,11 @@ void compact_objects(int size)
         cur_dis = 5 * (20 - cnt);
 
         /* Examine the objects */
-        for (i = 1; i < o_max; i++)
+        for (int i = 1; i < o_max; i++)
         {
-            o_ptr = &o_list[i];
+            int y, x;
+
+            object_type *o_ptr = &o_list[i];
 
             /* Skip dead objects */
             if (!o_ptr->k_idx) continue;
@@ -396,11 +311,10 @@ void compact_objects(int size)
             if ((cur_dis > 0) && (distance(py, px, y, x) < cur_dis)) continue;
 
             /* Saving throw */
-            chance = 90;
+            int chance = 90;
 
             /* Hack -- only compact artifacts in emergencies */
-            if ((object_is_fixed_artifact(o_ptr) || o_ptr->art_name) &&
-                (cnt < 1000)) chance = 100;
+            if ((object_is_fixed_artifact(o_ptr) || o_ptr->art_name) && (cnt < 1000)) chance = 100;
 
             /* Apply the saving throw */
             if (randint0(100) < chance) continue;
@@ -413,14 +327,10 @@ void compact_objects(int size)
         }
     }
 
-
     /* Excise dead objects (backwards!) */
-    for (i = o_max - 1; i >= 1; i--)
+    for (int i = o_max - 1; i >= 1; i--)
     {
-        o_ptr = &o_list[i];
-
-        /* Skip real objects */
-        if (o_ptr->k_idx) continue;
+        if (o_list[i].k_idx) continue;
 
         /* Move last object into open hole */
         compact_objects_aux(o_max - 1, i);
@@ -444,10 +354,8 @@ void compact_objects(int size)
  */
 void wipe_o_list(void)
 {
-    int i;
-
     /* Delete the existing objects */
-    for (i = 1; i < o_max; i++)
+    for (int i = 1; i < o_max; i++)
     {
         object_type *o_ptr = &o_list[i];
 
@@ -521,51 +429,26 @@ void wipe_o_list(void)
  */
 s16b o_pop(void)
 {
-    int i;
-
-
     /* Initial allocation */
     if (o_max < max_o_idx)
     {
-        /* Get next space */
-        i = o_max;
-
-        /* Expand object array */
-        o_max++;
-
-        /* Count objects */
-        o_cnt++;
-
-        /* Use this object */
-        return (i);
+        o_cnt++; // Increase object count
+        return o_max++; // Return next space and expand object array
     }
-
 
     /* Recycle dead objects */
-    for (i = 1; i < o_max; i++)
+    for (int i = 1; i < o_max; i++)
     {
-        object_type *o_ptr;
+        if (o_list[i].k_idx) continue;
 
-        /* Acquire object */
-        o_ptr = &o_list[i];
-
-        /* Skip live objects */
-        if (o_ptr->k_idx) continue;
-
-        /* Count objects */
-        o_cnt++;
-
-        /* Use this object */
-        return (i);
+        o_cnt++; // Increase object count
+        return i; // Use this object
     }
-
 
     /* Warn the player (except during dungeon creation) */
     if (character_dungeon) msg_print("Too many objects!");
 
-
-    /* Oops */
-    return (0);
+    return 0;
 }
 
 
@@ -574,31 +457,18 @@ s16b o_pop(void)
  */
 errr get_obj_num_prep(void)
 {
-    int i;
-
     /* Get the entry */
     alloc_entry *table = alloc_kind_table;
 
     /* Scan the allocation table */
-    for (i = 0; i < alloc_kind_size; i++)
+    for (int i = 0; i < alloc_kind_size; i++)
     {
         /* Accept objects which pass the restriction, if any */
-        if (!get_obj_num_hook || (*get_obj_num_hook)(table[i].index))
-        {
-            /* Accept this object */
-            table[i].prob2 = table[i].prob1;
-        }
-
-        /* Do not use this object */
-        else
-        {
-            /* Decline this object */
-            table[i].prob2 = 0;
-        }
+        if (!get_obj_num_hook || (*get_obj_num_hook)(table[i].index)) table[i].prob2 = table[i].prob1; // Accept this object
+        else table[i].prob2 = 0; // Decline this object
     }
 
-    /* Success */
-    return (0);
+    return 0;
 }
 
 static int _spellbook_max(int tval, int sval)
@@ -608,10 +478,8 @@ static int _spellbook_max(int tval, int sval)
 
     if (!ironman_shops && tval >= TV_LIFE_BOOK)
     {
-        if (tval == TV_ARCANE_BOOK)
-            max = 10;
-        else
-            max = limits[sval];
+        if (tval == TV_ARCANE_BOOK) max = 10;
+        else max = limits[sval];
     }
 
     return max;
@@ -647,10 +515,6 @@ static bool _is_stat_potion(int tval, int sval)
  */
 s16b get_obj_num(int level)
 {
-    int             i;
-    int             k_idx;
-    long            value, total;
-    object_kind     *k_ptr;
     alloc_entry     *table = alloc_kind_table;
 
     if (level > MAX_DEPTH - 1) level = MAX_DEPTH - 1;
@@ -662,8 +526,7 @@ s16b get_obj_num(int level)
         if (one_in_(GREAT_OBJ))
         {
             int boost = level;
-            if (boost < 20)
-                boost = 20;
+            if (boost < 20) boost = 20;
             level += rand_range(boost/4, boost/2);
 
             /* What a bizarre calculation ... yes, but this did allow
@@ -672,39 +535,36 @@ s16b get_obj_num(int level)
         }
     }
 
-    /* Reset total */
-    total = 0L;
+    long total = 0L;
 
     /* Process probabilities */
-    for (i = 0; i < alloc_kind_size; i++)
+    for (int i = 0; i < alloc_kind_size; i++)
     {
-        int p = table[i].prob2;
-        int max = 0;
-
         /* Objects are sorted by depth */
         if (table[i].level > level) break;
         table[i].prob3 = 0;
 
         if (table[i].max_level && table[i].max_level < level) continue;
 
-        k_idx = table[i].index;
-        k_ptr = &k_info[k_idx];
+        object_kind *k_ptr = &k_info[table[i].index];
+
         if (k_ptr->tval == TV_FOOD && k_ptr->sval == SV_FOOD_AMBROSIA && dungeon_type != DUNGEON_OLYMPUS) continue;
         if (k_ptr->tval == TV_POTION && k_ptr->sval == SV_POTION_MEAD_OF_POETRY && dungeon_type != DUNGEON_ASGARD) continue;
-	if (easy_id && k_ptr->tval == TV_SCROLL && ((k_ptr->sval == SV_SCROLL_STAR_IDENTIFY) || (k_ptr->sval == SV_SCROLL_UNDERSTANDING))) continue;
+        if (easy_id && k_ptr->tval == TV_SCROLL && ((k_ptr->sval == SV_SCROLL_STAR_IDENTIFY) || (k_ptr->sval == SV_SCROLL_UNDERSTANDING))) continue;
         if (only_downward() && k_ptr->tval == TV_SCROLL && k_ptr->sval == SV_SCROLL_RESET_RECALL) continue;
-        if ((coffee_break == SPEED_INSTA_COFFEE) && (k_ptr->tval == TV_POTION) && ((k_ptr->sval == SV_POTION_HEALING) || (k_ptr->sval == SV_POTION_STAR_HEALING) || (k_ptr->sval == SV_POTION_LIFE))) continue;
+        if ((coffee_break == SPEED_INSTA_COFFEE) && (k_ptr->tval == TV_POTION) &&
+            ((k_ptr->sval == SV_POTION_HEALING) || (k_ptr->sval == SV_POTION_STAR_HEALING) || (k_ptr->sval == SV_POTION_LIFE))) continue;
         /* Hack -- prevent embedded chests */
         if (opening_chest && (k_ptr->tval == TV_CHEST)) continue;
 
         /* TODO: Add some sort of max_num field to limit certain objects (I'm looking at you, spellbooks!)
            Note, this also ensures an even distribution of spellbook kinds for high level books! */
-        max = _spellbook_max(k_ptr->tval, k_ptr->sval);
+        int max = _spellbook_max(k_ptr->tval, k_ptr->sval);
+        int p = table[i].prob2;
         if (max && p)
         {
             int ct = k_ptr->counts.found - max;
-            while (ct-- > 0)
-                p /= 2;
+            while (ct-- > 0) p /= 2;
             p = MAX(p, 1);
         }
 
@@ -713,20 +573,16 @@ s16b get_obj_num(int level)
     }
 
     /* No legal objects */
-    if (total <= 0)
-        return 0;
-
+    if (total <= 0) return 0;
 
     /* Pick an object */
-    value = randint0(total);
+    long value = randint0(total);
 
     /* Find the object */
+    int i;
     for (i = 0; i < alloc_kind_size; i++)
     {
-        /* Found the entry */
         if (value < table[i].prob3) break;
-
-        /* Decrement */
         value = value - table[i].prob3;
     }
 
@@ -746,8 +602,7 @@ s16b get_obj_num(int level)
      * skewed and this "feature" seemed more like a bug to me. -CTK
      */
 
-    /* Result */
-    return (table[i].index);
+    return table[i].index;
 }
 
 bool object_is_aware(object_type *o_ptr)
@@ -1189,11 +1044,12 @@ s32b obj_value_real(object_type *o_ptr)
     if (object_is_jewelry(o_ptr) || (o_ptr->tval == TV_LITE && object_is_artifact(o_ptr))) return jewelry_cost(o_ptr, COST_REAL);
     if (o_ptr->tval == TV_LITE) return lite_cost(o_ptr, COST_REAL);
     if (o_ptr->tval == TV_QUIVER) return quiver_cost(o_ptr, COST_REAL);
+    if (o_ptr->tval == TV_BAG) return bag_cost(o_ptr, COST_REAL);
     if (object_is_device(o_ptr)) return device_value(o_ptr, COST_REAL);
     if ((o_ptr->tval == TV_CORPSE) && (o_ptr->sval >= SV_BODY_HEAD)) return igor_cost(o_ptr, COST_REAL);
 
     /* Hack -- "worthless" items */
-    if (!k_info[o_ptr->k_idx].cost) return (0L);
+    if (!k_info[o_ptr->k_idx].cost) return 0L;
 
     /* Base cost */
     value = k_info[o_ptr->k_idx].cost;
@@ -1230,7 +1086,7 @@ s32b obj_value_real(object_type *o_ptr)
     if (value < 0) return 0L;
 
     /* Return the value */
-    return (value);
+    return value;
 }
 
 
@@ -1256,32 +1112,26 @@ s32b obj_value(object_type *o_ptr)
            direct experience. Scoring is displayed in obj_display() and
            in the home inventory of the player.*/
         value = new_object_cost(o_ptr, COST_REAL);
-        if (!value)
-            value = obj_value_real(o_ptr);
+        if (!value) value = obj_value_real(o_ptr);
 
         if (!obj_is_identified_fully(o_ptr))
         {
-            if (object_is_artifact(o_ptr))
-                value += 1000;
-            if (object_is_cursed(o_ptr))
-                value -= value/10;
+            if (object_is_artifact(o_ptr)) value += 1000;
+            if (object_is_cursed(o_ptr))   value -= value/10;
         }
     }
     else
     {
         value = new_object_cost(o_ptr, 0);
-        if (!value)
-            value = object_value_base(o_ptr);
+        if (!value) value = object_value_base(o_ptr);
 
         if ( (o_ptr->ident & IDENT_SENSE)
           && (o_ptr->feeling == FEEL_EXCELLENT || o_ptr->feeling == FEEL_AWFUL)
           && object_is_ego(o_ptr))
         {
             value += 500;
-            if (object_is_ammo(o_ptr))
-                value = value / MAX(25, o_ptr->number);
-            else
-                value = value / o_ptr->number;
+            if (object_is_ammo(o_ptr)) value /= MAX(25, o_ptr->number);
+            else                       value /= o_ptr->number;
         }
         if ( (o_ptr->ident & IDENT_SENSE)
           && (o_ptr->feeling == FEEL_SPECIAL || o_ptr->feeling == FEEL_TERRIBLE)
@@ -1289,11 +1139,11 @@ s32b obj_value(object_type *o_ptr)
         {
             value += 1000;
         }
-        if ((o_ptr->ident & IDENT_SENSE) && object_is_cursed(o_ptr))
-            value = (value+2)/3;
+        if ((o_ptr->ident & IDENT_SENSE) && object_is_cursed(o_ptr)) value = (value+2)/3;
     }
-    if (o_ptr->discount)
-        value -= (value * o_ptr->discount / 100L);
+
+    if (o_ptr->discount) value -= (value * o_ptr->discount / 100L);
+
     return value;
 }
 
@@ -1340,12 +1190,11 @@ bool can_player_destroy_object(object_type *o_ptr)
  */
 s16b lookup_kind(int tval, int sval)
 {
-    int k;
     int num = 0;
     int bk = 0;
 
     /* Look for it */
-    for (k = 1; k < max_k_idx; k++)
+    for (int k = 1; k < max_k_idx; k++)
     {
         object_kind *k_ptr = &k_info[k];
 
@@ -1367,13 +1216,10 @@ s16b lookup_kind(int tval, int sval)
     }
 
     /* Return this choice */
-    if (sval == SV_ANY)
-    {
-        return bk;
-    }
+    if (sval == SV_ANY) return bk;
 
     /* Oops */
-    return (0);
+    return 0;
 }
 
 
@@ -1409,10 +1255,7 @@ void object_prep(object_type *o_ptr, int k_idx)
 
     /* Save the kind index */
     o_ptr->k_idx = k_idx;
-    if (k_ptr->tval != TV_GOLD && !store_hack)
-    {
-        k_ptr->counts.generated++;
-    }
+    if (k_ptr->tval != TV_GOLD && !store_hack) k_ptr->counts.generated++;
 
     /* Efficiency -- tval/sval */
     o_ptr->tval = k_ptr->tval;
@@ -1439,15 +1282,15 @@ void object_prep(object_type *o_ptr, int k_idx)
     o_ptr->mult = k_ptr->mult;
 
     /* Hack -- worthless items are always "broken" */
-    if (k_info[o_ptr->k_idx].cost <= 0) o_ptr->ident |= (IDENT_BROKEN);
+    if (k_info[o_ptr->k_idx].cost <= 0) o_ptr->ident |= IDENT_BROKEN;
 
     /* Hack -- cursed items are always "cursed" */
-    if (k_ptr->gen_flags & (OFG_CURSED)) o_ptr->curse_flags |= (OFC_CURSED);
-    if (k_ptr->gen_flags & (OFG_HEAVY_CURSE)) o_ptr->curse_flags |= (OFC_HEAVY_CURSE);
-    if (k_ptr->gen_flags & (OFG_PERMA_CURSE)) o_ptr->curse_flags |= (OFC_PERMA_CURSE);
-    if (k_ptr->gen_flags & (OFG_RANDOM_CURSE0)) o_ptr->curse_flags |= get_curse(0, o_ptr);
-    if (k_ptr->gen_flags & (OFG_RANDOM_CURSE1)) o_ptr->curse_flags |= get_curse(1, o_ptr);
-    if (k_ptr->gen_flags & (OFG_RANDOM_CURSE2)) o_ptr->curse_flags |= get_curse(2, o_ptr);
+    if (k_ptr->gen_flags & OFG_CURSED       ) o_ptr->curse_flags |= OFC_CURSED;
+    if (k_ptr->gen_flags & OFG_HEAVY_CURSE  ) o_ptr->curse_flags |= OFC_HEAVY_CURSE;
+    if (k_ptr->gen_flags & OFG_PERMA_CURSE  ) o_ptr->curse_flags |= OFC_PERMA_CURSE;
+    if (k_ptr->gen_flags & OFG_RANDOM_CURSE0) o_ptr->curse_flags |= get_curse(0, o_ptr);
+    if (k_ptr->gen_flags & OFG_RANDOM_CURSE1) o_ptr->curse_flags |= get_curse(1, o_ptr);
+    if (k_ptr->gen_flags & OFG_RANDOM_CURSE2) o_ptr->curse_flags |= get_curse(2, o_ptr);
 
     /* Inherit plurality */
     if (have_flag(k_ptr->flags, OF_PLURAL)) add_flag(o_ptr->flags, OF_PLURAL);
@@ -2047,8 +1890,7 @@ bool apply_magic(object_type *o_ptr, int lev, u32b mode)
     int maxf1 = d_info[dungeon_type].obj_good;
     int maxf2 = d_info[dungeon_type].obj_great;
 
-    if (mode & AM_QUEST)
-        lev += 10;
+    if (mode & AM_QUEST) lev += 10;
 
     /* Maximum "level" for various things */
     if (lev > MAX_DEPTH - 1) lev = MAX_DEPTH - 1;
@@ -2062,8 +1904,7 @@ bool apply_magic(object_type *o_ptr, int lev, u32b mode)
         if (o_ptr->tval == TV_STAFF) lev -= (lev / 15);
     }
 
-    if (!o_ptr->level)
-        o_ptr->level = lev; /* Wizard statistics ... */
+    if (!o_ptr->level) o_ptr->level = lev; // Wizard statistics
 
     /* Base chance of being "good" */
     f1 = lev + 10;
@@ -2075,8 +1916,7 @@ bool apply_magic(object_type *o_ptr, int lev, u32b mode)
     f2 = f1 * 2 / 3;
 
     /* Maximal chance of being "great" */
-    if (f2 > maxf2)
-        f2 = maxf2;
+    if (f2 > maxf2) f2 = maxf2;
 
     /* Temp Hack: It's a bit too hard to find good rings early on. Note we hack after
        calculating f2! */
@@ -2283,6 +2123,10 @@ bool apply_magic(object_type *o_ptr, int lev, u32b mode)
         case TV_QUIVER:
             obj_create_quiver(o_ptr, lev, power, mode);
             break;
+
+        case TV_BAG:
+          obj_create_bag(o_ptr, lev, power, mode);
+          break;
 
         case TV_DIGGING:
         case TV_HAFTED:
@@ -2981,11 +2825,8 @@ static bool _kind_is_bow_quiver(int k_idx) {
         return TRUE;
     return FALSE;
 }
-static bool _kind_is_lite(int k_idx) {
-    if (k_info[k_idx].tval == TV_LITE)
-        return TRUE;
-    return FALSE;
-}
+static bool _kind_is_bag(int k_idx) { return (k_info[k_idx].tval == TV_BAG); }
+static bool _kind_is_lite(int k_idx) { return (k_info[k_idx].tval == TV_LITE); }
 static bool _kind_is_bow2(int k_idx) {
     if (k_info[k_idx].tval == TV_BOW && k_info[k_idx].sval != SV_HARP) /* Assume tailored Archer reward, and a harp is just insulting! */
         return TRUE;
@@ -3033,7 +2874,8 @@ static _kind_alloc_entry _kind_alloc_table[] = {
     { kind_is_helm,             30,    0,    0, EQUIP_SLOT_HELMET },
     { _kind_is_gloves,          30,    0,    0, EQUIP_SLOT_GLOVES },
     { _kind_is_boots,           30,    0,    0, EQUIP_SLOT_BOOTS },
-    /*                         650              */
+    { _kind_is_bag,            910,    0,    0, EQUIP_SLOT_BAG },
+    /*                         660              */
 
     { kind_is_wand_rod_staff,   95,  -40,  -60, EQUIP_SLOT_NONE },
     { _kind_is_potion_scroll,  100,  -50,  -90, EQUIP_SLOT_NONE },
@@ -3053,7 +2895,7 @@ static int _kind_alloc_weight(_kind_alloc_entry *entry, u32b mode)
         w += entry->good;
 
     if (p_ptr->prace == RACE_MON_RING && entry->hook == kind_is_jewelry)
-        w = w * 2;
+        w *= 2;
 
     /* EXPERIMENTAL: Adjust frequencies of unusable objects down. For example, hounds
      * can neither wield weapons nor employ archery. Beholders are much worse, only using
@@ -4227,16 +4069,13 @@ s16b drop_near(object_type *j_ptr, int chance, int y, int x)
         if (!character_dungeon) return (0);
 
         /* Message */
-        msg_format("The %s disappear%s.",
-               o_name, (plural ? "" : "s"));
-
+        msg_format("The %s disappear%s.", o_name, (plural ? "" : "s"));
 
         /* Debug */
         if (p_ptr->wizard) msg_print("(no floor space)");
 
-
         /* Failure */
-        return (0);
+        return 0;
     }
 
 
@@ -4392,7 +4231,7 @@ s16b drop_near(object_type *j_ptr, int chance, int y, int x)
         }
 
         /* Failure */
-        return (0);
+        return 0;
     }
 
     /* Stack */
@@ -4437,14 +4276,11 @@ s16b drop_near(object_type *j_ptr, int chance, int y, int x)
     if (chance && player_bold(by, bx))
     {
         msg_print("You feel something roll beneath your feet.");
-
     }
 
-    /* XXX XXX XXX */
     p_ptr->window |= PW_OBJECT_LIST;
 
-    /* Result */
-    return (o_idx);
+    return o_idx;
 }
 
 
@@ -4472,10 +4308,7 @@ void acquirement(int y1, int x1, int num, bool great, bool known, byte origin)
         if (!make_object(i_ptr, mode, origin)) continue;
 
         num--;
-        if (known)
-        {
-            obj_identify(i_ptr);
-        }
+        if (known) obj_identify(i_ptr);
 
         /* Drop the object */
         (void)drop_near(i_ptr, -1, y1, x1);
@@ -4531,17 +4364,15 @@ void init_normal_traps(void)
 
 s16b choose_random_trap(void)
 {
-    int  tot = 0, i, roll;
+    int  tot = 0, roll;
     bool allow_down = TRUE;
 
-    if ( p_ptr->inside_arena
-      || quests_get_current()
-      || dun_level >= d_info[dungeon_type].maxdepth )
+    if ( p_ptr->inside_arena || quests_get_current() || dun_level >= d_info[dungeon_type].maxdepth )
     {
         allow_down = FALSE;
     }
 
-    for (i = 0; i < MAX_NORMAL_TRAPS; i++)
+    for (int i = 0; i < MAX_NORMAL_TRAPS; i++)
     {
         _trap_info_ptr trap = &normal_traps[i];
 
@@ -4558,7 +4389,7 @@ s16b choose_random_trap(void)
     if (tot <= 0) return feat_floor; /* impossible */
     roll = randint1(tot);
 
-    for (i = 0; i < MAX_NORMAL_TRAPS; i++)
+    for (int i = 0; i < MAX_NORMAL_TRAPS; i++)
     {
         _trap_info_ptr trap = &normal_traps[i];
 
@@ -4570,8 +4401,7 @@ s16b choose_random_trap(void)
         if ((trap->feat == feat_trap_banana) && (dungeon_type != DUNGEON_MERU)) continue;
 
         roll -= 100 / trap->rarity;
-        if (roll <= 0)
-            return trap->feat;
+        if (roll <= 0) return trap->feat;
     }
     return feat_floor; /* unreachable */
 }
@@ -4626,8 +4456,7 @@ void place_trap(int y, int x)
     c_ptr->feat = choose_random_trap();
 
     #if 0
-    if (p_ptr->wizard)
-        msg_format("<color:r>Trap:</color> %s", f_tag + f_info[c_ptr->feat].tag);
+    if (p_ptr->wizard) msg_format("<color:r>Trap:</color> %s", f_tag + f_info[c_ptr->feat].tag);
     #endif
 }
 
@@ -4639,8 +4468,6 @@ void place_trap(int y, int x)
  */
 void display_koff(int k_idx)
 {
-    int y;
-
     object_type forge;
     object_type *q_ptr;
     int         sval;
@@ -4656,7 +4483,7 @@ void display_koff(int k_idx)
 
 
     /* Erase the window */
-    for (y = 0; y < Term->hgt; y++)
+    for (int y = 0; y < Term->hgt; y++)
     {
         /* Erase the line */
         Term_erase(0, y, 255);

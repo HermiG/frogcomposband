@@ -567,7 +567,8 @@ bool object_needs_fuel(object_type *o_ptr)
  */
 bool object_known_on_average(object_type *o_ptr)
 {
-    if (o_ptr->tval == TV_RING || o_ptr->tval == TV_AMULET || o_ptr->tval == TV_QUIVER || object_is_(o_ptr, TV_LITE, SV_LITE_FEANOR)) return TRUE;
+    if (o_ptr->tval == TV_RING || o_ptr->tval == TV_AMULET || o_ptr->tval == TV_QUIVER ||
+        o_ptr->tval == TV_BAG || object_is_(o_ptr, TV_LITE, SV_LITE_FEANOR)) return TRUE;
     return FALSE;
 }
 

@@ -1135,10 +1135,26 @@ T:QUIVER
 W:50:*:4
 F:FULL_NAME
 
+############
+### Bags ###
+############
+N:285:of Holding
+T:BAG
+W:1:*:1
 
+N:286:of Protection
+T:BAG
+W:1:*:1
 
+N:287:of Weightlessness
+T:BAG
+W:50:*:4
 
+N:288:of Retention
+T:BAG
+W:50:*:4
 
-
-
-
+N:289:& Bottomless Bag~
+T:BAG
+W:50:*:4
+F:FULL_NAME

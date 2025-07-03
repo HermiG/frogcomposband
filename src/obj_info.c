@@ -189,7 +189,7 @@ bool display_origin(object_type *o_ptr, doc_ptr doc)
     if ((origin == ORIGIN_NONE) || (origin == ORIGIN_MIXED)) return FALSE;
     if ((!show_discovery) && (o_ptr->mitze_type & MITZE_MIXED)) return FALSE;
     if (origin == ORIGIN_MYSTERY) o_ptr->origin_xtra = d_info[DUNGEON_MYSTERY].final_guardian;
-    if ((origin != ORIGIN_CHEAT) && (origin != ORIGIN_PLAYER_MADE) && (origin != ORIGIN_GAMBLE) && (origin != ORIGIN_ENDLESS)
+    if ((origin != ORIGIN_CHEAT) && (origin != ORIGIN_PLAYER_MADE) && (origin != ORIGIN_GAMBLE) && (origin != ORIGIN_ENDLESS) && (origin != ORIGIN_BOTTOMLESS)
      && ((origin != ORIGIN_REFORGE) || (p_ptr->dragon_realm == DRAGON_REALM_CRAFT)) && (origin != ORIGIN_BIRTH) && (origin != ORIGIN_ARENA_REWARD) && (origin != ORIGIN_WANTED)
      && (origin != ORIGIN_CORNUCOPIA))
     {
@@ -342,6 +342,11 @@ bool display_origin(object_type *o_ptr, doc_ptr doc)
         case ORIGIN_ENDLESS:
         {
             doc_printf(doc, "Conjured forth by an endless quiver.");
+            break;
+        }
+        case ORIGIN_BOTTOMLESS:
+        {
+            doc_printf(doc, "Conjured forth by %s.", o_ptr->tval == TV_SCROLL ? "a bottomless scroll case" : "a bottomless potion belt");
             break;
         }
         case ORIGIN_PATRON:
@@ -1010,14 +1015,40 @@ static void _display_extra(object_type *o_ptr, u32b flgs[OF_ARRAY_SIZE], doc_ptr
     case EGO_AMMO_ENDURANCE:
         doc_insert(doc, "It endures almost anything without being destroyed.\n");
         break;
-    case EGO_QUIVER_PHASE:
-        doc_insert(doc, "This quiver and its contents weigh absolutely nothing at all.\n");
+    case EGO_QUIVER_HOLDING:
+        doc_insert(doc, "This quiver has an increased carrying capacity.\n");
         break;
     case EGO_QUIVER_PROTECTION:
         doc_insert(doc, "This quiver protects its contents from accidental destruction.\n");
         break;
-    case EGO_QUIVER_HOLDING:
-        doc_insert(doc, "This quiver has an increased carrying capacity.\n");
+    case EGO_QUIVER_PHASE:
+        doc_insert(doc, "This quiver and its contents weigh absolutely nothing at all.\n");
+        break;
+    case EGO_BAG_HOLDING:
+        doc_printf(doc, "This %s stretches space in subtle ways, holding far more than its size would suggest.\n"
+                        "The interior seems larger than the outside - unnervingly so.\n", bag_type_name(o_ptr->sval));
+        break;
+    case EGO_BAG_PROTECTION:
+        doc_printf(doc, "The lining of this %s pulses faintly with warding runes, "
+                        "shielding its contents from fire, frost, and ruin.\n",
+                        bag_type_name(o_ptr->sval));
+        break;
+    case EGO_BAG_ETHEREAL:
+        doc_printf(doc, "This %s barely seems to exist, its form light and shifting.\n"
+                        "Items within feel strangely insubstantial, as though part of them rests in some other place.\n",
+                        bag_type_name(o_ptr->sval));
+        break;
+    case EGO_BAG_CLASPED:
+        doc_printf(doc, "Reinforced clasps and clever folds make this %s devilishly hard to open - at least for anyone but you.\n"
+                        "A subtle mechanism guards the bag, locking securely at the slightest tug.\n",
+                        bag_type_name(o_ptr->sval));
+        break;
+    case EGO_BAG_BOTTOMLESS:
+        if(o_ptr->sval == SV_BAG_POTION_BELT)
+          doc_insert(doc, "It's compartments twist in strange ways; now and then, a potion turns up you don't remember packing.\n"
+                          "You swear this pocket was empty a moment ago...\n");
+        if(o_ptr->sval == SV_BAG_SCROLL_CASE)
+          doc_insert(doc, "Scrolls shift and shuffle within, as if reordering themselves. Occasionally, one seems to appear where none were before.\n");
         break;
     }
 
@@ -1042,6 +1073,12 @@ static void _display_extra(object_type *o_ptr, u32b flgs[OF_ARRAY_SIZE], doc_ptr
         doc_printf(doc, "It %s the multiplier of your bow.\n",
             (net > 0) ? "increases" : "<color:R>decreases</color>");
     }
+
+    if (have_flag(flgs, OF_SECURE))
+        doc_insert(doc, "Resists theivery.\n");
+
+    if (have_flag(flgs, OF_CONSERVATION))
+        doc_insert(doc, "Items used from this bag may be conserved instead of consumed.\n");
 
     switch (o_ptr->name1)
     {

@@ -12,11 +12,11 @@ extern void    pack_ui(void);
 extern void    pack_display(doc_ptr doc, obj_p p, int flags);
 
 /* Adding and Removing Items */
-extern bool pack_get_floor(void);
-    extern void pack_get(obj_ptr obj);
-        extern void pack_carry(obj_ptr obj);
-            extern void pack_carry_aux(obj_ptr obj);
-            extern void pack_remove(slot_t slot);
+extern bool    pack_get_floor(void);
+extern void    pack_get(obj_ptr obj);
+extern void    pack_carry(obj_ptr obj);
+extern void    pack_carry_aux(obj_ptr obj);
+extern void    pack_remove(slot_t slot);
 /* pack_get_floor gets all items on the floor, potentially prompting the
  *   user for a selection. This is used by the 'g'et command, as well
  *   as movement when XXXX is enabled.
@@ -26,11 +26,11 @@ extern bool pack_get_floor(void);
  *   Also, some spells, like Whip Fetch, directly move objects from the
  *   floor to the pack and use this function. obj will be released. This
  *   version must be used in preference to pack_carry whenever obj->loc.where
- *   is INV_EQUIP, INV_QUIVER, INV_FLOOR. This version properly handles
- *   checking for quest completion and then calls pack_carry(obj).
+ *   is INV_EQUIP, INV_QUIVER, INV_BAG, or INV_FLOOR. This version properly
+ *   handles checking for quest completion and then calls pack_carry(obj).
  *
  * pack_carry(obj) is the next layer down and actually adds obj, but it
- *   might go to the quiver instead. obj may stack (multiple times) or
+ *   might go to the quiver or bag instead. obj may stack (multiple times) or
  *   it may go to a new slot. Stop worrying about which slot gets it. Also,
  *   if the pack is full, obj gets pushed to the overflow stack which will
  *   be handled later by pack_overflow(). Don't worry about checking whether

@@ -27,10 +27,7 @@ void do_cmd_go_up(void)
 
     int up_num = 0;
 
-    if (p_ptr->special_defense & KATA_MUSOU)
-    {
-        set_action(ACTION_NONE);
-    }
+    if (p_ptr->special_defense & KATA_MUSOU) set_action(ACTION_NONE);
 
     /* Verify stairs */
     if (!have_flag(f_ptr->flags, FF_LESS))
@@ -117,10 +114,7 @@ void do_cmd_go_down(void)
     bool fall_trap = FALSE;
     int down_num = 0;
 
-    if (p_ptr->special_defense & KATA_MUSOU)
-    {
-        set_action(ACTION_NONE);
-    }
+    if (p_ptr->special_defense & KATA_MUSOU) set_action(ACTION_NONE);
 
     /* Verify stairs */
     if (!have_flag(f_ptr->flags, FF_MORE))
@@ -939,10 +933,7 @@ void do_cmd_open(void)
 
     bool more = FALSE;
 
-    if (p_ptr->special_defense & KATA_MUSOU)
-    {
-        set_action(ACTION_NONE);
-    }
+    if (p_ptr->special_defense & KATA_MUSOU) set_action(ACTION_NONE);
 
 #ifdef ALLOW_EASY_OPEN /* TNB */
 
@@ -1112,10 +1103,7 @@ void do_cmd_close(void)
 
     bool more = FALSE;
 
-    if (p_ptr->special_defense & KATA_MUSOU)
-    {
-        set_action(ACTION_NONE);
-    }
+    if (p_ptr->special_defense & KATA_MUSOU) set_action(ACTION_NONE);
 
 #ifdef ALLOW_EASY_OPEN /* TNB */
 
@@ -1377,11 +1365,7 @@ void do_cmd_tunnel(void)
 
     bool        more = FALSE;
 
-
-    if (p_ptr->special_defense & KATA_MUSOU)
-    {
-        set_action(ACTION_NONE);
-    }
+    if (p_ptr->special_defense & KATA_MUSOU) set_action(ACTION_NONE);
 
     /* Allow repeated command */
     if (command_arg)
@@ -1766,10 +1750,7 @@ void do_cmd_disarm(void)
 
     bool more = FALSE;
 
-    if (p_ptr->special_defense & KATA_MUSOU)
-    {
-        set_action(ACTION_NONE);
-    }
+    if (p_ptr->special_defense & KATA_MUSOU) set_action(ACTION_NONE);
 
 #ifdef ALLOW_EASY_DISARM /* TNB */
 
@@ -1986,11 +1967,7 @@ void do_cmd_bash(void)
 
     bool        more = FALSE;
 
-
-    if (p_ptr->special_defense & KATA_MUSOU)
-    {
-        set_action(ACTION_NONE);
-    }
+    if (p_ptr->special_defense & KATA_MUSOU) set_action(ACTION_NONE);
 
     /* Allow repeated command */
     if (command_arg)
@@ -2073,11 +2050,7 @@ void do_cmd_alter(void)
 
     bool        more = FALSE;
 
-
-    if (p_ptr->special_defense & KATA_MUSOU)
-    {
-        set_action(ACTION_NONE);
-    }
+    if (p_ptr->special_defense & KATA_MUSOU) set_action(ACTION_NONE);
 
     /* Allow repeated command */
     if (command_arg)
@@ -2172,10 +2145,7 @@ void do_cmd_spike(void)
 {
     int dir;
 
-    if (p_ptr->special_defense & KATA_MUSOU)
-    {
-        set_action(ACTION_NONE);
-    }
+    if (p_ptr->special_defense & KATA_MUSOU) set_action(ACTION_NONE);
 
     /* Get a "repeated" direction */
     if (get_rep_dir(&dir,FALSE))
@@ -2250,10 +2220,7 @@ static void do_cmd_walk_aux(int dir, bool pickup)
     /* Take a turn */
     energy_use = 100;
 
-    if ((dir != 5) && (p_ptr->special_defense & KATA_MUSOU))
-    {
-        set_action(ACTION_NONE);
-    }
+    if ((dir != 5) && (p_ptr->special_defense & KATA_MUSOU)) set_action(ACTION_NONE);
 
     /* Hack -- In small scale wilderness it takes MUCH more time to move */
     if (p_ptr->wild_mode) energy_use *= ((MAX_HGT + MAX_WID) / 2);
@@ -2387,8 +2354,7 @@ void do_cmd_run(void)
         handle_stuff();
     }
 
-    if (p_ptr->special_defense & KATA_MUSOU)
-        set_action(ACTION_NONE);
+    if (p_ptr->special_defense & KATA_MUSOU) set_action(ACTION_NONE);
 
     switch (get_rep_dir(&dir,FALSE))
     {
@@ -3729,8 +3695,7 @@ bool do_cmd_fire(void)
         return FALSE;
     }
 
-    if (p_ptr->special_defense & KATA_MUSOU)
-        set_action(ACTION_NONE);
+    if (p_ptr->special_defense & KATA_MUSOU) set_action(ACTION_NONE);
 
     prompt.prompt = "Fire which item?";
     prompt.error = "You have nothing to fire.";

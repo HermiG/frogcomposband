@@ -874,7 +874,7 @@ static void locate_connected_stairs(saved_floor_type *sf_ptr)
  */
 static void _fix_art_hack(obj_ptr obj)
 {
-    if (obj->name1) a_info[obj->name1].floor_id = 0;
+    if      (obj->name1) a_info[obj->name1].floor_id = 0;
     else if (obj->name3) a_info[obj->name3].floor_id = 0;
 }
 void leave_floor(void)
@@ -916,6 +916,7 @@ void leave_floor(void)
     equip_for_each(_fix_art_hack);
     pack_for_each(_fix_art_hack);
     quiver_for_each(_fix_art_hack);
+    bag_for_each(_fix_art_hack);
 
     /* Extract current floor info or NULL */
     sf_ptr = get_sf_ptr(p_ptr->floor_id);

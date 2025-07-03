@@ -41,7 +41,7 @@ static void pack_push_overflow(obj_ptr obj);
 void pack_carry(obj_ptr obj)
 {
     /* Carrying an object is rather complex, and the pile,
-     * if pile it be, may distribute between various quiver
+     * if pile it be, may distribute between various quiver, bag,
      * and pack slots. It may consume new slots. We must handle
      * statistics and the autopicker. It's easiest if all this
      * logic is here, in one place. And it simplifies things
@@ -51,15 +51,13 @@ void pack_carry(obj_ptr obj)
     object_mitze(obj, MITZE_PICKUP);
     if ((!obj) || (!obj->k_idx)) return;
     stats_on_pickup(obj);
-    if (quiver_likes(obj))
-        quiver_carry(obj);
-    if (obj->number)
-        pack_carry_aux(obj);
+    if (quiver_likes(obj)) quiver_carry(obj);
+    else if (bag_likes(obj))  bag_carry(obj);
+    if (obj->number)     pack_carry_aux(obj);
 }
 void pack_carry_aux(obj_ptr obj)
 {
-    if (obj->number)
-        inv_combine_ex(_inv, obj);
+    if (obj->number) inv_combine_ex(_inv, obj);
     if (obj->number)
     {
         slot_t slot = inv_add(_inv, obj);
@@ -71,8 +69,7 @@ void pack_carry_aux(obj_ptr obj)
             p_ptr->notice |= PN_OPTIMIZE_PACK;
         }
     }
-    if (obj->number)
-        pack_push_overflow(obj);
+    if (obj->number) pack_push_overflow(obj);
     p_ptr->update |= PU_BONUS; /* Weight changed */
     p_ptr->window |= PW_INVEN;
     p_ptr->notice |= PN_CARRY;
@@ -81,9 +78,8 @@ void pack_carry_aux(obj_ptr obj)
 /* Helper for pack_get_floor ... probably s/b private but the autopicker needs it */
 void pack_get(obj_ptr obj)
 {
-    char     name[MAX_NLEN];
-    class_t *class_ptr = get_class();
-
+    
+    char name[MAX_NLEN];
     object_desc(name, obj, OD_COLOR_CODED);
 
     if (obj->tval == TV_GOLD)
@@ -96,8 +92,7 @@ void pack_get(obj_ptr obj)
         }
         else
         {
-            msg_format("You collect %d gold pieces' worth of %s.",
-               value, name);
+            msg_format("You collect %d gold pieces' worth of %s.", value, name);
 
             sound(SOUND_SELL);
 
@@ -106,15 +101,14 @@ void pack_get(obj_ptr obj)
 
             p_ptr->redraw |= PR_GOLD;
 
-            if (prace_is_(RACE_MON_LEPRECHAUN))
-                p_ptr->update |= PU_BONUS | PU_HP | PU_MANA;
+            if (prace_is_(RACE_MON_LEPRECHAUN)) p_ptr->update |= PU_BONUS | PU_HP | PU_MANA;
         }
         obj->number = 0;
     }
     else
     {
-        if (class_ptr->get_object)
-            class_ptr->get_object(obj);
+        class_t *class_ptr = get_class();
+        if (class_ptr->get_object) class_ptr->get_object(obj);
 
         /*msg_format("You get %s.", name);*/
 
@@ -187,10 +181,10 @@ static bool _get_floor(inv_ptr floor)
 
 static bool _obj_not_autoleave(object_type *o_ptr)
 {
-    int idx;
-    if ((!o_ptr) || (!o_ptr->k_idx)) return FALSE;
-    idx = is_autopick(o_ptr);
-    if ((idx >= 0) && (autopick_list[idx].action & DO_AUTODESTROY))
+    if (!o_ptr || !o_ptr->k_idx) return FALSE;
+
+    int idx = is_autopick(o_ptr);
+    if (idx >= 0 && (autopick_list[idx].action & DO_AUTODESTROY))
     {
         obj_release(o_ptr, 0);
         return FALSE;

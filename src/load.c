@@ -1441,12 +1441,14 @@ static errr rd_savefile_new_aux(savefile_ptr file)
     equip_init();
     pack_init();
     quiver_init();
+    bag_init();
     towns_init();
     home_init();
 
     equip_load(file);
     pack_load(file);
     quiver_load(file);
+    bag_load(file);
     towns_load(file);
     home_load(file);
     cornucopia_load(file);

@@ -495,20 +495,21 @@ static tval_desc tvals[] =
     { TV_DEATH_BOOK,        "Death Spellbook"      },
     { TV_TRUMP_BOOK,        "Trump Spellbook"      },
     { TV_ARCANE_BOOK,       "Arcane Spellbook"     },
-    { TV_CRAFT_BOOK,        "Craft Spellbook"},
-    { TV_DAEMON_BOOK,       "Daemon Spellbook"},
-    { TV_CRUSADE_BOOK,      "Crusade Spellbook"},
-    { TV_NECROMANCY_BOOK,   "Necromancy Spellbook"},
-    { TV_ARMAGEDDON_BOOK,   "Armageddon Spellbook"},
+    { TV_CRAFT_BOOK,        "Craft Spellbook"      },
+    { TV_DAEMON_BOOK,       "Daemon Spellbook"     },
+    { TV_CRUSADE_BOOK,      "Crusade Spellbook"    },
+    { TV_NECROMANCY_BOOK,   "Necromancy Spellbook" },
+    { TV_ARMAGEDDON_BOOK,   "Armageddon Spellbook" },
     { TV_LAW_BOOK,          "Law Spellbook"        },
     { TV_MUSIC_BOOK,        "Music Spellbook"      },
     { TV_HISSATSU_BOOK,     "Book of Kendo"        },
     { TV_HEX_BOOK,          "Hex Spellbook"        },
     { TV_RAGE_BOOK,         "Rage Spellbook"       },
     { TV_BURGLARY_BOOK,     "Thieves' Guide"       },
-    { TV_PARCHMENT,         "Parchment" },
-    { TV_WHISTLE,           "Whistle"    },
+    { TV_PARCHMENT,         "Parchment"            },
+    { TV_WHISTLE,           "Whistle"              },
     { TV_QUIVER,            "Quiver"               },
+    { TV_BAG,               "Bag"                  },
     { TV_SPIKE,             "Spikes"               },
     { TV_DIGGING,           "Digger"               },
     { TV_CHEST,             "Chest"                },
@@ -1475,6 +1476,9 @@ static void _wiz_stats_inspect(int level)
             _wiz_stats_log_obj(level, o_ptr);
 
         if (0 && !object_is_nameless(o_ptr) && o_ptr->tval == TV_QUIVER)
+            _wiz_stats_log_obj(level, o_ptr);
+      
+        if (0 && !object_is_nameless(o_ptr) && o_ptr->tval == TV_BAG)
             _wiz_stats_log_obj(level, o_ptr);
 
         if (0 && !object_is_nameless(o_ptr) && object_is_ammo(o_ptr))

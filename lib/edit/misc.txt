@@ -16,7 +16,7 @@ R:1452
 B:150
 
 # Maximum number of items in k_info.txt
-K:750
+K:999
 
 # Maximum number of terrain features in f_info.txt
 F:255

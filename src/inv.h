@@ -4,8 +4,8 @@
 #include "obj.h"
 
 /* Helper Module for Managing Object Inventories (inv)
- * Used by equip, pack and quiver modules. Could also
- * be used for shop inventories.
+ * Used by equip, pack, quiver, and bag modules.
+ * Could also be used for shop inventories.
  *
  * Object Ownership: Any objects added to the inventory
  * are copied. Clients own the original while this module
@@ -32,14 +32,16 @@ typedef struct inv_s inv_t, *inv_ptr; /* Hidden/Abstract */
 #define INV_EQUIP     1
 #define INV_PACK      2
 #define INV_QUIVER    3
-#define INV_SHOP      4
+#define INV_BAG       4
 #define INV_FLOOR     5
-#define INV_HOME      6
+#define INV_SHOP      6
 #define INV_MUSEUM    7
-#define INV_TMP_ALLOC 8  /* Hack so obj_release knows to free() temp objs */
-#define INV_SPECIAL1  9
-#define INV_SPECIAL2  10
-#define INV_SPECIAL3  11
+#define INV_HOME      8
+#define INV_TMP_ALLOC 10  /* Hack so obj_release knows to free() temp objs */
+#define INV_SPECIAL1  11
+#define INV_SPECIAL2  12
+#define INV_SPECIAL3  13
+
 
 /* Creation ... be sure to inv_free() any returned inv_ptr */
 extern inv_ptr inv_alloc(cptr name, int type, int max);

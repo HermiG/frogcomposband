@@ -108,12 +108,11 @@ static void _destroy(obj_ptr obj);
 void obj_release(obj_ptr obj, int options)
 {
     char name[MAX_NLEN];
-    bool quiet = BOOL(options & OBJ_RELEASE_QUIET);
+    bool quiet   = BOOL(options & OBJ_RELEASE_QUIET);
     bool delayed = BOOL(options & OBJ_RELEASE_DELAYED_MSG);
 
     if (!obj) return;
-    if (!quiet)
-        object_desc(name, obj, OD_COLOR_CODED);
+    if (!quiet) object_desc(name, obj, OD_COLOR_CODED);
 
     if ((obj->marked & OM_AUTODESTROY) && obj->number)
     {
@@ -121,35 +120,27 @@ void obj_release(obj_ptr obj, int options)
         obj->number = 0;
     }
 
-    if (options & OBJ_RELEASE_ENCHANT)
-        gear_notice_enchant(obj);
-    if (options & OBJ_RELEASE_ID)
-        gear_notice_id(obj);
+    if (options & OBJ_RELEASE_ENCHANT) gear_notice_enchant(obj);
+    if (options & OBJ_RELEASE_ID) gear_notice_id(obj);
 
     switch (obj->loc.where)
     {
     case INV_FLOOR:
-        if (!quiet)
-            msg_format("You see %s.", name);
-        if (obj->number <= 0)
-            delete_object_idx(obj->loc.slot);
+        if (!quiet) msg_format("You see %s.", name);
+        if (obj->number <= 0) delete_object_idx(obj->loc.slot);
         break;
     case INV_EQUIP:
         if (obj->number <= 0)
         {
-            if (!quiet)
-                msg_format("You are no longer wearing %s.", name);
+            if (!quiet) msg_format("You are no longer wearing %s.", name);
             equip_remove(obj->loc.slot);
         }
-        else if (!quiet)
-            msg_format("You are wearing %s.", name);
+        else if (!quiet) msg_format("You are wearing %s.", name);
         p_ptr->window |= PW_EQUIP;
         break;
     case INV_PACK:
-        if (!quiet && !delayed)
-            msg_format("You have %s in your pack.", name);
-        if (obj->number <= 0)
-            pack_remove(obj->loc.slot);
+        if (!quiet && !delayed) msg_format("You have %s in your pack.", name);
+        if (obj->number <= 0) pack_remove(obj->loc.slot);
         else if (delayed)
         {
             obj->marked |= OM_DELAYED_MSG;
@@ -158,10 +149,8 @@ void obj_release(obj_ptr obj, int options)
         p_ptr->window |= PW_INVEN;
         break;
     case INV_QUIVER:
-        if (!quiet && !delayed)
-            msg_format("You have %s in your quiver.", name);
-        if (obj->number <= 0)
-            quiver_remove(obj->loc.slot);
+        if (!quiet && !delayed) msg_format("You have %s in your quiver.", name);
+        if (obj->number <= 0) quiver_remove(obj->loc.slot);
         else if (delayed)
         {
             obj->marked |= OM_DELAYED_MSG;
@@ -169,12 +158,22 @@ void obj_release(obj_ptr obj, int options)
         }
         p_ptr->window |= PW_EQUIP; /* a Quiver [32 of 110] */
         break;
+    case INV_BAG:
+        if (!quiet && !delayed) msg_format("You have %s in your bag.", name);
+        if (obj->number <= 0) bag_remove(obj->loc.slot);
+        else if (delayed)
+        {
+          obj->marked |= OM_DELAYED_MSG;
+          p_ptr->notice |= PN_CARRY;
+        }
+        p_ptr->window |= PW_EQUIP; /* a Bag [2.0 of 4 lbs] */
+        break;
     case INV_TMP_ALLOC:
         obj_free(obj);
         break;
     case INV_SPECIAL1:
     case INV_SPECIAL2:
-        if ((obj->number <= 0) && (!(obj->marked & OM_BEING_SHUFFLED)))
+        if ((obj->number <= 0) && !(obj->marked & OM_BEING_SHUFFLED))
             special_remove(obj->loc.slot, obj->loc.where);
         break;
     default:
@@ -224,6 +223,10 @@ void gear_notice_id(obj_ptr obj)
         p_ptr->notice |= PN_OPTIMIZE_QUIVER;
         p_ptr->window |= PW_EQUIP; /* a Quiver [32 of 110] */
         break;
+    case INV_BAG:
+        p_ptr->notice |= PN_OPTIMIZE_BAG;
+        p_ptr->window |= PW_EQUIP; /* a Bag {2.0 of 4.0} */
+        break;
     }
 }
 
@@ -244,6 +247,10 @@ void gear_notice_enchant(obj_ptr obj)
         p_ptr->notice |= PN_OPTIMIZE_QUIVER;
         p_ptr->window |= PW_EQUIP; /* a Quiver [32 of 110] */
         break;
+    case INV_BAG:
+        p_ptr->notice |= PN_OPTIMIZE_BAG;
+        p_ptr->window |= PW_EQUIP; /* a Bag {2.0 of 4.0} */
+        break;
     }
 }
 
@@ -259,6 +266,7 @@ bool obj_can_sense1(obj_ptr obj)
     case TV_BOLT:
     case TV_BOW:
     case TV_QUIVER:
+    case TV_BAG:
     case TV_DIGGING:
     case TV_HAFTED:
     case TV_POLEARM:
@@ -340,22 +348,36 @@ bool obj_is_readable_book(obj_ptr obj)
     return (REALM1_BOOK == obj->tval || REALM2_BOOK == obj->tval);
 }
 
-bool obj_exists(obj_ptr obj)     { return BOOL(obj); }
-bool obj_is_ammo(obj_ptr obj)    { return TV_MISSILE_BEGIN <= obj->tval && obj->tval <= TV_MISSILE_END; }
-bool obj_is_armor(obj_ptr obj)   { return TV_ARMOR_BEGIN <= obj->tval && obj->tval <= TV_ARMOR_END; }
-bool obj_is_art(obj_ptr obj)     { return obj->name1 || obj->art_name; }
-bool obj_is_book(obj_ptr obj)    { return TV_BOOK_BEGIN <= obj->tval && obj->tval <= TV_BOOK_END; }
-bool obj_is_device(obj_ptr obj)  { return obj_is_wand(obj) || obj_is_rod(obj) || obj_is_staff(obj); }
-bool obj_is_ego(obj_ptr obj)     { return BOOL(obj->name2); }
-bool obj_is_found(obj_ptr obj)   { return BOOL(obj->marked & OM_FOUND); }
-bool obj_is_inscribed(obj_ptr obj) { return BOOL(obj->inscription); }
-bool obj_is_quiver(obj_ptr obj)  { return obj->tval == TV_QUIVER; }
-bool obj_is_rod(obj_ptr obj)     { return obj->tval == TV_ROD; }
-bool obj_is_staff(obj_ptr obj)   { return obj->tval == TV_STAFF; }
-bool obj_is_unknown(obj_ptr obj) { return !obj_is_known(obj); }
-bool obj_is_wand(obj_ptr obj)    { return obj->tval == TV_WAND; }
+bool obj_exists(obj_ptr obj)       { return BOOL(obj); }
+bool obj_is_unknown(obj_ptr obj)   { return !obj_is_known(obj); }
+bool obj_is_ammo(obj_ptr obj)      { return TV_MISSILE_BEGIN <= obj->tval && obj->tval <= TV_MISSILE_END; }
+bool obj_is_not_ammo(obj_ptr obj)  { return !obj_is_ammo(obj); }
+bool obj_is_parchment(obj_ptr obj) { return obj->tval == TV_PARCHMENT; }
+bool obj_is_scroll(obj_ptr obj)    { return obj->tval == TV_SCROLL; }
+bool obj_is_potion(obj_ptr obj)    { return obj->tval == TV_POTION; }
+bool obj_is_food(obj_ptr obj)      { return obj->tval == TV_FOOD; }
+bool obj_is_armor(obj_ptr obj)     { return TV_ARMOR_BEGIN <= obj->tval && obj->tval <= TV_ARMOR_END; }
+bool obj_is_art(obj_ptr obj)       { return obj->name1 || obj->art_name; }
+bool obj_is_book(obj_ptr obj)      { return TV_BOOK_BEGIN <= obj->tval && obj->tval <= TV_BOOK_END; }
+bool obj_is_device(obj_ptr obj)    { return obj_is_wand(obj) || obj_is_rod(obj) || obj_is_staff(obj); }
+bool obj_is_ego(obj_ptr obj)       { return BOOL(obj->name2); }
+bool obj_is_found(obj_ptr obj)     { return BOOL(obj->marked & OM_FOUND); }
 
-bool obj_is_shooter(obj_ptr obj) { return obj->tval == TV_BOW; }
+bool obj_is_inscribed(obj_ptr obj) { return BOOL(obj->inscription); }
+bool obj_is_quiver(obj_ptr obj)    { return obj->tval == TV_QUIVER; }
+bool obj_is_bag(obj_ptr obj)       { return obj->tval == TV_BAG; }
+bool obj_is_rod(obj_ptr obj)       { return obj->tval == TV_ROD; }
+bool obj_is_staff(obj_ptr obj)     { return obj->tval == TV_STAFF; }
+bool obj_is_wand(obj_ptr obj)      { return obj->tval == TV_WAND; }
+bool obj_is_shooter(obj_ptr obj)   { return obj->tval == TV_BOW; }
+
+bool obj_is_weapon_or_shield(obj_ptr obj)
+{
+  if (object_is_shield(obj)) return TRUE;
+  if (object_is_shield(obj)) return TRUE;
+  return FALSE;
+}
+
 bool obj_is_bow(obj_ptr obj)
 {
     if (!obj_is_shooter(obj)) return FALSE;
@@ -632,6 +654,7 @@ bool obj_can_combine(obj_ptr dest, obj_ptr obj, int loc)
     case TV_HARD_ARMOR:
     case TV_DRAG_ARMOR:
     case TV_QUIVER:
+    case TV_BAG:
     case TV_RING:
     case TV_AMULET:
     case TV_LITE:
@@ -846,26 +869,26 @@ void obj_delayed_describe(obj_ptr obj)
         bool       show_slot = FALSE;
 
         object_desc(name, obj, OD_COLOR_CODED);
-        if (obj->loc.where == INV_EQUIP) /* paranoia */
-            string_append_s(msg, "You are wearing");
-        else
-            string_append_s(msg, "You have");
+        if (obj->loc.where == INV_EQUIP) string_append_s(msg, "You are wearing");
+        else string_append_s(msg, "You have");
+
         string_printf(msg, " %s", name);
-        if (obj->loc.where == INV_QUIVER)
-            string_append_s(msg, " in your quiver");
+
+        if (obj->loc.where == INV_QUIVER) string_append_s(msg, " in your quiver");
+        if (obj->loc.where == INV_BAG)    string_append_s(msg, " in your bag");
 
         switch (obj->loc.where)
         {
-        case INV_QUIVER:
         case INV_PACK:
+        case INV_QUIVER:
+        case INV_BAG:
             show_slot = use_pack_slots;
             break;
         case INV_EQUIP:
             show_slot = TRUE;
             break;
         }
-        if (show_slot)
-            string_printf(msg, " (%c)", slot_label(obj->loc.slot));
+        if (show_slot) string_printf(msg, " (%c)", slot_label(obj->loc.slot));
         string_append_c(msg, '.');
         msg_print(string_buffer(msg));
         string_free(msg);
@@ -882,7 +905,7 @@ void obj_delayed_describe(obj_ptr obj)
 static int _inspector(obj_prompt_context_ptr context, int cmd)
 {
     obj_prompt_tab_ptr tab = vec_get(context->tabs, context->tab);
-    slot_t             slot = inv_label_slot(tab->inv, cmd);
+    slot_t slot = inv_label_slot(tab->inv, cmd);
     if (slot)
     {
         obj_ptr obj = inv_obj(tab->inv, slot);
@@ -926,7 +949,8 @@ void obj_inspect_ui(void)
     prompt.where[0] = INV_PACK;
     prompt.where[1] = INV_EQUIP;
     prompt.where[2] = INV_QUIVER;
-    prompt.where[3] = INV_FLOOR;
+    prompt.where[3] = INV_BAG;
+    prompt.where[4] = INV_FLOOR;
     prompt.cmd_handler = _inspector;
     allow_special3_hack = TRUE;
     obj_prompt_add_special_packs(&prompt);
@@ -940,50 +964,61 @@ void obj_inspect_ui(void)
 
 void gear_ui(int which)
 {
-    obj_prompt_t prompt = {0};
-    int          wgt = py_total_weight();
-    int          pct = wgt * 100 / weight_limit();
-    string_ptr   s;
+    string_ptr s1, s2 = NULL;
+    int wgt = py_total_weight();
+    int pct = wgt * 100 / weight_limit();
 
-    s = string_alloc_format(
-        "<color:w>Carrying %d.%d pounds (<color:%c>%d%%</color> capacity).</color>\n\n"
-        "Examine which item <color:w>(<color:keypress>Esc</color> to exit)</color>?",
-         wgt / 10, wgt % 10, pct > 100 ? 'r' : 'G', pct);
-    prompt.prompt = string_buffer(s);
+    s1 = string_alloc_format("<color:w>Carrying %d.%d pounds (<color:%c>%d%%</color> capacity).</color>\n\n"
+                             "Examine which item <color:w>(<color:keypress>Esc</color> to exit)</color>?",
+                             wgt/10, wgt%10, pct>100 ? 'r' : 'G', pct);
+
+    if(equip_find_obj(TV_BAG, SV_ANY) && 1) {
+      char bag_name[MAX_NLEN];
+      obj_ptr bag_obj = equip_obj(equip_find_obj(TV_BAG, SV_ANY));
+      object_desc(bag_name, bag_obj, OD_COLOR_CODED);
+      
+      s2 = string_alloc_format("<color:w>Equipped Bag: %s</color>\n\n"
+                               "Examine which item <color:w>(<color:keypress>Esc</color> to exit)</color>?",
+                               bag_name);
+    }
+
+    obj_prompt_t prompt = {0};
+    prompt.prompt = string_buffer(s1);
+    prompt.custom = s2 ? (void *)string_buffer(s2) : NULL;
     prompt.where[0] = INV_PACK;
     prompt.where[1] = INV_EQUIP;
     prompt.where[2] = INV_QUIVER;
+    prompt.where[3] = INV_BAG;
     prompt.top_loc = which;
 
     prompt.cmd_handler = _inspector;
 
     obj_prompt(&prompt);
-    string_free(s);
+    string_free(s1);
+    if(s2) string_free(s2);
 }
 
 static int _inscriber(obj_prompt_context_ptr context, int cmd)
 {
     obj_prompt_tab_ptr tab = vec_get(context->tabs, context->tab);
-    slot_t             slot = inv_label_slot(tab->inv, cmd);
+    slot_t slot = inv_label_slot(tab->inv, cmd);
     if (slot)
     {
+        char name[MAX_NLEN];
+        char insc[80];
+
         obj_ptr obj = inv_obj(tab->inv, slot);
-        char    name[MAX_NLEN];
-        char    insc[80];
 
         object_desc(name, obj, OD_OMIT_INSCRIPTION | OD_COLOR_CODED);
-        if (obj->inscription)
-            strcpy(insc, quark_str(obj->inscription));
-        else
-            strcpy(insc, "");
+        if (obj->inscription) strcpy(insc, quark_str(obj->inscription));
+        else strcpy(insc, "");
 
         doc_clear(context->doc);
         doc_printf(context->doc, "Inscribing %s.\n", name);
         doc_printf(context->doc, "Inscription: ");
         Term_load();
         doc_sync_menu(context->doc);
-        if (askfor(insc, 80))
-            obj->inscription = quark_add(insc);
+        if (askfor(insc, 80)) obj->inscription = quark_add(insc);
         return OP_CMD_HANDLED;
     }
     return OP_CMD_SKIPPED;
@@ -999,12 +1034,13 @@ void obj_inscribe_ui(void)
     prompt.where[0] = INV_PACK;
     prompt.where[1] = INV_EQUIP;
     prompt.where[2] = INV_QUIVER;
-    prompt.where[3] = INV_FLOOR;
+    prompt.where[3] = INV_BAG;
+    prompt.where[4] = INV_FLOOR;
     prompt.cmd_handler = _inscriber;
 
     obj_prompt(&prompt);
 
-    p_ptr->notice |= PN_OPTIMIZE_PACK | PN_OPTIMIZE_QUIVER;
+    p_ptr->notice |= PN_OPTIMIZE_PACK | PN_OPTIMIZE_QUIVER | PN_OPTIMIZE_BAG;
     p_ptr->window |= PW_INVEN | PW_EQUIP;
 }
 
@@ -1031,12 +1067,13 @@ void obj_uninscribe_ui(void)
     prompt.where[0] = INV_PACK;
     prompt.where[1] = INV_EQUIP;
     prompt.where[2] = INV_QUIVER;
+    prompt.where[2] = INV_BAG;
     prompt.where[3] = INV_FLOOR;
     prompt.cmd_handler = _uninscriber;
 
     obj_prompt(&prompt);
 
-    p_ptr->notice |= PN_OPTIMIZE_PACK | PN_OPTIMIZE_QUIVER;
+    p_ptr->notice |= PN_OPTIMIZE_PACK | PN_OPTIMIZE_QUIVER | PN_OPTIMIZE_BAG;
     p_ptr->window |= PW_INVEN | PW_EQUIP;
 }
 
@@ -1047,8 +1084,7 @@ static void _drop(obj_ptr obj)
     if (!silent_drop_hack) msg_format("You drop %s.", name);
     drop_near(obj, 0, py, px);
     p_ptr->update |= PU_BONUS; /* Weight changed */
-    if (obj->loc.where == INV_PACK)
-        p_ptr->window |= PW_INVEN;
+    if (obj->loc.where == INV_PACK) p_ptr->window |= PW_INVEN;
 }
 
 void obj_drop(obj_ptr obj, int amt)
@@ -1071,10 +1107,9 @@ void obj_drop(obj_ptr obj, int amt)
 
         obj->marked |= OM_DELAYED_MSG;
         p_ptr->notice |= PN_CARRY;
-        if (obj->loc.where == INV_PACK)
-            p_ptr->notice |= PN_OPTIMIZE_PACK;
-        else if (obj->loc.where == INV_QUIVER)
-            p_ptr->notice |= PN_OPTIMIZE_QUIVER;
+        if      (obj->loc.where == INV_PACK)   p_ptr->notice |= PN_OPTIMIZE_PACK;
+        else if (obj->loc.where == INV_QUIVER) p_ptr->notice |= PN_OPTIMIZE_QUIVER;
+        else if (obj->loc.where == INV_BAG)    p_ptr->notice |= PN_OPTIMIZE_BAG;
 
         copy.marked &= ~OM_WORN;
         _drop(&copy);
@@ -1144,17 +1179,16 @@ void obj_destroy_ui(void)
     bool         force = command_arg > 0; /* 033kx to destroy 33 in slot (x) */
     int          amt = 1;
 
-    if (p_ptr->special_defense & KATA_MUSOU)
-        set_action(ACTION_NONE);
+    if (p_ptr->special_defense & KATA_MUSOU) set_action(ACTION_NONE);
 
     /* Prompt for an object */
     prompt.prompt = "Destroy which item?";
     prompt.error = "You have nothing to destroy.";
     prompt.filter = _can_destroy;
     prompt.where[pos++] = INV_PACK;
-    if (p_ptr->pclass == CLASS_RUNE_KNIGHT)
-        prompt.where[pos++] = INV_EQUIP;
+    if (p_ptr->pclass == CLASS_RUNE_KNIGHT) prompt.where[pos++] = INV_EQUIP;
     prompt.where[pos++] = INV_QUIVER;
+    prompt.where[pos++] = INV_BAG;
     prompt.where[pos++] = INV_FLOOR;
 
     obj_prompt(&prompt);

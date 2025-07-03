@@ -501,14 +501,14 @@ void do_cmd_eat_food(void)
 {
     obj_prompt_t prompt = {0};
 
-    if (p_ptr->special_defense & (KATA_MUSOU | KATA_KOUKIJIN))
-        set_action(ACTION_NONE);
+    if (p_ptr->special_defense & (KATA_MUSOU | KATA_KOUKIJIN)) set_action(ACTION_NONE);
 
     prompt.prompt = "Eat which item?";
     prompt.error = "You have nothing to eat.";
     prompt.filter = _can_eat;
     prompt.where[0] = INV_PACK;
-    prompt.where[1] = INV_FLOOR;
+    prompt.where[1] = INV_BAG;
+    prompt.where[2] = INV_FLOOR;
 
     obj_prompt(&prompt);
     if (!prompt.obj) return;
@@ -522,14 +522,12 @@ void do_cmd_eat_food(void)
  */
 static void do_cmd_quaff_potion_aux(obj_ptr obj)
 {
-    int   lev = k_info[obj->k_idx].level;
-    int   number = 1;
+    int lev = k_info[obj->k_idx].level;
+    int number = 1;
 
     /* Take a turn */
-    if (mut_present(MUT_POTION_CHUGGER))
-        energy_use = 50;
-    else
-        energy_use = 100;
+    if (mut_present(MUT_POTION_CHUGGER)) energy_use = 50;
+    else energy_use = 100;
 
     if (world_player)
     {
@@ -673,8 +671,7 @@ static void do_cmd_quaff_potion_aux(obj_ptr obj)
     else
     {
         stats_on_use(obj, number);
-        if (obj->loc.where == INV_FLOOR)
-            stats_on_pickup(obj);
+        if (obj->loc.where == INV_FLOOR) stats_on_pickup(obj);
 
         obj_dec_number(obj, number, TRUE);
         obj_release(obj, OBJ_RELEASE_DELAYED_MSG);
@@ -690,10 +687,7 @@ static bool _can_quaff(object_type *o_ptr)
     if (o_ptr->tval == TV_POTION) return TRUE;
 
     if (prace_is_(RACE_ANDROID) || elemental_is_(ELEMENTAL_FIRE))
-    {
-        if (o_ptr->tval == TV_FLASK && o_ptr->sval == SV_FLASK_OIL)
-            return TRUE;
-    }
+        if (o_ptr->tval == TV_FLASK && o_ptr->sval == SV_FLASK_OIL) return TRUE;
 
     return FALSE;
 }
@@ -706,14 +700,14 @@ void do_cmd_quaff_potion(void)
 {
     obj_prompt_t prompt = {0};
 
-    if (p_ptr->special_defense & (KATA_MUSOU | KATA_KOUKIJIN))
-        set_action(ACTION_NONE);
+    if (p_ptr->special_defense & (KATA_MUSOU | KATA_KOUKIJIN)) set_action(ACTION_NONE);
 
     prompt.prompt = "Quaff which potion?";
     prompt.error = "You have no potions to quaff.";
     prompt.filter = _can_quaff;
     prompt.where[0] = INV_PACK;
-    prompt.where[1] = INV_FLOOR;
+    prompt.where[1] = INV_BAG;
+    prompt.where[2] = INV_FLOOR;
 
     obj_prompt(&prompt);
     if (!prompt.obj) return;
@@ -736,10 +730,8 @@ static void do_cmd_read_scroll_aux(obj_ptr o_ptr)
     bool known = object_is_aware(o_ptr);
 
     /* Take a turn */
-    if (mut_present(MUT_SPEED_READER))
-        energy_use = 50;
-    else
-        energy_use = 100;
+    if (mut_present(MUT_SPEED_READER)) energy_use = 50;
+    else energy_use = 100;
 
     if (devicemaster_is_(DEVICEMASTER_SCROLLS) && !devicemaster_desperation)
     {
@@ -799,10 +791,10 @@ static void do_cmd_read_scroll_aux(obj_ptr o_ptr)
 
         if (devicemaster_desperation)
         {
-            int i, amt = 50;
+            int amt = 50;
             number = o_ptr->number;
             if (number > 4) number = 4;
-            for (i = 1; i < number && amt; i++)
+            for (int i = 1; i < number && amt; i++)
             {
                 device_extra_power += amt;
                 amt /= 2;
@@ -854,12 +846,11 @@ static void do_cmd_read_scroll_aux(obj_ptr o_ptr)
     }
     else if (o_ptr->tval==TV_PARCHMENT)
     {
-        cptr q;
         char o_name[MAX_NLEN];
         char buf[1024];
 
         screen_save();
-        q=format("book-%d_jp.txt",o_ptr->sval);
+        cptr q = format("book-%d_jp.txt", o_ptr->sval);
         object_desc(o_name, o_ptr, OD_NAME_ONLY);
         path_build(buf, sizeof(buf), ANGBAND_DIR_FILE, q);
         (void)show_file(TRUE, buf, o_name, 0, 0);
@@ -884,8 +875,7 @@ static void do_cmd_read_scroll_aux(obj_ptr o_ptr)
         gain_exp((lev + (p_ptr->lev >> 1)) / p_ptr->lev);
     }
 
-    if (!used_up)
-        return;
+    if (!used_up) return;
 
     water_mana_action(FALSE, 5);
 
@@ -905,19 +895,14 @@ static void do_cmd_read_scroll_aux(obj_ptr o_ptr)
 static bool _can_read(object_type *o_ptr)
 {
     if (!o_ptr) return FALSE;
-    if (o_ptr->tval==TV_SCROLL || o_ptr->tval==TV_PARCHMENT || o_ptr->name1 == ART_POWER)
-        return TRUE;
+    if (o_ptr->tval==TV_SCROLL || o_ptr->tval==TV_PARCHMENT || o_ptr->name1 == ART_POWER) return TRUE;
     return FALSE;
 }
 
 void do_cmd_read_scroll(void)
 {
-    obj_prompt_t prompt = {0};
+    if (p_ptr->special_defense & (KATA_MUSOU | KATA_KOUKIJIN)) set_action(ACTION_NONE);
 
-    if (p_ptr->special_defense & (KATA_MUSOU | KATA_KOUKIJIN))
-        set_action(ACTION_NONE);
-
-    /* Check some conditions */
     if (p_ptr->blind)
     {
         flush();
@@ -937,11 +922,13 @@ void do_cmd_read_scroll(void)
         return;
     }
 
-    prompt.prompt = "Read which scroll? ";
+    obj_prompt_t prompt = {0};
+    prompt.prompt = "Read which scroll?";
     prompt.error = "You have no scrolls to read.";
     prompt.filter = _can_read;
     prompt.where[0] = INV_PACK;
-    prompt.where[1] = INV_FLOOR;
+    prompt.where[1] = INV_BAG;
+    prompt.where[2] = INV_FLOOR;
     prompt.flags = INV_SHOW_FAIL_RATES;
 
     obj_prompt(&prompt);
@@ -1140,8 +1127,7 @@ void do_cmd_use_staff(void)
 {
     obj_prompt_t prompt = {0};
 
-    if (p_ptr->special_defense & (KATA_MUSOU | KATA_KOUKIJIN))
-        set_action(ACTION_NONE);
+    if (p_ptr->special_defense & (KATA_MUSOU | KATA_KOUKIJIN)) set_action(ACTION_NONE);
 
     if (p_ptr->pclass == CLASS_MAGIC_EATER && !pack_find_obj(TV_STAFF, SV_ANY) && !floor_find_obj(py, px, TV_STAFF, SV_ANY))
     {
@@ -1153,7 +1139,8 @@ void do_cmd_use_staff(void)
     prompt.error = "You have no staff to use.";
     prompt.filter = obj_is_staff;
     prompt.where[0] = INV_PACK;
-    prompt.where[1] = INV_FLOOR;
+    prompt.where[1] = INV_BAG;
+    prompt.where[2] = INV_FLOOR;
     prompt.flags = INV_SHOW_FAIL_RATES;
 
     obj_prompt(&prompt);
@@ -1167,8 +1154,7 @@ void do_cmd_aim_wand(void)
 {
     obj_prompt_t prompt = {0};
 
-    if (p_ptr->special_defense & (KATA_MUSOU | KATA_KOUKIJIN))
-        set_action(ACTION_NONE);
+    if (p_ptr->special_defense & (KATA_MUSOU | KATA_KOUKIJIN)) set_action(ACTION_NONE);
 
     if (p_ptr->pclass == CLASS_MAGIC_EATER && !pack_find_obj(TV_WAND, SV_ANY) && !floor_find_obj(py, px, TV_WAND, SV_ANY))
     {
@@ -1180,7 +1166,8 @@ void do_cmd_aim_wand(void)
     prompt.error = "You have no wand to aim.";
     prompt.filter = obj_is_wand;
     prompt.where[0] = INV_PACK;
-    prompt.where[1] = INV_FLOOR;
+    prompt.where[1] = INV_BAG;
+    prompt.where[2] = INV_FLOOR;
     prompt.flags = INV_SHOW_FAIL_RATES;
 
     obj_prompt(&prompt);
@@ -1193,8 +1180,7 @@ void do_cmd_zap_rod(void)
 {
     obj_prompt_t prompt = {0};
 
-    if (p_ptr->special_defense & (KATA_MUSOU | KATA_KOUKIJIN))
-        set_action(ACTION_NONE);
+    if (p_ptr->special_defense & (KATA_MUSOU | KATA_KOUKIJIN)) set_action(ACTION_NONE);
 
     if (p_ptr->pclass == CLASS_MAGIC_EATER && !pack_find_obj(TV_ROD, SV_ANY) && !floor_find_obj(py, px, TV_ROD, SV_ANY))
     {
@@ -1206,7 +1192,8 @@ void do_cmd_zap_rod(void)
     prompt.error = "You have no rod to zap.";
     prompt.filter = obj_is_rod;
     prompt.where[0] = INV_PACK;
-    prompt.where[1] = INV_FLOOR;
+    prompt.where[1] = INV_BAG;
+    prompt.where[2] = INV_FLOOR;
     prompt.flags = INV_SHOW_FAIL_RATES;
 
     obj_prompt(&prompt);
@@ -1574,8 +1561,7 @@ void do_cmd_activate(void)
 {
     obj_prompt_t prompt = {0};
 
-    if (p_ptr->special_defense & (KATA_MUSOU | KATA_KOUKIJIN))
-        set_action(ACTION_NONE);
+    if (p_ptr->special_defense & (KATA_MUSOU | KATA_KOUKIJIN)) set_action(ACTION_NONE);
 
     prompt.prompt ="Activate which item?"; 
     prompt.error = "You have nothing to activate.";

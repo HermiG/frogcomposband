@@ -1434,8 +1434,6 @@ static bool _is_polymorphed_demon(void)
 
 static bool is_autopick_aux(object_type *o_ptr, autopick_type *entry, cptr o_name)
 {
-    int j;
-
     /*** Unaware items ***/
     if (IS_FLG(FLG_UNAWARE) && _is_aware(o_ptr))
         return FALSE;
@@ -2022,17 +2020,20 @@ static bool is_autopick_aux(object_type *o_ptr, autopick_type *entry, cptr o_nam
     if (!IS_FLG(FLG_COLLECTING)) return TRUE;
 
     /* Check if there is a same item */
-    for (j = 1; j <= pack_max(); j++)
+    for (int i = 1; i <= pack_max(); i++)
     {
-        obj_ptr obj = pack_obj(j);
-        if (obj && obj_can_combine(obj, o_ptr, 0))
-            return TRUE;
+        obj_ptr obj = pack_obj(i);
+        if (obj && obj_can_combine(obj, o_ptr, 0)) return TRUE;
     }
-    for (j = 1; j <= quiver_max(); j++)
+    for (int i = 1; i <= quiver_max(); i++)
     {
-        obj_ptr obj = quiver_obj(j);
-        if (obj && obj_can_combine(obj, o_ptr, 0))
-            return TRUE;
+        obj_ptr obj = quiver_obj(i);
+        if (obj && obj_can_combine(obj, o_ptr, 0)) return TRUE;
+    }
+    for (int i = 1; i <= bag_max(); i++)
+    {
+        obj_ptr obj = bag_obj(i);
+        if (obj && obj_can_combine(obj, o_ptr, 0)) return TRUE;
     }
 
     /* Not collecting */
@@ -3917,7 +3918,8 @@ static bool entry_from_choosed_object(autopick_type *entry)
     prompt.where[0] = INV_PACK;
     prompt.where[1] = INV_EQUIP;
     prompt.where[2] = INV_QUIVER;
-    prompt.where[3] = INV_FLOOR;
+    prompt.where[3] = INV_BAG;
+    prompt.where[4] = INV_FLOOR;
 
     obj_prompt(&prompt);
     if (!prompt.obj) return FALSE;
@@ -3940,7 +3942,8 @@ static byte get_object_for_search(object_type **o_handle, cptr *search_strp)
     prompt.where[0] = INV_PACK;
     prompt.where[1] = INV_EQUIP;
     prompt.where[2] = INV_QUIVER;
-    prompt.where[3] = INV_FLOOR;
+    prompt.where[3] = INV_BAG;
+    prompt.where[4] = INV_FLOOR;
 
     obj_prompt(&prompt);
     if (!prompt.obj) return 0;

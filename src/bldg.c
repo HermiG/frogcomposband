@@ -2842,6 +2842,12 @@ static bool _reforge_artifact(void)
         return _reforge_artifact_exit();
     }
 
+    if (dest->tval == TV_BAG)
+    {
+      msg_print("I am unable to reforge bags."); // Maybe allow this later
+      return _reforge_artifact_exit();
+    }
+
     if (object_is_ammo(dest))
     {
         msg_print("I'm a weaponsmith not a fletcher. Perhaps you should check elsewhere?");
@@ -3292,6 +3298,7 @@ static bool enchant_item(obj_p filter, int cost, int to_hit, int to_dam, int to_
     prompt.where[0] = INV_PACK;
     prompt.where[1] = INV_EQUIP;
     prompt.where[2] = INV_QUIVER;
+    prompt.where[3] = INV_BAG;
     obj_prompt(&prompt);
     if (!prompt.obj) return FALSE;
 
@@ -3880,6 +3887,7 @@ static void _sell_photo(void)
     prompt.filter = _object_is_photograph;
     prompt.where[0] = INV_PACK;
     prompt.where[1] = INV_QUIVER;
+    prompt.where[2] = INV_BAG;
 
     obj_prompt(&prompt);
     if (!prompt.obj) return;

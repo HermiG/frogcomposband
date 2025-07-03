@@ -32,6 +32,7 @@ S:CLOAK:Cloak
 S:HELMET:Head
 S:GLOVES:Hands
 S:BOOTS:Feet
+S:BAG:Bag
 
 N:1:Possessor Soul
 S:LITE:Light

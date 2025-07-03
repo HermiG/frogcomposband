@@ -1142,25 +1142,42 @@ static void hit_trap(bool break_trap, bool do_jump)
                 dam = randint1(10);
                 take_hit(DAMAGE_NOESCAPE, dam, "slipping on a banana peel");
                 p_ptr->energy_need += ENERGY_NEED() * 3 / 4;
-                if (magik(40))
-                {
-                    slot_t slot = pack_random_slot(obj_exists);
-                    obj_ptr obj;
-                    char o_name[MAX_NLEN];
-                    if (!slot) break;
-                    obj = pack_obj(slot);
-                    if ((!obj) || (!obj->number)) break;
-                    object_desc(o_name, obj, OD_OMIT_PREFIX | OD_NO_PLURAL | OD_COLOR_CODED);
-                    if (obj->number > 1)
+                for(int where = one_in_(4); where < 3; where++) {
+                    if(where == 2 && !equip_find_obj(TV_BAG, SV_ANY)) continue;
+                    if(where == 2 && equip_find_obj(TV_BAG, SV_BAG_POTION_BELT) && !one_in_(3)) continue;
+                    if(where == 2 && equip_find_obj(TV_BAG, SV_BAG_SCROLL_CASE) && !one_in_(3)) continue;
+
+                    if (magik(75))
                     {
-                        msg_format("A %^s flies from your pack!", o_name);
-                        command_arg = 1;
+                        slot_t slot = (where == 0) ? equip_random_slot(obj_is_weapon_or_shield) :
+                                      (where == 1) ? pack_random_slot(obj_exists) :
+                                                     bag_random_slot(obj_exists);
+                        if (!slot) continue;
+
+                        obj_ptr obj = (where == 0) ? equip_obj(slot) :
+                                      (where == 1) ? pack_obj(slot) :
+                                                     bag_obj(slot);
+                        if (!obj || !obj->number) continue;
+                        if(where == 0 && !equip_can_takeoff(obj)) continue;
+ 
+                        char o_name[MAX_NLEN];
+                        object_desc(o_name, obj, OD_OMIT_PREFIX | OD_NO_PLURAL | OD_COLOR_CODED);
+                        if (obj->number > 1)
+                        {
+                          msg_format("A %^s flies from your %s and tumbles to the floor!", o_name,
+                                     (where == 0) ? "hands" : (where == 1) ? "pack" : bag_type_name(0));
+                          command_arg = 1;
+                        }
+                        else msg_format("%s %^s flies from your %s and clatters to the floor!", (where == 0) ? "Your" : "The",
+                                        o_name, (where == 0) ? "hands" : (where == 1) ? "pack" : bag_type_name(0));
+
+                        silent_drop_hack = TRUE;
+                        if(where == 0) equip_drop(obj);
+                        if(where == 1) pack_drop(obj);
+                        if(where == 2) bag_drop(obj);
+                        silent_drop_hack = FALSE;
+                        msg_print(NULL);
                     }
-                    else msg_format("The %^s is dislodged from your pack and flies on the floor!", o_name);
-                    silent_drop_hack = TRUE;
-                    pack_drop(obj);
-                    silent_drop_hack = FALSE;
-                    msg_print(NULL);
                 }
                 break;
             }
@@ -2010,7 +2027,7 @@ static int _many_strike_mon = 0;
 
 static bool py_attack_aux(int y, int x, bool *fear, bool *mdeath, s16b hand, int mode)
 {
-    int             num = 0, k, k2 = 0, dam_tot = 0, bonus, chance;
+    int             num = 0, k, k2 = 0, bonus, chance;
     int             to_h = 0, to_d = 0;
     int             touch_ct = 0;
     critical_t      crit;
@@ -3012,10 +3029,7 @@ static bool py_attack_aux(int y, int x, bool *fear, bool *mdeath, s16b hand, int
             if (mode == WEAPONMASTER_CRUSADERS_STRIKE)
                 k = k * 3 / 2;
 
-            if ((p_ptr->stun) && (!insta_kill))
-                k -= k * MIN(100, p_ptr->stun) / 150;
-
-            dam_tot += k;
+            if ((p_ptr->stun) && (!insta_kill)) k -= k * MIN(100, p_ptr->stun) / 150;
 
             check_muscle_sprains(500, "You sprain a muscle!");
 
@@ -3650,12 +3664,6 @@ weaponmaster_reap:
         obj_learn_slay(o_ptr, OF_IMPACT, "causes <color:U>Earthquakes</color>");
     }
 
-#if 0
-    if (p_ptr->pclass == CLASS_MAULER)
-        c_put_str(TERM_WHITE, format("Maul:%5d", dam_tot), 24, 0);
-    if (p_ptr->pclass == CLASS_DUELIST)
-        c_put_str(TERM_WHITE, format("Duel:%5d", dam_tot), 24, 0);
-#endif
     if (*mdeath)
         wizard_report_damage(old_hp);
     else

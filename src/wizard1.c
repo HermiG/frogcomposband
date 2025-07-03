@@ -113,6 +113,7 @@ static grouper group_item[] =
     { TV_CORPSE,        "Corpses" },
 
     { TV_QUIVER,        "Quivers" },
+    { TV_BAG,           "Bags" },
 
     { TV_SKELETON,      "Misc" },
 
@@ -741,6 +742,7 @@ static void spoil_object_tables(void)
     _spoil_object_table_aux(doc, "Boots", object_is_boots);
     _spoil_object_table_aux(doc, "Ammo", obj_is_ammo);
     _spoil_object_table_aux(doc, "Quivers", obj_is_quiver);
+    _spoil_object_table_aux(doc, "Bags", obj_is_bag);
     spoiler_hack = FALSE;
 
     doc_display(doc, "Object Tables", 0);

@@ -3729,11 +3729,10 @@ int py_total_weight(void)
     weight += equip_weight(NULL);
     weight += pack_weight(NULL);
     weight += quiver_weight(NULL);
+    weight += bag_weight_total(NULL);
 
-    if (race_ptr->calc_extra_weight)
-        weight += race_ptr->calc_extra_weight(NULL);
-    if (class_ptr->calc_extra_weight)
-        weight += class_ptr->calc_extra_weight(NULL);
+    if ( race_ptr->calc_extra_weight) weight +=  race_ptr->calc_extra_weight(NULL);
+    if (class_ptr->calc_extra_weight) weight += class_ptr->calc_extra_weight(NULL);
 
     return weight;
 }
@@ -5511,12 +5510,20 @@ void notice_stuff(void)
         p_ptr->notice &= ~PN_OPTIMIZE_QUIVER;
         quiver_optimize();
     }
+    if (p_ptr->notice & PN_OPTIMIZE_BAG)
+    {
+        p_ptr->notice &= ~PN_OPTIMIZE_BAG;
+        bag_optimize();
+    }
+  
     if ((p_ptr->notice & PN_CARRY) && !travel.run)
     {
         p_ptr->notice &= ~PN_CARRY;
         pack_delayed_describe();
-        if (!(p_ptr->notice & PN_CARRY))
+        if (!(p_ptr->notice & PN_CARRY)) {
             quiver_delayed_describe();
+            bag_delayed_describe();
+        }
     }
 }
 

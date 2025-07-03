@@ -8,11 +8,17 @@ static equip_template_ptr _template = NULL;
 static inv_ptr _inv = NULL;
 static bool _id_pack_hack = FALSE;
 
-static bool _object_is_amulet(obj_ptr obj)
-    { return obj->tval == TV_AMULET || obj->tval == TV_WHISTLE; }
-
-static bool _object_is_anything(obj_ptr obj)
-    { return TV_WEARABLE_BEGIN <= obj->tval && obj->tval <= TV_WEARABLE_END; }
+static bool _object_is_anything(obj_ptr obj)     { return TV_WEARABLE_BEGIN <= obj->tval && obj->tval <= TV_WEARABLE_END; }
+static bool _object_is_amulet(obj_ptr obj)       { return obj->tval == TV_AMULET || obj->tval == TV_WHISTLE; }
+static bool _object_is_boots(obj_ptr obj)        { return obj->tval == TV_BOOTS; }
+static bool _object_is_bow(obj_ptr obj)          { return obj->tval == TV_BOW; }
+static bool _object_is_quiver(obj_ptr obj)       { return obj->tval == TV_QUIVER; }
+static bool _object_is_bag(obj_ptr obj)          { return obj->tval == TV_BAG; }
+static bool _object_is_cloak(obj_ptr obj)        { return obj->tval == TV_CLOAK; }
+static bool _object_is_gloves(obj_ptr obj)       { return obj->tval == TV_GLOVES; }
+static bool _object_is_lite(obj_ptr obj)         { return obj->tval == TV_LITE; }
+static bool _object_is_ring(obj_ptr obj)         { return obj->tval == TV_RING; }
+static bool _object_is_capture_ball(obj_ptr obj) { return obj->tval == TV_CAPTURE; }
 
 static bool _object_is_body_armor(obj_ptr obj)
 {
@@ -24,21 +30,6 @@ static bool _object_is_body_armor(obj_ptr obj)
     return FALSE;
 }
 
-static bool _object_is_boots(obj_ptr obj)
-    { return obj->tval == TV_BOOTS; }
-
-static bool _object_is_bow(obj_ptr obj)
-    { return obj->tval == TV_BOW; }
-
-static bool _object_is_quiver(obj_ptr obj)
-    { return obj->tval == TV_QUIVER; }
-
-static bool _object_is_cloak(obj_ptr obj)
-    { return obj->tval == TV_CLOAK; }
-
-static bool _object_is_gloves(obj_ptr obj)
-    { return obj->tval == TV_GLOVES; }
-
 static bool _object_is_helmet(obj_ptr obj)
 {
     switch (obj->tval)
@@ -48,12 +39,6 @@ static bool _object_is_helmet(obj_ptr obj)
     }
     return FALSE;
 }
-
-static bool _object_is_lite(obj_ptr obj)
-    { return obj->tval == TV_LITE; }
-
-static bool _object_is_ring(obj_ptr obj)
-    { return obj->tval == TV_RING; }
 
 static bool _object_is_combat_ring(obj_ptr obj)
 {
@@ -94,9 +79,6 @@ static bool _object_is_weapon_or_shield(obj_ptr obj)
     return FALSE;
 }
 
-static bool _object_is_capture_ball(obj_ptr obj)
-    { return obj->tval == TV_CAPTURE; }
-
 static obj_p _accept[EQUIP_SLOT_MAX] = {
     NULL,
     _object_is_gloves,
@@ -113,6 +95,7 @@ static obj_p _accept[EQUIP_SLOT_MAX] = {
     _object_is_weapon,
     _object_is_capture_ball,
     _object_is_quiver,
+    _object_is_bag,
 };
 
 static int _slot_count(obj_ptr obj)
@@ -267,8 +250,7 @@ slot_t equip_first_empty_slot(obj_ptr obj)
     for (slot = 1; slot <= _template->max; slot++)
     {
         obj_p p = _accept[_template->slots[slot].type];
-        if (p(obj) && !equip_obj(slot))
-            return slot;
+        if (p(obj) && !equip_obj(slot)) return slot;
     }
     return 0;
 }
@@ -378,8 +360,7 @@ slot_t equip_is_worn(obj_ptr obj)
     for (slot = 1; slot <= _template->max; slot++)
     {
         object_type *o = equip_obj(slot);
-        if (o == obj)
-            return slot;
+        if (o == obj) return slot;
     }
     return 0;
 }
@@ -390,8 +371,7 @@ int equip_which_hand(obj_ptr obj)
     for (slot = 1; slot <= _template->max; slot++)
     {
         object_type *o = equip_obj(slot);
-        if (o == obj)
-            return _template->slots[slot].hand;
+        if (o == obj) return _template->slots[slot].hand;
     }
     return HAND_NONE;
 }
@@ -566,6 +546,11 @@ static bool _wield_verify(obj_ptr obj)
     {
         msg_format("Failed! Your current quiver holds %d missiles but this quiver "
                    "only has a capacity for %d missiles.", quiver_count(NULL), obj->xtra4);
+        return FALSE;
+    }
+    if (obj->tval == TV_BAG && bag_count(NULL))
+    {
+        msg_format("You must empty your current bag before equipping a new one.");
         return FALSE;
     }
     return TRUE;
@@ -768,6 +753,11 @@ void equip_takeoff_ui(void)
         msg_print("Your quiver still holds ammo. Remove all the ammo from your quiver first.");
         return;
     }
+    if (obj->tval == TV_BAG && bag_count(NULL))
+    {
+        msg_print("Your bag still contains items. Empty your bag first.");
+        return;
+    }
     energy_use = 50;
     if (!_unwield_verify(obj)) return;
 
@@ -805,6 +795,11 @@ void equip_drop(obj_ptr obj)
         msg_print("Your quiver still holds ammo. Remove all the ammo from your quiver first.");
         return;
     }
+    if (obj->tval == TV_BAG && bag_count(NULL))
+    {
+        msg_print("Your bag still contains items. Empty your bag first.");
+        return;
+    }
     if (!_unwield_verify(obj)) return;
 
     _unwield(obj, TRUE);
@@ -814,12 +809,13 @@ void equip_drop(obj_ptr obj)
 static obj_ptr _unwield_get_obj(void)
 {
     obj_prompt_t prompt = {0};
-
     prompt.prompt = "Take off which item?";
-    prompt.error = "You are not wearing anything to take off.";
+    prompt.custom = "Take out which item?";
+    prompt.error  = "You are not wearing anything to take off.";
     prompt.where[0] = INV_EQUIP;
     prompt.where[1] = INV_QUIVER;
-    if (get_race()->bonus_pack) prompt.where[2] = INV_SPECIAL1;
+    prompt.where[2] = INV_BAG;
+    if (get_race()->bonus_pack) prompt.where[3] = INV_SPECIAL1;
 
     if (black_curses) od_xtra_context = OD_BLACK_CURSES;
     obj_prompt(&prompt);
@@ -876,8 +872,7 @@ bool _unwield_verify(obj_ptr obj)
 
 void _unwield_before(obj_ptr obj)
 {
-    if (p_ptr->special_defense & KATA_MUSOU)
-        set_action(ACTION_NONE);
+    if (p_ptr->special_defense & KATA_MUSOU) set_action(ACTION_NONE);
 }
 
 void _unwield(obj_ptr obj, bool drop)
@@ -885,17 +880,35 @@ void _unwield(obj_ptr obj, bool drop)
     obj->marked &= ~OM_SLIPPING;
     if (obj->loc.where == INV_QUIVER)
     {
-        int amt = obj->number;
         assert(equip_find_obj(TV_QUIVER, SV_ANY));
         assert(!drop); /* quiver_drop ... not us. cf do_cmd_drop */
-        if (obj->number == 1 || msg_input_num("Quantity", &amt, 1, obj->number))
+
+        int amt = obj->number;
+        if (amt == 1 || msg_input_num("Quantity", &amt, 1, amt))
         {
             obj_t copy = *obj;
 
             copy.number = amt;
-            pack_carry_aux(&copy); /* Hack: don't put ammo back in the quiver if we just removed it! */
+            pack_carry_aux(&copy); // Don't put ammo back in the quiver if we just removed it!
 
             obj->number -= amt;
+            obj_release(obj, obj->number ? OBJ_RELEASE_DELAYED_MSG : OBJ_RELEASE_QUIET);
+            energy_use = 50;
+        }
+    }
+    else if (obj->loc.where == INV_BAG)
+    {
+        assert(equip_find_obj(TV_BAG, SV_ANY));
+        assert(!drop);
+
+        int amt = obj->number;
+        if (amt == 1 || msg_input_num("Quantity", &amt, 1, amt))
+        {
+            obj_t copy = *obj;
+            copy.number = amt;
+            pack_carry_aux(&copy); // Don't put items back in the bag if we just removed them!
+            obj->number -= amt;
+
             obj_release(obj, obj->number ? OBJ_RELEASE_DELAYED_MSG : OBJ_RELEASE_QUIET);
             energy_use = 50;
         }
@@ -1868,8 +1881,8 @@ void equip_on_change_race(void)
         inv_free(temp);
         temp = NULL;
 
-        if (!equip_find_obj(TV_QUIVER, SV_ANY))
-            quiver_remove_all();
+        if (!equip_find_obj(TV_QUIVER, SV_ANY)) quiver_remove_all();
+        if (!equip_find_obj(TV_BAG,    SV_ANY)) bag_remove_all();
 
         pack_overflow();
         for (slot = 1; slot <= pack_max(); slot++)
@@ -2036,16 +2049,16 @@ void _ring_finger_swap_aux(object_type *o_ptr, slot_t f1, slot_t f2)
 
 void _ring_finger_sanity_check(void)
 {
-    slot_t hukattu = 0, tyhja = 0, i;
     slot_t slot = equip_find_first(_object_is_combat_ring);
-    int ct;
-    slot_t slots[EQUIP_MAX + 1];
-    object_type *o_ptr;
     if (!slot) return;
-    o_ptr = equip_obj(slot);
-    ct = _get_slots(o_ptr, slots);
+
+    slot_t slots[EQUIP_MAX + 1];
+    object_type *o_ptr = equip_obj(slot);
+    int ct = _get_slots(o_ptr, slots);
     if (ct < 2) return;
-    for (i = 0; i < ct; i++)
+
+    slot_t hukattu = 0, tyhja = 0;
+    for (int i = 0; i < ct; i++)
     {
         slot_t slot = slots[i];
         int hand = _template->slots[slot].hand;
@@ -2065,7 +2078,7 @@ void _ring_finger_sanity_check(void)
             else hukattu = slot;
         }
     }
-    if ((tyhja) && (hukattu))
+    if (tyhja && hukattu)
     {
         if (get_check("Switch ring fingers so combat bonuses can apply to a weapon?")) _ring_finger_swap_aux(o_ptr, tyhja, hukattu);
     }
@@ -2073,22 +2086,23 @@ void _ring_finger_sanity_check(void)
 
 void ring_finger_swap_ui(slot_t f1, slot_t f2)
 {
-    slot_t ring_slot = equip_find_first(_object_is_ring);
-    int ct;
     slot_t slots[EQUIP_MAX + 1];
-    object_type *o_ptr;
+    slot_t ring_slot = equip_find_first(_object_is_ring);
+
     if (!ring_slot)
     {
         msg_print("You do not have any rings equipped.");
         return;
     }
-    o_ptr = equip_obj(ring_slot);
+
+    object_type *o_ptr = equip_obj(ring_slot);
     if ((!o_ptr) || (o_ptr->tval != TV_RING))
     {
         msg_print("A software bug has occurred in the ring finger swap UI - please report!");
         return;
     }
-    ct = _get_slots(o_ptr, slots);
+
+    int ct = _get_slots(o_ptr, slots);
     if (ct < 2)
     {
         msg_print("You cannot change ring fingers!");
@@ -2099,24 +2113,22 @@ void ring_finger_swap_ui(slot_t f1, slot_t f2)
         _ring_finger_swap_aux(o_ptr, slots[0], slots[1]);
         return;
     }
-    if ((f1) && (f2))
+    if (f1 && f2)
     {
         _ring_finger_swap_aux(o_ptr, f1, f2);
         return;
     }
     else if (ct > 2)
     {
-        menu_t menu = { "Choose first slot", NULL, NULL,
-                        _slot_menu_fn, slots, ct, 0 };
+        menu_t menu = { "Choose first slot", NULL, NULL, _slot_menu_fn, slots, ct, 0 };
 
-        int i, idx = menu_choose(&menu);
+        int idx = menu_choose(&menu);
         if (idx < 0) return;
         f1 = slots[idx];
         ct--;
-        for (i = idx; i < ct; i++)
-        {
+        for (int i = idx; i < ct; i++)
             slots[i] = slots[i + 1];
-        }
+
         menu.count = ct;
         menu.cookie = slots;
         menu.choose_prompt = "Choose second slot";
@@ -2124,6 +2136,5 @@ void ring_finger_swap_ui(slot_t f1, slot_t f2)
         if (idx < 0) return;
         f2 = slots[idx];
         _ring_finger_swap_aux(o_ptr, f1, f2);
-        return;
     }
 }

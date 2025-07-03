@@ -48,6 +48,7 @@
 #include "equip.h"
 #include "pack.h"
 #include "quiver.h"
+#include "bag.h"
 #include "home.h"
 #include "rooms.h"
 #include "shop.h"

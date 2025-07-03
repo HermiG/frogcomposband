@@ -10,12 +10,7 @@ static int _forms[_MAX_FORMS];
 
 static bool _is_memorized(int r_idx)
 {
-    int i;
-    for (i = 0; i < _MAX_FORMS; i++)
-    {
-        if (_forms[i] == r_idx)
-            return TRUE;
-    }
+    for (int i = 0; i < _MAX_FORMS; i++) if (_forms[i] == r_idx) return TRUE;
     return FALSE;
 }
 
@@ -26,13 +21,8 @@ bool mimic_is_memorized(int r_idx)
 
 static int _count_memorized(void)
 {
-    int ct = 0, i;
-
-    for (i = 0; i < _MAX_FORMS; i++)
-    {
-        if (_forms[i])
-            ct++;
-    }
+    int ct = 0;
+    for (int i = 0; i < _MAX_FORMS; i++) if (_forms[i]) ct++;
     return ct;
 }
 
@@ -323,6 +313,8 @@ static void _list(_choice_array_t *choices)
                             break;
                         case EQUIP_SLOT_QUIVER:
                             _prt_equippy(r, c, TV_QUIVER, 0);
+                        case EQUIP_SLOT_BAG:
+                            _prt_equippy(r, c, TV_BAG, 0);
                             break;
                         }
                     }

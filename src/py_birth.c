@@ -76,8 +76,7 @@ int py_birth(void)
     int result = UI_OK;
 
     /* Windows is not setting a player name for new files */
-    if (0 == strlen(player_name))
-        strcpy(player_name, "PLAYER");
+    if (strlen(player_name) == 0) strcpy(player_name, "PLAYER");
 
     assert(!_doc);
     _doc = doc_alloc(80);
@@ -104,12 +103,15 @@ void py_birth_obj_aux(int tval, int sval, int qty)
     {
         int k_idx = lookup_kind(tval, SV_ANY);
         object_prep(&forge, k_idx);
-        if (!device_init_fixed(&forge, sval))
-            return;
+        if (!device_init_fixed(&forge, sval)) return;
         qty = 1;
         break;
     }
     case TV_QUIVER:
+        object_prep(&forge, lookup_kind(tval, sval));
+        apply_magic(&forge, 0, AM_AVERAGE);
+        break;
+    case TV_BAG:
         object_prep(&forge, lookup_kind(tval, sval));
         apply_magic(&forge, 0, AM_AVERAGE);
         break;
@@ -123,14 +125,10 @@ void py_birth_obj_aux(int tval, int sval, int qty)
 
 void py_birth_obj(object_type *o_ptr)
 {
-    int slot;
-
-    if (spoiler_hack)
-        return;
+    if (spoiler_hack) return;
 
     /* Androids can hit CL9 or more with starting Chain Mail! */
-    if (p_ptr->prace == RACE_ANDROID && object_is_body_armour(o_ptr))
-        return;
+    if (p_ptr->prace == RACE_ANDROID && object_is_body_armour(o_ptr)) return;
 
     /* Weed out duplicate gear (e.g. Artemis Archer) but note
      * that centipedes start with duplicate boots (so allow
@@ -159,10 +157,9 @@ void py_birth_obj(object_type *o_ptr)
         return;
     }
 
-    slot = equip_first_empty_slot(o_ptr);
-    if ((slot) && (o_ptr->number == 1))
-        equip_wield(o_ptr, slot);
-    else if ((slot) && (thrall_mode))
+    int slot = equip_first_empty_slot(o_ptr);
+    if (slot && o_ptr->number == 1) equip_wield(o_ptr, slot);
+    else if (slot && thrall_mode)
     {
         equip_wield(o_ptr, slot);
         pack_carry(o_ptr);
@@ -191,10 +188,8 @@ void py_birth_light(void)
 
 void py_birth_spellbooks(void)
 {
-    if (p_ptr->realm1)
-        py_birth_obj_aux(TV_LIFE_BOOK + p_ptr->realm1 - 1, 0, 1);
-    if (p_ptr->realm2)
-        py_birth_obj_aux(TV_LIFE_BOOK + p_ptr->realm2 - 1, 0, 1);
+    if (p_ptr->realm1) py_birth_obj_aux(TV_LIFE_BOOK + p_ptr->realm1 - 1, 0, 1);
+    if (p_ptr->realm2) py_birth_obj_aux(TV_LIFE_BOOK + p_ptr->realm2 - 1, 0, 1);
 }
 
 /********************************************************************
@@ -217,7 +212,7 @@ int _letter_roman_value(unsigned char mika)
 
 int find_roman_numeral(char *nimi, int *paikka)
 {
-    int i, tyhja, pituus = strlen(nimi), uuspit, isoarvo = 0;
+    int tyhja, pituus = strlen(nimi), uuspit, isoarvo = 0;
     int arvot[22] = {0};
 
     if (pituus <= 2) return 0;
@@ -233,7 +228,7 @@ int find_roman_numeral(char *nimi, int *paikka)
     if (uuspit > PY_NAME_LEN) return 0;
 
     /* Check if name contains a Roman numeral */
-    for (i = 0; i < uuspit; i++)
+    for (int i = 0; i < uuspit; i++)
     {
         int _valu = _letter_roman_value(nimi[i + tyhja + 1]);
         if (!_valu) return 0;
@@ -242,7 +237,7 @@ int find_roman_numeral(char *nimi, int *paikka)
     }
 
     /* Calculate value of said numeral */
-    for (i = 0; i < uuspit; i++)
+    for (int i = 0; i < uuspit; i++)
     {
         if ((i < uuspit - 1) && (arvot[i + 1] > arvot[i])) isoarvo -= arvot[i];
         else isoarvo += arvot[i];
@@ -253,24 +248,24 @@ int find_roman_numeral(char *nimi, int *paikka)
 
 #define _MAX_ROMAN_CAT 13
 typedef struct _roman_cat_s {
-   int val;
-   char lisays[3];
+    int val;
+    char lisays[3];
 } _roman_cat_t, *_roman_cat_ptr;
 
 static _roman_cat_t _roman_cats[_MAX_ROMAN_CAT] = {
- { 1000, "M"},
- { 900, "CM"},
- { 500, "D"},
- { 400, "CD"},
- { 100, "C"},
- { 90, "XC"},
- { 50, "L"},
- { 40, "XL"},
- { 10, "X"},
- { 9, "IX"},
- { 5, "V"},
- { 4, "IV"},
- { 1, "I"}
+    { 1000, "M"},
+    { 900, "CM"},
+    { 500, "D"},
+    { 400, "CD"},
+    { 100, "C"},
+    { 90, "XC"},
+    { 50, "L"},
+    { 40, "XL"},
+    { 10, "X"},
+    { 9, "IX"},
+    { 5, "V"},
+    { 4, "IV"},
+    { 1, "I"}
 };
 
 bool num_to_roman(int _num, char *buf)
@@ -285,7 +280,7 @@ bool num_to_roman(int _num, char *buf)
         if ((pituus + (i % 2)) >= PY_NAME_LEN) return FALSE;
         if (!pituus) strcpy(buf, " ");
         strcat(buf, _roman_cats[i].lisays);
-        pituus += (1 + (i % 2));
+        pituus += 1 + (i % 2);
         jaljella -= _roman_cats[i].val;
     }
     return TRUE;
@@ -294,15 +289,15 @@ bool num_to_roman(int _num, char *buf)
 int find_arabic_numeral(char *nimi, int *paikka)
 {
     s32b arvo = 0;
-    int i, j, pituus = 0;
+    int pituus = 0;
         
-    for (i = strlen(nimi) - 1; i > 0; i--)
+    for (int i = strlen(nimi) - 1; i > 0; i--)
     {
         if (isdigit(nimi[i]))
         {
             int lisa = nimi[i] - '0';
             pituus++;
-            for (j = 1; j < pituus; j++)
+            for (int j = 1; j < pituus; j++)
             {
                 lisa *= 10;
             }
@@ -588,28 +583,28 @@ static void _inc_rcp_state(void);
 static void _change_name(void);
 
 static int _beginner_races[] = {
-  RACE_HUMAN,
-  RACE_DWARF,
-  RACE_HOBBIT,
-  RACE_GNOME,
-  RACE_DUNADAN,
-  RACE_HIGH_ELF,
-  RACE_HALF_TROLL,
-  RACE_WEREWOLF,
-  RACE_KLACKON,
-  -1
+    RACE_HUMAN,
+    RACE_DWARF,
+    RACE_HOBBIT,
+    RACE_GNOME,
+    RACE_DUNADAN,
+    RACE_HIGH_ELF,
+    RACE_HALF_TROLL,
+    RACE_WEREWOLF,
+    RACE_KLACKON,
+    -1
 };
 
 static int _beginner_classes[] = {
-  CLASS_WARRIOR,
-  CLASS_MAGE,
-  CLASS_PRIEST,
-  CLASS_ROGUE,
-  CLASS_RANGER,
-  CLASS_PALADIN,
-  CLASS_NINJA,
-  CLASS_WEAPONSMITH,
-  -1
+    CLASS_WARRIOR,
+    CLASS_MAGE,
+    CLASS_PRIEST,
+    CLASS_ROGUE,
+    CLASS_RANGER,
+    CLASS_PALADIN,
+    CLASS_NINJA,
+    CLASS_WEAPONSMITH,
+    -1
 };
 
 static int _race_class_ui(void)
@@ -3429,6 +3424,7 @@ static void _birth_finalize(void)
     equip_init();
     pack_init();
     quiver_init();
+    bag_init();
     towns_init();
     home_init();
     virtue_init();

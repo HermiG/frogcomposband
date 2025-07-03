@@ -1830,7 +1830,7 @@ static void _examine(_ui_context_ptr context)
 
 static void _reserve_aux(shop_ptr shop, obj_ptr obj)
 {
-    int        cost = _sell_price(shop, MIN(10000, obj_value(obj) / 10));
+    int        cost = MAX(10, _sell_price(shop, MIN(10000, obj_value(obj) / 10)));
     string_ptr s;
     char       c;
     char       name[MAX_NLEN];

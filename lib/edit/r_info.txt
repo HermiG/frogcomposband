@@ -17924,7 +17924,7 @@ B:HIT:HURT(4d8):HURT(4d8, 20%)
 B:HIT:HURT(4d8):HURT(4d8, 20%)
 F:MALE | DROP_CORPSE | DROP_SKELETON | FORCE_MAXHP | HAS_LITE_2 | HUMAN |
 F:OPEN_DOOR | BASH_DOOR | UNIQUE2
-D:He is always traveling together with
+D:He is always travelling together with
 D:Mitsukuni of the Yellow Gate, Grand Duke of Mito
 P:Copy:Dunadan:Warrior
 P:Speed:+5
@@ -17937,7 +17937,7 @@ B:HIT:HURT(4d8):HURT(4d8, 20%)
 B:HIT:HURT(4d8):HURT(4d8, 20%)
 F:MALE | DROP_CORPSE | DROP_SKELETON | FORCE_MAXHP | HAS_LITE_2 | HUMAN |
 F:OPEN_DOOR | BASH_DOOR | UNIQUE2
-D:He is always traveling together with
+D:He is always travelling together with
 D:Mitsukuni of the Yellow Gate, Grand Duke of Mito
 P:Copy:Dunadan:Warrior
 P:Speed:+5

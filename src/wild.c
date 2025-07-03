@@ -25,7 +25,7 @@ monster_hook_type wilderness_mon_hook = NULL;
    spawned adjacent to the player. For example, dragons in the mountains
    were a good, quick source of experience and loot for a mid level player.
    Let's prevent any encounters when the player leaves wild mode (excepting ambushes,
-   of course). To get encounters, the player must seek them by traveling about. */
+   of course). To get encounters, the player must seek them by travelling about. */
 bool no_encounters_hack = FALSE;
 bool locate_entrance_hack = FALSE;
 
@@ -479,7 +479,7 @@ void wilderness_move_player(int old_x, int old_y)
     _generate_cave(valid);
     _set_boundary();
 
-    /* Note: While it is true that disturb() will cancel traveling, travel_step()
+    /* Note: While it is true that disturb() will cancel travelling, travel_step()
        will undo the effects of any disturb() calls processed by move_player() (which
        includes us, btw). I have no idea why this is so, but it is (undocumented from Henband).
        And thus, we gosh darn better update the travel flow before disturb() sets

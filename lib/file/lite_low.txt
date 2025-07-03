@@ -48,7 +48,7 @@ N:*:Default
 'Talisman'
 'Tarazed'
 'Trailblazer'
-'Traveling Light'
+'Travelling Light'
 'Ultralight'
 'Wyrmglow'
 'Yellow Light'

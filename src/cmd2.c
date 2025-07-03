@@ -3871,7 +3871,7 @@ void travel_begin(int mode, int x, int y)
     travel.mode = mode;
     travel.run = 0;
 
-    assert(in_bounds2(y, x)); /* Old bug with traveling in a scrollable wilderness */
+    assert(in_bounds2(y, x)); /* Old bug with travelling in a scrollable wilderness */
 
     if (x == px && y == py)
     {

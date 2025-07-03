@@ -4964,7 +4964,7 @@ static void process_player(void)
             run_step(0);
         }
 
-        /* Traveling */
+        /* Travelling */
         else if (travel.run)
         {
             /* Take a step */

@@ -1785,21 +1785,37 @@ static void _buy(_ui_context_ptr context)
 
 static void _examine(_ui_context_ptr context)
 {
+    bool skip_prompt = FALSE;
+    char cmd = 0;
+  
     for (;;)
     {
-        char    cmd;
-        slot_t  slot;
-        obj_ptr obj;
-
-        if (!msg_command("<color:y>Examine which item <color:w>(<color:keypress>Esc</color> when done)</color>?</color>", &cmd)) break;
+        if(skip_prompt) {}
+        else if(!msg_command("<color:y>Examine which item <color:w>(<color:keypress>Esc</color> when done)</color>?</color>", &cmd)) break;
+        skip_prompt = FALSE;
         if (cmd < 'a' || cmd > 'z') continue;
-        slot = label_slot(cmd);
+        slot_t slot = label_slot(cmd);
         slot = slot + context->top - 1;
-        obj = inv_obj(context->shop->inv, slot);
+        obj_ptr obj = inv_obj(context->shop->inv, slot);
         if (!obj) continue;
 
         obj_learn_store(obj);
-        obj_display(obj);
+        int k = obj_display(obj);
+
+        switch(k) {
+            case '8': case SKEY_UP: case '4': case SKEY_LEFT:
+                if (cmd > 'a') {
+                    cmd--;
+                    skip_prompt = TRUE;
+                }
+                break;
+            case '2': case SKEY_DOWN: case '6': case SKEY_RIGHT:
+                if (cmd < 'z') {
+                    cmd++;
+                    skip_prompt = TRUE;
+                }
+                break;
+        }
     }
 }
 

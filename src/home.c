@@ -303,9 +303,7 @@ static void _display(_ui_context_ptr context)
     doc_insert(doc, "</style>");
 
     Term_clear_rect(r);
-    doc_sync_term(doc,
-        doc_range_top_lines(context->doc, r.cy),
-        doc_pos_create(r.x, r.y));
+    doc_sync_term(doc, doc_range_top_lines(context->doc, r.cy), doc_pos_create(r.x, r.y));
 }
 
 static void _get_aux(obj_ptr obj)
@@ -495,20 +493,36 @@ static void _drop(_ui_context_ptr context)
 
 static void _examine(_ui_context_ptr context)
 {
+    bool skip_prompt = FALSE;
+    char cmd = 0;
+  
     for (;;)
     {
-        char    cmd;
-        slot_t  slot;
-        obj_ptr obj;
-
-        if (!msg_command("<color:y>Examine which item <color:w>(<color:keypress>Esc</color> when done)</color>?</color>", &cmd)) break;
+        if(skip_prompt) {}
+        else if (!msg_command("<color:y>Examine which item <color:w>(<color:keypress>Esc</color> when done)</color>?</color>", &cmd)) break;
+        skip_prompt = FALSE;
         if (cmd < 'a' || cmd > 'z') continue;
-        slot = label_slot(cmd);
+        slot_t slot = label_slot(cmd);
         slot = slot + context->top - 1;
-        obj = inv_obj(context->inv, slot);
+        obj_ptr obj = inv_obj(context->inv, slot);
         if (!obj) continue;
 
-        obj_display(obj);
+        int k = obj_display(obj);
+
+        switch(k) {
+            case '8': case SKEY_UP: case '4': case SKEY_LEFT:
+                if (cmd > 'a') {
+                    cmd--;
+                    skip_prompt = TRUE;
+                }
+                break;
+            case '2': case SKEY_DOWN: case '6': case SKEY_RIGHT:
+                if (cmd < 'z') {
+                    cmd++;
+                    skip_prompt = TRUE;
+                }
+                break;
+        }
     }
 }
 

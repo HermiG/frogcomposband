@@ -1347,8 +1347,8 @@ extern void mon_display_doc(monster_race *r_ptr, doc_ptr doc);
 extern void mon_display_possessor(monster_race *r_ptr, doc_ptr doc);
 
 /* obj_info.c */
-extern void obj_display(object_type *o_ptr);
-extern void obj_display_rect(object_type *o_ptr, rect_t display);
+extern int  obj_display(object_type *o_ptr);
+extern int  obj_display_rect(object_type *o_ptr, rect_t display);
 extern void obj_display_doc(object_type *o_ptr, doc_ptr doc);
 extern void obj_display_smith(object_type *o_ptr, doc_ptr doc);
 extern void device_display_doc(object_type *o_ptr, doc_ptr doc);

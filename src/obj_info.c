@@ -4,8 +4,8 @@
 #include <assert.h>
 
 /* Display detailed object information to the user */
-extern void obj_display(object_type *o_ptr);
-extern void obj_display_rect(object_type *o_ptr, rect_t display);
+extern int  obj_display(object_type *o_ptr);
+extern int  obj_display_rect(object_type *o_ptr, rect_t display);
 extern void obj_display_doc(object_type *o_ptr, doc_ptr doc);
 extern void obj_display_smith(object_type *o_ptr, doc_ptr doc);
 extern void device_display_doc(object_type *o_ptr, doc_ptr doc);
@@ -1438,26 +1438,26 @@ static void _lite_display_doc(object_type *o_ptr, doc_ptr doc)
 }
 
 /* Public Interface */
-void obj_display(object_type *o_ptr)
+int obj_display(object_type *o_ptr)
 {
-    obj_display_rect(o_ptr, ui_menu_rect());
+    return obj_display_rect(o_ptr, ui_menu_rect());
 }
 
-void obj_display_rect(object_type *o_ptr, rect_t display)
+int obj_display_rect(object_type *o_ptr, rect_t display)
 {
+    int k = 0;
     doc_ptr doc = doc_alloc(MIN(display.cx, 72));
 
-    if (display.cx > 80)
-        display.cx = 80;
+    if (display.cx > 80) display.cx = 80;
 
     obj_display_doc(o_ptr, doc);
 
     screen_save();
     if (doc_cursor(doc).y < display.cy - 3)
     {
-        doc_insert(doc, "\n<color:B>[Press <color:y>Any Key</color> to Continue]</color>\n\n");
+        doc_insert(doc, "\n<color:B>[Press <color:y>Arrow Keys</color> to Browse; <color:y>Any Key</color> to Continue]</color>\n\n");
         doc_sync_term(doc, doc_range_all(doc), doc_pos_create(display.x, display.y));
-        inkey();
+        k = inkey();
     }
     else
     {
@@ -1466,6 +1466,8 @@ void obj_display_rect(object_type *o_ptr, rect_t display)
     screen_load();
 
     doc_free(doc);
+  
+    return k;
 }
 
 void obj_display_doc(object_type *o_ptr, doc_ptr doc)

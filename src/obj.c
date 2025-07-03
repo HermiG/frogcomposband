@@ -935,8 +935,7 @@ void obj_inspect_ui(void)
     allow_special3_hack = FALSE;
 
     /* The '-' key autoselects a single floor object */
-    if (prompt.obj)
-        obj_display(prompt.obj);
+    if (prompt.obj) obj_display(prompt.obj);
 }
 
 void gear_ui(int which)

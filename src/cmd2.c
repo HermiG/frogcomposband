@@ -3864,7 +3864,6 @@ static void travel_flow(int ty, int tx)
 
 void travel_begin(int mode, int x, int y)
 {
-    int i;
     int dx, dy, sx, sy;
     feature_type *f_ptr;
 
@@ -3888,8 +3887,8 @@ void travel_begin(int mode, int x, int y)
 
     if ((cave[y][x].info & CAVE_MARK) &&
         (have_flag(f_ptr->flags, FF_WALL) ||
-            have_flag(f_ptr->flags, FF_CAN_DIG) ||
-            (have_flag(f_ptr->flags, FF_DOOR) && cave[y][x].mimic)))
+         have_flag(f_ptr->flags, FF_CAN_DIG) ||
+        (have_flag(f_ptr->flags, FF_DOOR) && cave[y][x].mimic)))
     {
         msg_print("You cannot travel there!");
         travel_cancel();
@@ -3914,10 +3913,8 @@ void travel_begin(int mode, int x, int y)
     sx = ((x == px) || (dx < dy)) ? 0 : ((x > px) ? 1 : -1);
     sy = ((y == py) || (dy < dx)) ? 0 : ((y > py) ? 1 : -1);
 
-    for (i = 1; i <= 9; i++)
-    {
+    for (int i = 1; i <= 9; i++)
         if ((sx == ddx[i]) && (sy == ddy[i])) travel.dir = i;
-    }
 }
 
 void travel_wilderness_scroll(int new_x, int new_y)

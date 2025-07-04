@@ -29,12 +29,11 @@ slot_t label_slot(char label)
 /* Helpers */
 static void _grow(inv_ptr inv, slot_t slot)
 {
-    slot_t i;
     assert(slot);
     assert(!inv->max || slot <= inv->max);
     if (slot >= vec_length(inv->objects))
     {
-        for (i = vec_length(inv->objects); i <= slot; i++) vec_add(inv->objects, NULL);
+        for (slot_t i = vec_length(inv->objects); i <= slot; i++) vec_add(inv->objects, NULL);
         assert(slot == vec_length(inv->objects) - 1);
     }
 }

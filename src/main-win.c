@@ -994,39 +994,27 @@ static void load_prefs_for_term(int i)
     char sec_name[128];
     char tmp[1024];
 
-    int wid, hgt;
-
-    /* Make section name */
-    sprintf(sec_name, "Term-%d", i);
-
     /* Make section name */
     sprintf(sec_name, "Term-%d", i);
 
     /* Visible */
-    if (i > 0)
-    {
-        td->visible = (GetPrivateProfileInt(sec_name, "Visible", td->visible, ini_file) != 0);
-    }
+    if (i > 0) td->visible = (GetPrivateProfileInt(sec_name, "Visible", td->visible, ini_file) != 0);
 
     /* Desired font, with default */
     GetPrivateProfileString(sec_name, "Font", "Courier", tmp, 127, ini_file);
-
 
     /* Bizarre */
     td->bizarre = (GetPrivateProfileInt(sec_name, "Bizarre", td->bizarre, ini_file) != 0);
 
     /* Analyze font, save desired font name */
     td->font_want = z_string_make(tmp);
-    hgt = 15; wid = 0;
-    td->lf.lfWidth  = GetPrivateProfileInt(sec_name, "FontWid", wid, ini_file);
-    td->lf.lfHeight = GetPrivateProfileInt(sec_name, "FontHgt", hgt, ini_file);
-    td->lf.lfWeight = GetPrivateProfileInt(sec_name, "FontWgt", 0, ini_file);
-
+    td->lf.lfWidth  = GetPrivateProfileInt(sec_name, "FontWid",  0, ini_file);
+    td->lf.lfHeight = GetPrivateProfileInt(sec_name, "FontHgt", 15, ini_file);
+    td->lf.lfWeight = GetPrivateProfileInt(sec_name, "FontWgt",  0, ini_file);
 
     /* Tile size */
-    td->tile_wid = GetPrivateProfileInt(sec_name, "TileWid", td->lf.lfWidth, ini_file);
+    td->tile_wid = GetPrivateProfileInt(sec_name, "TileWid", td->lf.lfWidth,  ini_file);
     td->tile_hgt = GetPrivateProfileInt(sec_name, "TileHgt", td->lf.lfHeight, ini_file);
-
 
     /* Window size */
     td->cols = GetPrivateProfileInt(sec_name, "NumCols", td->cols, ini_file);
@@ -1034,24 +1022,14 @@ static void load_prefs_for_term(int i)
     normsize.x = td->cols; normsize.y = td->rows;
 
     /* Window size */
-    if (i == 0)
-    {
-        win_maximized = GetPrivateProfileInt(sec_name, "Maximized", win_maximized, ini_file);
-    }
+    if (i == 0) win_maximized = GetPrivateProfileInt(sec_name, "Maximized", win_maximized, ini_file);
 
     /* Window position */
     td->pos_x = GetPrivateProfileInt(sec_name, "PositionX", td->pos_x, ini_file);
     td->pos_y = GetPrivateProfileInt(sec_name, "PositionY", td->pos_y, ini_file);
 
-    if (i == 0)
-    {
-    }
-
     /* Window Z position */
-    if (i > 0)
-    {
-        td->posfix = GetPrivateProfileInt(sec_name, "PositionFix", td->posfix, ini_file);
-    }
+    if (i > 0) td->posfix = GetPrivateProfileInt(sec_name, "PositionFix", td->posfix, ini_file);
 }
 
 
@@ -1068,12 +1046,12 @@ static void load_prefs(void)
     use_bigtile = arg_bigtile;
 
     /* Extract the "arg_sound" flag */
-    arg_sound = (GetPrivateProfileInt("Angband", "Sound", 0, ini_file) != 0);
+    arg_sound = !! GetPrivateProfileInt("Angband", "Sound", 0, ini_file);
 
-    object_list_width = MAX(24, GetPrivateProfileInt("Angband", "ObjListWidth", object_list_width, ini_file));
+    object_list_width  = MAX(24, GetPrivateProfileInt("Angband", "ObjListWidth",  object_list_width, ini_file));
     monster_list_width = MAX(24, GetPrivateProfileInt("Angband", "MonListWidth", monster_list_width, ini_file));
 
-    GetPrivateProfileString("Angband", "ResumeSaveName", NULL, resume_savename, sizeof(resume_savename), ini_file));
+    GetPrivateProfileString("Angband", "ResumeSaveName", NULL, resume_savename, sizeof(resume_savename), ini_file);
 
     /* Load window prefs */
     for (int i = 0; i < MAX_TERM_DATA; ++i) load_prefs_for_term(i);
@@ -1099,9 +1077,7 @@ static void load_prefs(void)
 static s16b tokenize_whitespace(char *buf, s16b num, char **tokens)
 {
     int k = 0;
-
     char *s = buf;
-
 
     /* Process */
     while (k < num)
@@ -1128,12 +1104,11 @@ static s16b tokenize_whitespace(char *buf, s16b num, char **tokens)
     }
 
     /* Count */
-    return (k);
+    return k;
 }
 
 static void load_sound_prefs(void)
 {
-    int i, j, num;
     char tmp[1024];
     char ini_path[1024];
     char wav_path[1024];
@@ -1142,20 +1117,18 @@ static void load_sound_prefs(void)
     /* Access the sound.cfg */
     path_build(ini_path, 1024, ANGBAND_DIR_XTRA_SOUND, "sound.cfg");
 
-    for (i = 0; i < SOUND_MAX; i++)
+    for (int i = 0; i < SOUND_MAX; i++)
     {
         GetPrivateProfileString("Sound", angband_sound_name[i], "", tmp, 1024, ini_path);
+        int num = tokenize_whitespace(tmp, SAMPLE_MAX, zz);
 
-        num = tokenize_whitespace(tmp, SAMPLE_MAX, zz);
-
-        for (j = 0; j < num; j++)
+        for (int j = 0; j < num; j++)
         {
             /* Access the sound */
             path_build(wav_path, 1024, ANGBAND_DIR_XTRA_SOUND, zz[j]);
 
             /* Save the sound filename, if it exists */
-            if (check_file(wav_path))
-                sound_file[i][j] = z_string_make(zz[j]);
+            if (check_file(wav_path)) sound_file[i][j] = z_string_make(zz[j]);
         }
     }
 }
@@ -1188,7 +1161,7 @@ static int new_palette(void)
     term_data *td;
 
     /* This makes no sense */
-    if (!paletted) return (TRUE);
+    if (!paletted) return TRUE;
 
     /* No bitmap */
     lppeSize = 0;
@@ -1215,7 +1188,7 @@ static int new_palette(void)
             rnfree(lppe, lppeSize);
 
             /* Fail */
-            return (FALSE);
+            return FALSE;
         }
     }
 
@@ -1390,8 +1363,7 @@ static bool init_sound(void)
         can_use_sound = TRUE;
     }
 
-    /* Result */
-    return (can_use_sound);
+    return can_use_sound;
 }
 #endif /* USE_SOUND */
 
@@ -1578,30 +1550,25 @@ static errr Term_xtra_win_react(void)
     /* Complex color */
     else
     {
-        COLORREF code;
-
-        byte rv, gv, bv;
-
         bool change = FALSE;
 
         /* Save the default colors */
         for (int i = 0; i < 256; i++)
         {
             /* Extract desired values */
-            rv = angband_color_table[i][1];
-            gv = angband_color_table[i][2];
-            bv = angband_color_table[i][3];
+            byte rv = angband_color_table[i][1];
+            byte gv = angband_color_table[i][2];
+            byte bv = angband_color_table[i][3];
 
             /* Extract a full color code */
-            code = PALETTERGB(rv, gv, bv);
+            COLORREF code = PALETTERGB(rv, gv, bv);
 
             /* Activate changes */
             if (win_clr[i] != code)
             {
-                change = TRUE;
-
                 /* Apply the desired color */
                 win_clr[i] = code;
+                change = TRUE;
             }
         }
 
@@ -1818,8 +1785,7 @@ static errr Term_xtra_win_sound(int v)
   
 #ifdef USE_SOUND
     /* Count the samples */
-    for (i = 0; i < SAMPLE_MAX; i++)
-        if (!sound_file[v][i]) break;
+    for (i = 0; i < SAMPLE_MAX; i++) if (!sound_file[v][i]) break;
 
     if (i == 0) return 1; // No sample
 
@@ -1844,12 +1810,8 @@ static int Term_xtra_win_delay(int v)
 {
 
 #ifdef WIN32
-
-    /* Sleep */
     Sleep(v);
-
 #else /* WIN32 */
-
     MSG msg;
 
     /* Final count */
@@ -1865,11 +1827,10 @@ static int Term_xtra_win_delay(int v)
             DispatchMessage(&msg);
         }
     }
-
 #endif /* WIN32 */
 
     /* Success */
-    return (0);
+    return 0;
 }
 
 
@@ -1950,8 +1911,6 @@ static errr Term_curs_win(int x, int y)
 {
     term_data *td = (term_data*)(Term->data);
 
-    RECT rc;
-
     int tile_wid, tile_hgt;
 
     if (td->map_active)
@@ -1966,6 +1925,7 @@ static errr Term_curs_win(int x, int y)
     }
 
     /* Frame the grid */
+    RECT rc;
     rc.left = x * tile_wid + td->size_ow1;
     rc.right = rc.left + tile_wid;
     rc.top = y * tile_hgt + td->size_oh1;
@@ -1990,8 +1950,6 @@ static errr Term_bigcurs_win(int x, int y)
 {
     term_data *td = (term_data*)(Term->data);
 
-    RECT rc;
-
     int tile_wid, tile_hgt;
 
     if (td->map_active)
@@ -2007,6 +1965,7 @@ static errr Term_bigcurs_win(int x, int y)
     }
 
     /* Frame the grid */
+    RECT rc;
     rc.left = x * tile_wid + td->size_ow1;
     rc.right = rc.left + 2 * tile_wid;
     rc.top = y * tile_hgt + td->size_oh1;
@@ -2099,9 +2058,7 @@ static errr Term_text_win(int x, int y, int n, byte a, const char *s)
     SelectObject(hdc, td->font_id);
     
     /* Bizarre size */
-    if (td->bizarre ||
-        (td->tile_hgt != td->font_hgt) ||
-        (td->tile_wid != td->font_wid))
+    if (td->bizarre || td->tile_hgt != td->font_hgt || td->tile_wid != td->font_wid)
     {
         /* Erase complete rectangle */
         ExtTextOut(hdc, 0, 0, ETO_OPAQUE, &rc, NULL, 0, NULL);
@@ -2145,8 +2102,7 @@ static errr Term_text_win(int x, int y, int n, byte a, const char *s)
     else
     {
         /* Dump the text */
-        ExtTextOut(hdc, rc.left, rc.top, ETO_OPAQUE | ETO_CLIPPED, &rc,
-               s, n, NULL);
+        ExtTextOut(hdc, rc.left, rc.top, ETO_OPAQUE | ETO_CLIPPED, &rc, s, n, NULL);
     }
 
     /* Success */
@@ -2172,7 +2128,6 @@ static errr Term_pict_win(int x, int y, int n, const byte *ap, const char *cp, c
 
 #ifdef USE_GRAPHICS
 
-    int i;
     int x1, y1, w1, h1;
     int x2, y2, w2, h2, tw2 = 0;
     int x3, y3;
@@ -2213,7 +2168,7 @@ static errr Term_pict_win(int x, int y, int n, const byte *ap, const char *cp, c
     hdc = td->hDC;
 
     /* Draw attr/char pairs */
-    for (i = 0; i < n; i++, x2 += w2)
+    for (int i = 0; i < n; i++, x2 += w2)
     {
         byte a = ap[i];
         char c = cp[i];
@@ -2411,8 +2366,6 @@ static void term_data_link(term_data *td)
  */
 static void init_windows(void)
 {
-    int i;
-
     term_data *td;
 
     /* Main window */
@@ -2434,7 +2387,7 @@ static void init_windows(void)
     td->bizarre = TRUE;
 
     /* Sub windows */
-    for (i = 1; i < MAX_TERM_DATA; i++)
+    for (int i = 1; i < MAX_TERM_DATA; i++)
     {
         td = &data[i];
         WIPE(td, term_data);
@@ -2463,7 +2416,7 @@ static void init_windows(void)
     td->visible = TRUE;
 
     /* Sub windows (need these before term_getsize gets called) */
-    for (i = 1; i < MAX_TERM_DATA; i++)
+    for (int i = 1; i < MAX_TERM_DATA; i++)
     {
         td = &data[i];
         td->dwStyle = (WS_OVERLAPPED | WS_THICKFRAME | WS_SYSMENU);
@@ -2471,7 +2424,7 @@ static void init_windows(void)
     }
 
     /* All windows */
-    for (i = 0; i < MAX_TERM_DATA; i++)
+    for (int i = 0; i < MAX_TERM_DATA; i++)
     {
         td = &data[i];
 
@@ -2490,7 +2443,7 @@ static void init_windows(void)
     }
 
     /* Sub windows (reverse order) */
-    for (i = MAX_TERM_DATA - 1; i >= 1; --i)
+    for (int i = MAX_TERM_DATA - 1; i >= 1; --i)
     {
         td = &data[i];
         td->w = CreateWindowEx(td->dwExStyle, AngList, td->s, td->dwStyle, td->pos_x, td->pos_y,
@@ -2508,19 +2461,9 @@ static void init_windows(void)
         term_data_link(td);
         angband_term[i] = &td->t;
 
-        if (td->visible)
-        {
-            SetActiveWindow(td->w);
-        }
+        if (td->visible) SetActiveWindow(td->w);
 
-        if (data[i].posfix)
-        {
-            term_window_pos(&data[i], HWND_TOPMOST);
-        }
-        else
-        {
-            term_window_pos(&data[i], td->w);
-        }
+        term_window_pos(&data[i], data[i].posfix ? HWND_TOPMOST : td->w);
     }
 
     /* Main window */
@@ -2537,15 +2480,13 @@ static void init_windows(void)
     normsize.y = td->rows;
 
     /* Activate the main window */
-    if (win_maximized) ShowWindow(td->w, SW_SHOWMAXIMIZED);
-    else ShowWindow(td->w, SW_SHOW);
+    ShowWindow(td->w, win_maximized ? SW_SHOWMAXIMIZED : SW_SHOW);
 
     /* Bring main window back to top */
     SetWindowPos(td->w, HWND_TOP, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE);
 
     term_init_double_buffer(td);
 
-    /* New palette XXX XXX XXX */
     (void)new_palette();
 
     /* Create a "brush" for drawing the "cursor" */

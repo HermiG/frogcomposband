@@ -2837,7 +2837,6 @@ bool askfor_aux(char *buf, int len, bool numpad_cursor)
             /* Position of next character */
             src = pos + 1;
 
-
             dst = pos;
 
             /* Move characters at src to dst */

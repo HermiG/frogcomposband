@@ -2498,14 +2498,12 @@ void do_cmd_autoget(void)
 void do_cmd_rest(void)
 {
     int tmp;
-    if (REPEAT_PULL(&tmp))
-        command_arg = tmp;
+    if (REPEAT_PULL(&tmp)) command_arg = tmp;
 
     set_action(ACTION_NONE);
-    if (weaponmaster_get_toggle() == TOGGLE_SHADOW_STANCE)
-        weaponmaster_set_toggle(TOGGLE_NONE);
+    if (weaponmaster_get_toggle() == TOGGLE_SHADOW_STANCE) weaponmaster_set_toggle(TOGGLE_NONE);
 
-    if ((p_ptr->pclass == CLASS_BARD) && (p_ptr->magic_num1[0] || p_ptr->magic_num1[1]))
+    if (p_ptr->pclass == CLASS_BARD && (p_ptr->magic_num1[0] || p_ptr->magic_num1[1]))
     {
         bard_stop_singing();
     }
@@ -2520,27 +2518,16 @@ void do_cmd_rest(void)
     {
         cptr p = "<color:y>Rest</color> (0-9999, '*' for HP/SP, '&' as needed): ";
 
-
-        char out_val[80];
-
-        /* Default */
+        char out_val[5];
         strcpy(out_val, "&");
 
-        /* Ask for duration
-        if (!get_string(p, out_val, 4)) return;*/
-        if (!msg_input(p, out_val, 5)) return;
+        if (!msg_input_numpad(p, out_val, 5)) return;
 
         /* Rest until done */
-        if (out_val[0] == '&')
-        {
-            command_arg = (-2);
-        }
+        if (out_val[0] == '&') command_arg = -2;
 
         /* Rest a lot */
-        else if (out_val[0] == '*')
-        {
-            command_arg = (-1);
-        }
+        else if (out_val[0] == '*') command_arg = -1;
 
         /* Rest some */
         else
@@ -2551,8 +2538,6 @@ void do_cmd_rest(void)
         REPEAT_PUSH(command_arg);
     }
 
-
-    /* Paranoia */
     if (command_arg > 9999) command_arg = 9999;
 
     /* Mimickry blocks all regeneration (hp and sp)!
@@ -2582,9 +2567,7 @@ void do_cmd_rest(void)
             }
         }
 
-        /* XXX race_mimic? */
-        if (clear)
-            mimic_race(MIMIC_NONE, "You cannot rest while maintaining your current form.");
+        if (clear) mimic_race(MIMIC_NONE, "You cannot rest while maintaining your current form.");
     }
 
     if (p_ptr->special_defense & NINJA_S_STEALTH) set_superstealth(FALSE);
@@ -2595,8 +2578,7 @@ void do_cmd_rest(void)
     energy_use = 100;
 
     /* The sin of sloth */
-    if (command_arg > 100)
-        virtue_add(VIRTUE_DILIGENCE, -1);
+    if (command_arg > 100) virtue_add(VIRTUE_DILIGENCE, -1);
 
     /* Why are you sleeping when there's no need?  WAKE UP!*/
     if ((p_ptr->chp == p_ptr->mhp) &&

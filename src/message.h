@@ -54,6 +54,7 @@ extern void cmsg_format(byte color, cptr fmt, ...);
 extern char msg_prompt(cptr prompt, char keys[], int options);
 extern bool paranoid_msg_prompt(cptr buf, int options);
 extern bool msg_input(cptr prompt, char *buf, int len);
+extern bool msg_input_numpad(cptr prompt, char *buf, int len);
 extern bool msg_input_num(cptr prompt, int *num, int min, int max);
 extern bool msg_command(cptr prompt, char *cmd);
 

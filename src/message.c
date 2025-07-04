@@ -466,6 +466,19 @@ bool msg_input(cptr prompt, char *buf, int len)
     return result;
 }
 
+bool msg_input_numpad(cptr prompt, char *buf, int len)
+{
+  bool result = FALSE;
+  msg_boundary();
+  auto_more_state = AUTO_MORE_PROMPT;
+  msg_print(prompt);
+  result = askfor_aux(buf, len, FALSE);
+  if (result) msg_print(buf);
+  else cmsg_print(TERM_L_RED, "Cancelled");
+  msg_line_clear();
+  return result;
+}
+
 void cmsg_print(byte color, cptr msg)
 {
     if (world_monster) return;
@@ -594,10 +607,7 @@ bool msg_input_num(cptr prompt, int *num, int min, int max)
     result = askfor_aux(buf, 11, FALSE);
     if (result)
     {
-        if (isalpha(buf[0]))
-            *num = max;
-        else
-            *num = atoi(buf);
+        *num = isalpha(buf[0]) ? max : atoi(buf);
 
         if (*num > max) *num = max;
         if (*num < min) *num = min;

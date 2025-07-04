@@ -8,9 +8,9 @@
 extern void    bag_init(void);
 extern void    bag_ui(void);
 extern void    bag_display(doc_ptr doc, obj_p p, int flags);
+extern void    bag_place_ui(void);
 
 extern const char* bag_type_name(int sval);
-extern void    place_in_bag_ui(void);
 
 /* Adding and removing: bags allow a large number of slots
  * (bag_MAX) but restrict the number arrows, etc. The capacity

@@ -3624,8 +3624,7 @@ static void _dispatch_command(int old_now_turn)
         /* Place in bag */
         case 'P':
         {
-            //bag_store_ui();
-            if (!p_ptr->wild_mode) place_in_bag_ui();
+            if (!p_ptr->wild_mode) bag_place_ui();
             break;
         }
         

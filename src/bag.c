@@ -291,7 +291,7 @@ static bool _can_store_in_bag(obj_ptr obj)
   return bag_tolerates(obj);
 }
 
-static obj_ptr _place_in_bag_get_obj(void)
+static obj_ptr _bag_place_get_obj(void)
 {
   obj_ptr bag_obj = equip_obj(equip_find_obj(TV_BAG, SV_ANY));
   
@@ -316,7 +316,7 @@ static obj_ptr _place_in_bag_get_obj(void)
   return prompt.obj;
 }
 
-void place_in_bag_ui(void)
+void bag_place_ui(void)
 {
   if(!equip_find_obj(TV_BAG, SV_ANY))
   {
@@ -335,7 +335,7 @@ void place_in_bag_ui(void)
     return;
   }
   
-  obj_ptr obj = _place_in_bag_get_obj();
+  obj_ptr obj = _bag_place_get_obj();
   
   if (!obj) return;
   

@@ -568,6 +568,10 @@ static bool paint_rect = FALSE;
 static int mousex = 0, mousey = 0;
 static int oldx, oldy;
 
+/*
+ * Hide the cursor upon keypress
+ */
+static bool cursor_hidden = FALSE;
 
 /*
  * The "simple" color values
@@ -3169,6 +3173,7 @@ static void process_menus(WORD wCmd)
 static bool process_keydown(WPARAM wParam, LPARAM lParam)
 {
   Term_no_press = FALSE;
+  ShowCursor(FALSE);
   
   // Handle "special" keys
   if (special_key[(byte)(wParam)])
@@ -3316,8 +3321,13 @@ LRESULT FAR PASCAL AngbandWndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lP
         case WM_SYSKEYDOWN:
         case WM_KEYDOWN:
         {
-            if (process_keydown(wParam, lParam))
-                return 0;
+            if (!cursor_hidden)
+            {
+                cursor_hidden = TRUE;
+                ShowCursor(FALSE);
+            }
+
+            if (process_keydown(wParam, lParam)) return 0;
             break;
         }
 
@@ -3327,7 +3337,7 @@ LRESULT FAR PASCAL AngbandWndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lP
             else Term_keypress(wParam);
             return 0;
         }
-        
+
 #if 1
         case WM_LBUTTONUP:
         case WM_RBUTTONUP:
@@ -3341,6 +3351,15 @@ LRESULT FAR PASCAL AngbandWndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lP
                 Term_keypress('`');
             }
             return 0;
+        }
+        case WM_MOUSEMOVE:
+        {
+          if (cursor_hidden)
+          {
+            cursor_hidden = FALSE;
+            ShowCursor(TRUE);
+          }
+          break;
         }
 #else
         case WM_LBUTTONDOWN:
@@ -3709,8 +3728,7 @@ LRESULT FAR PASCAL AngbandListProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM l
         case WM_SYSKEYDOWN:
         case WM_KEYDOWN:
         {
-            if (process_keydown(wParam, lParam))
-                return 0;
+            if (process_keydown(wParam, lParam)) return 0;
             break;
         }
 
@@ -3719,6 +3737,16 @@ LRESULT FAR PASCAL AngbandListProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM l
             if (Term_no_press) Term_no_press = FALSE;
             else Term_keypress(wParam);
             return 0;
+        }
+
+        case WM_MOUSEMOVE:
+        {
+            if (cursor_hidden)
+            {
+                cursor_hidden = FALSE;
+                ShowCursor(TRUE);
+            }
+            break;
         }
 
         case WM_PALETTECHANGED:

@@ -313,6 +313,7 @@ static void _list(_choice_array_t *choices)
                             break;
                         case EQUIP_SLOT_QUIVER:
                             _prt_equippy(r, c, TV_QUIVER, 0);
+                            break;
                         case EQUIP_SLOT_BAG:
                             _prt_equippy(r, c, TV_BAG, 0);
                             break;

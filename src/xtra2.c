@@ -4801,12 +4801,12 @@ bool target_set(int mode)
                       break;
                     }
                   
-                    if ((!p_ptr->wild_mode) && (in_bounds(y,x)) && (cave[y][x].info & CAVE_MARK) && ((y != py) || (x != px)) && (player_can_enter(cave[y][x].feat, 0)))
+                    if (!p_ptr->wild_mode && in_bounds(y,x) && (cave[y][x].info & CAVE_MARK) && (y != py || x != px) && player_can_enter(cave[y][x].feat, 0))
                     {
                         travel_cancel_fully();
                         travel.y = y;
                         travel.x = x;
-                        if (mode & TARGET_TRVL)
+                        if ((mode & TARGET_TRVL) || (mode & TARGET_LOOK))
                         {
                             travel_tgt = TRUE;
                             done = TRUE;
@@ -4955,9 +4955,7 @@ bool target_set(int mode)
                 strcpy(info, rogue_like_commands ? "q,t,p,m,x,(,+,-,?,<dir>" : "q,t,p,m,x,j,+,-,?,<dir>");
 
 
-            if (double_clicked) {
-              query = '5';
-            }
+            if (double_clicked) query = '5';
             else
             {
               /* Describe and Prompt (enable "TARGET_LOOK") */
@@ -4970,12 +4968,8 @@ bool target_set(int mode)
             /* Assume no direction */
             d = 0;
 
-            if (use_menu)
-            {
-                if (query == '\r') query = 't';
-            }
-
-            if (((query == 'j') || (query == 'J')) && (!rogue_like_commands)) query = '(';
+            if (use_menu && query == '\r') query = 't';
+            if ((query == 'j' || query == 'J') && !rogue_like_commands) query = '(';
 
             /* Analyze the keypress */
             switch (query)
@@ -5086,7 +5080,7 @@ bool target_set(int mode)
                         travel_cancel_fully();
                         travel.y = y;
                         travel.x = x;
-                        if (mode & TARGET_TRVL)
+                        if ((mode & TARGET_TRVL) || (mode & TARGET_LOOK))
                         {
                             travel_tgt = TRUE;
                             done = TRUE;
@@ -5747,6 +5741,8 @@ bool tgt_pt(int *x_ptr, int *y_ptr, int rng)
         {
         case ESCAPE:
             break;
+        case 'j':
+        case 'J':
         case ' ':
         case 't':
         case '.':

@@ -3173,7 +3173,6 @@ static void process_menus(WORD wCmd)
 static bool process_keydown(WPARAM wParam, LPARAM lParam)
 {
   Term_no_press = FALSE;
-  ShowCursor(FALSE);
   
   // Handle "special" keys
   if (special_key[(byte)(wParam)])
@@ -3979,7 +3978,7 @@ static void init_filepaths(void)
     argv0 = strdup(path);
 
     /* Get the name of the "*.ini" file */
-    strcpy(path + strlen(path) - 4, ".INI");
+    strcpy(path + strlen(path) - 4, ".ini");
     ini_file = z_string_make(path);
 
     /* Add "lib" to the path */

@@ -1092,7 +1092,7 @@ enum {
 #define FF_ROGUE_TRAP_2  114
 #define FF_ROGUE_TRAP_3  115
 #define FF_WEB           116
-#define FF_SEMI_PUN 117
+#define FF_SEMI_PUN      117
 #define FF_SHADOW_ZAP    118
 #define FF_FLAG_MAX      119
 #define FF_FLAG_SIZE     (1 + ((FF_FLAG_MAX - 1) / 32))
@@ -1100,12 +1100,12 @@ enum {
 /* Which features are dynamic */
 #define have_dynamic_flags(ARRAY) \
     (!!((ARRAY)[(FF_INSTANT / 32)] & \
-        ((1UL << (FF_INSTANT % 32)) | \
-         (1UL << (FF_EXPLODE % 32)) | \
-         (1UL << (FF_TIMED % 32)) | \
-         (1UL << (FF_ERUPT % 32)) | \
-         (1UL << (FF_STRIKE % 32)) | \
-         (1UL << (FF_SPREAD % 32)))))
+       ((1UL << (FF_INSTANT % 32)) | \
+        (1UL << (FF_EXPLODE % 32)) | \
+        (1UL << (FF_TIMED   % 32)) | \
+        (1UL << (FF_ERUPT   % 32)) | \
+        (1UL << (FF_STRIKE  % 32)) | \
+        (1UL << (FF_SPREAD  % 32)))))
 
 
 /*

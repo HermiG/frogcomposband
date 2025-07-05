@@ -479,7 +479,7 @@ void equip_wield_ui(void)
         }
 
         int amt = obj->number;
-        if (amt == 1 || msg_input_num("Quantity", &amt, 1, obj->number))
+        if (amt == 1 || msg_input_num("Quantity", &amt, 1, amt))
         {
             obj_t copy = *obj;
             copy.number = amt;

@@ -2328,7 +2328,7 @@ void do_cmd_run(void)
 {
     int dir;
 
-    if ((!online_macros) && ((++run_count) == 4) && (!rogue_like_commands))
+    if (!online_macros && (++run_count == 4) && !rogue_like_commands)
     {
         msg_print("The game has detected multiple calls to the 'Run' command");
         msg_print("without any calls to the 'Walk' command, a possible sign");
@@ -2342,7 +2342,7 @@ void do_cmd_run(void)
         if (msg_prompt("Turn on the online_macros option? <color:y>[y/n]</color>", "ny", PROMPT_DEFAULT) == 'y')
             online_macros = TRUE;
         run_count = 5;
-        p_ptr->redraw |= (PR_MAP);
+        p_ptr->redraw |= PR_MAP;
         handle_stuff();
     }
 
@@ -2361,7 +2361,6 @@ void do_cmd_run(void)
 }
 
 
-
 /*
  * Stay still. Search. Enter stores.
  * Pick up treasure if "pickup" is true.
@@ -2377,7 +2376,7 @@ void do_cmd_stay(bool pickup)
         command_rep = command_arg - 1;
 
         /* Redraw the state */
-        p_ptr->redraw |= (PR_STATE);
+        p_ptr->redraw |= PR_STATE;
 
         /* Cancel the arg */
         command_arg = 0;
@@ -2394,8 +2393,8 @@ void do_cmd_stay(bool pickup)
  * Historically, 'g' was 'stay still (flip pickup)' which makes little sense */
 static bool _travel_next_obj(int mode)
 {
-    int i, best_idx = -1, best_dist = 0;
-    for (i = 0; i < max_o_idx; i++)
+    int best_idx = -1, best_dist = 0;
+    for (int i = 0; i < max_o_idx; i++)
     {
         object_type *o_ptr = &o_list[i];
         int          dist = 0;
@@ -2448,8 +2447,7 @@ static bool _travel_next_obj(int mode)
             best_dist = dist;
         }
     }
-    if (best_idx == -1)
-        return FALSE;
+    if (best_idx == -1) return FALSE;
     travel_begin(mode, o_list[best_idx].loc.x, o_list[best_idx].loc.y);
     return TRUE;
 }
@@ -3844,14 +3842,10 @@ static bool travel_flow_aux(int y, int x, int n, bool wall)
 
 static void travel_flow(int ty, int tx)
 {
-    int x, y, d;
-    bool wall = FALSE;
     feature_type *f_ptr = &f_info[cave[ty][tx].feat];
+    flow_head = flow_tail = 0; // Reset the "queue"
 
-    /* Reset the "queue" */
-    flow_head = flow_tail = 0;
-
-    if (!have_flag(f_ptr->flags, FF_MOVE)) wall = TRUE;
+    bool wall = !have_flag(f_ptr->flags, FF_MOVE);
 
     /* Add the target destination grid to the queue */
     wall = travel_flow_aux(ty, tx, 0, wall);
@@ -3860,14 +3854,14 @@ static void travel_flow(int ty, int tx)
     while (flow_head != flow_tail)
     {
         /* Extract the next entry */
-        y = temp2_y[flow_tail];
-        x = temp2_x[flow_tail];
+        int y = temp2_y[flow_tail];
+        int x = temp2_x[flow_tail];
 
         /* Forget that entry */
         if (++flow_tail == MAX_SHORT) flow_tail = 0;
 
         /* Add the "children" */
-        for (d = 0; d < 8; d++)
+        for (int d = 0; d < 8; d++)
         {
             /* Add that child if "legal" */
             wall = travel_flow_aux(y + ddy_ddd[d], x + ddx_ddd[d], travel.cost[y][x] + 1, wall);
@@ -3880,7 +3874,7 @@ static void travel_flow(int ty, int tx)
 
 bool can_travel(int y, int x)
 {
-    assert(in_bounds2(y, x)); /* Old bug with traveling in a scrollable wilderness */
+    assert(in_bounds2(y, x));
     if (y == py && x == px) return FALSE;
 
     cave_type *c_ptr = &cave[y][x];
@@ -3896,11 +3890,11 @@ bool can_travel(int y, int x)
 
 void travel_begin(int mode, int x, int y)
 {
+    assert(in_bounds2(y, x));
+
     travel.mode = mode;
     travel.run = 0;
     travel.aborted = FALSE;
-
-    assert(in_bounds2(y, x)); /* Old bug with travelling in a scrollable wilderness */
 
     if (y == py && x == px)
     {

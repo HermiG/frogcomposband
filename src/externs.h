@@ -792,7 +792,7 @@ extern void clear_mon_lite(void);
 extern void delayed_visual_update(void);
 extern void forget_flow(void);
 extern void update_flow(void);
-extern int  current_flow_depth;
+extern int current_flow_depth;
 extern void update_smell(void);
 extern void map_area(int range);
 extern void wiz_lite(bool ninja);
@@ -811,7 +811,7 @@ extern void health_track(int m_idx);
 extern void monster_race_track(int r_idx);
 extern void mon_track(mon_ptr mon);
 extern void object_kind_track(int k_idx);
-extern void disturb(int stop_search, int flush_output);
+extern void disturb(int stop_search, int unused_flag);
 extern void glow_deep_lava_and_bldg(void);
 extern void py_get_display_char_attr(char *c, byte *a);
 extern bool floor_find_obj(int y, int x, int tval, int sval);
@@ -859,6 +859,7 @@ extern void do_cmd_alter(void);
 extern void do_cmd_spike(void);
 extern void do_cmd_walk(bool pickup);
 extern void do_cmd_stay(bool pickup);
+extern void do_cmd_auto_explore(void);
 extern void do_cmd_get(void);
 extern void do_cmd_autoget(void);
 extern void do_cmd_get_nearest(void);
@@ -868,6 +869,7 @@ extern bool do_cmd_fire(void);
 extern bool do_cmd_fire_aux1(obj_ptr bow, obj_ptr arrows);
 extern void do_cmd_fire_aux2(obj_ptr bow, obj_ptr arrows, int sx, int sy, int tx, int ty);
 extern void do_cmd_travel(void);
+extern bool can_travel(int y, int x);
 extern void travel_begin(int mode, int x, int y);
 extern void travel_wilderness_scroll(int new_x, int new_y);
 extern void travel_cancel(void);
@@ -2082,8 +2084,8 @@ extern bool ui_xy_is_visible(int x, int y);
 /* As well as make sure the player is currently visible, or slide the viewport
    around to display other areas of the map: */
 #define VIEWPORT_FORCE_CENTER 0x01
-extern void viewport_verify(void);
-extern void viewport_verify_aux(u32b options);
+extern void viewport_recenter(void);
+extern void viewport_recenter_aux(u32b options);
 extern bool viewport_scroll(int dy, int dx);
 
 /* If you like, you should be able to alter the result of ui_map_rect() and

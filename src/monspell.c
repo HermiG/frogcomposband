@@ -3027,8 +3027,7 @@ static void _spell_cast_aux(void)
     if (_current.flags & MSC_SRC_MONSTER)
     {
         assert(_current.mon);
-        if (_current.flags & MSC_DEST_PLAYER)
-            disturb(1, 0);
+        if (_current.flags & MSC_DEST_PLAYER) disturb(1, 0);
         reset_target(_current.mon);
         if ((p_ptr->no_air) && (_current.mon->id != no_air_monster) && (monster_living(_current.race)))
             m_inc_minislow(_current.mon, 1);

@@ -2039,7 +2039,7 @@ void monster_desc(char *desc, monster_type *m_ptr, int mode)
         else
 
         /* It could be a Unique */
-        if ( (r_ptr->flags1 & RF1_UNIQUE)
+        if ( (r_ptr->flags1 & RF1_UNIQUE) && (m_ptr->r_idx != 39 /*Greater Hell-Beast*/)
           && !(p_ptr->image && !(mode & MD_IGNORE_HALLU))
           && (!(m_ptr->mflag2 & MFLAG2_FUZZY) || (mode & MD_TRUE_NAME) || (mode & MD_IGNORE_HALLU)) )
         {
@@ -2843,7 +2843,7 @@ void update_mon(int m_idx, bool full)
             {
                 flag = TRUE;
                 equip_learn_flag(OF_ESP_LIVING);
-		/* There is no RF3_LIVING flag, so you won't gain any monster memory here ... */
+                /* There is no RF3_LIVING flag, so you won't gain any monster memory here ... */
             }
 
             /* Magical sensing */
@@ -2999,15 +2999,23 @@ void update_mon(int m_idx, bool full)
             }
 
             /* Disturb on appearance */
-            if (disturb_near
-              && projectable(m_ptr->fy, m_ptr->fx, py, px)
-              && projectable(py, px, m_ptr->fy, m_ptr->fx) )
+            if (disturb_near &&
+                projectable(m_ptr->fy, m_ptr->fx, py, px) &&
+                projectable(py, px, m_ptr->fy, m_ptr->fx) )
             {
                 if (town_no_disturb && py_in_town() && r_ptr->level == 0)
                 {
                 }
-                else if (disturb_pets || is_hostile(m_ptr))
+                else if (disturb_pets || is_hostile(m_ptr)) {
+                    if(running || (travel.run && !travel.aborted))
+                    {
+                        char m_name[80];
+                        monster_desc(m_name, m_ptr, MD_INDEF_HIDDEN | MD_INDEF_VISIBLE);
+                        msg_format("You spot %s.", m_name);
+                        travel.aborted = !running;
+                    }
                     disturb(1, 0);
+                }
             }
 
             p_ptr->window |= PW_MONSTER_LIST;
@@ -3039,21 +3047,28 @@ void update_mon(int m_idx, bool full)
         }
     }
 
-
     /* The monster is now easily visible */
     if (easy)
     {
         /* Change */
-        if (!(m_ptr->mflag & (MFLAG_VIEW)))
+        if (!(m_ptr->mflag & MFLAG_VIEW))
         {
             /* Mark as easily visible */
-            m_ptr->mflag |= (MFLAG_VIEW);
+            m_ptr->mflag |= MFLAG_VIEW;
 
             /* Disturb on appearance */
             if (do_disturb)
             {
-                if (disturb_pets || is_hostile(m_ptr))
+                if (disturb_pets || is_hostile(m_ptr)) {
+                    if(running || (travel.run && !travel.aborted))
+                    {
+                        char m_name[80];
+                        monster_desc(m_name, m_ptr, MD_INDEF_HIDDEN | MD_INDEF_VISIBLE);
+                        msg_format("You spot %s.", m_name);
+                        travel.aborted = !running;
+                    }
                     disturb(1, 0);
+                }
             }
             p_ptr->window |= PW_MONSTER_LIST;
         }
@@ -3063,7 +3078,7 @@ void update_mon(int m_idx, bool full)
     else
     {
         /* Change */
-        if (m_ptr->mflag & (MFLAG_VIEW))
+        if (m_ptr->mflag & MFLAG_VIEW)
         {
             /* Mark as not easily visible */
             m_ptr->mflag &= ~(MFLAG_VIEW);

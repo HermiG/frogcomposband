@@ -8,7 +8,7 @@
     <link:avoid.txt> Common Mistakes to Avoid
 
     <color:R>Core Concepts:</color>
-    <link:raceclass_contents.txt> Races, Classes and Personalities
+    <link:raceclass_contents.txt> Races, Classes, and Personalities
     <link:town_contents.txt> The Towns and Wilderness
     <link:dungeon_contents.txt> The Dungeons
     <link:objects_contents.txt> Objects

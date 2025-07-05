@@ -6388,15 +6388,11 @@ int take_hit(int damage_type, int damage, cptr hit_from)
     if (check_foresight()) return 0;
     if (statistics_hack) return 0;
 
-    if (damage_type != DAMAGE_USELIFE)
-    {
-        /* Disturb */
-        disturb(1, 0);
-    }
+    if (damage_type != DAMAGE_USELIFE) disturb(1, 0);
 
     /* Mega-Hack -- Apply "invulnerability" */
-    if ( damage_type != DAMAGE_USELIFE
-      && damage_type != DAMAGE_LOSELIFE )
+    if ( damage_type != DAMAGE_USELIFE &&
+         damage_type != DAMAGE_LOSELIFE )
     {
         if (IS_INVULN() && damage < 9000)
         {

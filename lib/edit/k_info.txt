@@ -4751,7 +4751,6 @@ I:47:1:15
 W:20:0:40:10:30
 A:20/3
 
-
 N:*:& Drawstring Pouch~
 G:&:U
 I:47:1:20
@@ -4772,7 +4771,7 @@ G:&:U
 I:47:1:30
 W:20:0:40:10:30
 A:20/3
-D:Crafted from thick leather and reinforced with metal studs, this pouch is built to endure rough travel and careless handling alike.
+D:Crafted from thick leather and reinforced with metal studs, this pouch is built to endure rough travel and long expeditions.
 
 N:*:& Hide Satchel~
 G:&:U

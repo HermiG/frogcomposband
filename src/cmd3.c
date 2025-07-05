@@ -257,13 +257,7 @@ void do_cmd_target(void)
             msg_format("Targetting Position %d, %d.", target_row, target_col);
         }
     }
-
-    /* Target aborted */
-    else if (!travel.run)
-    {
-        msg_print("Target Aborted.");
-
-    }
+    else if (!travel.run) msg_print("Target Aborted.");
 }
 
 
@@ -273,12 +267,7 @@ void do_cmd_target(void)
  */
 void do_cmd_look(void)
 {
-    /* Look around */
-    if (target_set(TARGET_LOOK))
-    {
-        msg_print("Target Selected.");
-
-    }
+    if (target_set(TARGET_LOOK)) msg_print("Target Selected.");
 }
 
 
@@ -350,7 +339,7 @@ void do_cmd_locate(void)
         }
     }
 
-    viewport_verify();
+    viewport_recenter();
 
     p_ptr->update |= PU_MONSTERS;
     p_ptr->redraw |= PR_MAP;

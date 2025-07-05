@@ -690,56 +690,56 @@ enum {
     MTIMED_COUNT
 };
 
-#define MON_CSLEEP(M_PTR)   ((M_PTR)->mtimed[MTIMED_CSLEEP])
-#define MON_FAST(M_PTR)     ((M_PTR)->mtimed[MTIMED_FAST])
-#define MON_SLOW(M_PTR)     ((M_PTR)->mtimed[MTIMED_SLOW])
-#define MON_STUNNED(M_PTR)  ((M_PTR)->mtimed[MTIMED_STUNNED])
-#define MON_CONFUSED(M_PTR) ((M_PTR)->mtimed[MTIMED_CONFUSED])
-#define MON_MONFEAR(M_PTR)  ((M_PTR)->mtimed[MTIMED_MONFEAR])
-#define MON_INVULNER(M_PTR) ((M_PTR)->mtimed[MTIMED_INVULNER])
+#define MON_CSLEEP(M_PTR)    ((M_PTR)->mtimed[MTIMED_CSLEEP])
+#define MON_FAST(M_PTR)      ((M_PTR)->mtimed[MTIMED_FAST])
+#define MON_SLOW(M_PTR)      ((M_PTR)->mtimed[MTIMED_SLOW])
+#define MON_STUNNED(M_PTR)   ((M_PTR)->mtimed[MTIMED_STUNNED])
+#define MON_CONFUSED(M_PTR)  ((M_PTR)->mtimed[MTIMED_CONFUSED])
+#define MON_MONFEAR(M_PTR)   ((M_PTR)->mtimed[MTIMED_MONFEAR])
+#define MON_INVULNER(M_PTR)  ((M_PTR)->mtimed[MTIMED_INVULNER])
 #define MON_PARALYZED(M_PTR) ((M_PTR)->mtimed[MTIMED_PARALYZED])
 
 struct monster_type
 {
     int  id;
-    s16b r_idx;        /* Monster race index */
-    s16b ap_r_idx;        /* Monster race appearance index */
-    byte sub_align;        /* Sub-alignment for a neutral monster */
+    s16b r_idx;                /* Monster race index */
+    s16b ap_r_idx;             /* Monster race appearance index */
+    byte sub_align;            /* Sub-alignment for a neutral monster */
 
-    byte fy;        /* Y location on map */
-    byte fx;        /* X location on map */
+    byte fy;                   /* Y location on map */
+    byte fx;                   /* X location on map */
 
-    s16b hp;        /* Current Hit points */
-    s16b maxhp;        /* Max Hit points */
-    s16b max_maxhp;        /* Max Max Hit points */
+    s16b hp;                   /* Current Hit points */
+    s16b maxhp;                /* Max Hit points */
+    s16b max_maxhp;            /* Max Max Hit points */
     s16b ac_adj;
-    s16b mpower;    /* Monster power scales various things like melee skill, damage, AC, etc.
-                       This field is a per mill value, just like p_ptr->clp */
+    s16b mpower;               /* Monster power scales various things like melee skill, damage, AC, etc.
+                                  This field is a per mill value, just like p_ptr->clp */
 
-    s16b mtimed[MTIMED_COUNT];    /* Timed status counter */
+    s16b mtimed[MTIMED_COUNT]; /* Timed status counter */
 
-    byte mspeed;            /* Monster "speed" */
-    s16b energy_need;    /* Monster "energy" */
+    byte mspeed;               /* Monster "speed" */
+    s16b energy_need;          /* Monster "energy" */
 
-    byte cdis;        /* Current dis from player */
+    byte cdis;                 /* Current dis from player */
 
-    u32b mflag;        /* Extra monster flags. (Note: Not saved!) */
-    u32b mflag2;        /* Extra monster flags. (This one *is* saved)  */
+    u32b mflag;                /* Extra monster flags. (Note: Not saved!) */
+    u32b mflag2;               /* Extra monster flags. (This one *is* saved)  */
 
-    bool ml;        /* Monster is "visible" */
+    bool ml;                   /* Monster is "visible" */
 
-    s32b invis_turn;  /* Turn of last invisibility check (not saved) */
+    s32b invis_turn;           /* Turn of last invisibility check (not saved) */
 
-    s16b hold_o_idx;    /* Object being held (if any) */
+    s16b hold_o_idx;           /* Object being held (if any) */
 
-    s16b target_y;        /* Can attack !los player */
-    s16b target_x;        /* Can attack !los player */
+    s16b target_y;             /* Can attack !los player */
+    s16b target_x;             /* Can attack !los player */
 
-    u16b nickname;        /* Monster's Nickname */
+    u16b nickname;             /* Monster's Nickname */
 
     u32b exp;
 
-    u32b smart;            /* Field for "smart_learn" */
+    u32b smart;                /* Field for "smart_learn" */
 
     s16b parent_m_idx;
     s16b parent_r_idx;
@@ -755,7 +755,7 @@ struct monster_type
     byte minislow;
     s16b mana;
 
-    s32b pexp;    /* player experience gained (x100). kept <= r_ptr->mexp */
+    s32b pexp;                 /* player experience gained (x100). kept <= r_ptr->mexp */
 };
 
 enum {
@@ -769,7 +769,7 @@ enum {
 };
 
 typedef struct {
-    s16b pack_idx;        /* Set when allocated */
+    s16b pack_idx;      /* Set when allocated */
     s16b leader_idx;
     s16b count;
     s16b ai;            /* How is the pack behaving? */
@@ -777,7 +777,7 @@ typedef struct {
     s16b guard_x;       /* Pack is defending a specific location */
     s16b guard_y;
     s16b distance;
-    s16b next_idx;        /* Free list */
+    s16b next_idx;      /* Free list */
 } pack_info_t;
 
 
@@ -868,8 +868,8 @@ struct player_magic
     int spell_stat;        /* Stat for spells (if any)  */
     int spell_type;        /* Spell type (mage/priest) */
 
-    int spell_first;        /* Level of first spell */
-    int spell_weight;        /* Weight that hurts spells */
+    int spell_first;       /* Level of first spell */
+    int spell_weight;      /* Weight that hurts spells */
 
     magic_type info[MAX_MAGIC][32];    /* The available spells */
 };
@@ -884,8 +884,8 @@ typedef struct player_sex player_sex;
 
 struct player_sex
 {
-    cptr title;            /* Type of sex */
-    cptr winner;        /* Name of winner */
+    cptr title;     /* Type of sex */
+    cptr winner;    /* Name of winner */
 };
 
 typedef struct player_pact player_pact;
@@ -920,9 +920,9 @@ struct player_pact
 
 typedef struct {
     int  wield_how;
-    bool omoi;   /* WIELD_TWO_HANDS but too heavy for WIELD_ONE_HAND */
+    bool omoi;       /* WIELD_TWO_HANDS but too heavy for WIELD_ONE_HAND */
     bool bare_hands; /* Monks and Forcetrainers */
-    bool riding; /* Riding requires one hand to control your mount */
+    bool riding;     /* Riding requires one hand to control your mount */
     int  slot;
     int  to_h;
     int  to_d;
@@ -1863,9 +1863,10 @@ typedef struct
 /*
  *  A structure type for travel command
  */
-#define TRAVEL_MODE_NORMAL   0
-#define TRAVEL_MODE_AMMO     1
-#define TRAVEL_MODE_AUTOPICK 2
+#define TRAVEL_MODE_NORMAL      0
+#define TRAVEL_MODE_AMMO        1
+#define TRAVEL_MODE_AUTOPICK    2
+#define TRAVEL_MODE_AUTOEXPLORE 3
 typedef struct {
     int run;
     int cost[MAX_HGT][MAX_WID];
@@ -1873,6 +1874,7 @@ typedef struct {
     int y;
     int dir;
     int mode;
+    bool aborted;
 } travel_type;
 
 typedef struct {

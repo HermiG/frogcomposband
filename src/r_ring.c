@@ -2040,7 +2040,7 @@ void ring_process_m(int m_idx)
                 px = sx;
                 lite_spot(oy, ox);
                 lite_spot(py, px);
-                viewport_verify();
+                viewport_recenter();
                 set_hostile(m_ptr);
                 p_ptr->riding = 0;
                 calc_bonuses();

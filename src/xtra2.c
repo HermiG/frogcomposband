@@ -3351,7 +3351,7 @@ void resize_map(void)
 
     resize_hack = TRUE;
 
-    viewport_verify();
+    viewport_recenter();
     msg_line_clear();
 
     /* Update stuff */
@@ -3570,7 +3570,7 @@ bool viewport_scroll(int dy, int dx)
  *
  * The map is reprinted if necessary.
  */
-void viewport_verify_aux(u32b options)
+void viewport_recenter_aux(u32b options)
 {
     point_t p = cave_xy_to_ui_pt(px, py);
     rect_t  r = ui_map_rect();
@@ -3584,14 +3584,10 @@ void viewport_verify_aux(u32b options)
     }
     else
     {
-        if (p.y > r.y + r.cy - 2)
-            o.y += r.cy/2;
-        else if (p.y < r.y + 2)
-            o.y -= r.cy/2;
-        if (p.x > r.x + r.cx - 4)
-            o.x += r.cx/2;
-        else if (p.x < r.x + 4)
-            o.x -= r.cx/2;
+        if      (p.y > r.y + r.cy - 2) o.y += r.cy/2;
+        else if (p.y < r.y + 2)        o.y -= r.cy/2;
+        if      (p.x > r.x + r.cx - 4) o.x += r.cx/2;
+        else if (p.x < r.x + 4)        o.x -= r.cx/2;
     }
     if (o.x > cur_wid - 3*r.cx/4) o.x = cur_wid - 3*r.cx/4;
     if (o.y > cur_hgt - 3*r.cy/4) o.y = cur_hgt - 3*r.cy/4;
@@ -3608,12 +3604,11 @@ void viewport_verify_aux(u32b options)
     }
 }
 
-void viewport_verify(void)
+void viewport_recenter(void)
 {
     int options = 0;
-    if (center_player && (center_running || (!running && !travel.run)))
-        options |= VIEWPORT_FORCE_CENTER;
-    viewport_verify_aux(options);
+    if (center_player && (center_running || (!running && !travel.run))) options |= VIEWPORT_FORCE_CENTER;
+    viewport_recenter_aux(options);
     if (redraw_hack)
     {
         handle_stuff();
@@ -3624,28 +3619,21 @@ void viewport_verify(void)
 
 cptr mon_health_desc(monster_type *m_ptr)
 {
-    monster_race *ap_r_ptr = mon_apparent_race(m_ptr);
-    bool          living = monster_living(ap_r_ptr);
-    int           perc = 100 * m_ptr->hp / m_ptr->maxhp;
+    bool living = monster_living(mon_apparent_race(m_ptr));
+    int  perc = 100 * m_ptr->hp / m_ptr->maxhp;
 
-    if (m_ptr->hp >= m_ptr->maxhp)
-        return living ? "unhurt" : "undamaged";
-    else if (perc >= 60)
-        return living ? "somewhat wounded" : "somewhat damaged";
-    else if (perc >= 25)
-        return living ? "wounded" : "damaged";
-    else if (perc >= 10)
-        return living ? "badly wounded" : "badly damaged";
-
-    return living ? "almost dead" : "almost destroyed";
+    if      (perc >= 99) return living ? "unhurt"           : "undamaged";
+    else if (perc >= 65) return living ? "somewhat wounded" : "somewhat damaged";
+    else if (perc >= 30) return living ? "wounded"          : "damaged";
+    else if (perc >= 12) return living ? "badly wounded"    : "badly damaged";
+    else if (perc >=  2) return living ? "nearly dead"      : "almost destroyed";
+    else                 return living ? "only mostly dead" : "almost destroyed";
 }
 
 cptr mon_allegiance_desc(monster_type *m_ptr)
 {
-    if (is_pet(m_ptr))
-        return "pet";
-    else if (is_friendly(m_ptr))
-        return "friendly";
+    if (is_pet(m_ptr))           return "pet";
+    else if (is_friendly(m_ptr)) return "friendly";
     return ""; /* Hostile is to be assumed! */
 }
 
@@ -4625,7 +4613,7 @@ static int target_set_aux(int y, int x, int mode, cptr info)
  */
 bool target_set(int mode)
 {
-    int        i, d, m, t, bd;
+    int        i, d, t;
     int        y = py;
     int        x = px;
     bool       done = FALSE;
@@ -4650,11 +4638,11 @@ bool target_set(int mode)
         mouse_cursor_y = -1;
     }
     
-    /* Prepare the "temp" array */
+    /* Prepare the "temp" array with interesting features */
     target_set_prepare(mode);
 
     /* Start near the player */
-    m = 0;
+    int m = 0;
     
     /* Interact */
     while (!done)
@@ -4760,23 +4748,14 @@ bool target_set(int mode)
 
                 case 'p':
                 {
-                    /* Recenter the map around the player */
-                    viewport_verify();
+                    viewport_recenter();
 
-                    /* Update stuff */
-                    p_ptr->update |= (PU_MONSTERS);
-
-                    /* Redraw map */
-                    p_ptr->redraw |= (PR_MAP);
-
-                    /* Window stuff */
-                    p_ptr->window |= (PW_OVERHEAD);
-
-                    /* Handle stuff */
+                    p_ptr->update |= PU_MONSTERS;
+                    p_ptr->redraw |= PR_MAP;
+                    p_ptr->window |= PW_OVERHEAD;
                     handle_stuff();
 
-                    /* Recalculate interesting grids */
-                    target_set_prepare(mode);
+                    target_set_prepare(mode); // Recalculate interesting grids
 
                     y = py;
                     x = px;
@@ -4863,22 +4842,15 @@ bool target_set(int mode)
                         viewport_origin.y = y2;
                         viewport_origin.x = x2;
 
-                        /* Update stuff */
-                        p_ptr->update |= (PU_MONSTERS); /* XXX Why? */
-
-                        /* Redraw map */
+                        p_ptr->update |= (PU_MONSTERS);
                         p_ptr->redraw |= (PR_MAP);
-
-                        /* Window stuff */
                         p_ptr->window |= (PW_OVERHEAD);
 
-                        /* Handle stuff */
                         redraw_hack = TRUE;
                         handle_stuff();
                         redraw_hack = FALSE;
 
-                        /* Recalculate interesting grids */
-                        target_set_prepare(mode);
+                        target_set_prepare(mode); // Recalculate interesting grids
 
                         /* Look at boring grids */
                         flag = FALSE;
@@ -5010,32 +4982,21 @@ bool target_set(int mode)
 
                 case 'p':
                 {
-                    /* Recenter the map around the player */
-                    viewport_verify();
+                    viewport_recenter();
 
-                    /* Update stuff */
-                    p_ptr->update |= (PU_MONSTERS);
-
-                    /* Redraw map */
-                    p_ptr->redraw |= (PR_MAP);
-
-                    /* Window stuff */
-                    p_ptr->window |= (PW_OVERHEAD);
-
-                    /* Handle stuff */
+                    p_ptr->update |= PU_MONSTERS;
+                    p_ptr->redraw |= PR_MAP;
+                    p_ptr->window |= PW_OVERHEAD;
                     handle_stuff();
 
-                    /* Recalculate interesting grids */
-                    target_set_prepare(mode);
+                    target_set_prepare(mode); // Recalculate interesting grids
 
                     y = py;
                     x = px;
                 }
-
+                // fall-through
                 case 'o':
-                {
                     break;
-                }
 
                 case ' ':
                 case '*':
@@ -5044,26 +5005,21 @@ bool target_set(int mode)
                 case 'm':
                 {
                     flag = TRUE;
-
                     m = 0;
-                    bd = 999;
-
+                    
                     /* Pick a nearby monster */
-                    for (i = 0; i < temp_n; i++)
+                    int best_dist = 9999;
+                    for (int i = 0; i < temp_n; i++)
                     {
-                        t = distance(y, x, temp_y[i], temp_x[i]);
-
-                        /* Pick closest */
-                        if (t < bd)
+                        int t = distance(y, x, temp_y[i], temp_x[i]);
+                        if (t < best_dist)
                         {
                             m = i;
-                            bd = t;
+                            best_dist = t;
                         }
                     }
 
-                    /* Nothing interesting */
-                    if (bd == 999) flag = FALSE;
-
+                    if (best_dist == 9999) flag = FALSE; // Found nothing
                     break;
                 }
 
@@ -5122,23 +5078,21 @@ bool target_set(int mode)
 
                 /* Do not move horizontally if unnecessary */
                 if (((x < viewport_origin.x + map_rect.cx / 2) && (dx > 0)) ||
-                     ((x > viewport_origin.x + map_rect.cx / 2) && (dx < 0)))
+                    ((x > viewport_origin.x + map_rect.cx / 2) && (dx < 0)))
                 {
                     dx = 0;
                 }
 
                 /* Do not move vertically if unnecessary */
                 if (((y < viewport_origin.y + map_rect.cy / 2) && (dy > 0)) ||
-                     ((y > viewport_origin.y + map_rect.cy / 2) && (dy < 0)))
+                    ((y > viewport_origin.y + map_rect.cy / 2) && (dy < 0)))
                 {
                     dy = 0;
                 }
 
                 /* Apply the motion */
                 if (!cave_xy_is_visible(x, y))
-                {
                     if (viewport_scroll(dy, dx)) target_set_prepare(mode);
-                }
 
                 /* Slide into legality */
                 if (x >= cur_wid-1) x = cur_wid - 2;
@@ -5160,32 +5114,23 @@ bool target_set(int mode)
     prt("", 0, 0);
 
     /* Recenter the map around the player */
-    viewport_verify();
-
-    /* Update stuff */
-    p_ptr->update |= (PU_MONSTERS);
-
-    /* Redraw map */
-    p_ptr->redraw |= (PR_MAP | PR_HEALTH_BARS);
-
-    /* Window stuff */
-    p_ptr->window |= (PW_OVERHEAD | PW_MONSTER_LIST);
+    viewport_recenter();
+    p_ptr->update |= PU_MONSTERS;
+    p_ptr->redraw |= PR_MAP | PR_HEALTH_BARS;
+    p_ptr->window |= PW_OVERHEAD | PW_MONSTER_LIST;
 
     /* Prevent losing visibility on newly acquired target (PU_MONSTERS above) */
     redraw_hack = TRUE;
     handle_stuff();
     redraw_hack = FALSE;
 
-    if (travel_tgt)
-    {
-        travel_begin(TRAVEL_MODE_NORMAL, travel.x, travel.y);
-    }
+    if (travel_tgt) travel_begin(TRAVEL_MODE_NORMAL, travel.x, travel.y);
 
     /* Failure to set target */
-    if (!target_who) return (FALSE);
+    if (!target_who) return FALSE;
 
     /* Success */
-    return (TRUE);
+    return TRUE;
 }
 
 /*
@@ -5211,9 +5156,9 @@ bool get_fire_dir_aux(int *dp, int target_mode)
     /* auto_target the closest monster if no valid target is selected up front */
     if (auto_target && !p_ptr->confused && !p_ptr->image)
     {
-        int i, best_m_idx = 0, best_dis = 9999;
+        int best_m_idx = 0, best_dis = 9999;
 
-        for (i = 0; i < max_m_idx; i++)
+        for (int i = 0; i < max_m_idx; i++)
         {
             monster_type *m_ptr = &m_list[i];
             if (!m_ptr->r_idx) continue;
@@ -5238,7 +5183,7 @@ bool get_fire_dir_aux(int *dp, int target_mode)
             target_grab(m_list[best_m_idx].fy, m_list[best_m_idx].fx);
             *dp = 5;
             p_ptr->redraw |= PR_HEALTH_BARS;
-//            msg_format("Target grabbed: %s (%d) Distance: %d", r_name + r_info[m_list[best_m_idx].r_idx].name, target_who, best_dis);
+            //msg_format("Target grabbed: %s (%d) Distance: %d", r_name + r_info[m_list[best_m_idx].r_idx].name, target_who, best_dis);
             return TRUE;
         }
     }
@@ -5786,7 +5731,7 @@ bool tgt_pt(int *x_ptr, int *y_ptr, int rng)
 
                 n++;
 
-                while(n < temp_n)    /* Skip stairs which have different distance */
+                while(n < temp_n) /* Skip stairs which have different distance */
                 {
                     cave_type *c_ptr = &cave[temp_y[n]][temp_x[n]];
 
@@ -5805,26 +5750,19 @@ bool tgt_pt(int *x_ptr, int *y_ptr, int rng)
                     n++;
                 }
 
-                if (n == temp_n)    /* Loop out target list */
+                if (n == temp_n) /* Loop out target list */
                 {
                     n = 0;
                     y = py;
                     x = px;
-                    viewport_verify();    /* Move cursor to player */
+                    viewport_recenter();
 
-                    /* Update stuff */
-                    p_ptr->update |= (PU_MONSTERS);
-
-                    /* Redraw map */
-                    p_ptr->redraw |= (PR_MAP);
-
-                    /* Window stuff */
-                    p_ptr->window |= (PW_OVERHEAD);
-
-                    /* Handle stuff */
+                    p_ptr->update |= PU_MONSTERS;
+                    p_ptr->redraw |= PR_MAP;
+                    p_ptr->window |= PW_OVERHEAD;
                     handle_stuff();
                 }
-                else    /* move cursor to next stair and change panel */
+                else /* move cursor to next stair and change panel */
                 {
                     y = temp_y[n];
                     x = temp_x[n];
@@ -5911,7 +5849,7 @@ bool tgt_pt(int *x_ptr, int *y_ptr, int rng)
     msg_line_clear();
 
     /* Recenter the map around the player */
-    viewport_verify();
+    viewport_recenter();
 
     /* Update stuff */
     p_ptr->update |= (PU_MONSTERS);

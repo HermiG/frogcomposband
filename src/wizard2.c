@@ -1120,7 +1120,7 @@ static void _wiz_stats_display(void)
     if (doc_line_count(_wiz_doc))
         doc_display(_wiz_doc, "Statistics", 0);
 
-    viewport_verify();
+    viewport_recenter();
     do_cmd_redraw();
 }
 

@@ -321,7 +321,7 @@ static void _scroll_cave(int dx, int dy)
            fails to actually center the player as they approach
            the boundary of the cave. Shrink your display window
            enough and you will gain a very smooth scrolling experience! */
-        viewport_verify_aux(VIEWPORT_FORCE_CENTER);
+        viewport_recenter_aux(VIEWPORT_FORCE_CENTER);
     }
     else
         _scroll_panel(dx, dy);
@@ -486,8 +486,8 @@ void wilderness_move_player(int old_x, int old_y)
        travel.run to 0 (prior to travel_step restoring it after we return!)
        In other words: Here is a cryptic sequencing issue with global variables! Do not move this!! */
 
-    if ((travel.run) || ((travel.x) && (travel.y) && (in_bounds(travel.y, travel.x))))
-        travel_wilderness_scroll(travel.x - dx*WILD_SCROLL_CX, travel.y - dy*WILD_SCROLL_CY);
+    if (travel.run || (travel.x && travel.y && in_bounds(travel.y, travel.x)))
+        travel_wilderness_scroll(travel.x - dx * WILD_SCROLL_CX, travel.y - dy * WILD_SCROLL_CY);
 
     if (do_disturb) disturb(0, 0);
     p_ptr->redraw |= PR_BASIC; /* In case the user left/entered a town ... */
@@ -1605,7 +1605,7 @@ void wilderness_gen(void)
 
     /* Force scroll after wilderness travel since we are typically
        placed in a boundary "quadrant" */
-    viewport_verify_aux(VIEWPORT_FORCE_CENTER);
+    viewport_recenter_aux(VIEWPORT_FORCE_CENTER);
     wilderness_move_player(p_ptr->oldpx, p_ptr->oldpy);
     if ((locate_entrance_hack) && (wilderness[p_ptr->wilderness_y][p_ptr->wilderness_x].entrance > 0)
     && (wilderness[p_ptr->wilderness_y][p_ptr->wilderness_x].entrance < max_d_idx)

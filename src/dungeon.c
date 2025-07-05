@@ -2241,7 +2241,7 @@ static void process_world_aux_curse(void)
             char noise[1024];
             if (!get_rnd_line("chainswd.txt", 0, noise))
                 msg_print(noise);
-            disturb(FALSE, FALSE);
+            disturb(0, 0);
         }
         /* TY Curse */
         if ((p_ptr->cursed & OFC_TY_CURSE) && one_in_(TY_CURSE_CHANCE))
@@ -2279,7 +2279,7 @@ static void process_world_aux_curse(void)
         if ((p_ptr->cursed & OFC_ALLERGY) && (!p_ptr->unwell) && (one_in_(888)) && !(get_race()->flags & RACE_IS_NONLIVING))
         {
             msg_print("Your eyes suddenly feel very itchy...");
-            disturb(0,0);
+            disturb(0, 0);
             set_unwell(70, TRUE);
             equip_learn_curse(OFC_ALLERGY);
         }
@@ -2288,7 +2288,7 @@ static void process_world_aux_curse(void)
         {
             msg_print("You mutate!");
             mut_gain_random(mut_bad_pred);
-            disturb(0,0);
+            disturb(0, 0);
             equip_learn_curse(OFC_CRAPPY_MUT);
         }
 
@@ -4200,7 +4200,7 @@ static void _dispatch_command(int old_now_turn)
 
         case KTRL('V'):
         {
-            viewport_verify_aux(VIEWPORT_FORCE_CENTER);
+            viewport_recenter_aux(VIEWPORT_FORCE_CENTER);
             redraw_hack = FALSE;
             break;
         }
@@ -4419,6 +4419,13 @@ static void _dispatch_command(int old_now_turn)
         {
           if(mouse_cursor_targeting_state & MOUSE_CLICK_LEFT) do_cmd_look();
           else if (!p_ptr->wild_mode) do_cmd_travel();
+          break;
+        }
+
+        /* Autoexplore */
+        case 'x':
+        {
+          if (!p_ptr->wild_mode) do_cmd_auto_explore();
           break;
         }
 
@@ -4919,8 +4926,8 @@ static void process_player(void)
         /* Resting */
         else if (p_ptr->action == ACTION_REST)
         {
-			caster_info *caster_ptr = get_caster_info();
-			/* Timed rest */
+            caster_info *caster_ptr = get_caster_info();
+            /* Timed rest */
             if (resting > 0)
             {
                 /* Reduce rest count */
@@ -4959,14 +4966,12 @@ static void process_player(void)
         /* Running */
         else if (running)
         {
-            /* Take a step */
             run_step(0);
         }
 
         /* Travelling */
-        else if (travel.run)
+        else if (travel.run || travel.aborted)
         {
-            /* Take a step */
             travel_step();
         }
 
@@ -5288,16 +5293,10 @@ static void dungeon(bool load_game)
     repair_monsters = TRUE;
     repair_objects = TRUE;
 
-
-    /* Disturb */
     disturb(1, 0);
 
     /* Track maximum player level */
-    if (p_ptr->max_plv < p_ptr->lev)
-    {
-        p_ptr->max_plv = p_ptr->lev;
-    }
-
+    if (p_ptr->max_plv < p_ptr->lev) p_ptr->max_plv = p_ptr->lev;
 
     /* Track maximum dungeon level (if not in quest -KMW-)
      * XXX Why is this here? Why not in generate()?
@@ -5340,7 +5339,7 @@ static void dungeon(bool load_game)
 
     /* Verify the panel
      * (must be done AFTER setting the PU flags) */
-    viewport_verify();
+    viewport_recenter();
 
     redraw_hack = load_game;
 
@@ -6347,7 +6346,7 @@ void play_game(bool new_game)
     p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_SPELL);
     p_ptr->window |= (PW_MESSAGE | PW_OVERHEAD | PW_DUNGEON | PW_MONSTER_LIST | PW_OBJECT_LIST | PW_MONSTER | PW_OBJECT);
     window_stuff();
-    viewport_verify_aux(VIEWPORT_FORCE_CENTER);
+    viewport_recenter_aux(VIEWPORT_FORCE_CENTER);
 
     /* Give startup outfit (after loading pref files) */
     if (new_game)

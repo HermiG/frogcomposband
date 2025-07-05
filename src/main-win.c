@@ -3173,6 +3173,7 @@ static void process_menus(WORD wCmd)
 static bool process_keydown(WPARAM wParam, LPARAM lParam)
 {
   Term_no_press = FALSE;
+  ShowCursor(FALSE);
   
   // Handle "special" keys
   if (special_key[(byte)(wParam)])

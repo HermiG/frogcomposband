@@ -8,7 +8,7 @@ Welcome to the Online Help System
     [e] Common Mistakes to Avoid
 
     Core Concepts:
-    [f] Races, Classes and Personalities
+    [f] Races, Classes, and Personalities
     [g] The Towns and Wilderness
     [h] The Dungeons
     [i] Objects

@@ -308,7 +308,7 @@ static s16b chest_check(int y, int x, int mode)
     }
 
     /* No chest */
-    return (0);
+    return 0;
 }
 
 
@@ -890,12 +890,8 @@ static bool do_cmd_open_aux(int y, int x)
         /* Failure */
         else
         {
-            /* Failure */
-            if ((flush_failure) && (!travel.run)) flush();
-
-            /* Message */
+            if (flush_failure && !travel.run) flush();
             msg_print("You failed to pick the lock.");
-
 
             /* We may keep trying */
             more = TRUE;
@@ -1032,7 +1028,7 @@ void do_cmd_open(void)
     }
 
     /* Cancel repeat unless we may continue */
-    if ((!more) && (!travel.run)) disturb(0, 0);
+    if (!more && !travel.run) disturb(0, 0);
 }
 
 
@@ -1508,12 +1504,8 @@ bool easy_open_door(int y, int x, int dir)
         /* Failure */
         else
         {
-            /* Failure */
-            if ((flush_failure) && (!travel.run)) flush();
-
-            /* Message */
+            if (flush_failure && !travel.run) flush();
             msg_print("You failed to pick the lock.");
-
         }
     }
 
@@ -1528,7 +1520,7 @@ bool easy_open_door(int y, int x, int dir)
     }
 
     /* Result */
-    return (TRUE);
+    return TRUE;
 }
 
 #endif /* ALLOW_EASY_OPEN -- TNB */
@@ -2461,6 +2453,48 @@ static bool _travel_next_obj(int mode)
     travel_begin(mode, o_list[best_idx].loc.x, o_list[best_idx].loc.y);
     return TRUE;
 }
+
+bool has_unmarked_floor(int y, int x)
+{
+    int count = 0;
+    for (int dy = -1; dy <= 1; dy++)
+        for (int dx = -1; dx <= 1; dx++)
+            if (in_bounds2(y+dy, x+dx) && !(cave[y+dy][x+dx].info & CAVE_MARK)) count++;
+    return (count > 0 && count < 8);
+}
+
+bool _travel_continue(bool initial)
+{
+    update_stuff();
+
+    int ty = -1, tx = -1;
+    int min_dist = cur_hgt + cur_wid;
+    for (int y = 0; y < cur_hgt; y++) {
+        for (int x = 0; x < cur_wid; x++) {
+            if (can_travel(y, x) && has_unmarked_floor(y, x)) {
+                int dist = distance(py, px, y, x);
+                if (dist < min_dist) {
+                    min_dist = dist;
+                    ty = y;
+                    tx = x;
+                }
+            } 
+        }
+    }
+    if (ty != -1 && tx != -1) {
+        travel_begin(TRAVEL_MODE_AUTOEXPLORE, tx, ty);
+        if(initial) travel.run = 255;
+        return TRUE;
+    }
+    return FALSE;
+}
+
+
+void do_cmd_auto_explore(void)
+{
+    if (!_travel_continue(TRUE)) msg_print("Exploration complete!");
+}
+
 void do_cmd_get(void)
 {
     if (!cave[py][px].o_idx)
@@ -3844,17 +3878,31 @@ static void travel_flow(int ty, int tx)
     flow_head = flow_tail = 0;
 }
 
+bool can_travel(int y, int x)
+{
+    assert(in_bounds2(y, x)); /* Old bug with traveling in a scrollable wilderness */
+    if (y == py && x == px) return FALSE;
+
+    cave_type *c_ptr = &cave[y][x];
+
+    if(!(c_ptr->info & CAVE_MARK))             return FALSE; // Don't travel to unknown tiles
+    if(cave_have_flag_grid(c_ptr, FF_WALL))    return FALSE; // Don't travel to walls
+    if(cave_have_flag_grid(c_ptr, FF_CAN_DIG)) return FALSE; // Don't travel to rubble
+    if(is_hidden_door(c_ptr))                  return FALSE; // Don't travel to hidden doors
+    if(is_known_trap(c_ptr))                   return FALSE; // Don't travel to known traps
+
+    return TRUE;
+}
+
 void travel_begin(int mode, int x, int y)
 {
-    int dx, dy, sx, sy;
-    feature_type *f_ptr;
-
     travel.mode = mode;
     travel.run = 0;
+    travel.aborted = FALSE;
 
     assert(in_bounds2(y, x)); /* Old bug with travelling in a scrollable wilderness */
 
-    if (x == px && y == py)
+    if (y == py && x == px)
     {
         /* Shut up already ... perhaps we are being called from wilderness_move_player, rather
         than from the top level. It turns out that the Museum in Outpost is located on a scroll
@@ -3865,7 +3913,7 @@ void travel_begin(int mode, int x, int y)
         return;
     }
 
-    f_ptr = &f_info[cave[y][x].feat];
+    feature_type *f_ptr = &f_info[cave[y][x].feat];
 
     if ((cave[y][x].info & CAVE_MARK) &&
         (have_flag(f_ptr->flags, FF_WALL) ||
@@ -3877,26 +3925,28 @@ void travel_begin(int mode, int x, int y)
         return;
     }
 
-    travel.x = x;
     travel.y = y;
+    travel.x = x;
 
     forget_travel_flow();
     travel_flow(y, x);
 
-    /* Travel till 255 steps */
-    travel.run = 255;
-
-    /* Paranoia */
+    // Travel up to 255 steps
+    // Autoexplore starts with "one step already taken"
+    // This first step is "added back" only after the initial travel_begin() call
+    // This is so we print "Autoexplore canceled" only in response to the initial 'x' keypress
+    travel.run = (mode == TRAVEL_MODE_AUTOEXPLORE) ? 254 : 255;
     travel.dir = 0;
 
     /* Decides first direction */
-    dx = abs(px - x);
-    dy = abs(py - y);
-    sx = ((x == px) || (dx < dy)) ? 0 : ((x > px) ? 1 : -1);
-    sy = ((y == py) || (dy < dx)) ? 0 : ((y > py) ? 1 : -1);
+    int dy = abs(py - y);
+    int dx = abs(px - x);
+
+    int sy = (y == py || dy < dx) ? 0 : (y > py) ? 1 : -1;
+    int sx = (x == px || dx < dy) ? 0 : (x > px) ? 1 : -1;
 
     for (int i = 1; i <= 9; i++)
-        if ((sx == ddx[i]) && (sy == ddy[i])) travel.dir = i;
+        if (sx == ddx[i] && sy == ddy[i]) { travel.dir = i; break; }
 }
 
 void travel_wilderness_scroll(int new_x, int new_y)
@@ -3962,30 +4012,38 @@ void travel_cancel(void)
 void travel_cancel_fully(void)
 {
     travel.run = 0;
+    travel.aborted = FALSE;
     travel.mode = TRAVEL_MODE_NORMAL;
 }
 
 void travel_end(void)
 {
-    travel.run = 0;
-    if ((travel.mode != TRAVEL_MODE_NORMAL) && (!p_ptr->confused) && (!p_ptr->move_random) && (_travel_next_obj(travel.mode)))
-    {
-        /* paranoia ... but don't get stuck */
-        if (travel.x == px && travel.y == py)
-            travel_cancel();
+  travel.run = 0;
+  travel.aborted = FALSE;
+  
+  if(p_ptr->confused || p_ptr->move_random) travel.mode = TRAVEL_MODE_NORMAL;
+  
+  if(travel.mode == TRAVEL_MODE_AUTOEXPLORE){
+    if (_travel_continue(FALSE)) {
+      if (travel.y == py && travel.x == px) travel_cancel();
+      else return;
     }
-    else
-    {
-        travel.mode = TRAVEL_MODE_NORMAL;
-        if (center_player && !center_running) viewport_verify();
+    else msg_print("Exploration complete!");
+  } else if ((travel.mode == TRAVEL_MODE_AMMO || travel.mode == TRAVEL_MODE_AUTOPICK)) {
+    if(_travel_next_obj(travel.mode)) {
+      if (travel.y == py && travel.x == px) travel_cancel();
+      else return;
     }
+  }
+  
+  travel.mode = TRAVEL_MODE_NORMAL;
+  if (center_player && !center_running) viewport_recenter();
 }
 
 void do_cmd_travel(void)
 {
     int x, y;
-    if (!tgt_pt(&x, &y, -1)) return;
-    travel_begin(TRAVEL_MODE_NORMAL, x, y);
+    if (tgt_pt(&x, &y, -1)) travel_begin(TRAVEL_MODE_NORMAL, x, y);
 }
 
 void do_cmd_get_nearest(void)
@@ -3993,10 +4051,10 @@ void do_cmd_get_nearest(void)
     int old_y = travel.y;
     int old_x = travel.x;
     int by = 0, bx = 0;
-    int i, _itms = 0;
+    int _itms = 0;
     int best = TRAVEL_UNABLE;
     travel_cancel_fully();
-    for (i = 0; i < max_o_idx; i++)
+    for (int i = 0; i < max_o_idx; i++)
     {
         object_type       *o_ptr = &o_list[i];
         int                auto_pick_idx;
@@ -4022,8 +4080,7 @@ void do_cmd_get_nearest(void)
         if ((max_autopick > 1) && (!no_mogaminator))
         {
             auto_pick_idx = is_autopick(o_ptr);
-            if ((auto_pick_idx < 0) ||
-                (!(autopick_list[auto_pick_idx].action & (DO_AUTOPICK | DO_QUERY_AUTOPICK))))
+            if (auto_pick_idx < 0 || !(autopick_list[auto_pick_idx].action & (DO_AUTOPICK | DO_QUERY_AUTOPICK)))
             {
                 _itms--;
                 continue;
@@ -4032,7 +4089,7 @@ void do_cmd_get_nearest(void)
         forget_travel_flow();
         travel_flow(o_ptr->loc.y, o_ptr->loc.x);
         tulos = travel.cost[py][px];
-//        msg_format("Tulos: %d (%d,%d)", tulos, o_ptr->loc.y, o_ptr->loc.x);
+        //msg_format("Tulos: %d (%d,%d)", tulos, o_ptr->loc.y, o_ptr->loc.x);
         if (tulos < best)
         {
             best = tulos;

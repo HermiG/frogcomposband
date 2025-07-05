@@ -28,7 +28,7 @@ static int feat_priority;
 /*
  * Distance between two points via Newton-Raphson technique
  */
-int distance (int y1, int x1, int y2, int x2)
+int distance(int y1, int x1, int y2, int x2)
 {
     int dy = (y1 > y2) ? (y1 - y2) : (y2 - y1);
     int dx = (x1 > x2) ? (x1 - x2) : (x2 - x1);
@@ -5312,7 +5312,7 @@ void disturb(int stop_search, int unused_flag)
         command_rep = 0;
 
         /* Redraw the state (later) */
-        p_ptr->redraw |= (PR_STATE);
+        p_ptr->redraw |= PR_STATE;
     }
 
     /* Cancel Resting */
@@ -5332,13 +5332,13 @@ void disturb(int stop_search, int unused_flag)
         running = 0;
 
         /* Check for new panel if appropriate */
-        if (center_player && !center_running) viewport_verify();
+        if (center_player && !center_running) viewport_recenter();
 
         /* Calculate torch radius */
-        p_ptr->update |= (PU_TORCH);
+        p_ptr->update |= PU_TORCH;
 
         /* Update monster flow */
-        p_ptr->update |= (PU_FLOW);
+        p_ptr->update |= PU_FLOW;
     }
 
     if (travel.run)
@@ -5346,10 +5346,10 @@ void disturb(int stop_search, int unused_flag)
         travel_cancel();
 
         /* Check for new panel if appropriate */
-        if (center_player && !center_running) viewport_verify();
+        if (center_player && !center_running) viewport_recenter();
 
         /* Calculate torch radius */
-        p_ptr->update |= (PU_TORCH);
+        p_ptr->update |= PU_TORCH;
     }
 
     /* Flush the input if requested */

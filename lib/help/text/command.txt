@@ -74,7 +74,7 @@ Original Keyset
    u  Use a staff                          U  Use racial/bonus power
    v  Throw an item                        V  Version info
    w  Wear/wield equipment                 W  Switch ring fingers
-   x  (unused)                             X  (unused)
+   x  Autoexplore                          X  (unused)
    y  (unused)                             Y  Display monster list
    z  Zap a rod                            Z  Inscribe an object
    !  Enter a user pref command           ^A  (special - wizard command)

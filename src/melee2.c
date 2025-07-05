@@ -2408,17 +2408,12 @@ static void process_monster(int m_idx)
         {
             bool sad = FALSE;
 
-            if (is_pet(m_ptr) && !(m_ptr->ml))
-                sad = TRUE;
+            if (is_pet(m_ptr) && !(m_ptr->ml)) sad = TRUE;
 
             if (see_m)
             {
                 char m_name[80];
-
-                /* Acquire the monster name */
                 monster_desc(m_name, m_ptr, 0);
-
-                /* Oops */
                 msg_format("%^s disappears!", m_name);
             }
 
@@ -2428,15 +2423,13 @@ static void process_monster(int m_idx)
             /* Delete the monster */
             delete_monster_idx(m_idx);
 
-            if (sad)
-                msg_print("You feel sad for a moment.");
+            if (sad) msg_print("You feel sad for a moment.");
 
             return;
         }
     }
 
-    if ((m_ptr->r_idx == MON_LEPRECHAUN_FANATIC) && (m_ptr->mflag & MFLAG_NICE))
-        return;
+    if ((m_ptr->r_idx == MON_LEPRECHAUN_FANATIC) && (m_ptr->mflag & MFLAG_NICE)) return;
 
     if (m_ptr->r_idx == MON_SHURYUUDAN)
     {
@@ -2470,7 +2463,7 @@ static void process_monster(int m_idx)
             if (skip) {} /* Kamikaze pets fight to death */
             else if (is_riding_mon && riding_pinch < 2)
             {
-                msg_format("%^s seems to be in so much pain, and trying to escape from your restriction.", m_name);
+                msg_format("%^s seems to be in severe pain and is trying to escape your restraint.", m_name);
                 riding_pinch++;
                 disturb(1, 0);
             }
@@ -2482,9 +2475,9 @@ static void process_monster(int m_idx)
             {
                 if (is_riding_mon)
                 {
-                    msg_format("%^s succeeded to escape from your restriction!", m_name);
+                    msg_format("%^s has broken free from your restraint!", m_name);
                     if (rakuba(-1, FALSE))
-                        msg_print("You have fallen from riding pet.");
+                        msg_print("You fall from your mount.");
                 }
 
                 if (see_m)
@@ -2492,15 +2485,14 @@ static void process_monster(int m_idx)
                     if ((r_ptr->flags2 & RF2_CAN_SPEAK) && (m_ptr->r_idx != MON_GRIP) && (m_ptr->r_idx != MON_WOLF) && (m_ptr->r_idx != MON_FANG) &&
                         player_has_los_bold(m_ptr->fy, m_ptr->fx) && projectable(m_ptr->fy, m_ptr->fx, py, px))
                     {
-                        msg_format("<color:B>%^s</color> says 'It is the pinch! I will retreat'.", m_name);
+                        msg_format("<color:B>%^s</color> says 'This is too much! I must retreat'.", m_name);
                         msg_format("<color:B>%^s</color> reads a scroll of Teleport Level.", m_name);
                         msg_format("<color:B>%^s</color> disappears.", m_name);
                     }
                     else msg_format("<color:B>%^s</color> escapes.", m_name);
                 }
 
-                if (is_riding_mon && rakuba(-1, FALSE))
-                    msg_print("You have fallen from riding pet.");
+                if (is_riding_mon && rakuba(-1, FALSE)) msg_print("You fall from your mount.");
 
                 quests_on_kill_mon(m_ptr);
                 delete_monster_idx(m_idx);
@@ -3210,10 +3202,8 @@ static void process_monster(int m_idx)
                     /* Disturb (sometimes) */
                     if (disturb_minor)
                     {
-                        if (have_flag(f_ptr->flags, FF_GLASS))
-                            msg_print("You hear a glass was crashed!");
-                        else
-                            msg_print("You hear a door burst open!");
+                        if (have_flag(f_ptr->flags, FF_GLASS)) msg_print("You hear glass shattering!");
+                        else                                   msg_print("You hear a door burst open!");
 
                         disturb(0, 0);
                     }
@@ -3226,7 +3216,6 @@ static void process_monster(int m_idx)
                     must_alter_to_move = TRUE;
                 }
             }
-
 
             /* Deal with doors in the way */
             if (did_open_door || did_bash_door)
@@ -3415,8 +3404,6 @@ static void process_monster(int m_idx)
 
                 /* Wake up the moved monster */
                 (void)set_monster_csleep(c_ptr->m_idx, 0);
-
-                /* XXX XXX XXX Message */
             }
         }
 
@@ -3461,11 +3448,10 @@ static void process_monster(int m_idx)
             if (one_in_(GRINDNOISE))
             {
                 if (have_flag(f_ptr->flags, FF_GLASS))
-                    msg_print("There is a crashing sound.");
+                    msg_print("The crash of breaking glass echoes in the distance.");
                 else
-                    msg_print("There is a grinding sound.");
+                    msg_print("You hear a deep rumbling in the distance and feel a faint tremor beneath your feet.");
             }
-
 
             cave_alter_feat(ny, nx, FF_HURT_DISI);
 
@@ -3621,8 +3607,16 @@ static void process_monster(int m_idx)
                 if (town_no_disturb && py_in_town() && r_ptr->level == 0)
                 {
                 }
-                else if (is_hostile(m_ptr))
+                else if (is_hostile(m_ptr)) {
+                    if(running || (travel.run && !travel.aborted))
+                    {
+                      char m_name[80];
+                      monster_desc(m_name, m_ptr, MD_INDEF_HIDDEN | MD_INDEF_VISIBLE);
+                      msg_format("You spot %s.", m_name);
+                      travel.aborted = !running;
+                    }
                     disturb(0, 0);
+                }
             }
 
             /* Take or Kill objects on the floor */
@@ -3630,7 +3624,7 @@ static void process_monster(int m_idx)
                 (!is_pet(m_ptr) || ((p_ptr->pet_extra_flags & PF_PICKUP_ITEMS) && (r_ptr->flags2 & RF2_TAKE_ITEM))))
             {
                 s16b this_o_idx, next_o_idx;
-                bool do_take = (r_ptr->flags2 & RF2_TAKE_ITEM) ? TRUE : FALSE;
+                bool do_take = !! (r_ptr->flags2 & RF2_TAKE_ITEM);
 
                 /* Scan all objects in the grid */
                 for (this_o_idx = c_ptr->o_idx; this_o_idx; this_o_idx = next_o_idx)
@@ -3654,8 +3648,7 @@ static void process_monster(int m_idx)
                          * silliness like a novice rogue pockets full of statues
                          * and corpses.
                          */
-                        if ((o_ptr->tval == TV_CORPSE) ||
-                            (o_ptr->tval == TV_STATUE)) continue;
+                        if ((o_ptr->tval == TV_CORPSE) || (o_ptr->tval == TV_STATUE)) continue;
                     }
 
                     /* Extract some flags */
@@ -3685,7 +3678,7 @@ static void process_monster(int m_idx)
                     if (have_flag(flgs, OF_SLAY_EVIL))   flg3 |= (RF3_EVIL);
                     if (have_flag(flgs, OF_KILL_EVIL))   flg3 |= (RF3_EVIL);
                     if (have_flag(flgs, OF_SLAY_GOOD))   flg3 |= (RF3_GOOD);
-					if (have_flag(flgs, OF_KILL_GOOD))   flg3 |= (RF3_GOOD);
+                    if (have_flag(flgs, OF_KILL_GOOD))   flg3 |= (RF3_GOOD);
                     if (have_flag(flgs, OF_SLAY_HUMAN))  flg2 |= (RF2_HUMAN);
                     if (have_flag(flgs, OF_KILL_HUMAN))  flg2 |= (RF2_HUMAN);
                     if (have_flag(flgs, OF_BRAND_ACID))  flgr |= (RFR_IM_ACID);

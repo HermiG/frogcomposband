@@ -20,6 +20,8 @@ See <link:objects.txt#InscriptionAbbrev> for item attribute abbreviations.
 
 <color:keyword>auto-destroyer</color>: A system for automatically destroying items; either the Mogaminator or the easy auto-destroyer.
 
+<color:keyword>autoexplore</color>: Automatically explores any unexplored areas of the current level. The player will move toward and reveal unknown tiles, opening doors and avoiding known traps along the way. Autoexplore halts when a monster is spotted, or when the player is otherwise disturbed. Press any key to manually interrupt exploration.
+
 <color:keyword>average object</color>: An object without any magical enchantments or curses.
 
 <color:keyword>awful</color>: The object feeling for a cursed ego item.
@@ -348,7 +350,7 @@ See <link:objects.txt#InscriptionAbbrev> for item attribute abbreviations.
 
 <color:keyword>trap</color>: 1) A floor trap; a square on the floor that does not allow item drops and will usually attempt to harm or inconvenience the player if entered. 2) A chest trap; a mechanism, sometimes very nasty, that needs to be disarmed before a chest can be opened safely. 3) A monster trap; a floor trap set by the player for monsters to walk into.
 
-<color:keyword>travelling</color>: 1) The automated process of walking to another point on the level, commonly as a result of using auto-get or the 'H' or 'J' travel commands. 2) Manual travelling; manually walking from location to location, especially in the wilderness.
+<color:keyword>travelling</color>: 1) The automated movement toward a specified point on the level, initiated by commands like auto-get (^G), the 'H' or 'J' travel keys, or by right-clicking a location in the main game window. 2) Manual travelling; manually walking from location to location, especially in the wilderness.
 
 <color:keyword>unique</color>: A named monster, usually more dangerous than regular monsters at the same depth, and immune to slowing, annihilation and genocide. The same unique can be encountered repeatedly and on different level until it has been killed, at which point it will not generate again.
 

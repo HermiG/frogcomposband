@@ -13,6 +13,7 @@
 #include "angband.h"
 #include "equip.h"
 #include <assert.h>
+
 static int _max_vampiric_drain(void)
 {
     if (prace_is_(RACE_MON_VAMPIRE) || prace_is_(MIMIC_BAT))
@@ -4507,8 +4508,7 @@ bool move_player_effect(int ny, int nx, u32b mpe_mode)
 
     if (!(mpe_mode & MPE_STAYING) && (running || travel.run))
     {
-        if (old_map && !new_map)
-            _auto_mapping();
+        if (old_map && !new_map) _auto_mapping();
     }
 
     if (cave[py][px].info & CAVE_IN_DETECT)
@@ -4559,7 +4559,7 @@ bool move_player_effect(int ny, int nx, u32b mpe_mode)
         lite_spot(ny, nx);
 
         /* Check for new panel (redraw map) */
-        viewport_verify();
+        viewport_recenter();
 
         /* Check detection status */
         if (old_dtrap && !new_dtrap)
@@ -4698,9 +4698,8 @@ bool move_player_effect(int ny, int nx, u32b mpe_mode)
         {
             char name[MAX_NLEN];
             int  this_o_idx, next_o_idx = 0;
-            if ((!travel_ignore_items) || (!travel.run) || (travel.mode != TRAVEL_MODE_NORMAL) ||
-                ((travel.x == nx) && (travel.y == ny)))
-            autopick_get_floor(TRUE);
+            if (!travel_ignore_items || !travel.run || travel.mode != TRAVEL_MODE_NORMAL || (travel.y == ny && travel.x == nx))
+                autopick_get_floor(TRUE);
             else autopick_get_floor(FALSE);
             for (this_o_idx = c_ptr->o_idx; this_o_idx; this_o_idx = next_o_idx)
             {
@@ -5064,7 +5063,7 @@ void move_player(int dir, bool do_pickup, bool break_trap)
             monster_desc(m_name, riding_m_ptr, 0);
             msg_format("%^s is sleeping.", m_name);
             oktomove = FALSE;
-            disturb(0,0);
+            disturb(0, 0);
         }
         else if (MON_PARALYZED(riding_m_ptr))
         {
@@ -5072,7 +5071,7 @@ void move_player(int dir, bool do_pickup, bool break_trap)
             monster_desc(m_name, riding_m_ptr, 0);
             msg_format("%^s is paralyzed.", m_name);
             oktomove = FALSE;
-            disturb(0,0);
+            disturb(0, 0);
         }
         else if (MON_MONFEAR(riding_m_ptr))
         {
@@ -5552,7 +5551,7 @@ void move_player(int dir, bool do_pickup, bool break_trap)
             }
             else
             {
-                disturb(0,0);
+                disturb(0, 0);
                 if (p_ptr->special_defense & (KATA_MASK)) lose_kata();
                 else if (p_ptr->special_defense & (KAMAE_MASK)) lose_kamae();
                 if (p_ptr->concent) reset_concentration(TRUE);
@@ -6287,17 +6286,11 @@ void run_step(int dir)
         /* Hack -- do not start silly run */
         if (see_wall(dir, py, px))
         {
-            /* Message */
             msg_print("You cannot run in that direction.");
-
-            /* Disturb */
             disturb(0, 0);
-
-            /* Done */
             return;
         }
 
-        /* Initialize */
         run_init(dir);
     }
 
@@ -6307,10 +6300,7 @@ void run_step(int dir)
         /* Update run */
         if (run_test())
         {
-            /* Disturb */
             disturb(0, 0);
-
-            /* Done */
             return;
         }
         else if ((p_ptr->confused) && (randint0(4)))
@@ -6364,57 +6354,45 @@ void run_step(int dir)
 
 static bool travel_abort(void)
 {
-    int prev_dir, new_dir;
-    int row, col;
-    int i, max;
     bool stop = TRUE;
-    cave_type *c_ptr;
-
-    /* Where we came from */
-    prev_dir = find_prevdir;
-
-    /* Range of newly adjacent grids */
-    max = (prev_dir & 0x01) + 1;
-
-    for (i = 0; i < 8; i++)
-    {
-        if (travel.cost[py+ddy_ddd[i]][px+ddx_ddd[i]] < travel.cost[py][px]) stop = FALSE;
-    }
-
-    if (stop) return (TRUE);
 
     /* Cannot travel when blind */
     if (p_ptr->blind || no_lite())
     {
-        msg_print("You cannot see!");
-        return (TRUE);
+      msg_print("You cannot see!");
+      return TRUE;
+    }
+
+    /* Where we came from */
+    int prev_dir = find_prevdir;
+
+    /* Range of newly adjacent grids */
+    int max = (prev_dir & 0x01) + 1;
+
+    for (int i = 0; i < 8; i++)
+        if (travel.cost[py+ddy_ddd[i]][px+ddx_ddd[i]] < travel.cost[py][px]) stop = FALSE;
+
+    if (stop)
+    {
+        msg_print("No route found!");
+        return TRUE;
     }
 
     /* Look at every newly adjacent square. */
-    for (i = -max; i <= max; i++)
+    for (int i = -max; i <= max; i++)
     {
-        /* New direction */
-        new_dir = cycle[chome[prev_dir] + i];
-
-        /* New location */
-        row = py + ddy[new_dir];
-        col = px + ddx[new_dir];
+        int new_dir = cycle[chome[prev_dir] + i];
+        int row = py + ddy[new_dir];
+        int col = px + ddx[new_dir];
 
         if (!in_bounds(row, col)) continue;
 
-        /* Access grid */
-        c_ptr = &cave[row][col];
+        cave_type *c_ptr = &cave[row][col];
 
         if (disturb_trap_detect)
         {
-            bool old_dtrap = FALSE;
-            bool new_dtrap = FALSE;
-
-            if (cave[py][px].info & CAVE_IN_DETECT)
-                old_dtrap = TRUE;
-
-            if (c_ptr->info & CAVE_IN_DETECT)
-                new_dtrap = TRUE;
+            bool old_dtrap = (cave[py][px].info & CAVE_IN_DETECT);
+            bool new_dtrap = (c_ptr->info       & CAVE_IN_DETECT);
 
             if (old_dtrap && !new_dtrap && !_auto_detect_traps())
             {
@@ -6424,14 +6402,42 @@ static bool travel_abort(void)
         }
 
         /* Visible monsters abort running after the first step */
-		if (c_ptr->m_idx && travel.run != 255)
-		{
-			monster_type *m_ptr = &m_list[c_ptr->m_idx];
+        if (c_ptr->m_idx && travel.run != 255)
+        {
+            monster_type *m_ptr = &m_list[c_ptr->m_idx];
 
-			/* Visible monster */
-			if (m_ptr->ml)
-				return TRUE;
-		}
+            if (m_ptr->ml) {
+                char m_name[80];
+                monster_desc(m_name, m_ptr, 0);
+                
+                if (is_hostile(m_ptr)) {
+                    if(travel.mode == TRAVEL_MODE_AUTOEXPLORE)
+                        msg_format("You stop exploring upon seeing %s.", m_name);
+                    else
+                        msg_format("You come to a halt upon seeing %s.", m_name);
+                    return TRUE;
+                } else {
+                    msg_format("You see %s and wave as you continue your travels.", m_name);
+                }
+            }
+        } // monster and already underway
+    } // for i in [-max, max]
+
+    if (travel.mode == TRAVEL_MODE_AUTOEXPLORE) {
+        for (int i = 0; i < max_m_idx; i++)
+        {
+            monster_type *m_ptr = &m_list[i];
+            if (m_ptr->ml && (cave[m_ptr->fy][m_ptr->fx].info & CAVE_VIEW)){
+                char m_name[80];
+                monster_desc(m_name, m_ptr, 0);
+                
+                if (is_hostile(m_ptr)) {
+                    if(travel.run == 255) msg_format("Not with %s nearby.", m_name);
+                    else                  msg_format("You stop exploring upon seeing %s.", m_name);
+                    return TRUE;
+                }
+            }
+        }
     }
 
     return FALSE;
@@ -6444,31 +6450,42 @@ static int travel_cost(point_t pt)
 
 void travel_step(void)
 {
-    int i;
     int dir = 0;
     int old_run = travel.run;
-    int dirs[8] = { 2, 4, 6, 8, 1, 7, 9, 3 };
     point_t pt_best = {0};
-    int py_old=py;
-    int px_old=px;
-    bool ongelma = FALSE;
+    int py_old = py;
+    int px_old = px;
+    bool err = FALSE;
     bool door_hack = FALSE;
+    int travel_delay = travel.mode == TRAVEL_MODE_AUTOEXPLORE ? 50 : 0 ;
 
     find_prevdir = travel.dir;
 
-    if (travel_abort())
+
+    if (travel.aborted || travel_abort())
     {
-        if (travel.run == 255)
-            msg_print("No route is found!");
-        disturb(0, 0);
+        if (travel.mode == TRAVEL_MODE_AUTOEXPLORE) {
+            if (travel.run == 255) msg_print("Autoexplore canceled.");
+            else                   msg_print("Exploration halted.");
+        }
+        else
+        {
+            if (travel.run == 255) msg_print("Travel canceled.");
+            else                   msg_print("Travel interrupted.");
+        }
+
+        if(!travel.aborted) disturb(0, 0); // We've already been disturbed
+        travel.aborted = FALSE;
+
         return;
     }
 
     energy_use = 100;
 
-    for (i = 0; i < 8; i++)
+    int dirs[8] = { 2, 4, 6, 8, 1, 7, 9, 3 };
+    for (int i = 0; i < 8; i++)
     {
-        int     d = dirs[i];
+        int d = dirs[i];
         point_t pt = point(px + ddx[d], py + ddy[d]);
 
         if (!dir || travel_cost(pt) < travel_cost(pt_best))
@@ -6478,14 +6495,12 @@ void travel_step(void)
         }
     }
 
-    /* Travelling is bumping into jammed doors and getting stuck */
     if (is_jammed_door(cave[pt_best.y][pt_best.x].feat))
     {
+        cmsg_print(TERM_L_UMBER, "It's jammed!");
         disturb(0, 0);
         return;
     }
-
-    /* Closed door */
     else if (is_closed_door(cave[pt_best.y][pt_best.x].feat))
     {
         door_hack = TRUE;
@@ -6493,38 +6508,36 @@ void travel_step(void)
         {
             disturb(0, 0);
             return;
-        }
+        } else Term_xtra(TERM_XTRA_DELAY, MAX(delay_time(), travel_delay * 6));
     }
-    /* Travelling is bumping into mountains and permanent walls and getting stuck */
     else if (!player_can_enter(cave[pt_best.y][pt_best.x].feat, 0))
     {
+        cmsg_print(TERM_L_UMBER, "You find the terrain entirely impassible.");
         disturb(0, 0);
         return;
     }
 
     command_dir = dir;
-    if ((p_ptr->confused) && (randint0(4))) /* paranoia - get_rep_dir() doesn't handle this situation well */
+    if (p_ptr->confused && randint0(4)) /* paranoia - get_rep_dir() doesn't handle this situation well */
     {
         command_dir = ddd[randint0(8)];
         dir = command_dir;
-        ongelma = TRUE;
+        err = TRUE;
     }
     else if (get_rep_dir(&dir, FALSE) == GET_DIR_RANDOM)
     {
-        ongelma = TRUE;
+        err = TRUE;
     }
     travel.dir = dir;
     move_player(dir, always_pickup, easy_disarm);
-    Term_xtra(TERM_XTRA_DELAY, delay_time());
+    Term_xtra(TERM_XTRA_DELAY, MAX(delay_time(), travel_delay));
     Term_fresh();
     travel.run = old_run;
 
-    if (((py == travel.y) && (px == travel.x)) || ((py == py_old)&&(px == px_old) && (!door_hack)) || (ongelma))
+    if ((py == travel.y && px == travel.x) || (py == py_old && px == px_old && !door_hack) || err)
     {
         travel_end();
     }
     else
         travel.run--;
 }
-
-

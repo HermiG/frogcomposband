@@ -4431,8 +4431,10 @@ static void _dispatch_command(int old_now_turn)
 
         case 'J':
         {
-            if (!p_ptr->wild_mode && travel.x && travel.y && !player_bold(travel.y, travel.x) &&
-                in_bounds(travel.y, travel.x) && get_check("Resume travelling? ")) travel_begin(TRAVEL_MODE_NORMAL, travel.x, travel.y);
+            if (!p_ptr->wild_mode && travel.y && travel.x && in_bounds(travel.y, travel.x) && !player_bold(travel.y, travel.x)) {
+                char c = msg_prompt("Resume travelling? <color:y>[Y/n]</color>", "nyYjJ ", PROMPT_DEFAULT);
+                if(c == 'y' || c=='Y' || c=='j' || c =='J' || c==' ') travel_begin(TRAVEL_MODE_NORMAL, travel.x, travel.y);
+            }
             break;
         }
 

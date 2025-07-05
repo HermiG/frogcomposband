@@ -2951,9 +2951,7 @@ bool get_check(cptr prompt)
 /*  return get_check_strict(prompt, 0);*/
     char buf[255];
     sprintf(buf, "%s<color:y>[y/n]</color>", prompt);
-    if (msg_prompt(buf, "ny", PROMPT_DEFAULT) == 'y')
-        return TRUE;
-    return FALSE;
+    return (msg_prompt(buf, "ny", PROMPT_DEFAULT) == 'y');
 }
 
 /*
@@ -2975,8 +2973,7 @@ bool get_check_strict(cptr prompt, int mode)
     /* Paranoia XXX XXX XXX */
     msg_print(NULL);
 
-    if (!rogue_like_commands)
-        mode &= ~CHECK_OKAY_CANCEL;
+    if (!rogue_like_commands) mode &= ~CHECK_OKAY_CANCEL;
 
 
     /* Hack -- Build a "useful" prompt */

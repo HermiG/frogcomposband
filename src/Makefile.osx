@@ -1,216 +1,179 @@
 # File: Makefile.osx
 
-# This is a Makefile for the Mac OS X Cocoa port of Angband.
-
-# default target
+# Default target
 all: install
 
-# settings
+# Settings
 CC = clang
 LD = ld
 OPT ?= -O2
 
-# the CFBundleExecutable plist value is used within the app, so we want it to match the bundle name to make everything look right
+# Application metadata
 NAME = FrogComposband
-APPNAME = $(NAME).app
+BUNDLE_IDENTIFIER = org.rephial.angband
 EXE = $(NAME)
+APPNAME = $(NAME).app
 NIB = cocoa/English.lproj/MainMenu.nib
 
-# for consistency with older versions, use a lower case bundle ID
-BUNDLE_IDENTIFIER = org.rephial.angband
-
+# Architecture and warnings
 ARCH = -arch x86_64
-WARNINGS = -W -Wall -Wno-unused-parameter -Wno-missing-field-initializers
-JUST_C = -std=c99 -Wdeclaration-after-statement
-OBJ_CFLAGS = -std=c99 -x objective-c -mmacosx-version-min=10.13
-CFLAGS = -g -I. $(WARNINGS) $(OPT) -DMACH_O_CARBON -DHAVE_MKSTEMP -fno-stack-protector $(ARCH)
+#WARNINGS = -W -Wall -Wno-unused-parameter -Wno-missing-field-initializers
+WARNINGS = -Wall -Wextra -Wpedantic \
+	-Wimplicit-fallthrough \
+	-Wformat=2 \
+	-Wnull-dereference \
+	-Wdouble-promotion \
+	-Wswitch-enum \
+	-Wcast-align \
+	-Wuninitialized \
+	-Wmissing-prototypes \
+	-Wstrict-prototypes \
+	-Wold-style-definition \
+	-Werror=return-type \
+	-Werror=incompatible-pointer-types \
+	-Wno-shadow \
+	-Wno-missing-field-initializers \
+	-Wno-unused-parameter
+
+JUST_C = -std=c99 -Wunreachable-code -Wsometimes-uninitialized -Wno-missing-variable-declarations -Wno-format-nonliteral
+OBJ_CFLAGS = -std=c99 -x objective-c
+CFLAGS = -g -I. $(WARNINGS) $(OPT) -DMACH_O_CARBON -DHAVE_MKSTEMP -fno-stack-protector $(ARCH) -mmacosx-version-min=10.13
 LIBS = -framework Cocoa
-# Fix for bug #1663: Set the deployment target via environment variable
-# for the final link command. See http://grauonline.de/wordpress/?p=71
-# or http://stackoverflow.com/questions/5509885/creating-app-for-old-mac-from-new-mac-machine
-DEPLOYMENT_TARGET = MACOSX_DEPLOYMENT_TARGET=12.0
+DEPLOYMENT_TARGET = MACOSX_DEPLOYMENT_TARGET=10.13
 
 # Import user prefs
-# If you don't want to edit this file, put your module redefinitions
-# and build flags in "./config"
 -include config
 
-# -DALLOW_BORG is required for all .o files in a borg build 
+# Borg build support
 ifneq (,$(findstring borg, $(MAKECMDGOALS)))
 CFLAGS += -DALLOW_BORG
 endif
 
-# Check for autoconf.h; do not warn on nonexistence
-autoconf= $(wildcard autoconf.h)
+# Config handling
+autoconf = $(wildcard autoconf.h)
 ifneq ($(autoconf),)
 CFLAGS += -DHAVE_CONFIG_H
 endif
 
-# let Makefile.inc set VERSION and then we'll use the detailed build ID as the bundle version (visible in "About Angband")
+# Version information
 include Makefile.inc
-
 BUNDLE_VERSION := VERSION
 CFLAGS += -DBUILD_ID=${VERSION}
 OBJS = $(BASEOBJS)
 OSX_OBJS = main-cocoa.o
 
-
-
 #
-# Build the "Angband" program
+# Build the main executable
 #
-
-
 $(EXE).o: $(OBJS)
-	@printf "%10s %-20s\n" LD $@.x86_64
-	@$(LD) -r -arch x86_64 -o $@.x86_64 $(OBJS)
-	lipo -arch x86_64 $@.x86_64 -create -output frogcomposband.o
+	@printf "%10s %-20s\n" LD $@
+	@$(LD) -r -o $@ $(OBJS)
 
 $(EXE): $(EXE).o $(OSX_OBJS)
-	$(DEPLOYMENT_TARGET) $(CC) $(CFLAGS) $(LDFLAGS) -o $(EXE) $(EXE).o $(OSX_OBJS) $(LIBS) 
+	$(DEPLOYMENT_TARGET) $(CC) $(CFLAGS) $(LDFLAGS) -o $(EXE) $(EXE).o $(OSX_OBJS) $(LIBS)
 
 #
-# Clean up old junk
+# Clean targets
 #
-
 clean:
-	-rm -f $(OBJS) $(EXE) $(EXE).o.x86_64 $(EXE).o $(OSX_OBJS)
+	-rm -f $(OBJS) $(EXE) $(EXE).o $(EXE).o.x86_64 $(OSX_OBJS)
 	-rm -rf $(NIB)
 
-
 #
-# Basic build rules and dependencies
+# Build rules
 #
-
+# make seems to hang after a successful build if we have to run this step
 %.nib: %.xib
-	ibtool --compile $@ $< > /dev/null 2>&1
+	@printf "%10s %-20s\n" IBTOOL $@
+	@xcrun ibtool --compile $@ $<
 
-main-cocoa.o : main-cocoa.m
+main-cocoa.o: main-cocoa.m
 	@printf "%10s %-20s (objective-c)\n" CC $<
 	@$(CC) $(CFLAGS) $(OBJ_CFLAGS) -c -o $@ $<
 
-%.o : %.c
+%.o: %.c
 	@printf "%10s %-20s\n" CC $<
 	@$(CC) $(JUST_C) $(CFLAGS) -c -o $@ $<
 
-
 #
-# Installation.
-# Application bundle -- a directory looking like an ordinary application
+# Installation
 #
-
-# Bundle of the game (it must be a directory whose name ends in ".app")
 APPBNDL = ../$(APPNAME)
-
-# A bundle must have these subdirectories
 APPCONT = $(APPBNDL)/Contents
 APPBIN = $(APPCONT)/MacOS
 APPRES = $(APPCONT)/Resources
-
-# Auxiliary files. Please note that it still uses resouce fork based
-# resources for menus, dialogues and sounds, so that it isn't safe to use
-# utilities that doesn't understand them (virtually all Un*x commands) to
-# copy or archive the application.
-#
-# The graphics tiles have been moved out of the resource fork, but, again,
-# it isn't generally safe just to convert GIF or BMP files to PNG, because
-# the Mac OS takes dpi values stored in various images quite seriously.
-# Almost all tilesets for *band requires adjustment, with the sole exception
-# of 8x8.png for Vanilla.  Make sure setting dpi to 72, *not* preserving
-# the actual size of image.  When you have them ready, put them in
-# the lib/xtra/graf directory and rebuild.
 PLIST = cocoa/Angband-Cocoa.xml
-
 ICONFILES = cocoa/Angband_Icons.icns cocoa/Save.icns cocoa/Edit.icns cocoa/Data.icns
-
 LIBFILES = \
-  ../lib/edit/*.txt \
-  ../lib/file/*.txt \
-  ../lib/help/*.txt \
-  ../lib/help/html/*.html \
-  ../lib/pref/*.prf \
+	../lib/edit/*.txt \
+	../lib/file/*.txt \
+	../lib/help/*.txt \
+	../lib/help/html/*.html \
+	../lib/pref/*.prf
 
 install: $(EXE) $(NIB) $(ICONFILES) $(PLIST) $(LIBFILES)
-	@echo making directories...
-	@mkdir -p $(APPBNDL)
-	@mkdir -p $(APPCONT)
-	@mkdir -p $(APPBIN)
-	@mkdir -p $(APPRES)
-	@mkdir -p $(APPRES)/English.lproj
-	@mkdir -p $(APPRES)/lib/data
-	@mkdir -p $(APPRES)/lib/edit
-	@mkdir -p $(APPRES)/lib/file
-	@mkdir -p $(APPRES)/lib/help
-	@mkdir -p $(APPRES)/lib/help/html
-	@mkdir -p $(APPRES)/lib/pref
-	@mkdir -p $(APPRES)/lib/script
-	@mkdir -p $(APPRES)/lib/xtra/graf
-	@mkdir -p $(APPRES)/lib/xtra/sound
-
-	@echo copying files...
+	@echo "Creating application structure..."
+	@mkdir -p $(APPBIN) $(APPRES)/{English.lproj,lib/{data,edit,file,help/html,pref,script},lib/xtra/{graf,sound}}
+	
+	@echo "Copying core files..."
 	@cp ../lib/edit/*.txt $(APPRES)/lib/edit
 	@cp ../lib/file/*.txt $(APPRES)/lib/file
 	@cp ../lib/help/*.txt $(APPRES)/lib/help
 	@cp ../lib/help/html/*.html $(APPRES)/lib/help/html
 	@cp ../lib/pref/*.prf $(APPRES)/lib/pref
-
-	# 'optionally' install sound and graphics tiles, if present
-	# TODO: read the tile pngs from $(APPRES)/lib/xtra/graf/
-	# so we can just recursively copy that directory.
-	-cp ../lib/xtra/graf/graphics.txt $(APPRES)/lib/xtra/graf
-	-cp ../lib/xtra/graf/*.png $(APPRES)/
-	-cp ../lib/xtra/sound/*.mp3 $(APPRES)/lib/xtra/sound
-	-cp ../lib/xtra/sound/sound.cfg $(APPRES)/lib/xtra/sound
-
-	install -m 755 $(EXE) $(APPBIN)
-	install -m 644 $(ICONFILES) $(APPRES)
-	cp -r cocoa/English.lproj/MainMenu.nib $(APPRES)/English.lproj/MainMenu.nib
-	cp cocoa/CommandMenu.plist $(APPRES)/CommandMenu.plist
-	sed -e 's/\$$VERSION\$$/$(VERSION)/' \
+	
+	@echo "Copying optional graphics and sound assets (if present)..."
+	@if [ -d ../lib/xtra/graf ]; then \
+		cp ../lib/xtra/graf/graphics.txt $(APPRES)/lib/xtra/graf 2>/dev/null || :; \
+		cp ../lib/xtra/graf/*.png $(APPRES)/ 2>/dev/null || :; \
+	fi
+	@if [ -d ../lib/xtra/sound ]; then \
+		cp ../lib/xtra/sound/*.mp3 $(APPRES)/lib/xtra/sound 2>/dev/null || :; \
+		cp ../lib/xtra/sound/sound.cfg $(APPRES)/lib/xtra/sound 2>/dev/null || :; \
+	fi
+	
+	@echo "Installing binaries..."
+	@install -m 755 $(EXE) $(APPBIN)
+	@install -m 644 $(ICONFILES) $(APPRES)
+	@cp -R $(NIB) $(APPRES)/English.lproj/
+	@cp cocoa/CommandMenu.plist $(APPRES)/
+	
+	@echo "Generating Info.plist..."
+	@sed -e 's/\$$VERSION\$$/$(VERSION)/' \
 		-e 's/\$$COPYRIGHT\$$/$(COPYRIGHT)/' \
 		-e 's/\$$NAME\$$/$(NAME)/' \
 		-e 's/\$$EXECUTABLE\$$/$(EXE)/' \
 		-e 's/\$$BUNDLE_VERSION\$$/$(BUNDLE_VERSION)/' \
 		-e 's/\$$BUNDLE_IDENTIFIER\$$/$(BUNDLE_IDENTIFIER)/' \
 		$(PLIST) > $(APPCONT)/Info.plist
+	
+	@SetFile -a B $(APPBNDL)
+	@echo "Installation complete: $(APPBNDL)"
 
-	SetFile -a B $(APPBNDL)
+# Safe install with separate preferences
+safe-install:
+	$(MAKE) -f Makefile.osx install CFLAGS="-DSAFE_DIRECTORY $(CFLAGS)"
+	@sed -e 's/\$$BUNDLE_IDENTIFIER\$$/$(BUNDLE_IDENTIFIER).$(VERSION)/' \
+		$(PLIST) > $(APPCONT)/Info.plist
 
+# Distribution package
+PACKAGE_NAME = $(NAME)-$(VERSION)
+dist: install
+	@rm -rf disttemp*
+	@mkdir -p disttemp/Docs
+	@cp ../readme.txt disttemp/Docs
+	@cp -R -p "$(APPBNDL)" disttemp
+	@SetFile -a B disttemp/$(APPNAME)
+	
+	@hdiutil create -quiet -fs HFS+ -volname $(PACKAGE_NAME) -srcfolder disttemp disttemp.dmg
+	@hdiutil convert disttemp.dmg -quiet -format UDZO -imagekey zlib-level=6 -o ../"$(PACKAGE_NAME)-osx.dmg"
+	@rm -rf disttemp*
 
+# Debug targets
 vars:
 	@echo LDFLAGS = $(LDFLAGS)
 	@echo CFLAGS = $(CFLAGS)
 	@echo BASEOBJS = $(BASEOBJS)
-
-# build a version that has separate prefs (different bundle ID) and directories (setting SAFE_DIRECTORY preprocessor flag)
-safe-install:
-	$(MAKE) -f Makefile.osx install CFLAGS="-DSAFE_DIRECTORY $(CFLAGS)"
-	sed -e 's/\$$VERSION\$$/$(VERSION)/' \
-		-e 's/\$$COPYRIGHT\$$/$(COPYRIGHT)/' \
-		-e 's/\$$NAME\$$/$(NAME)/' \
-		-e 's/\$$EXECUTABLE\$$/$(EXE)/' \
-		-e 's/\$$BUNDLE_VERSION\$$/$(BUNDLE_VERSION)/' \
-		-e 's/\$$BUNDLE_IDENTIFIER\$$/$(BUNDLE_IDENTIFIER).$(VERSION)/' \
-		$(PLIST) > $(APPCONT)/Info.plist
-
-
-PACKAGE_NAME = $(NAME)-$(VERSION)
-
-# In the unlikely event that tar+zip isn't enough...
-
-dist: install
-	@rm -rf disttemp*
-	mkdir -p disttemp/Docs
-	cp ../readme.txt disttemp/Docs
-	cp -R -p "$(APPBNDL)" disttemp
-	SetFile -a B disttemp/$(APPNAME)
-
-	@-rm ../"$(PACKAGE_NAME)-osx.dmg"
-
-	hdiutil create -quiet -fs HFS+ -volname $(PACKAGE_NAME) -srcfolder disttemp disttemp.dmg
-	hdiutil convert disttemp.dmg -quiet -format UDZO -imagekey zlib-level=6 -o ../"$(PACKAGE_NAME)-osx.dmg"
-
-	rm -rf disttemp*
 
 tests:
 	$(MAKE) -C tests all CFLAGS="-I.. $(CFLAGS)" LDFLAGS="$(LIBS)" DEFAULT_CONFIG_PATH=../lib
@@ -218,12 +181,5 @@ tests:
 test-clean:
 	$(MAKE) -C tests clean
 
-.PHONY : tests test-clean
-#
-# Generate dependencies automatically
-#
-
-depend:
-	makedepend -D__MAKEDEPEND__ $(SRCS)
-
+.PHONY: all clean install safe-install dist vars tests test-clean
 

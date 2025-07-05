@@ -3764,23 +3764,24 @@ void forget_travel_flow(void)
     }
 }
 
-static byte _travel_flow_bonus(feature_type *f_ptr)
+static byte _travel_flow_penalty(feature_type *f_ptr)
 {
-    if ((have_flag(f_ptr->flags, FF_LAVA)) && (!elemental_is_(ELEMENTAL_FIRE)) && (res_pct(RES_FIRE) < 100))
+    if (have_flag(f_ptr->flags, FF_LAVA) && !elemental_is_(ELEMENTAL_FIRE) && res_pct(RES_FIRE) < 100)
     {
-        int bonus = (have_flag(f_ptr->flags, FF_DEEP)) ? 16 : 1;
-        if (p_ptr->levitation) bonus /= 2;
-        if (res_pct(RES_FIRE) <= 50) bonus *= 4;
-        return bonus;
+        int penalty = (have_flag(f_ptr->flags, FF_DEEP)) ? 16 : 2;
+        if (res_pct(RES_FIRE) <= 50) penalty *= 4;
+        if (p_ptr->levitation) penalty /= 2;
+        return penalty;
     }
     else if (have_flag(f_ptr->flags, FF_ACID))
     {
-        int bonus = (have_flag(f_ptr->flags, FF_DEEP)) ? 12 : 6;
-        if (p_ptr->levitation) bonus /= 2;
-        if (res_pct(RES_ACID) <= 50) bonus *= 4;
-        return bonus;
+        int penalty = (have_flag(f_ptr->flags, FF_DEEP)) ? 12 : 6;
+        if (res_pct(RES_ACID) <= 50) penalty *= 4;
+        if (p_ptr->levitation) penalty /= 2;
+        return penalty;
     }
-    else if ((!p_ptr->levitation) && (!p_ptr->can_swim) && (have_flag(f_ptr->flags, FF_WATER)) && (have_flag(f_ptr->flags, FF_DEEP)) && (!elemental_is_(ELEMENTAL_WATER)) && (py_total_weight() > weight_limit()))
+    else if (!p_ptr->levitation && !p_ptr->can_swim && have_flag(f_ptr->flags, FF_WATER) &&
+             have_flag(f_ptr->flags, FF_DEEP) && !elemental_is_(ELEMENTAL_WATER) && py_total_weight() > weight_limit())
     {
         return 4;
     }
@@ -3804,7 +3805,7 @@ static bool travel_flow_aux(int y, int x, int n, bool wall)
      * route around the trap anyway ... */
     if (is_known_trap(c_ptr)) return wall;
 
-    n += _travel_flow_bonus(f_ptr);
+    n += _travel_flow_penalty(f_ptr);
 
     /* Ignore "pre-stamped" entries */
     if ((travel.cost[y][x] > TRAVEL_UNABLE) || ((travel.cost[y][x] < TRAVEL_UNABLE) && (travel.cost[y][x] <= n))) return wall;

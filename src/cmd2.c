@@ -2452,7 +2452,7 @@ static bool _travel_next_obj(int mode)
     return TRUE;
 }
 
-bool has_unmarked_floor(int y, int x)
+bool _has_unmarked_floor(int y, int x)
 {
     int count = 0;
     for (int dy = -1; dy <= 1; dy++)
@@ -2469,7 +2469,7 @@ bool _travel_continue(bool initial)
     int min_dist = cur_hgt + cur_wid;
     for (int y = 0; y < cur_hgt; y++) {
         for (int x = 0; x < cur_wid; x++) {
-            if (can_travel(y, x) && has_unmarked_floor(y, x)) {
+            if (can_travel(y, x) && _has_unmarked_floor(y, x)) {
                 int dist = distance(py, px, y, x);
                 if (dist < min_dist) {
                     min_dist = dist;
@@ -3339,8 +3339,7 @@ void do_cmd_fire_aux2(obj_ptr bow, obj_ptr arrows, int sx, int sy, int tx, int t
 
                         if (weaponmaster_is_(WEAPONMASTER_CROSSBOWS))
                         {
-                            if (p_ptr->lev >= 20)
-                                tdam += bow_range(bow) - cur_dis;
+                            if (p_ptr->lev >= 20) tdam += bow_range(bow) - cur_dis;
 
                             if (p_ptr->lev >= 45)
                             {
@@ -3348,11 +3347,8 @@ void do_cmd_fire_aux2(obj_ptr bow, obj_ptr arrows, int sx, int sy, int tx, int t
                                 tdam = tdam * mult / 100;
                             }
                         }
-                        if (shoot_hack == SHOOT_RAMA)
-                        {
-                            tdam *= 3;
-                        }
-                        if (0) msg_format("<color:B>%d damage</color>", tdam);
+                        if (shoot_hack == SHOOT_RAMA) tdam *= 3;
+                        //msg_format("<color:B>%d damage</color>", tdam);
                         if (tdam < 0) tdam = 0;
                         tdam = mon_damage_mod(m_ptr, tdam, FALSE);
                     }
@@ -3450,8 +3446,7 @@ void do_cmd_fire_aux2(obj_ptr bow, obj_ptr arrows, int sx, int sy, int tx, int t
                                 mon_anger_shoot(m_ptr, tdam);
                         }
 
-                        if (anger && tdam > 0)
-                            anger_monster(m_ptr);
+                        if (anger && tdam > 0) anger_monster(m_ptr);
 
                         /* Artifact arrows stick to target. Note, we now do this
                            after hurting/angering the monster since Cupid's Arrow
@@ -3496,8 +3491,7 @@ void do_cmd_fire_aux2(obj_ptr bow, obj_ptr arrows, int sx, int sy, int tx, int t
                                 }
                             }
 
-                            if (stick_to)
-                                msg_format("%^s sticks to %s!",o_name, m_name);
+                            if (stick_to) msg_format("%^s sticks to %s!",o_name, m_name);
                         }
 
                         if (fear && m_ptr->ml)
@@ -3618,8 +3612,7 @@ void do_cmd_fire_aux2(obj_ptr bow, obj_ptr arrows, int sx, int sy, int tx, int t
 
         if (return_ammo)
         {
-            if (disturb_minor)
-                msg_format("The %s returns to your pack.", o_name);
+            if (disturb_minor) msg_format("The %s returns to your pack.", o_name);
         }
         else if (stick_to)
         {
@@ -3751,17 +3744,10 @@ static s16b temp2_y[MAX_SHORT];
 /* Hack: forget the "flow" information */
 void forget_travel_flow(void)
 {
-    int x, y;
-
-    /* Check the entire dungeon */
-    for (y = 0; y < cur_hgt; y++)
-    {
-        for (x = 0; x < cur_wid; x++)
-        {
-            /* Forget the old data */
-            travel.cost[y][x] = TRAVEL_UNABLE;
-        }
-    }
+    /* Check the entire level */
+    for (int y = 0; y < cur_hgt; y++)
+        for (int x = 0; x < cur_wid; x++)
+            travel.cost[y][x] = TRAVEL_UNABLE; // Forget the old data
 }
 
 static byte _travel_flow_penalty(feature_type *f_ptr)
@@ -3883,7 +3869,7 @@ bool can_travel(int y, int x)
 
     cave_type *c_ptr = &cave[y][x];
 
-    if(!(c_ptr->info & CAVE_MARK))             return FALSE; // Don't travel to unknown tiles
+    if(!(c_ptr->info & CAVE_MARK))             return FALSE; // Don't travel to unknown grids
     if(cave_have_flag_grid(c_ptr, FF_WALL))    return FALSE; // Don't travel to walls
     if(cave_have_flag_grid(c_ptr, FF_CAN_DIG)) return FALSE; // Don't travel to rubble
     if(is_hidden_door(c_ptr))                  return FALSE; // Don't travel to hidden doors
@@ -4056,7 +4042,6 @@ void do_cmd_get_nearest(void)
     {
         object_type       *o_ptr = &o_list[i];
         int                auto_pick_idx;
-        int                tulos;
 
         if (!o_ptr->k_idx) continue;
         if (!(o_ptr->marked & OM_FOUND)) continue;
@@ -4069,7 +4054,7 @@ void do_cmd_get_nearest(void)
             (o_ptr->feeling != FEEL_AWFUL) &&
             (o_ptr->feeling != FEEL_TERRIBLE) &&
             (o_ptr->feeling != FEEL_ENCHANTED)) continue;
-        if (!in_bounds(o_ptr->loc.y, o_ptr->loc.x)) continue; /* paranoia */
+        if (!in_bounds(o_ptr->loc.y, o_ptr->loc.x)) continue;
         _itms++;
         if ((by) && (MAX(ABS(py - o_ptr->loc.y), ABS(px - o_ptr->loc.x)) >= best)) continue;
         if ((o_ptr->loc.y == py) && (o_ptr->loc.x == px)) continue;
@@ -4086,11 +4071,10 @@ void do_cmd_get_nearest(void)
         }
         forget_travel_flow();
         travel_flow(o_ptr->loc.y, o_ptr->loc.x);
-        tulos = travel.cost[py][px];
-        //msg_format("Tulos: %d (%d,%d)", tulos, o_ptr->loc.y, o_ptr->loc.x);
-        if (tulos < best)
+        int cost = travel.cost[py][px];
+        if (cost < best)
         {
-            best = tulos;
+            best = cost;
             by = o_ptr->loc.y;
             bx = o_ptr->loc.x;
         }

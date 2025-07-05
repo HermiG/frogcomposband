@@ -16,8 +16,7 @@
 
 static int _max_vampiric_drain(void)
 {
-    if (prace_is_(RACE_MON_VAMPIRE) || prace_is_(MIMIC_BAT))
-        return 100;
+    if (prace_is_(RACE_MON_VAMPIRE) || prace_is_(MIMIC_BAT)) return 100;
     return 50;
 }
 
@@ -5821,27 +5820,16 @@ static bool adjacent_treasure;
 /* Check for buried treasure in an adjacent square */
 static bool _treasure_is_adjacent(int iy, int ix)
 {
-    bool loytyi = FALSE;
     if (find_ignore_veins) return TRUE; /* Don't waste time */
-    else {
-        int i, nx, ny;
-        cave_type *c_ptr;
-        s16b feat;
-        for (i = 0; i < 9; i++) /* Note that we do check the square the player's standing on */
-        {
-            ny = iy + ddy_ddd[i];
-            nx = ix + ddx_ddd[i];
-            if (!in_bounds(ny, nx)) continue;
-            c_ptr = &cave[ny][nx];
-            feat = get_feat_mimic(c_ptr);
-            if (have_flag(f_info[feat].flags, FF_HAS_GOLD))
-            {
-                loytyi = TRUE;
-                break;
-            }
-        }
+
+    for (int i = 0; i < 9; i++) /* Note that we do check the square the player's standing on */
+    {
+        int y = iy + ddy_ddd[i];
+        int x = ix + ddx_ddd[i];
+        if (!in_bounds(y, x)) continue;
+        if (have_flag(f_info[get_feat_mimic(&cave[y][x])].flags, FF_HAS_GOLD)) return TRUE;
     }
-    return loytyi;
+    return FALSE;
 }
 
 /*
@@ -5862,7 +5850,6 @@ static void run_init(int dir)
 {
     int             row, col, deepleft, deepright;
     int             i, shortleft, shortright;
-
 
     /* Save the direction */
     find_current = dir;
@@ -6354,23 +6341,15 @@ void run_step(int dir)
 
 static bool travel_abort(void)
 {
-    bool stop = TRUE;
-
-    /* Cannot travel when blind */
     if (p_ptr->blind || no_lite())
     {
       msg_print("You cannot see!");
       return TRUE;
     }
 
-    /* Where we came from */
-    int prev_dir = find_prevdir;
-
-    /* Range of newly adjacent grids */
-    int max = (prev_dir & 0x01) + 1;
-
+    bool stop = TRUE;
     for (int i = 0; i < 8; i++)
-        if (travel.cost[py+ddy_ddd[i]][px+ddx_ddd[i]] < travel.cost[py][px]) stop = FALSE;
+        if (travel.cost[py+ddy_ddd[i]][px+ddx_ddd[i]] < travel.cost[py][px]) { stop = FALSE; break; }
 
     if (stop)
     {
@@ -6378,6 +6357,11 @@ static bool travel_abort(void)
         return TRUE;
     }
 
+    /* Where we came from */
+    int prev_dir = find_prevdir;
+
+    /* Range of newly adjacent grids */
+    int max = (prev_dir & 0x01) + 1;
     /* Look at every newly adjacent square. */
     for (int i = -max; i <= max; i++)
     {

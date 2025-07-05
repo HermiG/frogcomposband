@@ -1533,7 +1533,7 @@ static errr Term_xtra_cocoa(int n, int v)
             break;
         }
             
-            /* Flush all pending events (if any) */
+        /* Flush all pending events (if any) */
         case TERM_XTRA_FLUSH:
         {
             /* Hack -- flush all events */
@@ -1542,14 +1542,13 @@ static errr Term_xtra_cocoa(int n, int v)
             break;
         }
             
-            /* Hack -- Change the "soft level" */
+        /* Hack -- Change the "soft level" */
         case TERM_XTRA_LEVEL:
         {
             /* Here we could activate (if requested), but I don't think Angband should be telling us our window order (the user should decide that), so do nothing. */            
             break;
         }
-            
-            /* Clear the screen */
+        
         case TERM_XTRA_CLEAR:
         {        
             [angbandContext lockFocus];
@@ -1561,18 +1560,14 @@ static errr Term_xtra_cocoa(int n, int v)
             [angbandContext setNeedsDisplay:YES];
             break;
         }
-            
-            /* React to changes */
+        
         case TERM_XTRA_REACT:
         {
             /* React to changes */
             return Term_xtra_cocoa_react();
         }
-            
-            /* Delay (milliseconds) */
         case TERM_XTRA_DELAY:
         {
-            /* If needed */
             if (v > 0)
             {
                 

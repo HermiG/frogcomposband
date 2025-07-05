@@ -26,14 +26,14 @@ WARNINGS = -Wall -Wextra -Wpedantic \
 	-Wswitch-enum \
 	-Wcast-align \
 	-Wuninitialized \
-	-Wmissing-prototypes \
 	-Wstrict-prototypes \
 	-Wold-style-definition \
 	-Werror=return-type \
 	-Werror=incompatible-pointer-types \
 	-Wno-shadow \
 	-Wno-missing-field-initializers \
-	-Wno-unused-parameter
+	-Wno-unused-parameter \
+ 	-Wno-missing-prototypes
 
 JUST_C = -std=c99 -Wunreachable-code -Wsometimes-uninitialized -Wno-missing-variable-declarations -Wno-format-nonliteral
 OBJ_CFLAGS = -std=c99 -x objective-c

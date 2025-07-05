@@ -4672,15 +4672,11 @@ static void process_player(void)
             /* Check for a key */
             if (inkey())
             {
-                /* Flush input */
                 flush();
-
-                /* Disturb */
                 disturb(0, 0);
 
                 /* Hack -- Show a Message */
                 msg_print("Canceled.");
-
             }
         }
     }

@@ -40,30 +40,29 @@ s16b *_cave[MAX_HGT];
    the cave ... sigh. */
 static void _set_boundary(void)
 {
-    int i;
     /* Special boundary walls -- North */
-    for (i = 0; i < MAX_WID; i++)
+    for (int i = 0; i < MAX_WID; i++)
     {
         cave[0][i].mimic = cave[0][i].feat;
         cave[0][i].feat = feat_permanent;
     }
 
     /* Special boundary walls -- South */
-    for (i = 0; i < MAX_WID; i++)
+    for (int i = 0; i < MAX_WID; i++)
     {
         cave[MAX_HGT - 1][i].mimic = cave[MAX_HGT - 1][i].feat;
         cave[MAX_HGT - 1][i].feat = feat_permanent;
     }
 
     /* Special boundary walls -- West */
-    for (i = 1; i < MAX_HGT - 1; i++)
+    for (int i = 1; i < MAX_HGT - 1; i++)
     {
         cave[i][0].mimic = cave[i][0].feat;
         cave[i][0].feat = feat_permanent;
     }
 
     /* Special boundary walls -- East */
-    for (i = 1; i < MAX_HGT - 1; i++)
+    for (int i = 1; i < MAX_HGT - 1; i++)
     {
         cave[i][MAX_WID - 1].mimic = cave[i][MAX_WID - 1].feat;
         cave[i][MAX_WID - 1].feat = feat_permanent;
@@ -130,18 +129,14 @@ static bool _scroll_panel(int dx, int dy)
 
 static void _apply_glow(bool all)
 {
-    int y,x;
-    cave_type *c_ptr;
-    feature_type *f_ptr;
-
-    for (y = 0; y < MAX_HGT; y++)
+    for (int y = 0; y < MAX_HGT; y++)
     {
-        for (x = 0; x < MAX_WID ; x++)
+        for (int x = 0; x < MAX_WID ; x++)
         {
-            c_ptr = &cave[y][x];
+            cave_type *c_ptr = &cave[y][x];
             if (all || (c_ptr->info & CAVE_TEMP))
             {
-                f_ptr = &f_info[get_feat_mimic(c_ptr)];
+                feature_type *f_ptr = &f_info[get_feat_mimic(c_ptr)];
                 if (is_daytime())
                 {
                     if ( (c_ptr->info & CAVE_ROOM)
@@ -165,8 +160,7 @@ static void _apply_glow(bool all)
                         c_ptr->info &= ~CAVE_GLOW;
 
                         /* Darken "boring" features */
-                        if (!have_flag(f_ptr->flags, FF_REMEMBER))
-                            c_ptr->info &= ~CAVE_MARK;
+                        if (!have_flag(f_ptr->flags, FF_REMEMBER)) c_ptr->info &= ~CAVE_MARK;
                     }
                     else if (have_flag(f_ptr->flags, FF_ENTRANCE))
                     {
@@ -174,8 +168,7 @@ static void _apply_glow(bool all)
                         if (view_perma_grids) c_ptr->info |= CAVE_MARK;
                     }
                 }
-                if (!all)
-                    c_ptr->info &= ~CAVE_TEMP;
+                if (!all) c_ptr->info &= ~CAVE_TEMP;
             }
         }
     }
@@ -1654,11 +1647,9 @@ static s16b conv_terrain2feat[MAX_WILDERNESS];
  */
 void wilderness_gen_small(void)
 {
-    int i, j;
-
     /* To prevent stupid things */
-    for (i = 0; i < MAX_WID; i++)
-    for (j = 0; j < MAX_HGT; j++)
+    for (int j = 0; j < MAX_HGT; j++)
+    for (int i = 0; i < MAX_WID; i++)
     {
         cave[j][i].feat = feat_permanent;
     }
@@ -1667,8 +1658,8 @@ void wilderness_gen_small(void)
     process_dungeon_file("w_info.txt", 0);
 
     /* Fill the map */
-    for (i = 0; i < max_wild_x; i++)
-    for (j = 0; j < max_wild_y; j++)
+    for (int j = 0; j < max_wild_y; j++)
+    for (int i = 0; i < max_wild_x; i++)
     {
         if (wilderness[j][i].town && (wilderness[j][i].town != NO_TOWN))
         {

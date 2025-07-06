@@ -817,6 +817,10 @@ extern void py_get_display_char_attr(char *c, byte *a);
 extern bool floor_find_obj(int y, int x, int tval, int sval);
 
 /* cmd1.c */
+extern byte cycle[];
+extern byte chome[];
+extern byte find_prevdir;
+
 extern void death_scythe_miss(object_type *o_ptr, int hand, int mode);
 extern void rune_sword_kill(object_type *o_ptr, monster_race *r_ptr);
 extern bool attack_mode_allows_innate(int mode);

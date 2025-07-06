@@ -5785,13 +5785,13 @@ static int see_nothing(int dir, int y, int x)
 /*
  * Hack -- allow quick "cycling" through the legal directions
  */
-static byte cycle[] =
+byte cycle[] =
 { 1, 2, 3, 6, 9, 8, 7, 4, 1, 2, 3, 6, 9, 8, 7, 4, 1 };
 
 /*
  * Hack -- map each direction into the "middle" of the "cycle[]" array
  */
-static byte chome[] =
+byte chome[] =
 { 0, 8, 9, 10, 7, 0, 11, 6, 5, 4 };
 
 /*
@@ -5802,7 +5802,7 @@ static byte find_current;
 /*
  * The direction we came from
  */
-static byte find_prevdir;
+byte find_prevdir;
 
 /*
  * We are looking for open area
@@ -6434,18 +6434,15 @@ static int travel_cost(point_t pt)
 
 void travel_step(void)
 {
-    int dir = 0;
     int old_run = travel.run;
-    point_t pt_best = {0};
     int py_old = py;
     int px_old = px;
     bool err = FALSE;
-    errr delay_canceled = 0;
     bool door_hack = FALSE;
-    int travel_delay = travel.mode == TRAVEL_MODE_AUTOEXPLORE ? 50 : 0 ;
+    errr delay_canceled = 0;
+    int travel_delay = travel.mode == TRAVEL_MODE_AUTOEXPLORE ? 500 : 0 ;
 
     find_prevdir = travel.dir;
-
 
     if (travel.aborted || travel_abort())
     {
@@ -6467,15 +6464,18 @@ void travel_step(void)
 
     energy_use = 100;
 
-    int dirs[8] = { 2, 4, 6, 8, 1, 7, 9, 3 };
-    for (int i = 0; i < 8; i++)
-    {
-        int d = dirs[i];
-        point_t pt = point(px + ddx[d], py + ddy[d]);
+    int dir = 0;
+    point_t pt_best = {0};
+    int d0 = chome[travel.dir];
 
+    int dd[] = { 0, 1, -1, 2, -2, 3, -3, 4 };
+    for(int d = 0; d < 8; d++) {
+        int new_dir = cycle[d0 + dd[d]];
+        point_t pt = point(px + ddx[new_dir], py + ddy[new_dir]);
+        
         if (!dir || travel_cost(pt) < travel_cost(pt_best))
         {
-            dir = d;
+            dir = new_dir;
             pt_best = pt;
         }
     }

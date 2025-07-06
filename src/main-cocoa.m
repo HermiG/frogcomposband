@@ -1566,26 +1566,34 @@ static errr Term_xtra_cocoa(int n, int v)
             /* React to changes */
             return Term_xtra_cocoa_react();
         }
+
         case TERM_XTRA_DELAY:
         {
             if (v > 0)
             {
+                double seconds = v / 1000.0;
+                NSDate *end = [NSDate dateWithTimeIntervalSinceNow:seconds];
                 
-                double seconds = v / 1000.;
-                NSDate* date = [NSDate dateWithTimeIntervalSinceNow:seconds];
-                do
+                while ([end timeIntervalSinceNow] > 0)
                 {
-                    NSEvent* event;
-                    do
+                    NSEvent *event = [NSApp nextEventMatchingMask:NSEventMaskAny
+                                                        untilDate:end
+                                                           inMode:NSDefaultRunLoopMode
+                                                          dequeue:YES];
+                    
+                    if (event)
                     {
-                        event = [NSApp nextEventMatchingMask:-1 untilDate:date inMode:NSDefaultRunLoopMode dequeue:YES];
-                        if (event) send_event(event);
-                    } while (event);
-                } while ([date timeIntervalSinceNow] >= 0);
-                
-            }
-            
-            break;
+                      send_event(event);
+                      if ([event type] == NSEventTypeKeyDown)
+                      {
+                        disturb(0, 0);
+                        result = 1;
+                        break;
+                      }
+                  }
+              }
+          }
+          break;
         }
             
         case TERM_XTRA_FRESH:

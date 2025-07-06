@@ -6511,15 +6511,19 @@ void travel_step(void)
     }
 
     command_dir = dir;
-    if (p_ptr->confused && randint0(4)) /* paranoia - get_rep_dir() doesn't handle this situation well */
+    if ((p_ptr->confused || p_ptr->move_random) && randint0(4))
     {
         command_dir = ddd[randint0(8)];
         dir = command_dir;
         err = TRUE;
+
+        msg_print("You are confused!");
+        travel.aborted = TRUE;
     }
     else if (get_rep_dir(&dir, FALSE) == GET_DIR_RANDOM)
     {
         err = TRUE;
+        travel.aborted = TRUE;
     }
 
     travel.dir = dir;

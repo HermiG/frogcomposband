@@ -6396,9 +6396,9 @@ static bool travel_abort(void)
                 
                 if (is_hostile(m_ptr)) {
                     if(travel.mode == TRAVEL_MODE_AUTOEXPLORE)
-                        msg_format("You stop exploring upon seeing %s.", m_name);
+                        msg_format("You stop exploring upon seeing %s.\n", m_name);
                     else
-                        msg_format("You come to a halt upon seeing %s.", m_name);
+                        msg_format("You come to a halt upon seeing %s.\n", m_name);
                     return TRUE;
                 } else {
                     msg_format("You see %s and wave as you continue your travels.", m_name);
@@ -6417,7 +6417,7 @@ static bool travel_abort(void)
                 
                 if (is_hostile(m_ptr)) {
                     if(travel.run == 255) msg_format("Not with %s nearby.", m_name);
-                    else                  msg_format("You stop exploring upon seeing %s.", m_name);
+                    else                  msg_format("You stop exploring upon seeing %s.\n", m_name);
                     return TRUE;
                 }
             }

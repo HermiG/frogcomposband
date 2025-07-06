@@ -6440,6 +6440,7 @@ void travel_step(void)
     int py_old = py;
     int px_old = px;
     bool err = FALSE;
+    errr delay_canceled = 0;
     bool door_hack = FALSE;
     int travel_delay = travel.mode == TRAVEL_MODE_AUTOEXPLORE ? 50 : 0 ;
 
@@ -6487,18 +6488,26 @@ void travel_step(void)
     }
     else if (is_closed_door(cave[pt_best.y][pt_best.x].feat))
     {
-        door_hack = TRUE;
-        if (!easy_open)
+        if (easy_open) delay_canceled = Term_xtra(TERM_XTRA_DELAY, MAX(delay_time(), MIN(500, travel_delay * 6)));
+        else
         {
             disturb(0, 0);
             return;
-        } else Term_xtra(TERM_XTRA_DELAY, MAX(delay_time(), travel_delay * 6));
+        }
+        door_hack = TRUE;
     }
     else if (!player_can_enter(cave[pt_best.y][pt_best.x].feat, 0))
     {
         cmsg_print(TERM_L_UMBER, "You find the terrain entirely impassible.");
         disturb(0, 0);
         return;
+    }
+
+    if(delay_canceled) {
+      travel_cancel_fully();
+      msg_print("Canceled.");
+      flush();
+      return;
     }
 
     command_dir = dir;
@@ -6512,11 +6521,19 @@ void travel_step(void)
     {
         err = TRUE;
     }
+
     travel.dir = dir;
     move_player(dir, always_pickup, easy_disarm);
-    Term_xtra(TERM_XTRA_DELAY, MAX(delay_time(), travel_delay));
     Term_fresh();
     travel.run = old_run;
+    delay_canceled = Term_xtra(TERM_XTRA_DELAY, MAX(delay_time(), travel_delay));
+
+    if(delay_canceled) {
+      travel_cancel_fully();
+      msg_print("Canceled.");
+      flush();
+      return;
+    }
 
     if ((py == travel.y && px == travel.x) || (py == py_old && px == px_old && !door_hack) || err)
     {

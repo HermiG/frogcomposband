@@ -3785,6 +3785,9 @@ static byte _travel_flow_penalty(feature_type *f_ptr)
     {
         return 4;
     }
+    else if (have_flag(f_ptr->flags, FF_TREE)) {
+        return 1;
+    }
     else return 0;
 }
 

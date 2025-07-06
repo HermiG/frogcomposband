@@ -1459,6 +1459,7 @@ void do_cmd_disarm(void)
         else if (c_ptr->m_idx && p_ptr->riding != c_ptr->m_idx)
         {
             msg_print("There is a monster in the way!");
+            energy_use = 100;
             py_attack(y, x, 0);
         }
         else if (o_idx) more = do_cmd_disarm_chest(y, x, o_idx);

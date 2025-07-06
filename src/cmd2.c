@@ -1983,34 +1983,157 @@ bool _has_unmarked_floor(int y, int x)
     int count = 0;
     for (int dy = -1; dy <= 1; dy++)
         for (int dx = -1; dx <= 1; dx++)
-            if (in_bounds2(y+dy, x+dx) && !(cave[y+dy][x+dx].info & CAVE_MARK)) count++;
+            if (!(cave[y+dy][x+dx].info & CAVE_MARK)) count++;
     return (count > 0 && count < 8);
+}
+
+int _auto_explore_affinity(int y, int x) {
+  cave_type *c_ptr = &cave[y][x];
+  
+  // Autoexplore will not travel to grids with affinity less than 1
+  if(is_known_trap(c_ptr))                 return 0;
+  if(is_hidden_door(c_ptr))                return 0;
+  
+  // May as well check out this item while we're here
+  if(cave_have_flag_grid(c_ptr, FF_HAS_GOLD)) return 400;
+  if(cave_have_flag_grid(c_ptr, FF_HAS_ITEM)) return 500;
+  
+  // Autoexplore prefers to open doors
+  if(is_jammed_door(c_ptr->feat))          return 150; //
+  if(is_closed_door(c_ptr->feat))          return 200; //
+  if(cave_have_flag_grid(c_ptr, FF_OPEN))  return 120; // open door
+  
+  if(!p_ptr->levitation) {
+    if(cave_have_flag_grid(c_ptr, FF_DEEP))  return 20;
+    
+    if (cave_have_flag_grid(c_ptr, FF_SHALLOW) ||
+        cave_have_flag_grid(c_ptr, FF_SLUSH)   ||
+        cave_have_flag_grid(c_ptr, FF_SNOW)) return 40;
+  }
+  
+  if(cave_have_flag_grid(c_ptr, FF_WEB))   return 10;
+  if(cave_have_flag_grid(c_ptr, FF_TREE))  return 30;
+  if(cave_have_flag_grid(c_ptr, FF_PLANT)) return 90;
+  
+  return 100;
 }
 
 bool _travel_continue(bool initial)
 {
-    update_stuff();
-
-    int ty = -1, tx = -1;
-    int min_dist = cur_hgt + cur_wid;
-    for (int y = 0; y < cur_hgt; y++) {
-        for (int x = 0; x < cur_wid; x++) {
-            if (can_travel(y, x) && _has_unmarked_floor(y, x)) {
-                int dist = distance(py, px, y, x);
-                if (dist < min_dist) {
-                    min_dist = dist;
-                    ty = y;
-                    tx = x;
-                }
-            } 
+  update_stuff();
+  
+  int ty = -1, tx = -1;
+  int r, best_affinity = -1;
+  int d0 = chome[find_prevdir];
+  int debug_newdir = -1, debug_dy = 0, debug_dx = 0;
+  
+  // -1 : 0,1,2 => 0,1,2 => -1,0,1 : right, center, left
+  // +1 : 2,3,4 => 2,0,1 => 1,-1,0 : left, right, center
+  
+  // First try continuing in the same direction
+#if 0
+  for(int i = 1; i <= 3; i++) {
+    int new_dir = cycle[d0 + ((i+1)%3)-1]; // 1,2,3 => 1,2,0 => 0,1,-1 : center, left, right
+#else
+  int dd[] = { 0, 1, -1 }; // center, left, right
+  for(int i = 0; i < 3; i++) {
+    int new_dir = cycle[d0 + dd[i]];
+#endif
+    int y = py + ddy[new_dir];
+    int x = px + ddx[new_dir];
+    if (in_bounds(y, x) && can_travel(y, x) && _has_unmarked_floor(y, x)) {
+      int affinity = _auto_explore_affinity(y, x);
+      if(affinity > best_affinity) {
+        best_affinity = affinity;
+        ty = y;
+        tx = x;
+        debug_newdir = new_dir;
+        debug_dy = ddy[new_dir];
+        debug_dx = ddx[new_dir];
+      }
+    }
+  }
+  //if (best_affinity > 0) msg_format("prevdir: %d, newdir: %d, dy: %+d, dx: %+d\n", find_prevdir, debug_newdir, debug_dy, debug_dx);
+  if (best_affinity > 0) goto done;
+  
+  // Then check nearby tiles
+  // Autoexplore has an affinity for certain grids like doors
+  for(r = 1; r <= 3; r++) {
+    for (int dy = -r; dy <= r; dy+=2*r) {
+      for (int dx = -r; dx <= r; dx++) {
+        int y = py+dy, x = px+dx;
+        if (in_bounds(y, x) && can_travel(y, x) && _has_unmarked_floor(y, x)) {
+          int affinity = _auto_explore_affinity(y, x);
+          if(affinity > best_affinity) {
+            best_affinity = affinity;
+            ty = y;
+            tx = x;
+          }
         }
+      }
     }
-    if (ty != -1 && tx != -1) {
-        travel_begin(TRAVEL_MODE_AUTOEXPLORE, tx, ty);
-        if(initial) travel.run = 255;
-        return TRUE;
+    for (int dx = -r; dx <= r; dx+=2*r) {
+      for (int dy = -r+1; dy <= r-1; dy++) {
+        int y = py+dy, x = px+dx;
+        if (in_bounds(y, x) && can_travel(y, x) && _has_unmarked_floor(y, x)) {
+          int affinity = _auto_explore_affinity(y, x);
+          if(affinity > best_affinity) {
+            best_affinity = affinity;
+            ty = y;
+            tx = x;
+          }
+        }
+      }
     }
-    return FALSE;
+  }
+  if (best_affinity > 0) goto done;
+  
+  // Then check a larger radius around the player
+  for(; r < cur_hgt; r++) {
+    for (int dy = -r; dy <= r; dy+=2*r) {
+      int y = py+dy;
+      if (!in_bounds(y, px)) continue;
+      for (int x = MAX(1, px-r); x <= MIN(cur_wid-2, px+r); x++) {
+        if (can_travel(y, x) && _has_unmarked_floor(y, x)) {
+          ty = y;
+          tx = x;
+          goto done;
+        }
+      }
+    }
+    for (int dx = -r; dx <= r; dx+=2*r) {
+      int x = px+dx;
+      if (!in_bounds(py, x)) continue;
+      for (int y = MAX(1, py-r); y <= MIN(cur_hgt-2, py+r); y++) {
+        if (can_travel(y, x) && _has_unmarked_floor(y, x)) {
+          ty = y;
+          tx = x;
+          goto done;
+        }
+      }
+    }
+  }
+  
+  // Nothing nearby, search the entire level
+  int min_dist = cur_hgt + cur_wid;
+  for (int y = 1; y < cur_hgt-1; y++) {
+    for (int x = 1; x < cur_wid-1; x++) {
+      if (can_travel(y, x) && _has_unmarked_floor(y, x)) {
+        int dist = distance(py, px, y, x);
+        if (dist < min_dist) {
+          min_dist = dist;
+          ty = y;
+          tx = x;
+        }
+      }
+    }
+  }
+  if (ty < 0 || tx < 0) return FALSE;
+  
+done:;
+  travel_begin(TRAVEL_MODE_AUTOEXPLORE, tx, ty);
+  if(initial) travel.run = 255;
+  return TRUE;
 }
 
 
@@ -3412,12 +3535,7 @@ void travel_begin(int mode, int x, int y)
         return;
     }
 
-    feature_type *f_ptr = &f_info[cave[y][x].feat];
-
-    if ((cave[y][x].info & CAVE_MARK) &&
-        (have_flag(f_ptr->flags, FF_WALL) ||
-         have_flag(f_ptr->flags, FF_CAN_DIG) ||
-        (have_flag(f_ptr->flags, FF_DOOR) && cave[y][x].mimic)))
+    if (!can_travel(y, x))
     {
         msg_print("You cannot travel there!");
         travel_cancel();

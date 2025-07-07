@@ -2327,12 +2327,11 @@ static BOOL send_event(NSEvent *event)
         case NSLeftMouseUp:
         case NSRightMouseUp:
         {
-            AngbandContext *angbandContext = [[[event window] contentView] angbandContext];
-            AngbandContext *mainAngbandContext = angband_term[0]->data;
+            AngbandContext *angbandContext = angband_term[0]->data;
             
-            if (mainAngbandContext->primaryWindow && [[event window] windowNumber] == [mainAngbandContext->primaryWindow windowNumber])
+            if ([event window] == angbandContext->primaryWindow)
             {
-              int cols, rows, x, y;
+              int cols, rows;
               Term_get_size(&cols, &rows);
               
               NSPoint p = [event locationInWindow];
@@ -2340,16 +2339,17 @@ static BOOL send_event(NSEvent *event)
               NSRect contentRect = [[event window] contentRectForFrameRect:[[event window] frame]];
               
               // Coordinate conversion: Cocoa origin is bottom-left, Angband is top-left
-              x = (p.x - angbandContext->borderSize.width) / tileSize.width;
-              y = ((contentRect.size.height - p.y) - angbandContext->borderSize.height) / tileSize.height;
+              int x = (p.x - angbandContext->borderSize.width) / tileSize.width;
+              int y = ((contentRect.size.height - p.y) - angbandContext->borderSize.height) / tileSize.height;
               
-              // Clamp to bounds
-              mouse_cursor_x = MAX(0, MIN(x, cols - 1));
-              mouse_cursor_y = MAX(0, MIN(y, rows - 1));
-              
-              if([event type] == NSLeftMouseUp)  mouse_cursor_targeting_state = MOUSE_CLICK_LEFT;
-              if([event type] == NSRightMouseUp) mouse_cursor_targeting_state = MOUSE_CLICK_RIGHT;
-              Term_keypress('`');
+              if(y > 0 && x >= 0 && y < rows-1 && x < cols-13) {
+                mouse_cursor_x = x;
+                mouse_cursor_y = y;
+                
+                if([event type] == NSLeftMouseUp)  mouse_cursor_targeting_state = MOUSE_CLICK_LEFT;
+                if([event type] == NSRightMouseUp) mouse_cursor_targeting_state = MOUSE_CLICK_RIGHT;
+                Term_keypress('`');
+              }
           }
           
           [NSApp sendEvent:event]; // Pass event through so other UI continues to work

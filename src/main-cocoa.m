@@ -973,7 +973,7 @@ static NSMenuItem *superitem(NSMenuItem *self)
     if (! primaryWindow)
     {
         // this has to be done after the font is set, which it already is in term_init_cocoa()
-        CGFloat width = self->cols * tileSize.width + borderSize.width * 2.0;
+        CGFloat width  = self->cols * tileSize.width  + borderSize.width  * 2.0;
         CGFloat height = self->rows * tileSize.height + borderSize.height * 2.0;
         NSRect contentRect = NSMakeRect( 0.0, 0.0, width, height );
       
@@ -986,13 +986,12 @@ static NSMenuItem *superitem(NSMenuItem *self)
           NSUInteger styleMask = NSWindowStyleMaskUtilityWindow | NSWindowStyleMaskTitled | NSWindowStyleMaskResizable | NSWindowStyleMaskMiniaturizable | NSWindowStyleMaskClosable;
           NSPanel *panel = [[NSPanel alloc] initWithContentRect:contentRect styleMask: styleMask backing:NSBackingStoreBuffered defer:YES];
           
-          // Prevent panel from hiding when app loses focus
-          [panel setHidesOnDeactivate:NO];
+          [panel setBecomesKeyOnlyIfNeeded:YES]; // Prevent panel from becoming key unless explicitly selected
+          [panel setHidesOnDeactivate:NO]; // Prevent panel from hiding when app loses focus
           
           primaryWindow = (NSWindow *)panel;
         }
 
-        /* Not to be released when closed */
         [primaryWindow setReleasedWhenClosed:NO];
         [primaryWindow setExcludedFromWindowsMenu: YES]; // we're using custom window menu handling
 
@@ -2238,8 +2237,6 @@ static BOOL send_event(NSEvent *event)
         {
           if ([[NSApp mainMenu] performKeyEquivalent:event]) break;
           
-          [NSCursor setHiddenUntilMouseMoves:YES];
-          
           unsigned modifiers = [event modifierFlags];
           int mc = !!(modifiers & NSControlKeyMask);
           int ms = !!(modifiers & NSShiftKeyMask);
@@ -2251,6 +2248,13 @@ static BOOL send_event(NSEvent *event)
           char ch = 0;
           
           int vk = [event keyCode]; // Cocoa virtual key code
+          
+          if(vk == kVK_F11) {
+            [[NSApp mainWindow] toggleFullScreen:nil];
+            break;
+          }
+          
+          [NSCursor setHiddenUntilMouseMoves:YES];
           
           // -----------------------
           // Step 2: Map Cocoa key codes for known special keys
@@ -2683,25 +2687,30 @@ static void hook_quit(const char * str)
 
 - (void)prepareWindowsMenu
 {
-    // get the window menu with default items and add a separator and item for the main window
     NSMenu *windowsMenu = [[NSApplication sharedApplication] windowsMenu];
-    [windowsMenu addItem: [NSMenuItem separatorItem]];
-
-    NSMenuItem *angbandItem = [[NSMenuItem alloc] initWithTitle: @"FrogComposband" action: @selector(selectWindow:) keyEquivalent: @"0"];
-    [angbandItem setTarget: self];
-    [angbandItem setTag: AngbandWindowMenuItemTagBase];
-    [windowsMenu addItem: angbandItem];
+    
+    [windowsMenu addItem:[NSMenuItem separatorItem]];
+    
+    NSMenuItem *angbandItem = [[NSMenuItem alloc] initWithTitle:@"FrogComposband"
+                                                     action:@selector(selectWindow:)
+                                              keyEquivalent:@"0"];
+    
+    [angbandItem setTarget:self];
+    [angbandItem setTag:AngbandWindowMenuItemTagBase];
+    [windowsMenu addItem:angbandItem];
     [angbandItem release];
-
-    // add items for the additional term windows
+    
     for( NSInteger i = 1; i < ANGBAND_TERM_MAX; i++ )
     {
-        NSString *title = [NSString stringWithFormat: @"Term %ld", (long)i];
-        NSString *key   = [NSString stringWithFormat: @"%ld", (long)i];
-        NSMenuItem *windowItem = [[NSMenuItem alloc] initWithTitle: title action: @selector(selectWindow:) keyEquivalent: key];
-        [windowItem setTarget: self];
-        [windowItem setTag: AngbandWindowMenuItemTagBase + i];
-        [windowsMenu addItem: windowItem];
+        NSString *title = [NSString stringWithFormat:@"Term %ld", (long)i];
+        NSString *key   = [NSString stringWithFormat:@"%ld", (long)i];
+        NSMenuItem *windowItem = [[NSMenuItem alloc] initWithTitle:title
+                                                            action:@selector(selectWindow:)
+                                                     keyEquivalent:key];
+        
+        [windowItem setTarget:self];
+        [windowItem setTag:AngbandWindowMenuItemTagBase + i];
+        [windowsMenu addItem:windowItem];
         [windowItem release];
     }
 }

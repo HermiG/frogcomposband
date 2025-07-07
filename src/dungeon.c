@@ -4428,6 +4428,13 @@ static void _dispatch_command(int old_now_turn)
           if (!p_ptr->wild_mode) do_cmd_auto_explore();
           break;
         }
+        
+        /* Debug */
+        case 'X':
+        {
+            msg_format("cur_hgt: %d, cur_wid: %d\n", cur_hgt, cur_wid);
+        break;
+        }
 
         case 'J':
         {

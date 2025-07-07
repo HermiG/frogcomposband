@@ -2697,7 +2697,8 @@ static void hook_quit(const char * str)
     for( NSInteger i = 1; i < ANGBAND_TERM_MAX; i++ )
     {
         NSString *title = [NSString stringWithFormat: @"Term %ld", (long)i];
-        NSMenuItem *windowItem = [[NSMenuItem alloc] initWithTitle: title action: @selector(selectWindow:) keyEquivalent: @""];
+        NSString *key   = [NSString stringWithFormat: @"%ld", (long)i];
+        NSMenuItem *windowItem = [[NSMenuItem alloc] initWithTitle: title action: @selector(selectWindow:) keyEquivalent: key];
         [windowItem setTarget: self];
         [windowItem setTag: AngbandWindowMenuItemTagBase + i];
         [windowsMenu addItem: windowItem];

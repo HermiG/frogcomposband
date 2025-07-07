@@ -126,37 +126,44 @@
                 <menuItem title="Animation speed" tag="150" id="284">
                     <menu key="submenu" title="Animation speed" id="285">
                         <items>
-                            <menuItem title="Infinite (no animation)" keyEquivalent="1" id="287">
+                            <menuItem title="Infinite (no animation)" id="287">
+                                <modifierMask key="keyEquivalentModifierMask"/>
                                 <connections>
                                     <action selector="setRefreshRate:" target="-1" id="294"/>
                                 </connections>
                             </menuItem>
-                            <menuItem title="60 fps" tag="60" keyEquivalent="2" id="288">
+                            <menuItem title="60 fps" tag="60" id="288">
+                                <modifierMask key="keyEquivalentModifierMask"/>
                                 <connections>
                                     <action selector="setRefreshRate:" target="-1" id="296"/>
                                 </connections>
                             </menuItem>
-                            <menuItem title="50 fps" tag="50" keyEquivalent="3" id="289">
+                            <menuItem title="50 fps" tag="50" id="289">
+                                <modifierMask key="keyEquivalentModifierMask"/>
                                 <connections>
                                     <action selector="setRefreshRate:" target="-1" id="297"/>
                                 </connections>
                             </menuItem>
-                            <menuItem title="40 fps" tag="40" keyEquivalent="4" id="290">
+                            <menuItem title="40 fps" tag="40" id="290">
+                                <modifierMask key="keyEquivalentModifierMask"/>
                                 <connections>
                                     <action selector="setRefreshRate:" target="-1" id="298"/>
                                 </connections>
                             </menuItem>
-                            <menuItem title="30 fps" tag="30" keyEquivalent="5" id="291">
+                            <menuItem title="30 fps" tag="30" id="291">
+                                <modifierMask key="keyEquivalentModifierMask"/>
                                 <connections>
                                     <action selector="setRefreshRate:" target="-1" id="299"/>
                                 </connections>
                             </menuItem>
-                            <menuItem title="20 fps" tag="20" keyEquivalent="6" id="292">
+                            <menuItem title="20 fps" tag="20" id="292">
+                                <modifierMask key="keyEquivalentModifierMask"/>
                                 <connections>
                                     <action selector="setRefreshRate:" target="-1" id="300"/>
                                 </connections>
                             </menuItem>
-                            <menuItem title="10 fps" tag="10" keyEquivalent="7" id="293">
+                            <menuItem title="10 fps" tag="10" id="293">
+                                <modifierMask key="keyEquivalentModifierMask"/>
                                 <connections>
                                     <action selector="setRefreshRate:" target="-1" id="301"/>
                                 </connections>

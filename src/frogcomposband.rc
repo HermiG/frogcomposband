@@ -1,45 +1,53 @@
 /* File: angband.rc */
 
+#include <windows.h>
+
+10 ACCELERATORS
+BEGIN
+    VK_F1,  211, VIRTKEY
+    VK_F2,  212, VIRTKEY
+    VK_F3,  213, VIRTKEY
+    VK_F4,  214, VIRTKEY
+    VK_F4,  215, VIRTKEY
+    VK_F6,  216, VIRTKEY
+    VK_F7,  217, VIRTKEY
+    
+    VK_F8,  110, VIRTKEY
+    VK_F9,  101, VIRTKEY
+    VK_F11, 200, VIRTKEY
+END
+
 ANGBAND MENU
 {
     POPUP "&File"
     {
         MENUITEM "&New", 100
-        MENUITEM "&Resume", 101
+        MENUITEM "&Resume\tF9", 101
         MENUITEM "&Open...", 102
         MENUITEM SEPARATOR
-        MENUITEM "&Save", 110
+        MENUITEM "&Save\tF8", 110
         MENUITEM SEPARATOR
         MENUITEM "E&xit", 130
     }
 
     POPUP "&Window"
     {
+	    MENUITEM "&Fullscreen\tF11", 200
+		
+	    MENUITEM SEPARATOR
+
         POPUP "&Visibility"
         {
-            MENUITEM "Term-0 window", 200
-            MENUITEM "Term-1 window", 201
-            MENUITEM "Term-2 window", 202
-            MENUITEM "Term-3 window", 203
-            MENUITEM "Term-4 window", 204
-            MENUITEM "Term-5 window", 205
-            MENUITEM "Term-6 window", 206
-            MENUITEM "Term-7 window", 207
+            MENUITEM "Term-1 window\tF1", 211
+            MENUITEM "Term-2 window\tF2", 212
+            MENUITEM "Term-3 window\tF3", 213
+            MENUITEM "Term-4 window\tF4", 214
+            MENUITEM "Term-5 window\tF5", 215
+            MENUITEM "Term-6 window\tF6", 216
+            MENUITEM "Term-7 window\tF7", 217
         }
 
-        POPUP "&Font"
-        {
-            MENUITEM "Term-0 window", 210
-            MENUITEM "Term-1 window", 211
-            MENUITEM "Term-2 window", 212
-            MENUITEM "Term-3 window", 213
-            MENUITEM "Term-4 window", 214
-            MENUITEM "Term-5 window", 215
-            MENUITEM "Term-6 window", 216
-            MENUITEM "Term-7 window", 217
-        }
-
-        POPUP "Keep on top"
+        POPUP "&Keep on top"
         {
             MENUITEM "Term-1 window", 221
             MENUITEM "Term-2 window", 222
@@ -50,9 +58,7 @@ ANGBAND MENU
             MENUITEM "Term-7 window", 227
         }
 
-        MENUITEM SEPARATOR
-/*
-        POPUP "Bizarre Display"
+        POPUP "Font"
         {
             MENUITEM "Term-0 window", 230
             MENUITEM "Term-1 window", 231
@@ -63,8 +69,10 @@ ANGBAND MENU
             MENUITEM "Term-6 window", 236
             MENUITEM "Term-7 window", 237
         }
-*/
-        POPUP "Increase Tile Width"
+
+        MENUITEM SEPARATOR
+/*
+        POPUP "Bizarre Display"
         {
             MENUITEM "Term-0 window", 240
             MENUITEM "Term-1 window", 241
@@ -75,8 +83,8 @@ ANGBAND MENU
             MENUITEM "Term-6 window", 246
             MENUITEM "Term-7 window", 247
         }
-
-        POPUP "Decrease Tile Width"
+*/
+        POPUP "Increase Tile Width"
         {
             MENUITEM "Term-0 window", 250
             MENUITEM "Term-1 window", 251
@@ -88,7 +96,7 @@ ANGBAND MENU
             MENUITEM "Term-7 window", 257
         }
 
-        POPUP "Increase Tile Height"
+        POPUP "Decrease Tile Width"
         {
             MENUITEM "Term-0 window", 260
             MENUITEM "Term-1 window", 261
@@ -100,7 +108,7 @@ ANGBAND MENU
             MENUITEM "Term-7 window", 267
         }
 
-        POPUP "Decrease Tile Height"
+        POPUP "Increase Tile Height"
         {
             MENUITEM "Term-0 window", 270
             MENUITEM "Term-1 window", 271
@@ -110,6 +118,18 @@ ANGBAND MENU
             MENUITEM "Term-5 window", 275
             MENUITEM "Term-6 window", 276
             MENUITEM "Term-7 window", 277
+        }
+
+        POPUP "Decrease Tile Height"
+        {
+            MENUITEM "Term-0 window", 280
+            MENUITEM "Term-1 window", 281
+            MENUITEM "Term-2 window", 282
+            MENUITEM "Term-3 window", 283
+            MENUITEM "Term-4 window", 284
+            MENUITEM "Term-5 window", 285
+            MENUITEM "Term-6 window", 286
+            MENUITEM "Term-7 window", 287
         }
     }
 

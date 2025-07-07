@@ -6817,7 +6817,7 @@ printf "%s\n" "#define USE_WIN 1" >>confdefs.h
 
     CFLAGS="${CFLAGS} -DWINDOWS -static -Iwin/include"
     LDFLAGS="${LDFLAGS} -Lwin/lib"
-    LIBS="${LIBS} -mwindows -lwinmm"
+    LIBS="${LIBS} -mwindows -lwinmm -ldwmapi"
     MAINFILES="\$(WINMAINFILES)"
 fi
 

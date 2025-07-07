@@ -276,7 +276,7 @@ if test "$enable_win" = "yes"; then
     AC_DEFINE(USE_WIN, 1, [Define to 1 if using the Windows interface.])
     CFLAGS="${CFLAGS} -DWINDOWS -static -Iwin/include"
     LDFLAGS="${LDFLAGS} -Lwin/lib"
-    LIBS="${LIBS} -mwindows -lwinmm"
+    LIBS="${LIBS} -mwindows -lwinmm -ldwmapi"
 dnl LIBS="${LIBS} -mwindows -lwinmm -lzlib -llibpng -lmsimg32"
 dnl Note complete replacement of all main files
     MAINFILES="\$(WINMAINFILES)"

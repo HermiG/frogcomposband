@@ -581,12 +581,16 @@ static int oldx, oldy;
 static bool cursor_hidden = FALSE;
 
 /*
+* Skip resizing the main terminal window.
+* Used to smooth fullscreen transitions and toggling menu bar.
+*/
+static bool skip_resize = FALSE;
+
+/*
  * The "simple" color values
  *
  * See "main-ibm.c" for original table information
- *
  * The entries below are taken from the "color bits" defined above.
- *
  * Note that many of the choices below suck, but so do crappy monitors.
  */
 static BYTE win_pal[256] =
@@ -2661,7 +2665,7 @@ static void check_for_save_file(LPSTR cmd_line)
     quit(NULL);
 }
 
-void EnableDarkMode(HWND hWnd, BOOL enable)
+void EnableDarkMode(HWND hWnd, int enable)
 {
     DwmSetWindowAttribute(hWnd, DWMWA_USE_IMMERSIVE_DARK_MODE, &enable, sizeof(enable));
 }
@@ -2672,7 +2676,7 @@ void EnableDarkMode(HWND hWnd, BOOL enable)
 static HMENU g_hMenuSaved = NULL;
 static DWORD g_mainStyle, g_mainExStyle;
 static RECT  g_mainWindowRect;
-static BOOL  g_isFullscreen = FALSE;
+static bool  g_isFullscreen = FALSE;
 
 void HideAppMenu(HWND hwnd)
 {
@@ -2687,19 +2691,12 @@ void ShowAppMenu(HWND hwnd)
     DrawMenuBar(hwnd);
 }
 
-void StartTracking(HWND hwnd)
-{
-    TRACKMOUSEEVENT tme = { sizeof(tme) };
-    tme.dwFlags = TME_LEAVE;
-    tme.hwndTrack = hwnd;
-    TrackMouseEvent(&tme);
-}
-
 /*
  * Toggle fullscreen
  */
 void toggle_fullscreen(void)
 {
+  skip_resize = TRUE;
   if (!g_isFullscreen)
   {
     // 1) Save old style & position
@@ -2708,7 +2705,6 @@ void toggle_fullscreen(void)
     GetWindowRect(hwndMain, &g_mainWindowRect);
     
     HideAppMenu(hwndMain);
-    StartTracking(hwndMain);
     
     // 2) Remove window chrome
     SetWindowLong(hwndMain, GWL_STYLE,
@@ -2733,7 +2729,6 @@ void toggle_fullscreen(void)
   else
   {
     ShowAppMenu(hwndMain);
-    StartTracking(hwndMain);
     
     // Restore
     SetWindowLong(hwndMain, GWL_STYLE,   g_mainStyle);
@@ -2747,6 +2742,7 @@ void toggle_fullscreen(void)
     
     g_isFullscreen = FALSE;
   }
+  skip_resize = FALSE;
 }
 
 /*
@@ -3378,7 +3374,7 @@ static bool process_keydown(WPARAM wParam, LPARAM lParam)
 
 LRESULT FAR PASCAL AngbandWndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
-    static BOOL menuVisible = TRUE;
+    static bool menuVisible = TRUE;
     term_data *td = (term_data*)GetWindowLongPtrW(hWnd, GWLP_USERDATA);
 
     /* Process message */
@@ -3475,26 +3471,18 @@ LRESULT FAR PASCAL AngbandWndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lP
             int y = HIWORD(lParam);
             if (!menuVisible && y <= 10)
             {
+                skip_resize = g_isFullscreen;
                 ShowAppMenu(hWnd);
                 menuVisible = TRUE;
             }
             else if (g_isFullscreen && menuVisible && y > GetSystemMetrics(SM_CYMENU))
             {
+                skip_resize = TRUE;
                 HideAppMenu(hWnd);
+                skip_resize = FALSE;
                 menuVisible = FALSE;
             }
 
-            break;
-        }
-		
-        case WM_MOUSELEAVE:
-        {
-            if (!menuVisible)
-            {
-                ShowAppMenu(hWnd);
-                menuVisible = TRUE;
-            }
-            //StartTracking(hWnd);
             break;
         }
 		
@@ -3658,6 +3646,7 @@ LRESULT FAR PASCAL AngbandWndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lP
             if (!td) return 1; // This message was sent before WM_NCCREATE
             if (!td->w) return 1; // This message was sent from inside CreateWindowEx
             if (td->size_hack) return 1; //This message was sent from WM_SIZE
+            if (skip_resize) return 1;
 
             switch (wParam)
             {

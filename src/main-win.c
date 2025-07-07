@@ -3450,7 +3450,7 @@ LRESULT FAR PASCAL AngbandWndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lP
         case WM_LBUTTONUP:
         case WM_RBUTTONUP:
         {
-            if (td && hWnd == hwndMain) {
+            if (td && hWnd == hwndMain && !(mouse_cursor_targeting_state & MOUSE_CLICK_IGNORE)) {
                 int x = LOWORD(lParam) / td->tile_wid);
                 int y = HIWORD(lParam) / td->tile_hgt, td->rows - 1));
 

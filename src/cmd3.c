@@ -1683,9 +1683,12 @@ void do_cmd_list_monsters(int mode)
 
     if (display_rect.cx > monster_list_width) display_rect.cx = monster_list_width;
 
+  
+    mouse_cursor_targeting_state = MOUSE_CLICK_IGNORE;
     if (list->ct_total) _list_monsters_aux(list, display_rect, mode);
     else msg_print("You see no visible monsters.");
-
+    mouse_cursor_targeting_state = MOUSE_CLICK_NONE;
+  
     _mon_list_free(list);
 }
 
@@ -2039,6 +2042,7 @@ static int _draw_obj_list(_obj_list_ptr list, int top, rect_t rect)
 
 void do_cmd_list_objects(void)
 {
+    mouse_cursor_targeting_state = MOUSE_CLICK_IGNORE;
     _obj_list_ptr list = _create_obj_list();
     rect_t display_rect = ui_menu_rect();
 
@@ -2363,6 +2367,7 @@ void do_cmd_list_objects(void)
     list_stairs = stairs_on; /* Keep old default */
 
     if(switch_to_list_monsters) do_cmd_list_monsters(0);
+    mouse_cursor_targeting_state = MOUSE_CLICK_NONE;
 }
 
 void _fix_object_list_aux(void)

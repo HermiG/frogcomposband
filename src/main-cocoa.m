@@ -2329,7 +2329,7 @@ static BOOL send_event(NSEvent *event)
         {
             AngbandContext *angbandContext = angband_term[0]->data;
             
-            if ([event window] == angbandContext->primaryWindow)
+            if ([event window] == angbandContext->primaryWindow && !(mouse_cursor_targeting_state & MOUSE_CLICK_IGNORE))
             {
               int cols, rows;
               Term_get_size(&cols, &rows);

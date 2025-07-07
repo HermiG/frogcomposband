@@ -2730,37 +2730,31 @@ static void hook_quit(const char * str)
  *  Send a command to Angband via a menu item. This places the appropriate key down events into the queue
  *  so that it seems like the user pressed them (instead of trying to use the term directly).
  */
-- (void)sendAngbandCommand: (id)sender
+- (void)sendAngbandCommand:(id)sender
 {
-    NSMenuItem *menuItem = (NSMenuItem *)sender;
-    NSString *command = [self.commandMenuTagMap objectForKey: @([menuItem tag])];
-    NSInteger windowNumber = [((AngbandContext *)angband_term[0]->data)->primaryWindow windowNumber];
-
-    // send a \ to bypass keymaps
-    NSEvent *escape = [NSEvent keyEventWithType: NSKeyDown
-                                       location: NSZeroPoint
-                                  modifierFlags: 0
-                                      timestamp: 0.0
-                                   windowNumber: windowNumber
-                                        context: nil
-                                     characters: @"\\"
-                    charactersIgnoringModifiers: @"\\"
-                                      isARepeat: NO
-                                        keyCode: 0];
-    [[NSApplication sharedApplication] postEvent: escape atStart: NO];
-
-    // send the actual command (from the original command set)
-    NSEvent *keyDown = [NSEvent keyEventWithType: NSKeyDown
-                                        location: NSZeroPoint
-                                   modifierFlags: 0
-                                       timestamp: 0.0
-                                    windowNumber: windowNumber
-                                         context: nil
-                                      characters: command
-                     charactersIgnoringModifiers: command
-                                       isARepeat: NO
-                                         keyCode: 0];
-    [[NSApplication sharedApplication] postEvent: keyDown atStart: NO];
+  NSMenuItem *menuItem   = (NSMenuItem *)sender;
+  NSString *command      = self.commandMenuTagMap[@(menuItem.tag)];
+  NSInteger windowNumber = [((AngbandContext *)angband_term[0]->data)->primaryWindow windowNumber];
+  
+  unichar buffer[1];
+  for (NSUInteger i = 0; i < command.length; i++) {
+    buffer[0] = [command characterAtIndex:i];
+    NSString *charStr = [[NSString alloc] initWithCharacters:buffer length:1];
+    
+    NSEvent *event = [NSEvent keyEventWithType:NSKeyDown
+                                      location:NSZeroPoint
+                                 modifierFlags:0
+                                     timestamp:0.0
+                                  windowNumber:windowNumber
+                                       context:nil
+                                    characters:charStr
+                   charactersIgnoringModifiers:charStr
+                                     isARepeat:NO
+                                       keyCode:0];
+    
+    [[NSApplication sharedApplication] postEvent:event atStart:NO];
+    [charStr release];
+  }
 }
 
 /**
@@ -2768,39 +2762,40 @@ static void hook_quit(const char * str)
  */
 - (void)prepareCommandMenu
 {
-    NSString *commandMenuPath = [[NSBundle mainBundle] pathForResource: @"CommandMenu" ofType: @"plist"];
-    NSArray *commandMenuItems = [[NSArray alloc] initWithContentsOfFile: commandMenuPath];
-    NSMutableDictionary *angbandCommands = [[NSMutableDictionary alloc] init];
-    NSInteger tagOffset = 0;
-
-    for( NSDictionary *item in commandMenuItems )
-    {
-        BOOL useShiftModifier = [[item valueForKey: @"ShiftModifier"] boolValue];
-        BOOL useOptionModifier = [[item valueForKey: @"OptionModifier"] boolValue];
-        NSUInteger keyModifiers = NSCommandKeyMask;
-        keyModifiers |= (useShiftModifier) ? NSShiftKeyMask : 0;
-        keyModifiers |= (useOptionModifier) ? NSAlternateKeyMask : 0;
-
-        NSString *title = [item valueForKey: @"Title"];
-        NSString *key = [item valueForKey: @"KeyEquivalent"];
-        NSMenuItem *menuItem = [[NSMenuItem alloc] initWithTitle: title action: @selector(sendAngbandCommand:) keyEquivalent: key];
-        [menuItem setTarget: self];
-        [menuItem setKeyEquivalentModifierMask: keyModifiers];
-        [menuItem setTag: AngbandCommandMenuItemTagBase + tagOffset];
-        [self.commandMenu addItem: menuItem];
-        [menuItem release];
-
-        NSString *angbandCommand = [item valueForKey: @"AngbandCommand"];
-        [angbandCommands setObject: angbandCommand forKey: @([menuItem tag])];
-        tagOffset++;
-    }
-
-    [commandMenuItems release];
-
-    NSDictionary *safeCommands = [[NSDictionary alloc] initWithDictionary: angbandCommands];
-    self.commandMenuTagMap = safeCommands;
-    [safeCommands release];
-    [angbandCommands release];
+  NSString *commandMenuPath = [[NSBundle mainBundle] pathForResource:@"CommandMenu" ofType:@"plist"];
+  NSArray *commandMenuItems = [[NSArray alloc] initWithContentsOfFile:commandMenuPath];
+  NSMutableDictionary *angbandCommands = [[NSMutableDictionary alloc] init];
+  NSInteger tagOffset = 0;
+  
+  for( NSDictionary *item in commandMenuItems )
+  {
+    NSUInteger modifiers = NSCommandKeyMask;
+    modifiers |= [[item valueForKey:@"ShiftModifier"]  boolValue] ? NSShiftKeyMask     : 0;
+    modifiers |= [[item valueForKey:@"OptionModifier"] boolValue] ? NSAlternateKeyMask : 0;
+    
+    NSMenuItem *menuItem = [[NSMenuItem alloc] initWithTitle:[item valueForKey:@"Title"]
+                                                      action:@selector(sendAngbandCommand:)
+                                               keyEquivalent:[item valueForKey:@"KeyEquivalent"]];
+    
+    [menuItem setTarget:self];
+    [menuItem setKeyEquivalentModifierMask:modifiers];
+    [menuItem setTag:AngbandCommandMenuItemTagBase + tagOffset];
+    [self.commandMenu addItem:menuItem];
+    [menuItem release];
+    
+    // Replace every instance of '«' with ESCAPE (ASCII 27) to send Escape keypresses
+    NSString *escapedCommand = [[item valueForKey:@"AngbandCommand"]
+                                stringByReplacingOccurrencesOfString:@"«"
+                                                          withString:[NSString stringWithFormat:@"%c", ESCAPE]];
+    
+    [angbandCommands setObject: escapedCommand forKey: @([menuItem tag])];
+    tagOffset++;
+  }
+  
+  [commandMenuItems release];
+  
+  self.commandMenuTagMap = [[[NSDictionary alloc] initWithDictionary:angbandCommands] autorelease];
+  [angbandCommands release];
 }
 
 - (void)awakeFromNib

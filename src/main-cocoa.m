@@ -2343,12 +2343,16 @@ static BOOL send_event(NSEvent *event)
               int y = ((contentRect.size.height - p.y) - angbandContext->borderSize.height) / tileSize.height;
               
               if(y > 0 && x >= 0 && y < rows-1 && x < cols-13) {
-                mouse_cursor_x = x;
-                mouse_cursor_y = y;
+                point_t pt = ui_xy_to_cave_pt(x, y);
                 
-                if([event type] == NSLeftMouseUp)  mouse_cursor_targeting_state = MOUSE_CLICK_LEFT;
-                if([event type] == NSRightMouseUp) mouse_cursor_targeting_state = MOUSE_CLICK_RIGHT;
-                Term_keypress('`');
+                if (panel_contains(pt.y, pt.x)) {
+                  mouse_cursor_x = x;
+                  mouse_cursor_y = y;
+                  
+                  if([event type] == NSLeftMouseUp)  mouse_cursor_targeting_state = MOUSE_CLICK_LEFT;
+                  if([event type] == NSRightMouseUp) mouse_cursor_targeting_state = MOUSE_CLICK_RIGHT;
+                  Term_keypress('`');
+                }
               }
           }
           

@@ -15,6 +15,7 @@ BEGIN
     VK_F8,  110, VIRTKEY
     VK_F9,  101, VIRTKEY
     VK_F11, 200, VIRTKEY
+    VK_F12, 201, VIRTKEY
 END
 
 ANGBAND MENU
@@ -33,6 +34,7 @@ ANGBAND MENU
     POPUP "&Window"
     {
 	    MENUITEM "&Full Screen\tF11", 200
+      MENUITEM "&Auto Size\tF12", 201
 
 	    MENUITEM SEPARATOR
 

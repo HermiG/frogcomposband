@@ -115,6 +115,7 @@
 #define IDM_FILE_EXIT             130
 
 #define IDM_WINDOW_FULLSCREEN     200
+#define IDM_WINDOW_AUTOSIZE       201
 
 #define IDM_WINDOW_VIS_0          210
 #define IDM_WINDOW_VIS_1          211
@@ -199,8 +200,6 @@
 #define IDM_DUMP_SCREEN_HTML      450
 
 #define IDM_HELP_CONTENTS         901
-
-
 
 /*
  * Exclude parts of WINDOWS.H that are not needed
@@ -2558,13 +2557,14 @@ static void setup_menus(void)
         if(strlen(resume_savename) > 0) EnableMenuItem(hm, IDM_FILE_RESUME, MF_BYCOMMAND | MF_ENABLED);
     }
 
-    CheckMenuItem(GetMenu(hwndMain), IDM_WINDOW_FULLSCREEN, g_isFullscreen ? MF_CHECKED : MF_UNCHECKED);
+    CheckMenuItem(hm, IDM_WINDOW_FULLSCREEN, g_isFullscreen ? MF_CHECKED : MF_UNCHECKED);
+    EnableMenuItem(hm, IDM_WINDOW_AUTOSIZE, g_isFullscreen ? MF_DISABLED | MF_GRAYED :  MF_ENABLED);
 
     /* Menu "Window::Visibility" */
     for (int i = 1; i < MAX_TERM_DATA; i++)
     {
         CheckMenuItem(hm,  IDM_WINDOW_VIS_0 + i, (data[i].visible ? MF_CHECKED : MF_UNCHECKED));
-        EnableMenuItem(hm, IDM_WINDOW_VIS_0 + i, MF_BYCOMMAND | MF_ENABLED);
+        EnableMenuItem(hm, IDM_WINDOW_VIS_0 + i, MF_ENABLED);
     }
 
     /* Menu "Window::Keep on Top" */
@@ -2579,17 +2579,14 @@ static void setup_menus(void)
     /* Menu "Window::Font" */
     for (int i = 0; i < MAX_TERM_DATA; i++)
     {
-        if (data[i].visible) EnableMenuItem(hm, IDM_WINDOW_FONT_0 + i, MF_BYCOMMAND | MF_ENABLED);
-        else                 EnableMenuItem(hm, IDM_WINDOW_FONT_0 + i, MF_BYCOMMAND | MF_DISABLED | MF_GRAYED);
+        EnableMenuItem(hm, IDM_WINDOW_FONT_0 + i, (data[i].visible && !g_isFullscreen) ? MF_ENABLED : MF_DISABLED | MF_GRAYED);
     }
 
     /* Menu "Window::Bizarre Display" */
     for (int i = 0; i < MAX_TERM_DATA; i++)
     {
         CheckMenuItem(hm, IDM_WINDOW_BIZ_0 + i, (data[i].bizarre ? MF_CHECKED : MF_UNCHECKED));
-        
-        if (data[i].visible) EnableMenuItem(hm, IDM_WINDOW_BIZ_0 + i, MF_BYCOMMAND | MF_ENABLED);
-        else                 EnableMenuItem(hm, IDM_WINDOW_BIZ_0 + i, MF_BYCOMMAND | MF_DISABLED | MF_GRAYED);
+        EnableMenuItem(hm, IDM_WINDOW_BIZ_0 + i, data[i].visible ? MF_ENABLED : MF_DISABLED | MF_GRAYED);
     }
 
     for (int i = 0; i < MAX_TERM_DATA; i++) {
@@ -2868,7 +2865,64 @@ static void process_menus(WORD wCmd)
             toggle_fullscreen();
             break;
         }
+        #if 1
+case IDM_WINDOW_AUTOSIZE:
+{
+    // 1) Get work‑area (excludes taskbar)
+    HMONITOR hMon = MonitorFromWindow(hwndMain, MONITOR_DEFAULTTOPRIMARY);
+    MONITORINFO mi = { sizeof(mi) };
+    if (!GetMonitorInfo(hMon, &mi)) break;
+    RECT work = mi.rcWork;
+    work.top--;
 
+    // 2) Get the “outer” rect Windows actually draws (incl. DWM shadow)
+    RECT outer = {0};
+    if (FAILED(DwmGetWindowAttribute(hwndMain, DWMWA_EXTENDED_FRAME_BOUNDS, &outer, sizeof(outer)))) {
+      GetWindowRect(hwndMain, &outer); // fallback if DWM not available
+    }
+    
+    // 3) Get the “window‐rect” that your app requested
+    RECT wnd;
+    GetWindowRect(hwndMain, &wnd);
+
+    // 4) Compute true non–client margins:
+    int borderLeft   = wnd.left   - outer.left;
+    int borderTop    = wnd.top    - outer.top;
+    int borderRight  = outer.right  - wnd.right;
+    int borderBottom = outer.bottom - wnd.bottom;
+
+    // 5) Expand the work‑area by those margins:
+    int x      = work.left   + borderLeft;
+    int y      = work.top    + borderTop;
+    int width  = (work.right  - work.left) - borderLeft - borderRight;
+    int height = (work.bottom - work.top)  - borderTop  - borderBottom;
+
+    // 6) Finally, resize/position
+    SetWindowPos(hwndMain, NULL, x, y, width, height, SWP_NOZORDER | SWP_NOOWNERZORDER | SWP_FRAMECHANGED);
+
+    break;
+}
+        #else
+        case IDM_WINDOW_AUTOSIZE:
+        {
+          // Get the monitor containing the window (or primary monitor fallback)
+          HMONITOR hMon = MonitorFromWindow(hwndMain, MONITOR_DEFAULTTOPRIMARY);
+
+          MONITORINFO mi = { 0 };
+          mi.cbSize = sizeof(mi);
+          if (GetMonitorInfo(hMon, &mi)) {
+            RECT workArea = mi.rcWork; // this excludes taskbar and reserved OS UI
+
+            // Move and resize the window to match the work area exactly
+            SetWindowPos(hwndMain, HWND_TOP,
+                         workArea.left-7, workArea.top - 1,
+                         workArea.right - workArea.left+14,
+                         workArea.bottom - workArea.top+8,
+                         SWP_NOZORDER | SWP_NOOWNERZORDER | SWP_FRAMECHANGED);
+          }
+          break;
+        }
+#endif
         case IDM_WINDOW_VIS_0:
         {
             plog("You are not allowed to do that!");
@@ -2937,8 +2991,7 @@ static void process_menus(WORD wCmd)
         case IDM_WINDOW_TOP_7:
         {
             int i = wCmd - IDM_WINDOW_TOP_0;
-
-            if ((i < 0) || (i >= MAX_TERM_DATA)) break;
+            if (i < 1 || i >= MAX_TERM_DATA) break;
 
             term_data *td = &data[i];
 

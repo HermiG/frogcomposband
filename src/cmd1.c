@@ -4673,16 +4673,10 @@ bool move_player_effect(int ny, int nx, u32b mpe_mode)
         }
 
         /* Spontaneous Searching */
-        if ((p_ptr->skills.fos >= 50) || (0 == randint0(50 - p_ptr->skills.fos)))
-        {
-            search();
-        }
+        if ((p_ptr->skills.fos >= 50) || (0 == randint0(50 - p_ptr->skills.fos))) search();
 
         /* Continuous Searching */
-        if (p_ptr->action == ACTION_SEARCH)
-        {
-            search();
-        }
+        if (p_ptr->action == ACTION_SEARCH) search();
     }
 
     /* Handle "objects" */

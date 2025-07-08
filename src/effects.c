@@ -56,11 +56,11 @@ void set_action(int typ)
             new_mane = FALSE;
             break;
         case ACTION_KAMAE:
-            msg_print("You stop assuming the posture.");
+            msg_print("You relax your posture.");
             p_ptr->special_defense &= ~(KAMAE_MASK);
             break;
         case ACTION_KATA:
-            msg_print("You stop assuming the posture.");
+            msg_print("You drop your stance.");
             p_ptr->special_defense &= ~(KATA_MASK);
             p_ptr->update |= (PU_MONSTERS);
             p_ptr->redraw |= (PR_STATUS);
@@ -69,10 +69,10 @@ void set_action(int typ)
             msg_print("You stop singing.");
             break;
         case ACTION_QUICK_WALK:
-            msg_print("You are no longer moving extremely fast.");
+            msg_print("You slow your pace.");
             break;
         case ACTION_SPELL:
-            msg_print("You stopped spelling all spells.");
+            msg_print("You stop spelling.");
             break;
         case ACTION_STALK:
             msg_print("You no longer stalk your prey.");
@@ -92,16 +92,16 @@ void set_action(int typ)
         p_ptr->redraw |= PR_EFFECTS;
         break;
     case ACTION_LEARN:
-        msg_print("You begin to learn spells.");
+        msg_print("You begin learning spells.");
         break;
     case ACTION_FISH:
         msg_print("You begin fishing...");
         break;
     case ACTION_QUICK_WALK:
-        msg_print("You begin to move extremely fast.");
+        msg_print("You quicken your pace.");
         break;
     case ACTION_STALK:
-        msg_print("You begin to stalk your prey.");
+        msg_print("You begin stalking your prey.");
         break;
     }
 
@@ -6591,7 +6591,7 @@ int take_hit(int damage_type, int damage, cptr hit_from)
 
                 do
                 {
-                    while (!get_string("Last word: ", death_message, 1024)) ;
+                    while (!get_string("Last words: ", death_message, 1024)) ;
                 }
                 while (winning_seppuku && !get_check_strict("Are you sure? ", CHECK_NO_HISTORY));
 

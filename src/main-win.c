@@ -406,7 +406,7 @@ struct _term_data
     bool map_active;
     LOGFONT lf;
 
-    bool ontop;
+    bool lock_size;
 };
 
 
@@ -949,18 +949,18 @@ static void save_prefs_for_term(int i)
     GetWindowRect(td->w, &rc);
 
     /* Window position (x) */
-    wsprintf(buf, "%d", rc.left);
+    wsprintf(buf, "%d", rc.left + (!!i)*(td->lock_size ? -5 : 5));
     WritePrivateProfileString(sec_name, "PositionX", buf, ini_file);
 
     /* Window position (y) */
     wsprintf(buf, "%d", rc.top);
     WritePrivateProfileString(sec_name, "PositionY", buf, ini_file);
 
-    /* Window Z position */
+    /* Lock window size? */
     if (i > 0)
     {
-        strcpy(buf, td->ontop ? "1" : "0");
-        WritePrivateProfileString(sec_name, "KeepOnTop", buf, ini_file);
+        strcpy(buf, td->lock_size ? "1" : "0");
+        WritePrivateProfileString(sec_name, "LockSize", buf, ini_file);
     }
 }
 
@@ -1044,8 +1044,8 @@ static void load_prefs_for_term(int i)
     td->pos_x = GetPrivateProfileInt(sec_name, "PositionX", td->pos_x, ini_file);
     td->pos_y = GetPrivateProfileInt(sec_name, "PositionY", td->pos_y, ini_file);
 
-    /* Window Z position */
-    if (i > 0) td->ontop = GetPrivateProfileInt(sec_name, "KeepOnTop", td->ontop, ini_file);
+    /* Lock window size? */
+    if (i > 0) td->lock_size = GetPrivateProfileInt(sec_name, "LockSize", td->lock_size, ini_file);
 }
 
 
@@ -1490,16 +1490,25 @@ static void term_change_font(term_data *td)
  */
 static void term_window_pos(term_data *td, HWND hWnd)
 {
-    LONG_PTR style = GetWindowLongPtr(td->w, GWL_STYLE);
+    RECT rect;
+    GetWindowRect(td->w, &rect);
+    int x = rect.left + (td->lock_size ? 5 : -5);
+    int y = rect.top;
     
-    if(td->ontop) {
+    LONG_PTR style = GetWindowLongPtr(td->w, GWL_STYLE);
+    if(td->lock_size) {
       style &= ~WS_THICKFRAME;
     } else {
       style |=  WS_THICKFRAME;
     }
     
+    GetClientRect(td->w, &rect);
+    AdjustWindowRectEx(&rect, style, FALSE, GetWindowLong(td->w, GWL_EXSTYLE));
+    int w = rect.right - rect.left;
+    int h = rect.bottom - rect.top + (td->lock_size ? 5 : -5);
+
     SetWindowLongPtr(td->w, GWL_STYLE, style);
-    SetWindowPos(td->w, NULL, 0, 0, 0, 0, SWP_NOACTIVATE | SWP_NOMOVE | SWP_NOSIZE | SWP_FRAMECHANGED | SWP_NOZORDER | SWP_NOOWNERZORDER);
+    SetWindowPos(td->w, NULL, x, y, w, h, SWP_NOACTIVATE | SWP_FRAMECHANGED | SWP_NOZORDER | SWP_NOOWNERZORDER);
 }
 
 static void windows_map(void);
@@ -2408,7 +2417,7 @@ static void init_windows(void)
     td->size_oh2 = 2;
     td->pos_x = 7 * 30;
     td->pos_y = 7 * 20;
-    td->ontop = FALSE;
+    td->lock_size = FALSE;
     td->bizarre = TRUE;
 
     /* Sub windows */
@@ -2427,7 +2436,7 @@ static void init_windows(void)
         td->size_oh2 = 1;
         td->pos_x = (7 - i) * 30;
         td->pos_y = (7 - i) * 20;
-        td->ontop = FALSE;
+        td->lock_size = FALSE;
         td->bizarre = TRUE;
     }
 
@@ -2573,13 +2582,11 @@ static void setup_menus(void)
         EnableMenuItem(hm, IDM_WINDOW_VIS_0 + i, MF_ENABLED);
     }
 
-    /* Menu "Window::Keep on Top" */
+    /* Menu "Window::Lock Size" */
     for (int i = 0; i < MAX_TERM_DATA; i++)
     {
-        CheckMenuItem(hm, IDM_WINDOW_TOP_0 + i, (data[i].ontop ? MF_CHECKED : MF_UNCHECKED));
-
-        if (data[i].visible) EnableMenuItem(hm, IDM_WINDOW_TOP_0 + i, MF_BYCOMMAND | MF_ENABLED);
-        else                 EnableMenuItem(hm, IDM_WINDOW_TOP_0 + i, MF_BYCOMMAND | MF_DISABLED | MF_GRAYED);
+        CheckMenuItem(hm, IDM_WINDOW_TOP_0 + i, (data[i].lock_size ? MF_CHECKED : MF_UNCHECKED));
+        EnableMenuItem(hm, IDM_WINDOW_TOP_0 + i, data[i].visible ? MF_ENABLED : MF_DISABLED | MF_GRAYED);
     }
 
     /* Menu "Window::Font" */
@@ -2959,7 +2966,7 @@ case IDM_WINDOW_AUTOSIZE:
             else
             {
                 td->visible = FALSE;
-                td->ontop   = FALSE;
+                td->lock_size   = FALSE;
                 ShowWindow(td->w, SW_HIDE);
             }
 
@@ -2987,7 +2994,7 @@ case IDM_WINDOW_AUTOSIZE:
             break;
         }
 
-        /* Keep window on top */
+        /* Lock Term Size */
         case IDM_WINDOW_TOP_1:
         case IDM_WINDOW_TOP_2:
         case IDM_WINDOW_TOP_3:
@@ -3000,18 +3007,8 @@ case IDM_WINDOW_AUTOSIZE:
             if (i < 1 || i >= MAX_TERM_DATA) break;
 
             term_data *td = &data[i];
-
-            if (!td->ontop && td->visible)
-            {
-                td->ontop = TRUE;
-                term_window_pos(td, HWND_TOPMOST);
-            }
-            else
-            {
-                td->ontop = FALSE;
-                term_window_pos(td, hwndMain);
-            }
-
+            td->lock_size = !td->lock_size;
+            term_window_pos(td, hwndMain);
             break;
         }
 
@@ -3797,7 +3794,7 @@ LRESULT FAR PASCAL AngbandWndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lP
             {
                 /* Do something to sub-windows */
                 for (int i = 1; i < MAX_TERM_DATA; i++)
-                    if (!data[i].ontop) term_window_pos(&data[i], hWnd);
+                    if (!data[i].lock_size) term_window_pos(&data[i], hWnd);
 
                 SetFocus(hWnd);
 

@@ -49,7 +49,7 @@ ANGBAND MENU
             MENUITEM "Term-7 window\tF7", 217
         }
 
-        POPUP "&Keep on top"
+        POPUP "&Lock Size"
         {
             MENUITEM "Term-1 window", 221
             MENUITEM "Term-2 window", 222

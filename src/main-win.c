@@ -993,7 +993,8 @@ static void save_prefs(void)
 	
     /* Save the current save file name */
     const char *savename = strrchr(savefile, '\\');
-    WritePrivateProfileString("Angband", "ResumeSaveName", savename ? savename+1 : "", ini_file);
+    if(savename && strlen(savename) > 1) WritePrivateProfileString("Angband", "ResumeSaveName", savename+1, ini_file);
+    else WritePrivateProfileString("Angband", "ResumeSaveName", resume_savename, ini_file);
 
     /* Save window prefs */
     for (int i = 0; i < MAX_TERM_DATA; ++i) save_prefs_for_term(i);
@@ -2554,8 +2555,13 @@ static void setup_menus(void)
         EnableMenuItem(hm, IDM_FILE_NEW, MF_BYCOMMAND | MF_ENABLED);
         EnableMenuItem(hm, IDM_FILE_OPEN, MF_BYCOMMAND | MF_ENABLED);
 
-        if(strlen(resume_savename) > 0) EnableMenuItem(hm, IDM_FILE_RESUME, MF_BYCOMMAND | MF_ENABLED);
-    }
+        if (strlen(resume_savename) > 0) {
+            char buf[64];
+            snprintf(buf, sizeof(buf), "Resume %s\tF9", resume_savename);
+            EnableMenuItem(hm, IDM_FILE_RESUME, MF_BYCOMMAND | MF_ENABLED);
+            ModifyMenu(hm, IDM_FILE_RESUME, MF_BYCOMMAND | MF_STRING, IDM_FILE_RESUME, buf); 
+        }
+     }
 
     CheckMenuItem(hm, IDM_WINDOW_FULLSCREEN, g_isFullscreen ? MF_CHECKED : MF_UNCHECKED);
     EnableMenuItem(hm, IDM_WINDOW_AUTOSIZE, g_isFullscreen ? MF_DISABLED | MF_GRAYED :  MF_ENABLED);

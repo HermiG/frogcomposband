@@ -1334,7 +1334,7 @@ static void prt_status(void)
         if (hex_spelling(HEX_BLESS)) ADD_FLG(BAR_BLESSED);
         if (hex_spelling(HEX_DEMON_AURA)) { ADD_FLG(BAR_SHFIRE); ADD_FLG(BAR_REGENERATION); }
         if (hex_spelling(HEX_XTRA_MIGHT)) ADD_FLG(BAR_MIGHT);
-        if (hex_spelling(HEX_DETECT_EVIL)) ADD_FLG(BAR_ESP_EVIL);
+        if (hex_spelling(HEX_SENSE_G_AND_E)) ADD_FLG(BAR_ESP_EVIL);
         if (hex_spelling(HEX_ICE_ARMOR)) ADD_FLG(BAR_SHCOLD);
         if (hex_spelling(HEX_RUNESWORD)) ADD_FLG(BAR_RUNESWORD);
         if (hex_spelling(HEX_BUILDING)) ADD_FLG(BAR_BUILD);
@@ -4289,7 +4289,7 @@ void calc_bonuses(void)
     if (p_ptr->realm1 == REALM_HEX)
     {
         if (hex_spelling_any()) p_ptr->skills.stl -= (1 + p_ptr->magic_num2[0]);
-        if (hex_spelling(HEX_DETECT_EVIL))
+        if (hex_spelling(HEX_SENSE_G_AND_E))
         {
             p_ptr->esp_evil = TRUE;
             p_ptr->esp_good = TRUE;

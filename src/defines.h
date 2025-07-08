@@ -5315,7 +5315,7 @@ enum mon_save_fields_e {
 #define HEX_STINKING_MIST     3
 #define HEX_XTRA_MIGHT        4
 #define HEX_CURSE_WEAPON      5
-#define HEX_DETECT_EVIL       6
+#define HEX_SENSE_G_AND_E     6
 #define HEX_PATIENCE          7
 /* 2nd book */
 #define HEX_ICE_ARMOR         8

@@ -3800,7 +3800,7 @@ static void _dispatch_command(int old_now_turn)
         }
 
         /* Bash a door */
-        case KTRL('B'):
+        case 'B':
         {
             if (!p_ptr->wild_mode) do_cmd_bash();
             break;
@@ -3841,7 +3841,7 @@ static void _dispatch_command(int old_now_turn)
         }
 
         /* Browse a book */
-        case 'B':
+        case KTRL('B'):
         {
             if (p_ptr->prace == RACE_MON_RING)
                 ring_browse();

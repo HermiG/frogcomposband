@@ -52,7 +52,7 @@ Original Keyset
        1  2  3
 
    a  Aim a wand                           A  Activate equipment
-   b  Bag view                             B  Browse magic spells
+   b  Bag view                             B  Bash a door
    c  Close a door                         C  Character description
    d  Drop an item                         D  Disarm a trap
    e  Equipment view                       E  Eat some food
@@ -78,8 +78,8 @@ Original Keyset
    y  (unused)                             Y  Display monster list
    z  Zap a rod                            Z  Inscribe an object
    !  Enter a user pref command           ^A  (special - wizard command)
-   @  Interact with macros                ^B  Bash a door
    #  (unused)                            ^C  (special - break)
+   @  Interact with macros                ^B  Browse magic spells
    $  Reload Mogaminator prefs            ^D  (unused)
    %  Interact with visuals               ^E  Interact with macros
    ^  (special - control key)             ^F  Repeat level feeling

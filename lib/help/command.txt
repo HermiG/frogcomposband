@@ -20,7 +20,7 @@ Press <color:keypress>?</color> for commands to use in the help interface itself
        1  2  3</color>
 
    <color:y>a  Aim a wand</color>                           A  Activate equipment
-   b  Bag view                             B  Browse magic spells
+   b  Bag view                             B  Bash a door
    c  Close a door                         <color:y>C  Character description</color>
    d  Drop an item                         <color:y>D  Disarm a trap</color>
    <color:y>e  Equipment view</color>                       <color:y>E  Eat some food</color>
@@ -46,8 +46,8 @@ Press <color:keypress>?</color> for commands to use in the help interface itself
    <color:D>y  (unused)</color>                             <color:y>Y  Display monster list</color>
    <color:y>z  Zap a rod</color>                            Z  Inscribe an object
    !  Enter a user pref command           ^A  (special - wizard command)
-   @  Interact with macros                ^B  Bash a door
    <color:D>#  (unused)</color>                            ^C  (special - break)
+   @  Interact with macros                ^B  Browse magic spells
    $  Reload Mogaminator prefs            <color:D>^D  (unused)</color>
    %  Interact with visuals               ^E  Interact with macros
    ^  (special - control key)             ^F  Repeat level feeling

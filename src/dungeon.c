@@ -1543,14 +1543,14 @@ static void process_world_aux_hp_and_sp(void)
     }
     else
     {
-        regen_amount = regen_amount * p_ptr->regen/100;
+        regen_amount = (regen_amount * p_ptr->regen) / 100;
     }
 
     if ( p_ptr->action == ACTION_SEARCH
       || p_ptr->action == ACTION_REST
       || p_ptr->action == ACTION_GLITTER )
     {
-        regen_amount = regen_amount * 2;
+        regen_amount *= 2;
     }
 
     upkeep_factor = calculate_upkeep();
@@ -1572,8 +1572,7 @@ static void process_world_aux_hp_and_sp(void)
      * and regen-worsening things make it better */
     upkeep_regen = (100 - upkeep_factor) * ((upkeep_factor > 100) ? PY_REGEN_NORMAL : regen_amount);
 
-    if ((p_ptr->mana_regen) && (upkeep_regen > 0))
-        upkeep_regen = upkeep_regen * 2;
+    if ((p_ptr->mana_regen) && (upkeep_regen > 0)) upkeep_regen = upkeep_regen * 2;
 
     if (!p_ptr->nice) regenmana(upkeep_regen);
 
@@ -1587,8 +1586,7 @@ static void process_world_aux_hp_and_sp(void)
         set_action(ACTION_NONE);
     }
 
-    if (magic_eater_regen(regen_amount))
-        wild_regen = 20;
+    if (magic_eater_regen(regen_amount)) wild_regen = 20;
 
     if (((p_ptr->csp == 0) && (p_ptr->csp_frac == 0)) || (elemental_is_(ELEMENTAL_WATER)))
     {
@@ -1622,10 +1620,7 @@ static void process_world_aux_hp_and_sp(void)
     regen_amount = (regen_amount * mutant_regenerate_mod) / 100;
 
     /* Regenerate Hit Points if needed */
-    if ((p_ptr->chp < p_ptr->mhp) && !cave_no_regen)
-    {
-        regenhp(regen_amount);
-    }
+    if ((p_ptr->chp < p_ptr->mhp) && !cave_no_regen) regenhp(regen_amount);
 }
 
 /*
@@ -1637,8 +1632,7 @@ static void process_world_aux_timeout(void)
 
     process_maul_of_vice();
 
-    if (p_ptr->prace == RACE_DOPPELGANGER)
-        mimic_upkeep();
+    if (p_ptr->prace == RACE_DOPPELGANGER) mimic_upkeep();
 
     /* Mimic */
     if (p_ptr->tim_mimic)

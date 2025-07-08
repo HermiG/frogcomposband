@@ -850,6 +850,7 @@ static int compare_advances(const void *ap, const void *bp)
     load_sounds();
     init_windows();
     //init_display();
+    signals_init();
     init_angband();
     
     player_egid = getegid(); // Record effective group ID for file permissions and security
@@ -860,7 +861,11 @@ static int compare_advances(const void *ap, const void *bp)
     
     [pool drain];
     
-    prt("[Choose 'New', 'Open', or 'Resume' from the 'File' menu]", 23, 17);
+    display_news();
+    Term_erase(0, Term->hgt - 1, Term->wid);
+    c_prt(TERM_YELLOW, "             [Choose 'New', 'Open', or 'Resume' from the 'File' menu]             ", 30, 0);
+    Term_fresh();
+
     while (!game_in_progress) (check_events(CHECK_EVENTS_WAIT));
     
     play_game(new_game);
@@ -1876,7 +1881,7 @@ static void wakeup_event_loop(void)
 /*
  * Create and initialize window number "i"
  */
-static term *term_data_link(int i)
+static term * term_data_link(int i)
 {
     NSArray *terminalDefaults = [[NSUserDefaults standardUserDefaults] valueForKey: AngbandTerminalsDefaultsKey];
     NSInteger rows = 24;
@@ -2381,29 +2386,28 @@ static BOOL send_event(NSEvent *event)
  * Check for Events, return TRUE if we process any
  */
 static BOOL check_events(int wait)
-{ 
-    
+{
     NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
     
-    /* Handles the quit_when_ready flag */
     if (quit_when_ready) quit_calmly();
     
-    NSDate* endDate;
+    NSDate *endDate;
     if (wait == CHECK_EVENTS_WAIT) endDate = [NSDate distantFuture];
     else endDate = [NSDate distantPast];
     
-    NSEvent* event;
+    NSEvent *event;
     for (;;) {
         if (quit_when_ready)
         {
             /* send escape events until we quit */
             Term_keypress(0x1B);
             [pool drain];
-            return false;
+            return FALSE;
         }
-        else {
+        else
+        {
             event = [NSApp nextEventMatchingMask:-1 untilDate:endDate inMode:NSDefaultRunLoopMode dequeue:YES];
-            if (! event)
+            if (!event)
             {
                 [pool drain];
                 return FALSE;
@@ -2414,7 +2418,6 @@ static BOOL check_events(int wait)
     
     [pool drain];
     
-    /* Something happened */
     return YES;
 }
 
@@ -2426,7 +2429,7 @@ static void hook_plog(const char * str)
     if (str)
     {
         NSString *string = [NSString stringWithCString:str encoding:NSMacOSRomanStringEncoding];
-        NSRunAlertPanel(@"Danger Will Robinson", @"%@", @"OK", nil, nil, string);
+        NSRunAlertPanel(@"Danger Will Robinson!", @"%@", @"OK", nil, nil, string);
     }
 }
 
@@ -2536,17 +2539,14 @@ static void hook_quit(const char * str)
 
 - (IBAction)openGame:sender
 {
-  NSAutoreleasePool* pool = [[NSAutoreleasePool alloc] init];
+  NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
   BOOL selectedSomething = NO;
   int panelResult;
-  NSString* startingDirectory;
+  NSString *startingDirectory;
   
-  /* Get where we think the save files are */
   startingDirectory = [get_data_directory() stringByAppendingPathComponent:@"/save/"];
-  
-  /* Get what we think the default save file name is. Deafult to the empty string. */
   NSString *savefileName = [[NSUserDefaults angbandDefaults] stringForKey:@"SaveFile"];
-  if (! savefileName) savefileName = @"";
+  if (!savefileName) savefileName = @"";
   
   /* Set up an open panel */
   NSOpenPanel* panel = [NSOpenPanel openPanel];
@@ -2560,7 +2560,7 @@ static void hook_quit(const char * str)
   panelResult = [panel runModalForDirectory:startingDirectory file:savefileName types:nil];
   if (panelResult == NSOKButton)
   {
-    NSArray* filenames = [panel filenames];
+    NSArray *filenames = [panel filenames];
     if ([filenames count] > 0)
     {
         selectedSomething = [[filenames objectAtIndex:0] getFileSystemRepresentation:savefile maxLength:sizeof savefile];
@@ -2569,8 +2569,7 @@ static void hook_quit(const char * str)
   
   if (selectedSomething)
   {
-    /* Remember this so we can select it by default next time */
-    record_current_savefile();
+    record_current_savefile(); // For selecting our file in future Open dialogs
     
     game_in_progress = TRUE;
     new_game = FALSE;
@@ -2897,25 +2896,18 @@ static void hook_quit(const char * str)
 /* Delegate method that gets called if we're asked to open a file. */
 - (BOOL)application:(NSApplication *)sender openFiles:(NSArray *)filenames
 {
-  /* Can't open a file once we've started */
   if (game_in_progress) return NO;
   
-  /* We can only open one file. Use the last one. */
   NSString *file = [filenames lastObject];
-  if (! file) return NO;
+  if (!file) return NO;
   
-  /* Put it in savefile */
   if (! [file getFileSystemRepresentation:savefile maxLength:sizeof savefile]) return NO;
   
-  /* Remember this so we can select it by default next time */
-  record_current_savefile();
+  record_current_savefile(); // For selecting our file in the Open dialog
   
   game_in_progress = TRUE;
   new_game = FALSE;
-
-  /* Wake us up in case this arrives while we're sitting at the Welcome screen! */
-  //wakeup_event_loop();
-
+  
   return YES;
 }
 

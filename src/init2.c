@@ -1430,9 +1430,8 @@ void display_news(void)
         sprintf(name, "news%d.txt", n);
         _display_file(name);
 
-        /* Windows is an odd duck, indeed! */
-        if (strcmp(ANGBAND_SYS, "win") == 0)
-            break;
+        if (strcmp(ANGBAND_SYS, "win") == 0) break;
+        if (strcmp(ANGBAND_SYS, "mac") == 0) break;
 
         cmd = inkey_special(TRUE);
         switch (cmd)

@@ -2665,7 +2665,7 @@ static void setup_menus(void)
  * piece of the "command line string".  Perhaps we should extract
  * the "basename" of that filename and append it to the "save" dir.
  */
-static void check_for_save_file(LPSTR cmd_line)
+static void load_save_file(LPSTR cmd_line)
 {
     /* First arg */
     char *s = cmd_line;
@@ -2792,7 +2792,7 @@ static void process_menus(WORD wCmd)
         {
             if      (!initialized)     plog("You cannot do that yet...");
             else if (game_in_progress) plog("You can't open a new game while you're still playing!");
-            else if (strlen(resume_savename)) check_for_save_file(resume_savename);
+            else if (strlen(resume_savename)) load_save_file(resume_savename);
             break;
         }
         case IDM_FILE_OPEN:
@@ -4333,13 +4333,10 @@ int FAR PASCAL WinMain(HINSTANCE hInst, HINSTANCE hPrevInst,
         }
     }
 
-    /* Catch nasty signals */
     signals_init();
-
     init_angband();
 
-    /* Did the user double click on a save file? */
-    check_for_save_file(lpCmdLine);
+    load_save_file(lpCmdLine);
 
     Term_flush();
     display_news();

@@ -8064,7 +8064,7 @@ static cptr do_hex_spell(int spell, int mode)
 
     case 1:
         if (name) return "Cure light wounds";
-        if (desc) return "Slowly heals cuts and HP.";
+        if (desc) return "Slightly heals cuts and HP.";
         if (info) return info_heal(1, 10, 0);
         if (cast)
         {
@@ -8082,7 +8082,7 @@ static cptr do_hex_spell(int spell, int mode)
         if (desc) return "Grants a fiery aura and regeneration.";
         if (cast)
         {
-            msg_print("You are enveloped by a fiery aura!");
+            msg_print("You are enveloped in a fiery aura!");
         }
         if (stop)
         {
@@ -8416,15 +8416,15 @@ static cptr do_hex_spell(int spell, int mode)
 
     case 20:
         if (name) return "Curse armor";
-        if (desc) return "Curse a piece of armour that you wielding, increasing the AC for you.";
+        if (desc) return "Curse a piece of armour that you wearing, increasing the AC for you.";
         if (cast)
         {
             obj_prompt_t prompt = {0};
             char o_name[MAX_NLEN];
             u32b f[OF_ARRAY_SIZE];
 
-            prompt.prompt = "Which piece of armour do you curse?";
-            prompt.error = "You wield no piece of armours.";
+            prompt.prompt = "Which piece of armour do you wish to curse?";
+            prompt.error = "You have no suitable armour.";
             prompt.filter = object_is_armour;
             prompt.where[0] = INV_EQUIP;
 
@@ -8434,7 +8434,7 @@ static cptr do_hex_spell(int spell, int mode)
             object_desc(o_name, prompt.obj, OD_NAME_ONLY);
             obj_flags(prompt.obj, f);
 
-            if (!get_check(format("Do you curse %s, really?", o_name))) return FALSE;
+            if (!get_check(format("Do you really wish to curse %s?", o_name))) return FALSE;
 
             if (!one_in_(3) &&
                 (object_is_artifact(prompt.obj) || have_flag(f, OF_BLESSED)))
@@ -8479,7 +8479,7 @@ static cptr do_hex_spell(int spell, int mode)
                         add_flag(prompt.obj->flags, OF_RES_POIS);
                         add_flag(prompt.obj->flags, OF_RES_DARK);
                         add_flag(prompt.obj->flags, OF_RES_NETHER);
-                        msg_print("Blood, Blood, Blood!");
+                        cmsg_print(TERM_RED, "Blood, Blood, Blood!");
                         power = 2;
                     }
                 }
@@ -8494,7 +8494,7 @@ static cptr do_hex_spell(int spell, int mode)
 
     case 21:
         if (name) return "Cloak of Shadow";
-        if (desc) return "Imbues a cursed cloak and body armor to attack enemies with darkness in melee.";
+        if (desc) return "Imbues a cursed cloak and body armor to attack enemies.";
         if (cast)
         {
             int slot = equip_find_first(object_is_cloak);
@@ -8535,7 +8535,7 @@ static cptr do_hex_spell(int spell, int mode)
 
     case 22:
         if (name) return "Absorb Minds";
-        if (desc) return "Deals psychic damage to all monsters in sight, and absorbs some mana.";
+        if (desc) return "Deals psychic damage to all visible monsters and absorbs some mana.";
         power = plev * 3 / 2 + p_ptr->to_d_spell;
         if (info) return info_damage(1, power, 0);
         if (cast || cont)
@@ -8545,8 +8545,8 @@ static cptr do_hex_spell(int spell, int mode)
         break;
 
     case 23:
-        if (name) return "Eye For An Eye";
-        if (desc) return "Returns all damage taken to the monster which damaged you.";
+        if (name) return "Eye for an Eye";
+        if (desc) return "Returns all damage taken to your attackers.";
         if (cast)
         {
             msg_print("You begin a chant of revenge.");
@@ -8555,11 +8555,11 @@ static cptr do_hex_spell(int spell, int mode)
 
     /*** 4th book (24-31) ***/
     case 24:
-        if (name) return "Anti multiply barrier";
-        if (desc) return "Obstructs all multiplying by monsters in entire floor.";
+        if (name) return "Withering";
+        if (desc) return "Prevents monsters from multiplying on the entire level.";
         if (cast)
         {
-            msg_print("You obstruct all multiplying creatures.");
+            msg_print("A blight settles over the land, halting all monstrous reproduction.");
         }
         break;
 

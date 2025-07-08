@@ -32,8 +32,8 @@ ANGBAND MENU
 
     POPUP "&Window"
     {
-	    MENUITEM "&Fullscreen\tF11", 200
-		
+	    MENUITEM "&Full Screen\tF11", 200
+
 	    MENUITEM SEPARATOR
 
         POPUP "&Visibility"

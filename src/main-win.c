@@ -125,14 +125,14 @@
 #define IDM_WINDOW_VIS_6          216
 #define IDM_WINDOW_VIS_7          217
 
-#define IDM_WINDOW_POS_0          220
-#define IDM_WINDOW_POS_1          221
-#define IDM_WINDOW_POS_2          222
-#define IDM_WINDOW_POS_3          223
-#define IDM_WINDOW_POS_4          224
-#define IDM_WINDOW_POS_5          225
-#define IDM_WINDOW_POS_6          226
-#define IDM_WINDOW_POS_7          227
+#define IDM_WINDOW_TOP_0          220
+#define IDM_WINDOW_TOP_1          221
+#define IDM_WINDOW_TOP_2          222
+#define IDM_WINDOW_TOP_3          223
+#define IDM_WINDOW_TOP_4          224
+#define IDM_WINDOW_TOP_5          225
+#define IDM_WINDOW_TOP_6          226
+#define IDM_WINDOW_TOP_7          227
 
 #define IDM_WINDOW_FONT_0         230
 #define IDM_WINDOW_FONT_1         231
@@ -303,13 +303,6 @@ unsigned _cdecl _dos_getfileattr(const char *, unsigned *);
 #endif /* WIN32 */
 
 /*
- * Silliness for Windows 95
- */
-#ifndef WS_EX_TOOLWINDOW
-# define WS_EX_TOOLWINDOW 0
-#endif
-
-/*
  * Foreground color bits (hard-coded by DOS)
  */
 #define VID_BLACK    0x00
@@ -414,7 +407,7 @@ struct _term_data
     bool map_active;
     LOGFONT lf;
 
-    bool posfix;
+    bool ontop;
 };
 
 
@@ -476,6 +469,14 @@ static HPALETTE hPal;
 static HWND hwndMain;
 
 static HACCEL hAccel;
+
+/*
+ * Variables and helper functions for fullscreen support
+ */
+static HMENU g_hMenuSaved = NULL;
+static DWORD g_mainStyle, g_mainExStyle;
+static RECT  g_mainWindowRect;
+static bool  g_isFullscreen = FALSE;
 
 #ifdef USE_SAVER
 
@@ -959,8 +960,8 @@ static void save_prefs_for_term(int i)
     /* Window Z position */
     if (i > 0)
     {
-        strcpy(buf, td->posfix ? "1" : "0");
-        WritePrivateProfileString(sec_name, "PositionFix", buf, ini_file);
+        strcpy(buf, td->ontop ? "1" : "0");
+        WritePrivateProfileString(sec_name, "KeepOnTop", buf, ini_file);
     }
 }
 
@@ -1044,7 +1045,7 @@ static void load_prefs_for_term(int i)
     td->pos_y = GetPrivateProfileInt(sec_name, "PositionY", td->pos_y, ini_file);
 
     /* Window Z position */
-    if (i > 0) td->posfix = GetPrivateProfileInt(sec_name, "PositionFix", td->posfix, ini_file);
+    if (i > 0) td->ontop = GetPrivateProfileInt(sec_name, "KeepOnTop", td->ontop, ini_file);
 }
 
 
@@ -1489,7 +1490,16 @@ static void term_change_font(term_data *td)
  */
 static void term_window_pos(term_data *td, HWND hWnd)
 {
-    SetWindowPos(td->w, hWnd, 0, 0, 0, 0, SWP_NOACTIVATE | SWP_NOMOVE | SWP_NOSIZE);
+    LONG_PTR style = GetWindowLongPtr(td->w, GWL_STYLE);
+    
+    if(td->ontop) {
+      style &= ~WS_THICKFRAME;
+    } else {
+      style |=  WS_THICKFRAME;
+    }
+    
+    SetWindowLongPtr(td->w, GWL_STYLE, style);
+    SetWindowPos(td->w, NULL, 0, 0, 0, 0, SWP_NOACTIVATE | SWP_NOMOVE | SWP_NOSIZE | SWP_FRAMECHANGED | SWP_NOZORDER | SWP_NOOWNERZORDER);
 }
 
 static void windows_map(void);
@@ -2398,7 +2408,7 @@ static void init_windows(void)
     td->size_oh2 = 2;
     td->pos_x = 7 * 30;
     td->pos_y = 7 * 20;
-    td->posfix = FALSE;
+    td->ontop = FALSE;
     td->bizarre = TRUE;
 
     /* Sub windows */
@@ -2417,7 +2427,7 @@ static void init_windows(void)
         td->size_oh2 = 1;
         td->pos_x = (7 - i) * 30;
         td->pos_y = (7 - i) * 20;
-        td->posfix = FALSE;
+        td->ontop = FALSE;
         td->bizarre = TRUE;
     }
 
@@ -2435,7 +2445,7 @@ static void init_windows(void)
     {
         td = &data[i];
         td->dwStyle = WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU;
-        td->dwExStyle = WS_EX_TOOLWINDOW | WS_EX_NOACTIVATE;// | WS_EX_TOPMOST;
+        td->dwExStyle = WS_EX_TOOLWINDOW | WS_EX_NOACTIVATE;
     }
 
     /* All windows */
@@ -2488,7 +2498,7 @@ static void init_windows(void)
 
         if (td->visible) SetActiveWindow(td->w);
 
-        term_window_pos(&data[i], data[i].posfix ? HWND_TOPMOST : td->w);
+        term_window_pos(&data[i], NULL);
     }
 
     /* Main window */
@@ -2548,6 +2558,8 @@ static void setup_menus(void)
         if(strlen(resume_savename) > 0) EnableMenuItem(hm, IDM_FILE_RESUME, MF_BYCOMMAND | MF_ENABLED);
     }
 
+    CheckMenuItem(GetMenu(hwndMain), IDM_WINDOW_FULLSCREEN, g_isFullscreen ? MF_CHECKED : MF_UNCHECKED);
+
     /* Menu "Window::Visibility" */
     for (int i = 1; i < MAX_TERM_DATA; i++)
     {
@@ -2555,20 +2567,20 @@ static void setup_menus(void)
         EnableMenuItem(hm, IDM_WINDOW_VIS_0 + i, MF_BYCOMMAND | MF_ENABLED);
     }
 
+    /* Menu "Window::Keep on Top" */
+    for (int i = 0; i < MAX_TERM_DATA; i++)
+    {
+        CheckMenuItem(hm, IDM_WINDOW_TOP_0 + i, (data[i].ontop ? MF_CHECKED : MF_UNCHECKED));
+
+        if (data[i].visible) EnableMenuItem(hm, IDM_WINDOW_TOP_0 + i, MF_BYCOMMAND | MF_ENABLED);
+        else                 EnableMenuItem(hm, IDM_WINDOW_TOP_0 + i, MF_BYCOMMAND | MF_DISABLED | MF_GRAYED);
+    }
+
     /* Menu "Window::Font" */
     for (int i = 0; i < MAX_TERM_DATA; i++)
     {
         if (data[i].visible) EnableMenuItem(hm, IDM_WINDOW_FONT_0 + i, MF_BYCOMMAND | MF_ENABLED);
         else                 EnableMenuItem(hm, IDM_WINDOW_FONT_0 + i, MF_BYCOMMAND | MF_DISABLED | MF_GRAYED);
-    }
-
-    /* Menu "Window::Window Position Fix" */
-    for (int i = 0; i < MAX_TERM_DATA; i++)
-    {
-        CheckMenuItem(hm, IDM_WINDOW_POS_0 + i, (data[i].posfix ? MF_CHECKED : MF_UNCHECKED));
-
-        if (data[i].visible) EnableMenuItem(hm, IDM_WINDOW_POS_0 + i, MF_BYCOMMAND | MF_ENABLED);
-        else                 EnableMenuItem(hm, IDM_WINDOW_POS_0 + i, MF_BYCOMMAND | MF_DISABLED | MF_GRAYED);
     }
 
     /* Menu "Window::Bizarre Display" */
@@ -2670,14 +2682,6 @@ void EnableDarkMode(HWND hWnd, int enable)
     DwmSetWindowAttribute(hWnd, DWMWA_USE_IMMERSIVE_DARK_MODE, &enable, sizeof(enable));
 }
 
-/*
- * Variables and helper functions for fullscreen support
- */
-static HMENU g_hMenuSaved = NULL;
-static DWORD g_mainStyle, g_mainExStyle;
-static RECT  g_mainWindowRect;
-static bool  g_isFullscreen = FALSE;
-
 void HideAppMenu(HWND hwnd)
 {
     if (!g_hMenuSaved) g_hMenuSaved = GetMenu(hwnd);
@@ -2697,6 +2701,7 @@ void ShowAppMenu(HWND hwnd)
 void toggle_fullscreen(void)
 {
   skip_resize = TRUE;
+  
   if (!g_isFullscreen)
   {
     // 1) Save old style & position
@@ -2733,7 +2738,7 @@ void toggle_fullscreen(void)
     // Restore
     SetWindowLong(hwndMain, GWL_STYLE,   g_mainStyle);
     SetWindowLong(hwndMain, GWL_EXSTYLE, g_mainExStyle);
-    SetWindowPos(hwndMain,  HWND_TOPMOST,
+    SetWindowPos(hwndMain,  HWND_NOTOPMOST,
                  g_mainWindowRect.left,
                  g_mainWindowRect.top,
                  g_mainWindowRect.right - g_mainWindowRect.left,
@@ -2742,6 +2747,7 @@ void toggle_fullscreen(void)
     
     g_isFullscreen = FALSE;
   }
+  
   skip_resize = FALSE;
 }
 
@@ -2750,10 +2756,8 @@ void toggle_fullscreen(void)
  */
 static void process_menus(WORD wCmd)
 {
-    /* Analyze */
     switch (wCmd)
     {
-        /* New game */
         case IDM_FILE_NEW:
         {
             if (!initialized)
@@ -2817,7 +2821,6 @@ static void process_menus(WORD wCmd)
             break;
         }
 
-        /* Save game */
         case IDM_FILE_SAVE:
         {
             if (game_in_progress && character_generated)
@@ -2838,7 +2841,6 @@ static void process_menus(WORD wCmd)
             break;
         }
 
-        /* Exit */
         case IDM_FILE_EXIT:
         {
             if (game_in_progress && character_generated)
@@ -2861,7 +2863,6 @@ static void process_menus(WORD wCmd)
             break;
         }
 
-        /* Fullscreen */
         case IDM_WINDOW_FULLSCREEN:
         {
             toggle_fullscreen();
@@ -2898,7 +2899,7 @@ static void process_menus(WORD wCmd)
             else
             {
                 td->visible = FALSE;
-                td->posfix = FALSE;
+                td->ontop   = FALSE;
                 ShowWindow(td->w, SW_HIDE);
             }
 
@@ -2926,29 +2927,29 @@ static void process_menus(WORD wCmd)
             break;
         }
 
-        /* Window Z Position */
-        case IDM_WINDOW_POS_1:
-        case IDM_WINDOW_POS_2:
-        case IDM_WINDOW_POS_3:
-        case IDM_WINDOW_POS_4:
-        case IDM_WINDOW_POS_5:
-        case IDM_WINDOW_POS_6:
-        case IDM_WINDOW_POS_7:
+        /* Keep window on top */
+        case IDM_WINDOW_TOP_1:
+        case IDM_WINDOW_TOP_2:
+        case IDM_WINDOW_TOP_3:
+        case IDM_WINDOW_TOP_4:
+        case IDM_WINDOW_TOP_5:
+        case IDM_WINDOW_TOP_6:
+        case IDM_WINDOW_TOP_7:
         {
-            int i = wCmd - IDM_WINDOW_POS_0;
+            int i = wCmd - IDM_WINDOW_TOP_0;
 
             if ((i < 0) || (i >= MAX_TERM_DATA)) break;
 
             term_data *td = &data[i];
 
-            if (!td->posfix && td->visible)
+            if (!td->ontop && td->visible)
             {
-                td->posfix = TRUE;
+                td->ontop = TRUE;
                 term_window_pos(td, HWND_TOPMOST);
             }
             else
             {
-                td->posfix = FALSE;
+                td->ontop = FALSE;
                 term_window_pos(td, hwndMain);
             }
 
@@ -3451,8 +3452,8 @@ LRESULT FAR PASCAL AngbandWndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lP
         case WM_RBUTTONUP:
         {
             if (td && hWnd == hwndMain && !(mouse_cursor_targeting_state & MOUSE_CLICK_IGNORE)) {
-                int x = LOWORD(lParam) / td->tile_wid);
-                int y = HIWORD(lParam) / td->tile_hgt, td->rows - 1));
+                int x = LOWORD(lParam) / td->tile_wid;
+                int y = HIWORD(lParam) / td->tile_hgt;
 
                 if(y > 0 && x >= 0 && y < td->rows-1 && x < td->cols-13) {
                     point_t pt = ui_xy_to_cave_pt(x, y);
@@ -3478,7 +3479,7 @@ LRESULT FAR PASCAL AngbandWndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lP
             }
 
             int y = HIWORD(lParam);
-            if (!menuVisible && y <= 10)
+            if (!menuVisible && y <= 4)
             {
                 skip_resize = g_isFullscreen;
                 ShowAppMenu(hWnd);
@@ -3737,7 +3738,7 @@ LRESULT FAR PASCAL AngbandWndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lP
             {
                 /* Do something to sub-windows */
                 for (int i = 1; i < MAX_TERM_DATA; i++)
-                    if (!data[i].posfix) term_window_pos(&data[i], hWnd);
+                    if (!data[i].ontop) term_window_pos(&data[i], hWnd);
 
                 SetFocus(hWnd);
 

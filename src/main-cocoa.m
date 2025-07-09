@@ -84,6 +84,8 @@ static int frames_per_second;
 
 static NSFont *default_font;
 
+@class AngbandAppDelegate;
+
 @class AngbandView;
 
 /* An AngbandContext represents a logical Term (i.e. what Angband thinks is a window).
@@ -799,35 +801,20 @@ static int compare_advances(const void *ap, const void *bp)
     return [bundleLibPath stringByAppendingString: @"/"];
 }
 
-/**
- *  Return the path for the directory where Angband should look for its standard user file tree.
- */
-+ (NSString *)angbandDocumentsPath
-{
-    // angband requires the trailing slash, so we'll just add it here; NSString won't care about it when we use the base path for other things
-    NSString *documents = [NSSearchPathForDirectoriesInDomains( NSDocumentDirectory, NSUserDomainMask, YES ) lastObject];
-
-#if defined(SAFE_DIRECTORY)
-    NSString *versionedDirectory = [NSString stringWithFormat: @"%@-%s", AngbandDirectoryNameBase, VERSION_STRING];
-    return [[documents stringByAppendingPathComponent: versionedDirectory] stringByAppendingString: @"/"];
-#else
-    return [[documents stringByAppendingPathComponent: AngbandDirectoryNameBase] stringByAppendingString: @"/"];
-#endif
-}
 
 /**
  *  Give Angband the base paths that should be used for the various directories it needs. It will create any needed directories.
  */
 + (void)prepareFilePathsAndDirectories
 {
-    char libpath[PATH_MAX + 1] = "\0";
-    char basepath[PATH_MAX + 1] = "\0";
+  char libpath[ PATH_MAX + 1] = "\0";
+  char basepath[PATH_MAX + 1] = "\0";
+  
+  [[self libDirectoryPath] getFileSystemRepresentation: libpath maxLength: sizeof(libpath)];
+  [[AngbandAppDelegate angbandDocumentsPath] getFileSystemRepresentation: basepath maxLength: sizeof(basepath)];
 
-    [[self libDirectoryPath] getFileSystemRepresentation: libpath maxLength: sizeof(libpath)];
-    [[self angbandDocumentsPath] getFileSystemRepresentation: basepath maxLength: sizeof(basepath)];
-
-    init_file_paths( libpath, libpath, basepath );
-    create_needed_dirs();
+  init_file_paths( libpath, libpath, basepath );
+  create_needed_dirs();
 }
 
 #pragma mark -
@@ -2186,12 +2173,6 @@ static void init_windows(void)
     Term_activate(angband_term[0]);
 }
 
-/* Return the directory into which we put data (save and config) */
-static NSString *get_data_directory(void)
-{
-    return [@"~/Documents/PosChengband/" stringByExpandingTildeInPath];
-}
-
 /*
  * Handle quit_when_ready, by Peter Ammon,
  * slightly modified to check inkey_flag.
@@ -2468,6 +2449,22 @@ static void hook_quit(const char * str)
 @synthesize commandMenu=_commandMenu;
 @synthesize commandMenuTagMap=_commandMenuTagMap;
 
+/**
+ *  Return the path for the directory where Angband should look for its standard user file tree.
+ */
++ (NSString *)angbandDocumentsPath
+{
+  // angband requires the trailing slash, so we'll just add it here; NSString won't care about it when we use the base path for other things
+  NSString *documents = [NSSearchPathForDirectoriesInDomains( NSDocumentDirectory, NSUserDomainMask, YES ) lastObject];
+  
+#if defined(SAFE_DIRECTORY)
+  NSString *versionedDirectory = [NSString stringWithFormat: @"%@-%s", AngbandDirectoryNameBase, VERSION_STRING];
+  return [[documents stringByAppendingPathComponent: versionedDirectory] stringByAppendingString: @"/"];
+#else
+  return [[documents stringByAppendingPathComponent: AngbandDirectoryNameBase] stringByAppendingString: @"/"];
+#endif
+}
+
 - (IBAction)newGame:sender
 {
     game_in_progress = TRUE;
@@ -2541,13 +2538,11 @@ static void hook_quit(const char * str)
 {
   NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
   BOOL selectedSomething = NO;
-  int panelResult;
-  NSString *startingDirectory;
   
-  startingDirectory = [get_data_directory() stringByAppendingPathComponent:@"/save/"];
+  NSString *startingDirectory = [[AngbandAppDelegate angbandDocumentsPath] stringByAppendingPathComponent:@"/save/"];
   NSString *savefileName = [[NSUserDefaults angbandDefaults] stringForKey:@"SaveFile"];
   if (!savefileName) savefileName = @"";
-  
+ 
   /* Set up an open panel */
   NSOpenPanel* panel = [NSOpenPanel openPanel];
   [panel setCanChooseFiles:YES];
@@ -2557,7 +2552,7 @@ static void hook_quit(const char * str)
   [panel setTreatsFilePackagesAsDirectories:YES];
   
   /* Run it */
-  panelResult = [panel runModalForDirectory:startingDirectory file:savefileName types:nil];
+  int panelResult = [panel runModalForDirectory:startingDirectory file:savefileName types:nil];
   if (panelResult == NSOKButton)
   {
     NSArray *filenames = [panel filenames];

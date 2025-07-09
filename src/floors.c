@@ -30,52 +30,52 @@ void init_saved_floors(bool force)
     int fd = -1;
     int mode = 0644;
 
-    for (i = 0; i < MAX_SAVED_FLOORS; i++)
-    {
-        saved_floor_type *sf_ptr = &saved_floors[i];
-
-        /* File name */
-        sprintf(floor_savefile, "%s.F%02d", savefile, i);
-
-        /* Grab permissions */
-        safe_setuid_grab();
-
-        /* Try to create the file */
-        fd = fd_make(floor_savefile, mode);
-
-        /* Drop permissions */
-        safe_setuid_drop();
-
-        /* Failed! */
-        if (fd < 0)
+    if(strlen(savefile) > 0) {
+        for (i = 0; i < MAX_SAVED_FLOORS; i++)
         {
-            if (!force)
+            saved_floor_type *sf_ptr = &saved_floors[i];
+            
+            sprintf(floor_savefile, "%s.F%02d", savefile, i);
+            
+            /* Grab permissions */
+            safe_setuid_grab();
+            
+            /* Try to create the file */
+            fd = fd_make(floor_savefile, mode);
+            
+            /* Drop permissions */
+            safe_setuid_drop();
+            
+            /* Failed! */
+            if (fd < 0)
             {
-                msg_print("Error: There are old temporal files.");
-                msg_print("Make sure you are not running two game processes simultaneously.");
-                msg_print("If the temporal files are garbage of old crashed process, ");
-                msg_print("you can delete it safely.");
-                if (!get_check("Do you delete old temporal files? ")) quit("Aborted.");
-                force = TRUE;
+                if (!force)
+                {
+                    msg_print("Warning: There are old level files in the save directory.\n");
+                    msg_print("Make sure you are not running two game processes simultaneously.\n");
+                    msg_format("  Unexpected files: %s.FXX\n", savefile);
+                    msg_print("If these files are remnants of previous runs or crashes, \nyou can delete them safely.");
+                    if (!get_check("Do you wish to delete these files?")) quit("Aborted.");
+                    force = TRUE;
+                }
             }
+            else
+            {
+                (void)fd_close(fd);
+            }
+            
+            /* Grab permissions */
+            safe_setuid_grab();
+            
+            /* Simply kill the temporal file */
+            (void)fd_kill(floor_savefile);
+            
+            /* Drop permissions */
+            safe_setuid_drop();
         }
-        else
-        {
-            /* Close the "fd" */
-            (void)fd_close(fd);
-        }
-
-        /* Grab permissions */
-        safe_setuid_grab();
-
-        /* Simply kill the temporal file */ 
-        (void)fd_kill(floor_savefile);
-
-        /* Drop permissions */
-        safe_setuid_drop();
-
-        sf_ptr->floor_id = 0;
     }
+
+    for (i = 0; i < MAX_SAVED_FLOORS; i++) saved_floors[i].floor_id = 0;
 
     /* No floor_id used yet (No.0 is reserved to indicate non existance) */
     max_floor_id = 1;

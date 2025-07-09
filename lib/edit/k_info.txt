@@ -688,6 +688,7 @@ W:10:0:0:60:120
 A:10/2
 P:0:1d6:0:0:0
 F:SHOW_MODS | TOWN
+D:A small axe useful for chopping wood--or goblin necks.
 
 N:*:& Spear~
 G:/:s
@@ -706,6 +707,8 @@ W:10:0:0:70:110
 A:10/3
 P:0:2d4:0:0:0
 F:SHOW_MODS | TOWN
+D:A farming tool turned weapon. The curved blade delivers cruel cuts,
+D:equally suited to slashing flesh as harvesting grain.
 
 N:*:& Awl-Pike~
 G:/:s
@@ -714,6 +717,7 @@ W:10:0:0:160:340
 A:10/1
 P:0:1d10:0:0:0
 F:SHOW_MODS | TOWN
+D:A narrow, sharply tapered spear ideal for penetrating armor.
 
 N:*:& Trident~
 G:/:y
@@ -723,6 +727,7 @@ A:5/1
 P:0:1d10:0:0:0
 F:SHOW_MODS | RIDING | TOWN
 D:A three-pronged spear, originally for catching fish.
+D:It seems to work just as well on terrestrial prey.
 
 N:*:& Fauchard~
 G:/:s
@@ -731,6 +736,8 @@ W:18:0:0:155:301
 A:18/2
 P:0:1d12:0:0:0
 F:SHOW_MODS | RIDING | TOWN
+D:A long, curved blade affixed to a pole, used to sweep mounted enemies
+D:from their saddles.
 
 N:*:& Broad Spear~
 G:/:w
@@ -739,6 +746,7 @@ W:14:0:0:100:240
 A:14/1
 P:0:1d11:0:0:0
 F:SHOW_MODS | RIDING | TOWN
+D:A spear with a wide, leaf-shaped blade balanced for reach and thrusting power.
 
 N:*:& Pike~
 G:/:s
@@ -748,6 +756,7 @@ A:15/1
 P:0:2d6:0:0:0
 F:SHOW_MODS | TOWN
 D:A long, heavy spear with an iron head and reinforced shaft.
+D:Favored in defensive formations against cavalry.
 
 N:*:& Naginata~
 G:/:s
@@ -756,6 +765,7 @@ W:25:0:0:150:408
 A:25/2
 P:0:2d7:0:0:0
 F:SHOW_MODS | TOWN
+D:A graceful curved blade on a pole, traditional to Eastern martial orders.
 
 N:*:& Beaked Axe~
 G:/:s
@@ -765,6 +775,7 @@ A:15/1
 P:0:2d7:0:0:0
 F:SHOW_MODS | TOWN
 D:A narrow axe head opposed by a crow's beak, mounted on an oaken shaft.
+D:The beak is ideal for pulling riders from mounts or piercing mail.
 
 N:*:& Broad Axe~
 G:/:s
@@ -773,7 +784,7 @@ W:15:0:0:130:304
 A:15/1
 P:0:2d7:0:0:0
 F:SHOW_MODS | TOWN
-D:A simple, single-bladed war axe capable of chopping though limbs or armour.
+D:A simple, single-bladed war axe capable of chopping through limbs or armour.
 
 N:*:& Lucerne Hammer~
 G:/:B
@@ -782,6 +793,7 @@ W:10:0:0:120:376
 A:10/1
 P:0:2d6:0:0:0
 F:SHOW_MODS | TOWN
+D:A hammer head with spikes and flanges, made to crush plate armor and bones alike.
 
 N:*:& Glaive~
 G:/:s
@@ -791,7 +803,7 @@ A:20/1
 P:0:2d7:0:0:0
 F:SHOW_MODS | RIDING | TOWN
 D:A reinforced wooden pole eight feet long, topped by a massive knife blade
-D:that can can be used to thrust or chop.
+D:that can be used to thrust or chop.
 
 N:*:& Lajatang~
 G:/:s
@@ -800,6 +812,7 @@ W:25:0:0:175:330
 A:25/2
 P:0:2d8:0:0:0
 F:SHOW_MODS | TOWN
+D:A rare double-bladed staff from the East, requiring finesse and speed to master.
 
 N:*:& Halberd~
 G:/:s
@@ -818,6 +831,7 @@ W:21:0:0:165:320
 A:21/1
 P:0:2d7:0:0:0
 F:SHOW_MODS | TOWN
+D:An odd hook-like blade, used to dismount riders or hook foes from behind cover.
 
 N:*:& Scythe~
 G:/:s
@@ -836,6 +850,7 @@ W:10:0:0:300:230
 A:10/1
 P:0:2d10:0:0:0
 F:SHOW_MODS | RIDING | TOWN
+D:A long, tapering spear balanced for devastating charge attacks.
 
 N:*:& Battle Axe~
 G:/:s
@@ -844,7 +859,8 @@ W:15:0:0:170:334
 A:15/1
 P:0:2d9:0:0:0
 F:SHOW_MODS | TOWN
-D:A double-bladed axe.  Very popular among Dwarves.
+D:A double-bladed axe. Very popular among Dwarves.
+D:Built to cleave through armor, shields, and anything else in the way.
 
 N:*:& Great Axe~
 G:/:s
@@ -863,6 +879,7 @@ W:35:0:0:140:400
 A:35/3
 P:0:2d10:0:0:0
 F:SHOW_MODS | RIDING
+D:A heavy shaft splits into three long barbed prongs--once they pierce, they stay in.
 
 N:*:& Lochaber Axe~
 G:/:D
@@ -871,6 +888,7 @@ W:45:0:0:250:750
 A:45/1
 P:0:3d9:0:0:0
 F:SHOW_MODS
+D:A Scottish poleaxe with a large blade and rear hook. It strikes with force and control.
 
 N:*:& Heavy Lance~
 G:/:s
@@ -879,6 +897,7 @@ W:43:0:0:400:700
 A:43/4
 P:0:4d10:0:0:0
 F:SHOW_MODS | RIDING
+D:A mighty lance for mounted troops. Hard to wield but deadly at full gallop.
 
 N:*:& Scythe~ of Slicing
 G:/:r
@@ -896,6 +915,7 @@ I:22:40:0
 W:10:0:0:30:30
 P:0:1d1:0:0:0
 F:INSTA_ART
+D:A simple rod of wood and twine. You won't slay dragons with it, but you might catch supper.
 
 N:*:& Death Scythe~
 G:/:R
@@ -908,6 +928,8 @@ F:SLAY_DRAGON | SLAY_ANIMAL | SLAY_EVIL | SLAY_HUMAN | BRAND_VAMP |
 F:SLAY_UNDEAD | SLAY_DEMON | SLAY_TROLL | SLAY_GIANT | SLAY_ORC |
 F:BRAND_FIRE | BRAND_ELEC | BRAND_COLD | BRAND_ACID | BRAND_POIS |
 F:IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD | RIDING
+D:A monstrous scythe that gleams with every type of dark magic.
+D:It kills indiscriminately--living or dead, good or evil, friend or foe.
 
 #Hack for RACE_MON_SWORD
 N:*:& Death Scythe~
@@ -916,6 +938,7 @@ I:22:51:0
 W:70:0:0:350:10000
 P:0:10d10:-50:30:0
 F:IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD
+D:A mockery of a weapon, unbalanced and cursed, but brimming with deathly force.
 
 ########################################################################
 # Blunt Weapons (TV_HAFTED)

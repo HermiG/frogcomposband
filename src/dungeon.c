@@ -3524,7 +3524,6 @@ static void _dispatch_command(int old_now_turn)
 
 
 #ifdef ALLOW_WIZARD
-
         /* Special "debug" commands */
         case KTRL('A'):
         {
@@ -3535,15 +3534,13 @@ static void _dispatch_command(int old_now_turn)
             }
             break;
         }
-
 #endif /* ALLOW_WIZARD */
 
 
 #ifdef ALLOW_SPOILERS
 		case KTRL('Z'):
 			/*  v~~~ ^Z(d|D) is useful info for game design ... */
-			if (0 || allow_spoilers)
-				do_cmd_spoilers();
+			if (0 || allow_spoilers) do_cmd_spoilers();
 			break;
 #endif /* ALLOW_SPOILERS */
 		
@@ -3682,8 +3679,7 @@ static void _dispatch_command(int old_now_turn)
         /* Begin Running -- Arg is Max Distance */
         case '.':
         {
-            if (!p_ptr->wild_mode)
-                do_cmd_run();
+            if (!p_ptr->wild_mode) do_cmd_run();
             break;
         }
 
@@ -4227,7 +4223,6 @@ static void _dispatch_command(int old_now_turn)
         }
 
 
-
         /*** Help and Such ***/
 
         /* Help */
@@ -4404,30 +4399,30 @@ static void _dispatch_command(int old_now_turn)
         /* Look around */
         case 'l':
         {
-          mouse_cursor_targeting_state = 0;
-          do_cmd_look();
-          break;
+            mouse_cursor_targeting_state = 0;
+            do_cmd_look();
+            break;
         }
 
         case '`': // Travel or look at cursor
         {
-          if(mouse_cursor_targeting_state & MOUSE_CLICK_LEFT) do_cmd_look();
-          else if (!p_ptr->wild_mode) do_cmd_travel();
-          break;
+            if(mouse_cursor_targeting_state & MOUSE_CLICK_LEFT) do_cmd_look();
+            else if (!p_ptr->wild_mode) do_cmd_travel();
+            break;
         }
 
         /* Autoexplore */
         case 'x':
         {
-          if (!p_ptr->wild_mode) do_cmd_auto_explore();
-          break;
+            if (!p_ptr->wild_mode) do_cmd_auto_explore();
+            break;
         }
         
         /* Debug */
         case 'X':
         {
             msg_format("cur_hgt: %d, cur_wid: %d\n", cur_hgt, cur_wid);
-        break;
+            break;
         }
 
         case 'J':
@@ -4465,17 +4460,14 @@ static void process_command(void)
     int old_now_turn = now_turn;
 
 #ifdef ALLOW_REPEAT /* TNB */
-
     /* Handle repeating the last command */
     repeat_check(FALSE);
-
 #endif /* ALLOW_REPEAT -- TNB */
 
     now_turn = game_turn;
     msg_boundary();
 
-    if (p_ptr->pclass == CLASS_SNIPER && p_ptr->concent)
-        reset_concent = TRUE;
+    if (p_ptr->pclass == CLASS_SNIPER && p_ptr->concent) reset_concent = TRUE;
 
     online_macro_hack = TRUE;
 
@@ -4513,8 +4505,7 @@ static void process_command(void)
 
     online_macro_hack = FALSE;
 
-    if (!energy_use)
-        now_turn = old_now_turn;
+    if (!energy_use) now_turn = old_now_turn;
 }
 
 
@@ -4523,11 +4514,7 @@ static void process_command(void)
 static bool monster_tsuri(int r_idx)
 {
     monster_race *r_ptr = &r_info[r_idx];
-
-    if ((r_ptr->flags7 & RF7_AQUATIC) && !(r_ptr->flags1 & RF1_UNIQUE) && my_strchr("Jjlw", r_ptr->d_char))
-        return TRUE;
-    else
-        return FALSE;
+    return (r_ptr->flags7 & RF7_AQUATIC) && !(r_ptr->flags1 & RF1_UNIQUE) && my_strchr("Jjlw", r_ptr->d_char);
 }
 
 

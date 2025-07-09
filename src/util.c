@@ -2265,10 +2265,8 @@ char inkey(void)
             break;
         }
 
-
         /* Get a key (see above) */
         ch = inkey_aux();
-
 
         /* Handle "control-right-bracket" */
         if (ch == 29)
@@ -2289,11 +2287,6 @@ char inkey(void)
             continue;
         }
 
-
-        /* Treat back-quote as escape */
-/*        if (ch == '`') ch = ESCAPE; */
-
-
         /* End "macro trigger" */
         if (parse_under && (ch <= 32))
         {
@@ -2303,7 +2296,6 @@ char inkey(void)
             /* End "macro trigger" */
             parse_under = FALSE;
         }
-
 
         /* Handle "control-caret" */
         if (ch == 30)
@@ -2330,14 +2322,11 @@ char inkey(void)
         }
     }
 
-
     /* Hack -- restore the term */
     Term_activate(old);
 
-
     /* Restore the cursor */
     Term_set_cursor(v);
-
 
     /* Cancel the various "global parameters" */
     inkey_base = inkey_xtra = inkey_flag = inkey_scan = FALSE;

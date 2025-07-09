@@ -1,10 +1,14 @@
 # By Shayne Steele (steele@cs.fsu.edu)
 
 ?:[EQU $QUEST29 Taken InProgress]
-D:The Magic Shop's owner is thinking of opening another Thieves' Guild. 
-D:I do not need the competition, here is the key to the Magic Shop's
-D:back treasure room. Destroy everything you find there and you will
-D:be rewarded.
+D:The proprietor of the Magic Bazaar has been making inquiries--
+D:dangerous ones. Word is, they're preparing to sponsor a new
+D:Thieves' Guild under the guise of arcane trade. I can't allow
+D:that. This key should get you into their private vault.
+D:I want you to ransack the place.
+D:Tear through anything that isn't nailed down--burn what is.
+D:You can keep what you find, and I'll even sweeten the pot... 
+D:just make sure this doesn't come back to me.
 ?:1
 
 ?:[EQU $QUEST29 Completed]

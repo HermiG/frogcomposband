@@ -3245,16 +3245,16 @@ F:8:0x05:0xAB
 # Armoury
 F:9:0x0F:0xDA
 
-# Weapon Smiths
+# Weapon Smithy
 F:10:0x02:0x13
 
 # Temple
 F:11:0x01:0x80
 
-# Alchemy Shop
+# Alchemist's
 F:12:0x0A:0xA4
 
-# Magic Shop
+# Magic Bazaar
 F:13:0x04:0xA6
 
 # Black Market

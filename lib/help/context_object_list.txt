@@ -95,10 +95,10 @@ There are 19 interesting features:                <color:G>:</color><color:g>...
  <color:y>></color> <color:y>Quest Entrance: The Thieves' Hideout</color> S  1 E 26 <color:g>.......</color><color:G>:</color><color:g>.</color><color:G>:</color><color:g>.....</color><color:G>:</color><color:g>.</color> EXP <color:G>      15</color>
  <color:U>1</color> <color:U>General Store                       </color> S 12 W 29 <color:G>:</color><color:g>..</color><color:G>:</color><color:U>#</color><color:g>..</color><color:G>::</color><color:U>#</color><color:g>..</color><color:G>:#</color><color:g>::</color><color:G>:</color> AU  <color:G>     767</color>
  <color:s>2</color> <color:s>Armoury                             </color> S  1 E 16 <color:U>#</color><color:g>:.</color><color:U>###</color><color:G>#</color><color:g>:</color><color:U>###</color><color:G>#</color><color:g>:</color><color:G>:</color><color:g>...</color> <color:W>|</color><color:d>       </color><color:U>(</color><color:d>   </color>
- 3 Weapon Smiths                        S  4 E 27 <color:U>############</color><color:G>##</color><color:g>...</color> STR : <color:G>    16</color>
+ 3 Weapon Smithy                        S  4 E 27 <color:U>############</color><color:G>##</color><color:g>...</color> STR : <color:G>    16</color>
  <color:g>4</color> <color:g>Temple                              </color> S  2 W 29 <color:U>#############</color><color:G>#</color><color:g>...</color> INT : <color:G>    18</color>
- <color:b>5</color> <color:b>Alchemy Shop                        </color> S 16 W 25 <color:U>##</color><color:g>..</color><color:s>.</color><color:g>..</color><color:U>###</color><color:g>.</color><color:G>#</color><color:g>.....</color> WIS : <color:G>     9</color>
- <color:r>6</color> <color:r>Magic Shop                          </color> S 16 W 15 <color:G>#</color><color:g>...</color><color:s>.</color><color:g>...</color><color:G>#</color><color:g>........</color> DEX : <color:G> 18/40</color>
+ <color:b>5</color> <color:b>Alchemist's Shop                    </color> S 16 W 25 <color:U>##</color><color:g>..</color><color:s>.</color><color:g>..</color><color:U>###</color><color:g>.</color><color:G>#</color><color:g>.....</color> WIS : <color:G>     9</color>
+ <color:r>6</color> <color:r>Magic Bazaar                        </color> S 16 W 15 <color:G>#</color><color:g>...</color><color:s>.</color><color:g>...</color><color:G>#</color><color:g>........</color> DEX : <color:G> 18/40</color>
  <color:D>7</color> <color:D>Black Market                        </color> S 16 E 16 <color:s>.................</color> CON : <color:G>    17</color>
  <color:y>8</color> <color:y>Home                                </color> S 17 E 11 <color:r>.................</color> CHR : <color:G>    12</color>
  <color:o>9</color> <color:o>Bookstore                           </color> S 17 W 10 <color:b>~~~~~~~~~~~~~~~~~</color> AC     <color:G>    6</color>
@@ -110,7 +110,7 @@ There are 19 interesting features:                <color:G>:</color><color:g>...
  <color:B>+</color> <color:B>Bounty Office                       </color> N  1 W 15 <color:U>####</color><color:s>.</color><color:U>#########</color><color:s>.</color><color:U>##</color>             
  <color:v>></color> <color:v>entrance to dungeon                 </color> S 31 E 89 <color:U>####</color><color:s>.</color><color:U>####</color><color:y>></color><color:U>####</color><color:s>.</color><color:U>##</color>             
  <color:v>></color> <color:v>entrance to dungeon                 </color> S  4 E 51 <color:s>...............</color><color:U>##</color>             
- <color:G>0</color> <color:G>Mushroom Store                      </color> N  1 W 21 <color:s>..........</color><color:U>####</color><color:s>.</color><color:U>##</color>             
+ <color:G>0</color> <color:G>Shroomery                           </color> N  1 W 21 <color:s>..........</color><color:U>####</color><color:s>.</color><color:U>##</color>             
                                                   <color:s>..........</color>3<color:U>###</color><color:s>.</color><color:U>##</color> <color:B>Study (1)</color>   
    <color:B>[Press ESC to exit. Press ? for help]</color>          <color:s>..........</color><color:U>####</color><color:s>.</color><color:U>##</color>             
 <color:s>...........................</color>........<color:s>..............................</color><color:U>##</color>             

@@ -2,7 +2,7 @@
 
 Press <link:context_shop.txt#QuickRef> for the <color:keyword>Quick Reference</color> and <link:town.txt#Shopping> for details on shopping.
 
-Each town on the surface contains numerous shops where you may purchase supplies or sell unwanted objects. Each shop specializes in a certain class of items: The Weapon Smiths sells weapons (melee and missile) while the Armory sells armor; the Alchemist sells potions and scrolls while the General Store sells basic utilities such as food, lanterns and oil. Each town also has a Black Market where you may, for an exorbitant price, purchase items normally found only in the dungeon.
+Each town on the surface contains numerous shops where you may purchase supplies or sell unwanted objects. Each shop specializes in a certain class of items: The Weapon Smith sells weapons (melee and missile) while the Armory sells armor; the Alchemist sells potions and scrolls while the General Store sells basic utilities such as food, lanterns and oil. Each town also has a Black Market where you may, for an exorbitant price, purchase items normally found only in the dungeon.
 
 <topic:Tutorial><style:heading>Your First Shopping Spree</style>
 

@@ -32,7 +32,7 @@ Finally, if you tire of dying to myriad powerful monsters, you can play as a mon
 
 You begin your adventure in the town of <color:keyword>Outpost</color>, where you may acquire supplies, weapons, armor, and magical devices by bartering with various shop owners. You will have some gear as a birthright, and a little bit of gold as well.
 
-First of all, you should visit the shops and buy some key supplies - Scrolls of Phase Door and Teleportation from the <color:keyword>Alchemy Shop</color> and Potions of Cure Serious Wounds from the <color:keyword>Temple Shop</color>. It is very easy to get in over your head, especially early on, so having ready ways to escape and heal is essential. If you have gold left over, consider upgrading your starting torch to a lantern at the <color:keyword>General Store</color>; a lantern casts more light, and so allows you to see further in the dark.
+First of all, you should visit the shops and buy some key supplies - Scrolls of Phase Door and Teleportation from the <color:keyword>Alchemist's</color> and Potions of Cure Serious Wounds from the <color:keyword>Temple</color>. It is very easy to get in over your head, especially early on, so having ready ways to escape and heal is essential. If you have gold left over, consider upgrading your starting torch to a lantern at the <color:keyword>General Store</color>; a lantern casts more light, and so allows you to see further in the dark.
 
 You are now ready to descend into the dungeon, where fantastic adventures await you... but hold on a moment! If you visit the castle of Uldrik, the ruler of Outpost, you will receive a special <color:keyword>town quest</color> you might want to complete first.
 

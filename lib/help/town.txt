@@ -14,15 +14,15 @@ The symbols on your map can be broken down into three broad categories: terrain 
   <$:FF_TREE>   Tree/wooded area          <$:FF_PERMANENT>   Building wall
   <$:FF_GRASS>   Patch of grass            <$:FF_GENERAL_STORE>   Entrance to General Store
   <$:FF_FLOWER>   Flower                    <$:FF_ARMOURY>   Entrance to Armoury
-  <$:FF_BRAKE>   Brake                     <$:FF_WEAPON_SMITHS>   Entrance to Weapon Shop
-  <$:FF_SWAMP>   Swamp                     <$:FF_TEMPLE>   Entrance to Temple Shop
-  <$:FF_SHALLOW_WATER>   Shallow water             <$:FF_ALCHEMY_SHOP>   Entrance to Alchemy Shop
-  <$:FF_DEEP_WATER>   Deep water                <$:FF_MAGIC_SHOP>   Entrance to Magic Shop
+  <$:FF_BRAKE>   Brake                     <$:FF_WEAPON_SMITHS>   Entrance to Weapon Smithy
+  <$:FF_SWAMP>   Swamp                     <$:FF_TEMPLE>   Entrance to Temple
+  <$:FF_SHALLOW_WATER>   Shallow water             <$:FF_ALCHEMY_SHOP>   Entrance to Alchemist's
+  <$:FF_DEEP_WATER>   Deep water                <$:FF_MAGIC_SHOP>   Entrance to Magic Bazaar
   <$:FF_SHALLOW_LAVA>   Shallow lava              <$:FF_BLACK_MARKET>   Entrance to Black Market
   <$:FF_DEEP_LAVA>   Deep lava                 <$:FF_HOME>   Entrance to your home
-  <$:FF_DARK_PIT>   Dark pit                  <$:FF_BOOKSTORE>   Entrance to Book Store
+  <$:FF_DARK_PIT>   Dark pit                  <$:FF_BOOKSTORE>   Entrance to Bookstore
   <$:FF_MOUNTAIN>   Mountains                 <$:FF_SHROOMERY>   Entrance to Shroomery
-  <$:FF_FLOOR>   Floor/road                <$:FF_JEWELER>   Entrance to Jewelry Store
+  <$:FF_FLOOR>   Floor/road                <$:FF_JEWELER>   Entrance to Jeweler
   <$:FF_DIRT>   Dirt                      <$:FF_MUSEUM>   Entrance to Museum
   <$:FF_GRASS>   Grass                     <$:FF_BUILDING_1>   Entrance to non-shop building
   <$:FF_ENTRANCE>   Dungeon entrance          <$:FF_BUILDING_2>   Entrance to non-shop building
@@ -31,7 +31,7 @@ The symbols on your map can be broken down into three broad categories: terrain 
 
 <topic:TownLevel><style:heading>What to Expect in a Town</style>
 
-The exact appearance of Outpost depends on whether you are playing with the wilderness on or off, but the basics are the same either way: you will find a number of shops where items can be bought and sold, plus a handful of other buildings where items are not on display but services or interesting quests might be offered instead. As a general rule, the symbols for shop entrances are usually numerical (such as <$:FF_ALCHEMY_SHOP> for the Alchemy Shop), while buildings that offer services or quests are denoted with the character <$:FF_BUILDING_1> in various colors. Outside these rules are your home <$:FF_HOME> and the museum <$:FF_MUSEUM>, which are not shops but also do not offer quests or services.
+The exact appearance of Outpost depends on whether you are playing with the wilderness on or off, but the basics are the same either way: you will find a number of shops where items can be bought and sold, plus a handful of other buildings where items are not on display but services or interesting quests might be offered instead. As a general rule, the symbols for shop entrances are usually numerical (such as <$:FF_ALCHEMY_SHOP> for the Alchemist's), while buildings that offer services or quests are denoted with the character <$:FF_BUILDING_1> in various colors. Outside these rules are your home <$:FF_HOME> and the museum <$:FF_MUSEUM>, which are not shops but also do not offer quests or services.
 
 A glimpse of Outpost as it appears with the wilderness on can be seen below:
 <style:screenshot>
@@ -65,7 +65,7 @@ Outpost
 
 The <color:v>></color> to the east is a dungeon entrance, and is actually where you start the game, but it is not a good idea to enter the dungeon immediately! Do some shopping first, maybe even complete a couple of town quests. The @ symbol marks the player's location; and directly to the player's southeast is the entrance to the White Horse Inn, one of two buildings in this wilderness-on version of Outpost to offer quests. The other one is also visible here - that large multi-entrance building to the northwest, which is the castle of Uldrik, the Count of Outpost. Visit these two buildings, press <color:keypress>q</color> to request your first quests, and decide if you're brave enough to take them on immediately.
 
-A few of the town's shops are also visible here, as well as your home <color:y>8</color>. Additional shops not visible in this shot can be found to the west, including the <color:keyword>General Store</color>, the <color:keyword>Temple Shop</color> and the <color:keyword>Alchemy Shop</color>. These are three shops you should visit at the beginning of every new game, as they sell very useful items you will need on your adventures.
+A few of the town's shops are also visible here, as well as your home <color:y>8</color>. Additional shops not visible in this shot can be found to the west, including the <color:keyword>General Store</color>, the <color:keyword>Temple</color> and the <color:keyword>Alchemist's</color>. These are three shops you should visit at the beginning of every new game, as they sell very useful items you will need on your adventures.
 
 The first time you are in town it will be daytime (unless you are playing an undead race who starts at night), but note that the sun rises and falls as time passes; if you enter the town at night, the town will be dark. Fortunately for you, the various shops and the other special buildings are open on a 24-hour basis.
 
@@ -107,16 +107,16 @@ The General Store sells foods, drinks, some clothing, torches, lamps, oil, shove
   <indent><color:B>The Armory</color> (<$:FF_ARMOURY>)
 The Armory is where the town's armor is fashioned. All sorts of protective gear may be bought and sold here.</indent>
 
-  <indent><color:B>The Weaponsmith's Shop</color> (<$:FF_WEAPON_SMITHS>)
-The Weaponsmith's Shop is where the town's weapons are fashioned. Hand and missile weapons may be purchased and sold here, along with arrows, bolts, and shots.</indent>
+  <indent><color:B>The Weapon Smithy</color> (<$:FF_WEAPON_SMITHS>)
+The Weapon Smithy is where the town's weapons are fashioned. Hand and missile weapons may be purchased and sold here, along with arrows, bolts, and shots.</indent>
 
-  <indent><color:B>The Temple Shop</color> (<$:FF_TEMPLE>)
-The Temple Shop deals in healing and restoration potions, as well as bless scrolls, word of recall scrolls, some approved priestly weapons, as well as books of Life magic for priests and paladins.</indent>
+  <indent><color:B>The Temple</color> (<$:FF_TEMPLE>)
+The Temple deals in healing and restoration potions, as well as bless scrolls, word of recall scrolls, some approved priestly weapons, as well as books of Life magic for priests and paladins.</indent>
 
-  <indent><color:B>The Alchemy Shop</color> (<$:FF_ALCHEMY_SHOP>)
+  <indent><color:B>The Alchemist's</color> (<$:FF_ALCHEMY_SHOP>)
 The Alchemy Shop deals in all types of potions and scrolls.</indent>
 
-  <indent><color:B>The Magic Shop</color> (<$:FF_MAGIC_SHOP>)
+  <indent><color:B>The Magic Bazaar</color> (<$:FF_MAGIC_SHOP>)
 The Magic Shop deals in all sorts of rings, wands, amulets, and staves, as well as some magic books.</indent>
 
   <indent><color:B>The Black Market</color> (<$:FF_BLACK_MARKET>)
@@ -129,7 +129,7 @@ This is your house where you can store objects that you cannot carry on your tra
 The Bookstore deals in all sorts of magical books. You can purchase and sell spellbooks for the spellcasters here.</indent>
 
   <indent><color:B>The Shroomery</color> (<$:FF_SHROOMERY>)
-The Shroomery sells many useful basic mushrooms, including the always-handy Cure Poison, Cure Confusion and Fast Recovery.</indent>
+The Mushroom Shop sells many useful basic mushrooms, including the always-handy Cure Poison, Cure Confusion and Fast Recovery.</indent>
 
   <indent><color:B>The Museum</color> (<$:FF_MUSEUM>)
 This is a place where you can donate objects, which will then be put on permanent display. There is no gameplay advantage to using the Museum; it is simply for storing memories. See <link:context_home.txt#Museum> for more information.</indent>

@@ -7,7 +7,7 @@
 
 <color:G>Q:</color> All right, I have a character up and walking. What should I do?
 
-<color:R>A:</color> First of all, you will want things that help your character survive difficult situations - either cheap healing potions (cure light/cure serious wounds), or escape scrolls (phase door/teleportation), or ideally both. These are sold at the Temple (shop <color:g>4</color>) and the Alchemy Shop (shop <color:b>5</color>). After that, you'll probably want to either explore a dungeon (Warrens, in Outpost, is the easiest and the usual starter dungeon) or request and complete one of the early quests. While the Thieves' Hideout quest is marked as level 5, for all but the weakest characters it is doable at the very beginning of the game, at least with a bit of luck and a cure wounds potion or two.
+<color:R>A:</color> First of all, you will want things that help your character survive difficult situations - either cheap healing potions (cure light/cure serious wounds), or escape scrolls (phase door/teleportation), or ideally both. These are sold at the Temple (shop <color:g>4</color>) and the Alchemist's (shop <color:b>5</color>). After that, you'll probably want to either explore a dungeon (Warrens, in Outpost, is the easiest and the usual starter dungeon) or request and complete one of the early quests. While the Thieves' Hideout quest is marked as level 5, for all but the weakest characters it is doable at the very beginning of the game, at least with a bit of luck and a cure wounds potion or two.
 
 
 <color:G>Q:</color> How do I access the Thieves' Hideout quest?
@@ -31,7 +31,7 @@ Coffee-break mode is a birth option; it is automatically turned on for players w
 
 <color:G>Q:</color> I can't find any up staircases, only down staircases! Is there any way I can get back to town?
 
-<color:R>A:</color> In coffee-break mode (and Beginner mode), up staircases never generate, but you can return to Outpost by reading a scroll of Word of Recall (or using the 'Recall' class power on a Berserker). Be careful not to run out of scrolls; if you start running low, buy a few more at the Temple or the Alchemy Shop. (If all else fails, you can hope to find a scroll in the dungeon.)
+<color:R>A:</color> In coffee-break mode (and Beginner mode), up staircases never generate, but you can return to Outpost by reading a scroll of Word of Recall (or using the 'Recall' class power on a Berserker). Be careful not to run out of scrolls; if you start running low, buy a few more at the Temple or the Alchemist's. (If all else fails, you can hope to find a scroll in the dungeon.)
 
 In pure forced-descent mode, up staircases never generate and recalling is disabled, so you do not have any way to return to the surface once you've left it.
 

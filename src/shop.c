@@ -142,7 +142,7 @@ static _type_t _types[] =
          { 28, "Zzathath the Imp",         30000, 112, RACE_IMP },
          { 0 }}},
 
-    { SHOP_WEAPON, "Weapon Smiths", _weapon_will_buy, _weapon_create,
+    { SHOP_WEAPON, "Weapon Smithy", _weapon_will_buy, _weapon_create,
         {{  1, "Arnold the Beastly",       15000, 115, RACE_BARBARIAN },
          {  2, "Arndal Beast-Slayer",      20000, 110, RACE_HUMAN },
          {  3, "Eddie Beast-Master",       25000, 115, RACE_SNOTLING },
@@ -198,7 +198,7 @@ static _type_t _types[] =
          { 22, "Dardobard the Weak",       30000, 109, RACE_SPECTRE },
          { 0 }}},
 
-    { SHOP_ALCHEMIST, "Alchemy Shop", _alchemist_will_buy, _alchemist_create,
+    { SHOP_ALCHEMIST, "Alchemist's", _alchemist_will_buy, _alchemist_create,
         {{  1, "Mauser the Chemist",       10000, 111, RACE_HUMAN },
          {  2, "Wizzle the Chaotic",       10000, 110, RACE_HOBBIT },
          {  3, "Midas the Greedy",         15000, 116, RACE_GNOME },
@@ -228,7 +228,7 @@ static _type_t _types[] =
          { 27, "Igor the Mixturemaker",    15000, 112, RACE_IGOR },
          { 0 }}},
 
-    { SHOP_MAGIC, "Magic Shop", _magic_will_buy, _magic_create,
+    { SHOP_MAGIC, "Magic Bazaar", _magic_will_buy, _magic_create,
         {{  1, "Lo Pan the Sorcerer",      20000, 110, RACE_HUMAN },
          {  2, "Buggerby the Great",       20000, 113, RACE_GNOME },
          {  3, "The Wizard of Yendor",     30000, 110, RACE_HUMAN },
@@ -313,7 +313,7 @@ static _type_t _types[] =
          { 21, "Isung the Lord",           30000, 105, RACE_HIGH_ELF },
          { 0 }}},
 
-    { SHOP_JEWELER, "Jewelry Shop", _jeweler_will_buy, _jeweler_create,
+    { SHOP_JEWELER, "Jeweler", _jeweler_will_buy, _jeweler_create,
         {{  1, "Dalanna the Sweet",        20000, 108, RACE_HUMAN },
          {  2, "Mesistrond",               15000, 105, RACE_DARK_ELF },
          {  3, "Mr. Biggles",              50000, 110, RACE_GNOME },
@@ -332,7 +332,7 @@ static _type_t _types[] =
          { 16, "Aulendil",                 25000, 110, RACE_HIGH_ELF },
          { 0 }}},
 
-	{ SHOP_SHROOMERY, "Mushroom Store", _shroomery_will_buy, _shroomery_create,
+	{ SHOP_SHROOMERY, "Shroomery", _shroomery_will_buy, _shroomery_create,
 		 { { 1, "Mysticus",              50000, 110, RACE_GNOME },
 		 { 2, "Martin",                10000, 108, RACE_HUMAN },
 		 { 3, "Karl",                     10000, 110, RACE_HALF_TROLL },
@@ -627,7 +627,7 @@ static bool _armory_create(obj_ptr obj, u32b mode)
 }
 
 /************************************************************************
- * The Weapon Smiths
+ * The Weapon Smithy
  ***********************************************************************/
 static bool _weapon_will_buy(obj_ptr obj)
 {
@@ -899,7 +899,7 @@ static bool _alchemist_create(obj_ptr obj, u32b mode)
 }
 
 /************************************************************************
- * The Magic Shop
+ * The Magic Bazaar
  ***********************************************************************/
 static bool _magic_will_buy(obj_ptr obj)
 {
@@ -1143,7 +1143,7 @@ static bool _jeweler_create(obj_ptr obj, u32b mode)
 }
 
 /************************************************************************
-* The Mushroomery
+* The Shroomery
 ***********************************************************************/
 
 static bool _shroomery_will_buy(obj_ptr obj)

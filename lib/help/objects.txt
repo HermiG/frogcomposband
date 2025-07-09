@@ -40,9 +40,9 @@ It is possible to learn everything about an object this way, but doing so is muc
 
 The broad quality of equipment is given by the strong version of pseudo-ID: objects are, in increasing order of quality, either <color:keyword>average</color>, <color:keyword>good</color>/<color:keyword>bad</color>, <color:keyword>excellent</color>/<color:keyword>awful</color> or <color:keyword>special</color>/<color:keyword>terrible</color>. What does this mean?
 
-If you did some shopping, then you probably saw what average equipment looks like. For example, you might have seen this inventory at the Weapon Smiths:
+If you did some shopping, then you probably saw what average equipment looks like. For example, you might have seen this inventory at the Weapon Smithy:
 <style:screenshot>
-    <color:U>Solvistani the Ranger (Wood-Elf)</color>                     <color:G>Weapon Smiths</color> (<color:r>25000</color>)  
+    <color:U>Solvistani the Ranger (Wood-Elf)</color>                     <color:G>Weapon Smithy</color> (<color:r>25000</color>)  
                                                                                 
     Item Description                                               Weight  Price
  a) <color:v>?</color> <color:B>a Rage Spellbook [Northern Frights]</color>                         3.0 lbs <color:D>  1610</color>

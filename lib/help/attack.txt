@@ -143,7 +143,7 @@ Many magical devices can be used to attack monsters directly. Nearly all charact
 
 Each device produces a specific effect when used. For offensive devices, these tend to be either <color:keyword>bolts</color>, which hurt a single monster; <color:keyword>balls</color>, which hurt all monsters within a given radius of the ball's epicenter; <color:keyword>beams</color>, which hurt all monsters within the beam's path; or <color:keyword>breaths</color>, conical effects that explode into a ball. These bolts, beams, balls or breaths are <color:keyword>elemental</color>, meaning their damage relies on a specific damage type (such as acid, electricity, fire, cold or nexus) and monsters resistant to that element will not suffer full damage.
 
-Bolt devices are generally the least exciting, but they are also the most common in the early game and so likely to be your first offensive devices. An early <color:g>Wand of Frost Bolts</color> can really help a character with otherwise limited offense, and some characters accordingly buy one from the Magic Shop as soon as they can afford it.
+Bolt devices are generally the least exciting, but they are also the most common in the early game and so likely to be your first offensive devices. An early <color:g>Wand of Frost Bolts</color> can really help a character with otherwise limited offense, and some characters accordingly buy one from the Magic Bazaar as soon as they can afford it.
 
 With some very rare exceptions, offensive magic devices are always aimed at a target or direction, and are accordingly best used from range. See <link:objects.txt#Devices> for more information about magic devices, and <link:attack.txt#DistanceAttack> above for more on attacking from a distance.
 

@@ -831,7 +831,7 @@ F:PERMANENT | GLOW | CAN_FLY
 # 0x4C --> shop -- weapon shop (perm)
 
 N:76:WEAPON_SMITHS
-E:Weapon Smiths
+E:Weapon Smithy
 G:3:w
 W:10
 F:SUBTYPE_2 | LOS | PROJECT | MOVE | NOTICE | REMEMBER | STORE | DOOR |
@@ -849,7 +849,7 @@ F:PERMANENT | GLOW | CAN_FLY
 # 0x4E --> shop -- alchemist (perm)
 
 N:78:ALCHEMY_SHOP
-E:Alchemy Shop
+E:Alchemist's
 G:5:b
 W:10
 F:SUBTYPE_4 | LOS | PROJECT | MOVE | NOTICE | REMEMBER | STORE | DOOR |
@@ -858,7 +858,7 @@ F:PERMANENT | GLOW | CAN_FLY
 # 0x4F --> shop -- magic shop (perm)
 
 N:79:MAGIC_SHOP
-E:Magic Shop
+E:Magic Bazaar
 G:6:r
 W:10
 F:SUBTYPE_5 | LOS | PROJECT | MOVE | NOTICE | REMEMBER | STORE | DOOR |
@@ -1624,7 +1624,7 @@ F:SUBTYPE_10 | LOS | PROJECT | MOVE | NOTICE | REMEMBER | STORE | DOOR |
 F:PERMANENT | GLOW | CAN_FLY
 
 N:227:SHROOMERY
-E:Mushroom Store
+E:Shroomery
 G:0:G
 W:10
 F:SUBTYPE_11 | LOS | PROJECT | MOVE | NOTICE | REMEMBER | STORE | DOOR |

@@ -37,14 +37,6 @@ C:0:9
 A:\r
 C:0:^J
 
-# Hack -- Commit suicide
-A:Q
-C:0:^K
-
-# Hack -- Commit suicide
-A:Q
-C:0:^C
-
 ##### Roguelike Keyset Mappings #####
 
 # Repeat Last Command

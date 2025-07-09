@@ -3255,8 +3255,8 @@ menu_naiyou menu_info[10][10] =
 
     {
         {"Use(m)", 'm', TRUE},
-        {"See tips(b/P)", 'b', TRUE},
-        {"Study(G)", 'G', TRUE},
+        {"See tips(^B/P)", KTRL('B'), TRUE},
+        {"Learn(^L)", KTRL('L'), TRUE},
         {"Special abilities(U/O)", 'U', TRUE},
         {"", 0, FALSE},
         {"", 0, FALSE},
@@ -3272,7 +3272,7 @@ menu_naiyou menu_info[10][10] =
         {"Search(s)", 's', TRUE},
         {"Look(l/x)", 'l', TRUE},
         {"Target(*)", '*', TRUE},
-        {"Dig(T/^t)", 'T', TRUE},
+        {"Dig(T/^T)", 'T', TRUE},
         {"Go up stairs(<)", '<', TRUE},
         {"Go down stairs(>)", '>', TRUE},
         {"Command pets(p)", 'p', TRUE},
@@ -3285,7 +3285,7 @@ menu_naiyou menu_info[10][10] =
         {"Use a staff(u/Z)", 'u', TRUE},
         {"Aim a wand(a/z)", 'a', TRUE},
         {"Zap a rod(z/a)", 'z', TRUE},
-        {"Activate an equipment(A)", 'A', TRUE},
+        {"Activate equipment(A)", 'A', TRUE},
         {"Eat(E)", 'E', TRUE},
         {"Fire missile weapon(f/t)", 'f', TRUE},
         {"Throw an item(v)", 'v', TRUE},
@@ -3295,13 +3295,13 @@ menu_naiyou menu_info[10][10] =
     {
         {"Get items(g)", 'g', TRUE},
         {"Drop an item(d)", 'd', TRUE},
-        {"Destroy an item(k/^d)", 'k', TRUE},
-        {"Inscribe an item(Z/{)", 'Z', TRUE},
+        {"Destroy an item(k/^D)", 'k', TRUE},
+        {"Inscribe an item({)", 'Z', TRUE},
         {"Uninscribe an item(})", '}', TRUE},
-        {"Inspect an item(I)", 'I', TRUE},
-        {"Inventory list(i)", 'i', TRUE},
-        {"Travel to item(H/^E)", 'H', TRUE},
-        {"Resume travel(J/())", 'J', TRUE},
+        {"Inventory view(i)", 'i', TRUE},
+        {"Bag view(b)", 'b', TRUE},
+        {"Travel to item(G/^E)", 'H', TRUE},
+        {"Resume travel(J/()", 'J', TRUE},
         {"", 0, FALSE}
     },
 
@@ -3310,7 +3310,7 @@ menu_naiyou menu_info[10][10] =
         {"Take off(t/T)", 't', TRUE},
         {"Refuel(F)", 'F', TRUE},
         {"Equipment list(e)", 'e', TRUE},
-        {"Switch ring fingers", 'W', TRUE},
+        {"Switch ring fingers(W)", 'W', TRUE},
         {"", 0, FALSE},
         {"", 0, FALSE},
         {"", 0, FALSE},
@@ -3332,15 +3332,15 @@ menu_naiyou menu_info[10][10] =
     },
 
     {
-        {"List monsters(Y/[)", 'Y', TRUE},
-        {"List objects(O/])", ']', TRUE},
+        {"List monsters([)", '[', TRUE},
+        {"List objects(])", ']', TRUE},
         {"Character sheet(C)", 'C', TRUE},
-        {"Full map(M)", 'M', TRUE},
-        {"Map(L/W)", 'L', TRUE},
-        {"Level feeling(^f)", KTRL('F'), TRUE},
+        {"Map(M)", 'M', TRUE},
+        {"Locate player(L)", 'L', TRUE},
+        {"Level feeling(^F)", KTRL('F'), TRUE},
         {"Identify symbol(/)", '/', TRUE},
-        {"Show prev messages(^p)", KTRL('P'), TRUE},
-        {"Current time(^t/')", KTRL('T'), TRUE},
+        {"Show prev messages(^P)", KTRL('P'), TRUE},
+        {"Current time(^T)", KTRL('T'), TRUE},
         {"Knowledge menu(~)", '~', TRUE}
     },
 
@@ -3358,15 +3358,15 @@ menu_naiyou menu_info[10][10] =
     },
 
     {
-        {"Save and quit(^x)", KTRL('X'), TRUE},
-        {"Save(^s)", KTRL('S'), TRUE},
+        {"Save and quit(^X)", KTRL('X'), TRUE},
+        {"Save(^S)", KTRL('S'), TRUE},
         {"Help(?)", '?', TRUE},
-        {"Redraw(^r)", KTRL('R'), TRUE},
+        {"Redraw(^R)", KTRL('R'), TRUE},
         {"Take note(:)", ':', TRUE},
         {"Dump screen dump(()", ')', TRUE},
         {"Load screen dump())", '(', TRUE},
         {"Version info(V)", 'V', TRUE},
-        {"Commit suicide(Q)", 'Q', TRUE},
+        {"Commit suicide(^K)", KTRL('K'), TRUE},
         {"", 0, FALSE}
     },
 };
@@ -3559,7 +3559,7 @@ static char inkey_from_menu(void)
  */
 void request_command(int shopping)
 {
-    int i,ct;
+    int i, ct;
 
     char cmd;
     int mode;

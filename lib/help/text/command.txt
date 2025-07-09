@@ -57,52 +57,52 @@ Original Keyset
    d  Drop an item                         D  Disarm a trap
    e  Equipment view                       E  Eat some food
    f  Fire an arrow etc.                   F  Fuel your lantern/torch
-   g  Pick up objects (Get)                G  Gain new spells/prayers
-   h  (unused)                             H  Travel to interesting item
-   i  Inventory view                       I  Inspect an item
-   j  Jam a door                           J  Resume travelling
+   g  Get (pick up) objects                G  Go (travel) to interesting item
+   h  (unused)                             H  (unused)
+   i  Inventory view                       I  (unused)
+   j  Jam a door                           J  Resume journey/travelling
    k  Destroy an item                      K  (unused)
    l  Look around                          L  Locate player on map
-   m  Cast a spell / use mental power      M  Full dungeon map
+   m  Cast a spell / Use mental power      M  Map of current level
    n  Repeat last command                  N  (unused)
    o  Open a door or chest                 O  Display object list
    p  Command your pets                    P  Place an item into your bag
-   q  Quaff a potion                       Q  Quit (commit suicide)
+   q  Quaff a potion                       Q  Quest log
    r  Read a scroll                        R  Rest for a period
    s  Search for traps/doors               S  Toggle search mode
-   t  Take off equipment / out of bag      T  Dig a tunnel
+   t  Take off equipment / out of bag      T  Tunnel or dig
    u  Use a staff                          U  Use racial/bonus power
    v  Throw an item                        V  Version info
    w  Wear/wield equipment                 W  Switch ring fingers
    x  Autoexplore                          X  (unused)
-   y  (unused)                             Y  Display monster list
-   z  Zap a rod                            Z  Inscribe an object
+   y  (unused)                             Y  (unused)
+   z  Zap a rod                            Z  (unused)
    !  Enter a user pref command           ^A  (special - wizard command)
-   #  (unused)                            ^C  (special - break)
    @  Interact with macros                ^B  Browse magic spells
+   #  (unused)                            ^C  (special - break)
    $  Reload Mogaminator prefs            ^D  (unused)
    %  Interact with visuals               ^E  Interact with macros
    ^  (special - control key)             ^F  Repeat level feeling
-   &  Interact with colors                ^G  Auto-Get nearby objects
+   &  Interact with colors                ^G  Auto-get nearby objects
    *  Target monster or location          ^H  (unused)
    (  (unused)                            ^I  (Tab) Toggle choice window
    )  Create screen dump                  ^J  (special - linefeed)
-   {  Inscribe an object                  ^K  (unused)
-   }  Uninscribe an object                ^L  (unused)
+   {  Inscribe an object                  ^K  Kill yourself (commit suicide)
+   }  Uninscribe an object                ^L  Learn new spells/prayers
    [  Display monster list                ^M  (special - return)
    ]  Display object list                 ^N  (unused)
    -  Walk (flip pickup)                  ^O  (unused)
    _  Edit/activate Mogaminator prefs     ^P  Show previous messages
-   +  Alter adjacent grid                 ^Q  Display quest info
+   +  Alter adjacent grid                 ^Q  (unused)
    =  Set options                         ^R  Redraw the screen
-   ;  Walk                                ^S  Save and don't quit
+   ;  Walk                                ^S  Save
    :  Take notes                          ^T  Display game time
    '  Playback recorded command           ^U  (unused)
    "  Record command                      ^V  Recenter Viewport
    ,  Stay still                          ^W  (special - wizard mode)
-   <  Go up staircase/Toggle global map   ^X  Save and quit
+   <  Go up staircase / Toggle global map ^X  Save and quit
    .  Run                                 ^Y  (special - wizard mode)
-   >  Go down staircase/Enter normal map  ^Z  (special - borg command)
+   >  Go down staircase / Enter local map ^Z  (special - borg command)
    \  (special - bypass keymap)            |  (unused)
    `  Travel to location                   ~  Knowledge menu
    /  Identify symbol                      ?  Help
@@ -121,7 +121,7 @@ Roguelike Keyset
    d  Drop an item                         D  Disarm a trap or chest
    e  Equipment list                       E  Eat some food
    f  Bash a door (Force)                  F  Fuel your lantern/torch
-   g  Pick up objects (Get)                G  Gain new spells/prayers
+   g  Get (pick up) objects                G  Gain new spells/prayers
    h  (walk - west)                        H  (run - west)
    i  Inventory list                       I  Inspect an item
    j  (walk - south)                       J  (run - south)
@@ -131,7 +131,7 @@ Roguelike Keyset
    n  (walk - south east)                  N  (run - south east)
    o  Open a door or chest                 O  Use racial/bonus power
    p  Command your pets                    P  Browse magic list (Peruse)
-   q  Quaff a potion                       Q  Quit (commit suicide)
+   q  Quaff a potion                       Q  Quest log
    r  Read a scroll                        R  Rest for a period
    s  Search for traps/doors               S  Jam a door (Spike)
    t  Fire an arrow etc.                   T  Take off equipment
@@ -157,16 +157,16 @@ Roguelike Keyset
    ]  Display object list                 ^N  (tunnel - south east)
    -  Walk (flip pickup)                  ^O  (unused)
    _  Edit/activate Mogaminator prefs     ^P  Show previous messages
-   +  Alter adjacent grid                 ^Q  Display quest info
+   +  Alter adjacent grid                 ^Q  (unused)
    =  Set options                         ^R  Redraw the screen
-   ;  Walk                                ^S  Save and don't quit
-   :  Take notes                          ^T  Dig a Tunnel
+   ;  Walk                                ^S  Save
+   :  Take notes                          ^T  Tunnel or dig
    '  Playback recorded command           ^U  (tunnel - north east)
    "  Record command                      ^V  Recenter Viewport
    ,  Run                                 ^W  (special - wizard mode)
-   <  Go up staircase/Toggle global map   ^X  Save and quit
+   <  Go up staircase / Toggle global map ^X  Save and quit
    .  Stay still                          ^Y  (tunnel - north west)
-   >  Go down staircase/Enter normal map  ^Z  (unused)
+   >  Go down staircase / Enter local map ^Z  (unused)
    \  (special - bypass keymap)            |  (unused)
    `  Travel to location                   ~  Knowledge menu
    /  Identify symbol                      ?  Help
@@ -273,7 +273,7 @@ through @md; this allows them to keep their usual, "expected" labels in
 the m spellcasting menu even though the first book, book 'a', is 
 missing.
 
-Inscriptions are added with the Z/{ command, and can be used for many 
+Inscriptions are added with the { command, and can be used for many 
 other purposes besides item labeling (see [d] for more detail). The 
 Mogaminator often automatically applies standard inscriptions to items; 
 the three books of the above example were inscribed by the Mogaminator. 
@@ -284,7 +284,7 @@ inscribe it @uy rather than @Zy even if you use the roguelike keyset.
 
     Note: Many object selection menus allow you to select 
     items from any of several inventories, which you can 
-    toggle between by pressing /. In the drop example 
+    toggle between by pressing / or Tab. In the drop example 
     above, the default inventory is your backpack, but you 
     can use / to select an item from your equipment or 
     quiver instead.
@@ -298,6 +298,7 @@ Updated    : Zangband DevTeam
 Updated    : Hengband 1.0.11
 Updated    : PosChengband 6.0.0
 Updated    : FrogComposband 7.1.liquorice
+Updated    : FrogComposband 7.2.toffee
 
 
 

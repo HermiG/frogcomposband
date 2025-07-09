@@ -25,52 +25,52 @@ Press <color:keypress>?</color> for commands to use in the help interface itself
    d  Drop an item                         <color:y>D  Disarm a trap</color>
    <color:y>e  Equipment view</color>                       <color:y>E  Eat some food</color>
    <color:y>f  Fire an arrow etc.</color>                   <color:y>F  Fuel your lantern/torch</color>
-   <color:y>g  Pick up objects (Get)</color>                <color:y>G  Gain new spells/prayers</color>
-   <color:D>h  (unused)</color>                             H  Travel to interesting item
-   <color:y>i  Inventory view</color>                       <color:y>I  Inspect an item</color>
-   j  Jam a door                           J  Resume travelling
+   <color:y>g  Get (pick up) objects</color>                G  Go (travel) to interesting item
+   <color:D>h  (unused)</color>                             <color:D>H  (unused)</color>
+   <color:y>i  Inventory view</color>                       <color:D>I  (unused)</color>
+   j  Jam a door                           J  Resume journey/travelling
    k  Destroy an item                      <color:D>K  (unused)</color>
    <color:y>l  Look around</color>                          L  Locate player on map
-   <color:y>m  Cast a spell / use mental power</color>      M  Full dungeon map
+   <color:y>m  Cast a spell / Use mental power</color>      M  Map of current level
    <color:y>n  Repeat last command</color>                  <color:D>N  (unused)</color>
-   <color:y>o  Open a door or chest</color>                 <color:y>O  Display object list</color>
+   <color:y>o  Open a door or chest</color>                 O  Display object list
    p  Command your pets                    P  Place an item into your bag
-   <color:y>q  Quaff a potion</color>                       Q  Quit (commit suicide)
+   <color:y>q  Quaff a potion</color>                       <color:y>Q  Quest log</color>
    <color:y>r  Read a scroll</color>                        <color:y>R  Rest for a period</color>
    <color:y>s  Search for traps/doors</color>               S  Toggle search mode
-   t  Take off equipment / out of bag      T  Dig a tunnel
+   t  Take off equipment / out of bag      T  Tunnel or dig
    <color:y>u  Use a staff</color>                          <color:y>U  Use racial/bonus power</color>
    v  Throw an item                        V  Version info
    <color:y>w  Wear/wield equipment</color>                 W  Switch ring fingers
    x  Autoexplore                          <color:D>X  (unused)</color>
-   <color:D>y  (unused)</color>                             <color:y>Y  Display monster list</color>
-   <color:y>z  Zap a rod</color>                            Z  Inscribe an object
+   <color:D>y  (unused)</color>                             <color:D>Y  (unused)</color>
+   <color:y>z  Zap a rod</color>                            <color:D>Z  (unused)</color>
    !  Enter a user pref command           ^A  (special - wizard command)
+   @  Interact with macros                <color:y>^B  Browse magic spells</color>
    <color:D>#  (unused)</color>                            ^C  (special - break)
-   @  Interact with macros                ^B  Browse magic spells
    $  Reload Mogaminator prefs            <color:D>^D  (unused)</color>
    %  Interact with visuals               ^E  Interact with macros
    ^  (special - control key)             ^F  Repeat level feeling
-   &  Interact with colors                ^G  Auto-Get nearby objects
+   &  Interact with colors                ^G  Auto-get nearby objects
    <color:y>*  Target monster or location</color>          <color:D>^H  (unused)</color>
    <color:D>(  (unused)</color>                            ^I  (Tab) Toggle choice window
    )  Create screen dump                  ^J  (special - linefeed)
-   {  Inscribe an object                  <color:D>^K  (unused)</color>
-   }  Uninscribe an object                <color:D>^L  (unused)</color>
-   [  Display monster list                ^M  (special - return)
-   ]  Display object list                 <color:D>^N  (unused)</color>
+   {  Inscribe an object                  ^K  Kill yourself (commit suicide)
+   }  Uninscribe an object                <color:y>^L  Learn new spells/prayers</color>
+   <color:y>[  Display monster list</color>                ^M  (special - return)
+   <color:y>]  Display object list</color>                 <color:D>^N  (unused)</color>
    -  Walk (flip pickup)                  <color:D>^O  (unused)</color>
    _  Edit/activate Mogaminator prefs     ^P  Show previous messages
-   <color:y>+  Alter adjacent grid</color>                 <color:y>^Q  Display quest info</color>
+   <color:y>+  Alter adjacent grid</color>                 <color:D>^Q  (unused)</color>
    =  Set options                         ^R  Redraw the screen
-   ;  Walk                                ^S  Save and don't quit
+   ;  Walk                                ^S  Save
    :  Take notes                          ^T  Display game time
    '  Playback recorded command           <color:D>^U  (unused)</color>
    "  Record command                      ^V  Recenter Viewport
    ,  Stay still                          ^W  (special - wizard mode)
-   <color:y><  Go up staircase/Toggle global map  </color> <color:y>^X  Save and quit</color>
+   <color:y><  Go up staircase / Toggle global map</color> <color:y>^X  Save and quit</color>
    <color:y>.  Run</color>                                 ^Y  (special - wizard mode)
-   <color:y>>  Go down staircase/Enter normal map </color> ^Z  (special - borg command)
+   <color:y>>  Go down staircase / Enter local map</color> ^Z  (special - borg command)
    \  (special - bypass keymap)            <color:D>|  (unused)</color>
    `  Travel to location                   ~  Knowledge menu
    /  Identify symbol                      <color:y>?  Help</color>
@@ -89,17 +89,17 @@ Press <color:keypress>?</color> for commands to use in the help interface itself
    d  Drop an item                         <color:y>D  Disarm a trap or chest</color>
    <color:y>e  Equipment list</color>                       <color:y>E  Eat some food</color>
    f  Bash a door (Force)                  <color:y>F  Fuel your lantern/torch</color>
-   <color:y>g  Pick up objects (Get)</color>                <color:y>G  Gain new spells/prayers</color>
+   <color:y>g  Get (pick up) objects</color>                <color:y>G  Gain new spells/prayers</color>
    h  (walk - west)                        H  (run - west)
    <color:y>i  Inventory list</color>                       <color:y>I  Inspect an item</color>
    j  (walk - south)                       J  (run - south)
    k  (walk - north)                       K  (run - north)
    l  (walk - east)                        L  (run - east)
-   <color:y>m  Cast a spell / use mental power</color>      M  Full dungeon map
+   <color:y>m  Cast a spell / Use mental power</color>      M  Full dungeon map
    n  (walk - south east)                  N  (run - south east)
    <color:y>o  Open a door or chest</color>                 <color:y>O  Use racial/bonus power</color>
    p  Command your pets                    P  Browse magic list (Peruse)
-   <color:y>q  Quaff a potion</color>                       Q  Quit (commit suicide)
+   <color:y>q  Quaff a potion</color>                       <color:y>Q  Quest log</color>
    <color:y>r  Read a scroll</color>                        <color:y>R  Rest for a period</color>
    s  Search for traps/doors               S  Jam a door (Spike)
    <color:y>t  Fire an arrow etc.</color>                   T  Take off equipment
@@ -125,16 +125,16 @@ Press <color:keypress>?</color> for commands to use in the help interface itself
    <color:y>]  Display object list</color>                 ^N  (tunnel - south east)
    -  Walk (flip pickup)                  <color:D>^O  (unused)</color>
    _  Edit/activate Mogaminator prefs     ^P  Show previous messages
-   <color:y>+  Alter adjacent grid</color>                 <color:y>^Q  Display quest info</color>
+   <color:y>+  Alter adjacent grid</color>                 <color:D>^Q  (unused)</color>
    =  Set options                         ^R  Redraw the screen
-   ;  Walk                                ^S  Save and don't quit
-   :  Take notes                          ^T  Dig a Tunnel
+   ;  Walk                                ^S  Save
+   :  Take notes                          ^T  Tunnel or dig
    '  Playback recorded command           ^U  (tunnel - north east)
    "  Record command                      ^V  Recenter Viewport
    ,  Run                                 ^W  (special - wizard mode)
-   <color:y><  Go up staircase/Toggle global map</color>   <color:y>^X  Save and quit</color>
+   <color:y><  Go up staircase / Toggle global map</color> <color:y>^X  Save and quit</color>
    .  Stay still                          ^Y  (tunnel - north west)
-   <color:y>>  Go down staircase/Enter normal map</color>  <color:D>^Z  (unused)</color>
+   <color:y>>  Go down staircase / Enter local map</color> <color:D>^Z  (unused)</color>
    \  (special - bypass keymap)            <color:D>|  (unused)</color>
    `  Travel to location                   ~  Knowledge menu
    /  Identify symbol                      <color:y>?  Help</color>
@@ -204,9 +204,9 @@ You might notice something odd, though: while Scrolls of Genocide are expectedly
 
 The advantage of inscribing items in this way is that they retain their label even when items are added to or removed from the list. Note, for instance, that three books in the example inventory are inscribed <color:keyword>@mb</color> through <color:keyword>@md</color>; this allows them to keep their usual, "expected" labels in the <color:keypress>m</color> spellcasting menu even though the first book, book '<color:keypress>a</color>', is missing.
 
-Inscriptions are added with the <color:keypress>Z</color>/<color:keypress>{</color> command, and can be used for many other purposes besides item labeling (see <link:objects.txt#Inscriptions> for more detail). The Mogaminator often automatically applies standard inscriptions to items; the three books of the above example were inscribed by the Mogaminator. Note that inscriptions are always based on the <color:keyword>underlying keyset</color>, which for the most part is the same as the original keyset; so if you want a staff to be labeled '<color:keypress>y</color>' in the "Use a Staff" prompt, you should inscribe it <color:keyword>@uy</color> rather than <color:keyword>@Zy</color> even if you use the roguelike keyset.
+Inscriptions are added with the <color:keypress>{</color> command, and can be used for many other purposes besides item labeling (see <link:objects.txt#Inscriptions> for more detail). The Mogaminator often automatically applies standard inscriptions to items; the three books of the above example were inscribed by the Mogaminator. Note that inscriptions are always based on the <color:keyword>underlying keyset</color>, which for the most part is the same as the original keyset; so if you want a staff to be labeled '<color:keypress>y</color>' in the "Use a Staff" prompt, you should inscribe it <color:keyword>@uy</color> rather than <color:keyword>@Zy</color> even if you use the roguelike keyset.
 
-<style:note>Note: Many object selection menus allow you to select items from any of several inventories, which you can toggle between by pressing <color:keypress>/</color>. In the <color:keypress>d</color>rop example above, the default inventory is your backpack, but you can use <color:keypress>/</color> to select an item from your equipment or quiver instead.</style>
+<style:note>Note: Many object selection menus allow you to select items from any of several inventories, which you can toggle between by pressing <color:keypress>/</color> or <color:keypress>Tab</color>. In the <color:keypress>d</color>rop example above, the default inventory is your backpack, but you can use <color:keypress>/</color> to select an item from your equipment or quiver instead.</style>
 
 <color:D>
 Original   : Alexander Cutler and Andy Astrand
@@ -217,5 +217,6 @@ Updated    : Zangband DevTeam
 Updated    : Hengband 1.0.11
 Updated    : PosChengband 6.0.0
 Updated    : FrogComposband 7.1.liquorice
+Updated    : FrogComposband 7.2.toffee
 </color>
 

@@ -20,7 +20,7 @@ Press ? for commands to use within the help system.
 
 Inventory Commands
 
-  Inventory List (i)
+  Inventory View (i)
   Displays a list of objects being carried but not equipped. You have 
   up to 26 slots in your inventory, not counting equipment slots. 
   Identical objects can often form a "stack" which only occupies a 
@@ -40,12 +40,19 @@ Inventory Commands
   Carrying 93.4 pounds (71% capacity).
   
   You can press / here to toggle between the inventory list, the 
-  equipment list and potentially other item inventories like your 
-  quiver.
-   
-  Equipment List (e)
+  equipment list and potentially other item inventories like your bag
+  or quiver.
+
+  Press the key corresponding to the item slot label (a-z) to examine
+  the item in greater detail, listing any special powers of the object
+  you have identified, mentioning if the object still has hidden powers,
+  and noting the item's weight and estimated value. Here too, use / to
+  toggle between your pack, equipment, and other relevant inventories.
+  This is an especially handy command for artifacts and ego-items.
+
+  Equipment View (e)
   Use this command to display a list of the objects currently worn or 
-  wielded by your character. Your character typically has 13 slots for 
+  wielded by your character. Your character typically has 14 slots for
   equipment, each corresponding to a different location on the body; 
   each slot may contain only a single object at a time, and each slot 
   may only contain objects of the proper type. Note that some races 
@@ -66,7 +73,8 @@ Inventory Commands
    k)   Head      :
    l)   Hands     :
    m)   Feet      :                                                     
-                                                              48.0 lb   
+   n)   Bag       :
+                                                              48.0 lb
   
   Each slot has a descriptive label (like "Right Hand") that determines 
   what type of object it may receive; the right hand and left hand, for 
@@ -74,21 +82,26 @@ Inventory Commands
   weapons, or two shields! The slots for most items are very intuitive 
   (gloves go on your hands, helmets go on your head), but some might be 
   a bit surprising, like harps going into the Shooting slot.
+  
+  Bag View (b)
+  Use this command to display a list of items currently stored in your
+  equipped bag, if any. Generic bags can hold most object types, but have
+  a strict weight limit. Specialized bags instead store only certain item
+  types and have a fixed capacity, such as a scroll case that holds up to
+  a dozen scrolls. Transferring items to or from a bag takes some time,
+  unlike normal inventory actions. Specialty bags, however, are designed
+  for easy access and do not incur this penalty.
 
-  Inspect Item (I)
-  This command lets you examine an item in detail, listing whatever 
-  special powers of the object you have identified, mentioning if the 
-  object still has hidden powers, and noting the item's weight and 
-  estimated value. Here too, use / to toggle between your pack, 
-  equipment, and other relevant inventories. This is an especially 
-  handy command for artifacts and ego-items.
-
+  Place Item into Bag (P)
+  This command allows you to move an item into your equipped bag from
+  other inventories, including your backpack, equipment, or the floor.
+  
   Get Objects (g)
   This command will get any objects located on the same tile as the 
   player (Mogaminator applies). As a convenience, picking up items does 
   not consume time.
 
-  Auto-Get Objects (^G)
+  Auto-Get Nearby Objects (^G)
   This command will get any objects located on the same tile as the 
   player (Mogaminator applies). In addition, this command will 
   automatically travel to and get other objects in line of sight. With 
@@ -104,7 +117,7 @@ Inventory Commands
   deciding to breathe on you. Auto-get is both safer and more limited 
   than travelling through the object list; auto-get usually only cleans 
   up a single room since the objects must be visible to qualify, while 
-  the object list and the H/^E command allow lengthy automatic travels, 
+  the object list and the G/^E command allow lengthy automatic travels, 
   potentially into harm's way (although these journeys also stop if bad 
   things happen).
 
@@ -132,13 +145,14 @@ Inventory Commands
   taken off, and may be dropped if there is no room for it in your 
   inventory.
 
-  Take Off Equipment (t) or (T)
-  Use this command to take off a piece of equipment and return it to 
-  your inventory. If there is no room in your inventory for the item, 
-  your pack will overflow and you will drop the item after taking it 
-  off. Occasionally, you will run into a cursed item which cannot be 
-  removed; these items normally penalize you in some way, and can only 
-  be taken off after the curse has been removed.
+  Take Off Equipment / Out of Bag (t) or (T)
+  Use this command to take off a piece of equipment or take an item
+  out of a bag or quiver and return it to your inventory. If there is
+  no room in your inventory for the item, your pack will overflow and
+  you will drop the item after removing it. Occasionally, you will run
+  into a cursed item which cannot be removed; these items normally
+  penalize you in some way, and can only be taken off after the curse
+  has been lifted.
 
 Movement Commands
 
@@ -193,7 +207,7 @@ Movement Commands
   will take you to a new dungeon level (see "Go Up Staircase" for 
   notes).
 
-  Travel to Nearest Interesting Item (H or ^E)
+  Travel to Nearest Interesting Item (G) or (^E)
   Locates and automatically travels to the nearest known item that is 
   unidentified, either has not been pseudo-ID'd or has been sensed as 
   an artifact or ego item, is not considered unworthy of picking up by 
@@ -207,6 +221,12 @@ Movement Commands
   target. This command can also be used in the monster and object lists 
   to start a new travel; for this purpose, the J key is also used by 
   the roguelike keyset.
+
+  Autoexplore (x)
+  This command causes your character to automatically travel to any
+  unexplored areas of the current level. Exploration continues until
+  the entire level is mapped, or you spot a monster or are otherwise
+  disturbed.
 
 Resting Commands
 
@@ -319,7 +339,7 @@ Alter Commands
 
 Spell and Prayer Commands
 
-  Browse Magic List (b) or Peruse Magic List (P)
+  Browse Magic Spells (^B) or Peruse Magic List (P)
   All characters which can cast spells can use this command. When this 
   command is used, all of the spells available to you (or contained in 
   a selected magic book) are displayed, along with such information as 
@@ -327,7 +347,7 @@ Spell and Prayer Commands
   not you know the spell. And when you select a spell from the list, a 
   short description of the selected spell's effect will be displayed.
 
-  Gain New Spells or Prayers (G)
+  Learn New Spells or Prayers (^L)
   Use this command to actually learn new spells or prayers. When you 
   are able to learn new spells or prayers, the word Study will appear 
   in the status area of the screen. If you have a book in your 
@@ -338,7 +358,7 @@ Spell and Prayer Commands
   even study the same spell a second time. There are four books in each 
   realm, some normally found only in the dungeon.
 
-  Use a Magic Spell/Mental Power (m)
+  Cast a Magic Spell / Use a Mental Power (m)
   To use a book spell (or prayer), you must have previously learned the 
   spell and must have in your inventory a book from which the spell can 
   be read. Each spell has a chance of failure which starts out fairly 
@@ -355,7 +375,7 @@ Spell and Prayer Commands
   classes, this command will not work at all if your character is 
   Mundane or has equipped an Anti-Magic item.
 
-  Use Bonus Power (U) or (O)
+  Use Racial/Bonus Power (U) or (O)
   Some races and classes have special natural abilities. For example, a 
   Cyclops may Throw Boulders and a Gnome may Blink away from danger. A 
   Warrior can learn the power of Sword Dancing. Also, it is possible to 
@@ -394,7 +414,7 @@ Object Use Commands
   scroll must be read with care; mispronounce the incantations, and 
   nothing happens.
  
-  Activate Item (A)
+  Activate Equipment (A)
   You have heard rumors of special items deep in the dungeon that let 
   you breathe fire like a dragon or illuminate rooms with just a 
   thought. Should you ever be lucky enough to find such an item, this 
@@ -420,7 +440,7 @@ Object Use Commands
   on the type of rod, and whether you are aware of its type) and can 
   use a target.
 
-  Inscribe an object (Z) or ({)
+  Inscribe Object ({)
   This command inscribes a string on an object. The inscription is 
   displayed inside curly braces after the object description. The 
   inscription is limited to the particular object (or pile) and is not 
@@ -428,7 +448,7 @@ Object Use Commands
   inscriptions give the game instructions for how to handle or label 
   the item; see [a] for more information.
 
-  Uninscribe an object (})
+  Uninscribe Object (})
   This command removes the inscription on an object. This command will 
   have no effect on "fake" inscriptions added by the game itself.
 
@@ -509,7 +529,7 @@ Throwing and Missile Weapons
 
 Looking Commands
 
-  Display Monster List (Y) or ([)
+  Display Monster List ([)
   This command displays a list of all monsters currently visible. This 
   is a quick way to tell if there are any uniques or other threatening 
   monsters nearby, and is most commonly used immediately after a summon 
@@ -632,7 +652,11 @@ Message Commands
     combat, spell repertoire, quest history, and other information. 
     From this screen, you can use the | command to create a character 
     dump.
-  
+
+    Quest Log (Q)
+    Displays a list of your current and completed quests, including the
+    quest source, description, and suggested level.
+
     Knowledge Menu (~)
     The command opens a menu from which you can select or recall 
     information about your character, artifacts, monsters, identified 
@@ -655,7 +679,7 @@ Message Commands
     As you can see, there is a lot of information here; poke around and 
     you will see what's available.
   
-    Display game time (^T) or (')
+    Display Game Time (^T) or (')
     This command shows you current date and time in the game, usually 
     with a short comment. (The basic information, without the comments, 
     is also available through the C character sheet.)
@@ -673,7 +697,7 @@ Message Commands
     if you are paranoid about having the computer crash while you are 
     playing.
   
-    Quit (commit suicide) (Q)
+    Quit (Commit Suicide) (^K)
     Kills your character and exits the game. You will be prompted to 
     make sure you really want to do this, and then asked to verify that 
     choice. Note that dead characters are dead forever.
@@ -750,7 +774,11 @@ Message Commands
     This command repeats the previously executed command with all its 
     arguments. Very useful for repeatedly firing at or casting the same 
     spell at a given enemy.
-  
+    
+    Command your Pets (p)
+    If you have pets, use this command to give orders or toggle pet
+    options.
+
     Record Command (")
     Commands that you enter may be recorded to any normal ASCII 
     character register. In fact, every command that you manually enter 
@@ -779,7 +807,7 @@ Message Commands
     The playback command is rarely used, as macros and keymaps ([f]) 
     are usually preferable.
   
-    Toggle Choice Window (^I)
+    Toggle Choice Window (Tab)
     Toggles subwindow display between your inventory and your 
     equipment. This command only applies if you have an 
     inventory/equipment subwindow.
@@ -792,7 +820,7 @@ Message Commands
     game has not properly responded to visual changes you made. When in 
     doubt, use it.
           
-    Create screen dump ())
+    Create Screen Dump ())
     This command creates a document of the current screen and then 
     displays that document to you in the game's internal file viewer. 
     You may then save the document as either plaintext or as html, 
@@ -800,22 +828,21 @@ Message Commands
     an html extension. Note that if you are playing with graphics 
     enabled, then this command will attempt to convert to normal 
     textual display before creating the screen dump.
-  
-    Command your pets (p)
-    If you have pets, use this command to give orders or toggle pet 
-    options. See [g] for details.
+
   
   Summary
   
   Inventory Commands         Original        Roguelike
-    Inventory List              i                 
-    Equipment List              e                 
-    Inspect Item                I                 
-    Get Objects                 g                 
+    Inventory View              i
+    Equipment View              e
+    Bag View                    b
+    Place Item into Bag         P
+    Get Objects                 g
+    Auto-Get Nearby Objects    ^G
     Drop Item                   d                 
     Destroy Item                k               ^D
     Wear/Wield Equipment        w                 
-    Take Off Equipment          t                T
+    Take Out/Off Equipment      t                T
   
   Movement Commands          Original        Roguelike
     Walk (with pickup)          ;                 
@@ -823,12 +850,13 @@ Message Commands
     Run                         .                ,
     Go Up Staircase             <                 
     Go Down Staircase           >                 
+    Travel to Interesting Item  G               ^E
+    Resume Journey/Travelling   J                (
+    Autoexplore                 x
     Direction Keys (DIR)     7  8  9          y  k  u
                              4     6          h     l
                              1  2  3          b  j  n
-    Run                     SHIFT+DIR             
-    Travel to Interesting Item  H               ^E
-    Resume Travelling           J                (
+    Run                     SHIFT+DIR
   
   Resting Commands           Original        Roguelike
     Stay (pickup)               ,                .
@@ -849,9 +877,9 @@ Message Commands
     Alter                   CTRL+DIR              
   
   Spell Commands             Original        Roguelike
-    Browse/Peruse Spells        b                P
-    Gain Spell                  G                 
-    Cast Spell                  m                 
+    Browse/Peruse Spells       ^B                P
+    Learn Spell/Prayer         ^L
+    Cast Spell/Mental Power     m
     Use Power                   U                O
   
   Object Commands            Original        Roguelike
@@ -859,11 +887,11 @@ Message Commands
     Fuel Lantern/Torch          F                 
     Quaff Potion                q                 
     Read Scroll                 r                 
-    Activate Object             A                 
+    Activate Equipment          A                 
     Aim/Zap Wand                a                z
     Use/Zap Staff               u                Z
     Zap/Activate Rod            z                a
-    Inscribe Object             Z                {
+    Inscribe Object             {
     Uninscribe Object           }                 
   
   Missile Commands           Original        Roguelike
@@ -872,7 +900,7 @@ Message Commands
     Set Target/Look Around      *                 
   
   Looking Commands           Original        Roguelike
-    Display Monster List        Y                [
+    Display Monster List        [
     Display Object List         ]                 
     Full Screen Map             M                 
     Locate Player on Map        L                W
@@ -886,13 +914,14 @@ Message Commands
   
   Game Status Commands       Original        Roguelike
     Character Sheet             C                 
+    Quest Log                   Q                 
     Knowledge Menu              ~                 
     Display Game Time          ^T                '
   
   Save/Quit Commands         Original        Roguelike
     Save and Quit              ^X
     Save                       ^S
-    Quit/Commit Suicide         Q
+    Quit (Commit Suicide)      ^K
   
   User Preference Commands   Original        Roguelike
     Interact with Options       =
@@ -909,11 +938,11 @@ Message Commands
   
   Extra Commands             Original        Roguelike
     Repeat Last Command         n                X
-    Toggle Choice Window       ^I                 
+    Command Pets                p
+    Toggle Choice Window        Tab
     Redraw Screen              ^R                 
     Create Screen Dump          )                 
-    Command Pets                p                 
-  
+ 
   
   Original   : Alexander Cutler and Andy Astrand
   Updated    : (2.7.6) by Russ Allbery (rra@cs.stanford.edu)
@@ -923,5 +952,6 @@ Message Commands
   Updated    : Hengband 1.7.0
   Updated    : PosChengband 4.0.0
   Updated    : FrogComposband 7.1.liquorice
+  Updated    : FrogComposband 7.2.toffee
   
   

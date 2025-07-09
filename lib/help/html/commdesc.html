@@ -23,7 +23,7 @@ Press </font><font color="#ff8000">? </font><font color="#ffffff">for commands t
 
 <a name="Inventory"></a></font><font color="#c00000">Inventory Commands
 
-  </font><font color="#c08040">Inventory List (</font><font color="#ff8000">i</font><font color="#c08040">)
+  </font><font color="#c08040">Inventory View (</font><font color="#ff8000">i</font><font color="#c08040">)
   </font><font color="#ffffff">Displays a list of objects being carried but not equipped. You have 
   up to 26 slots in your inventory, not counting equipment slots. 
   Identical objects can often form a "stack" which only occupies a 
@@ -43,12 +43,19 @@ Press </font><font color="#ff8000">? </font><font color="#ffffff">for commands t
   </font><font color="#ffffff">Carrying 93.4 pounds (</font><font color="#00ff00">71% </font><font color="#ffffff">capacity).
   
   You can press </font><font color="#ff8000">/ </font><font color="#ffffff">here to toggle between the inventory list, the 
-  equipment list and potentially other item inventories like your 
-  quiver.
-   
-  </font><font color="#c08040">Equipment List (</font><font color="#ff8000">e</font><font color="#c08040">)
+  equipment list and potentially other item inventories like your bag
+  or quiver.
+  
+  Press the key corresponding to the item slot label (a-z) to examine
+  the item in greater detail, listing any special powers of the object
+  you have identified, mentioning if the object still has hidden powers,
+  and noting the item's weight and estimated value. Here too, use / to
+  toggle between your pack, equipment, and other relevant inventories.
+  This is an especially handy command for artifacts and ego-items.
+  
+  </font><font color="#c08040">Equipment View (</font><font color="#ff8000">e</font><font color="#c08040">)
   </font><font color="#ffffff">Use this command to display a list of the objects currently worn or 
-  wielded by your character. Your character typically has 13 slots for 
+  wielded by your character. Your character typically has 14 slots for 
   equipment, each corresponding to a different location on the body; 
   each slot may contain only a single object at a time, and each slot 
   may only contain objects of the proper type. Note that some races 
@@ -69,7 +76,7 @@ Press </font><font color="#ff8000">? </font><font color="#ffffff">for commands t
    k)   Head      :
    l)   Hands     :
    m)   Feet      :                                                     
-                                                              </font><font color="#ff0000">48.0 lb   
+   b)   Bag       :                                           </font><font color="#ff0000">48.0 lb   
   
   </font><font color="#ffffff">Each slot has a descriptive label (like "Right Hand") that determines 
   what type of object it may receive; the right hand and left hand, for 
@@ -78,20 +85,25 @@ Press </font><font color="#ff8000">? </font><font color="#ffffff">for commands t
   (gloves go on your hands, helmets go on your head), but some might be 
   a bit surprising, like harps going into the Shooting slot.
 
-  </font><font color="#c08040">Inspect Item (</font><font color="#ff8000">I</font><font color="#c08040">)
-  </font><font color="#ffffff">This command lets you examine an item in detail, listing whatever 
-  special powers of the object you have identified, mentioning if the 
-  object still has hidden powers, and noting the item's weight and 
-  estimated value. Here too, use </font><font color="#ff8000">/ </font><font color="#ffffff">to toggle between your pack, 
-  equipment, and other relevant inventories. This is an especially 
-  handy command for artifacts and ego-items.
+  </font><font color="#c08040">Bag View (</font><font color="#ff8000">b</font><font color="#c08040">)
+  </font><font color="#ffffff">Use this command to display a list of items currently stored in your
+  equipped bag, if any. Generic bags can hold most object types, but have
+  a strict weight limit. Specialized bags instead store only certain item
+  types and have a fixed capacity, such as a scroll case that holds up to
+  a dozen scrolls. Transferring items to or from a bag takes some time,
+  unlike normal inventory actions. Specialty bags, however, are designed
+  for easy access and do not incur this penalty.
+
+  </font><font color="#c08040">Place Item into Bag (</font><font color="#ff8000">P</font><font color="#c08040">)
+  </font><font color="#ffffff">This command allows you to move an item into your equipped bag from
+  other inventories, including your backpack, equipment, or the floor.
 
   </font><font color="#c08040">Get Objects (</font><font color="#ff8000">g</font><font color="#c08040">)
   </font><font color="#ffffff">This command will get any objects located on the same tile as the 
   player (Mogaminator applies). As a convenience, picking up items does 
   not consume time.
 
-  </font><font color="#c08040">Auto-Get Objects (</font><font color="#ff8000">^G</font><font color="#c08040">)
+  </font><font color="#c08040">Auto-Get Nearby Objects (</font><font color="#ff8000">^G</font><font color="#c08040">)
   </font><font color="#ffffff">This command will get any objects located on the same tile as the 
   player (Mogaminator applies). In addition, this command will 
   automatically travel to and get other objects in line of sight. With 
@@ -100,14 +112,14 @@ Press </font><font color="#ff8000">? </font><font color="#ffffff">for commands t
   is too much for you (maybe you enjoy cleaning up after battles?), the 
   </font><font color="#ff0000">auto_get_ammo </font><font color="#ffffff">option only applies to objects inscribed with </font><font color="#ff8000">=g</font><font color="#ffffff">; which 
   is typically your ammo, or perhaps spikes on a ninja.
-  
+
   The auto-get travels will terminate when there are no more visible 
   qualifying objects; if your pack becomes full; or if you are 
   disturbed for any reason, such as a nasty dragon waking up and 
   deciding to breathe on you. Auto-get is both safer and more limited 
   than travelling through the object list; auto-get usually only cleans 
   up a single room since the objects must be visible to qualify, while 
-  the object list and the </font><font color="#ff8000">H</font><font color="#ffffff">/</font><font color="#ff8000">^E </font><font color="#ffffff">command allow lengthy automatic travels, 
+  the object list and the </font><font color="#ff8000">G</font><font color="#ffffff">/</font><font color="#ff8000">^E </font><font color="#ffffff">command allow lengthy automatic travels, 
   potentially into harm's way (although these journeys also stop if bad 
   things happen).
 
@@ -135,13 +147,14 @@ Press </font><font color="#ff8000">? </font><font color="#ffffff">for commands t
   taken off, and may be dropped if there is no room for it in your 
   inventory.
 
-  </font><font color="#c08040">Take Off Equipment (</font><font color="#ff8000">t</font><font color="#c08040">) or (</font><font color="#ff8000">T</font><font color="#c08040">)
-  </font><font color="#ffffff">Use this command to take off a piece of equipment and return it to 
-  your inventory. If there is no room in your inventory for the item, 
-  your pack will overflow and you will drop the item after taking it 
-  off. Occasionally, you will run into a cursed item which cannot be 
-  removed; these items normally penalize you in some way, and can only 
-  be taken off after the curse has been removed.
+  </font><font color="#c08040">Take Off Equipment / Out of Bag (</font><font color="#ff8000">t</font><font color="#c08040">) or (</font><font color="#ff8000">T</font><font color="#c08040">)
+  </font><font color="#ffffff">Use this command to take off a piece of equipment or take an item
+  out of a bag or quiver and return it to your inventory. If there is
+  no room in your inventory for the item, your pack will overflow and
+  you will drop the item after removing it. Occasionally, you will run
+  into a cursed item which cannot be removed; these items normally
+  penalize you in some way, and can only be taken off after the curse
+  has been lifted.
 
 <a name="Movement"></a></font><font color="#c00000">Movement Commands
 
@@ -196,7 +209,7 @@ Press </font><font color="#ff8000">? </font><font color="#ffffff">for commands t
   will take you to a new dungeon level (see "Go Up Staircase" for 
   notes).
 
-  </font><font color="#c08040">Travel to Nearest Interesting Item (</font><font color="#ff8000">H </font><font color="#c08040">or </font><font color="#ff8000">^E</font><font color="#c08040">)
+  </font><font color="#c08040">Travel to Nearest Interesting Item (</font><font color="#ff8000">G</font><font color="#c08040">) or (</font><font color="#ff8000">^E</font><font color="#c08040">)
   </font><font color="#ffffff">Locates and automatically travels to the nearest known item that is 
   unidentified, either has not been pseudo-ID'd or has been sensed as 
   an artifact or ego item, is not considered unworthy of picking up by 
@@ -210,6 +223,12 @@ Press </font><font color="#ff8000">? </font><font color="#ffffff">for commands t
   target. This command can also be used in the monster and object lists 
   to start a new travel; for this purpose, the </font><font color="#ff8000">J </font><font color="#ffffff">key is also used by 
   the roguelike keyset.
+
+  </font><font color="#c08040">Autoexplore (</font><font color="#ff8000">x</font><font color="#c08040">)
+  </font><font color="#ffffff">This command causes your character to automatically travel to any
+  unexplored areas of the current level. Exploration continues until
+  the entire level is mapped, or you spot a monster or are otherwise
+  disturbed.
 
 <a name="Resting"></a></font><font color="#c00000">Resting Commands
 
@@ -322,7 +341,7 @@ Press </font><font color="#ff8000">? </font><font color="#ffffff">for commands t
 
 <a name="SpellPrayer"></a></font><font color="#c00000">Spell and Prayer Commands
 
-  </font><font color="#c08040">Browse Magic List (</font><font color="#ff8000">b</font><font color="#c08040">) or Peruse Magic List (</font><font color="#ff8000">P</font><font color="#c08040">)
+  </font><font color="#c08040">Browse Magic Spells (</font><font color="#ff8000">^B</font><font color="#c08040">) or Peruse Magic List (</font><font color="#ff8000">P</font><font color="#c08040">)
   </font><font color="#ffffff">All characters which can cast spells can use this command. When this 
   command is used, all of the spells available to you (or contained in 
   a selected magic book) are displayed, along with such information as 
@@ -330,7 +349,7 @@ Press </font><font color="#ff8000">? </font><font color="#ffffff">for commands t
   not you know the spell. And when you select a spell from the list, a 
   short description of the selected spell's effect will be displayed.
 
-  </font><font color="#c08040">Gain New Spells or Prayers (</font><font color="#ff8000">G</font><font color="#c08040">)
+  </font><font color="#c08040">Learn New Spells or Prayers (</font><font color="#ff8000">^L</font><font color="#c08040">)
   </font><font color="#ffffff">Use this command to actually learn new spells or prayers. When you 
   are able to learn new spells or prayers, the word </font><font color="#00ffff">Study </font><font color="#ffffff">will appear 
   in the status area of the screen. If you have a book in your 
@@ -341,7 +360,7 @@ Press </font><font color="#ff8000">? </font><font color="#ffffff">for commands t
   even study the same spell a second time. There are four books in each 
   realm, some normally found only in the dungeon.
 
-  </font><font color="#c08040">Use a Magic Spell/Mental Power (</font><font color="#ff8000">m</font><font color="#c08040">)
+  </font><font color="#c08040">Cast a Magic Spell / Use a Mental Power (</font><font color="#ff8000">m</font><font color="#c08040">)
   </font><font color="#ffffff">To use a book spell (or prayer), you must have previously learned the 
   spell and must have in your inventory a book from which the spell can 
   be read. Each spell has a chance of failure which starts out fairly 
@@ -358,7 +377,7 @@ Press </font><font color="#ff8000">? </font><font color="#ffffff">for commands t
   classes, this command will not work at all if your character is 
   Mundane or has equipped an Anti-Magic item.
 
-  </font><font color="#c08040">Use Bonus Power (</font><font color="#ff8000">U</font><font color="#c08040">) or (</font><font color="#ff8000">O</font><font color="#c08040">)
+  </font><font color="#c08040">Use Racial/Bonus Power (</font><font color="#ff8000">U</font><font color="#c08040">) or (</font><font color="#ff8000">O</font><font color="#c08040">)
   </font><font color="#ffffff">Some races and classes have special natural abilities. For example, a 
   Cyclops may </font><font color="#ff0000">Throw Boulders </font><font color="#ffffff">and a Gnome may </font><font color="#ff0000">Blink </font><font color="#ffffff">away from danger. A 
   Warrior can learn the power of </font><font color="#ff0000">Sword Dancing</font><font color="#ffffff">. Also, it is possible to 
@@ -397,7 +416,7 @@ Press </font><font color="#ff8000">? </font><font color="#ffffff">for commands t
   scroll must be read with care; mispronounce the incantations, and 
   nothing happens.
  
-  </font><font color="#c08040">Activate Item (</font><font color="#ff8000">A</font><font color="#c08040">)
+  </font><font color="#c08040">Activate Equipment (</font><font color="#ff8000">A</font><font color="#c08040">)
   </font><font color="#ffffff">You have heard rumors of special items deep in the dungeon that let 
   you breathe fire like a dragon or illuminate rooms with just a 
   thought. Should you ever be lucky enough to find such an item, this 
@@ -423,7 +442,7 @@ Press </font><font color="#ff8000">? </font><font color="#ffffff">for commands t
   on the type of rod, and whether you are aware of its type) and can 
   use a target.
 
-  </font><font color="#c08040">Inscribe an object (</font><font color="#ff8000">Z</font><font color="#c08040">) or (</font><font color="#ff8000">{</font><font color="#c08040">)
+  </font><font color="#c08040">Inscribe Object (</font><font color="#ff8000">{</font><font color="#c08040">)
   </font><font color="#ffffff">This command inscribes a string on an object. The inscription is 
   displayed inside curly braces after the object description. The 
   inscription is limited to the particular object (or pile) and is not 
@@ -431,7 +450,7 @@ Press </font><font color="#ff8000">? </font><font color="#ffffff">for commands t
   inscriptions give the game instructions for how to handle or label 
   the item; see <a href="objects.html#Inscriptions"></font><font color="#00ff00">[a]</a> </font><font color="#ffffff">for more information.
 
-  </font><font color="#c08040">Uninscribe an object (</font><font color="#ff8000">}</font><font color="#c08040">)
+  </font><font color="#c08040">Uninscribe Object (</font><font color="#ff8000">}</font><font color="#c08040">)
   </font><font color="#ffffff">This command removes the inscription on an object. This command will 
   have no effect on "fake" inscriptions added by the game itself.
 
@@ -453,7 +472,7 @@ Press </font><font color="#ff8000">? </font><font color="#ffffff">for commands t
   wall always breaks it, potentially causing splash damage. This 
   command requires a direction, and can take a target.
 
-<a name="Targetting"></a>  </font><font color="#c08040">Set Target (</font><font color="#ff8000">*</font><font color="#c08040">)
+  <a name="Targetting"></a></font><font color="#c08040">Set Target (</font><font color="#ff8000">*</font><font color="#c08040">)
   </font><font color="#ffffff">This command allows you to aim your spells, arrows and such at a 
   specific monster or grid, even if they are not in one of the eight 
   compass directions; it works both inside and outside direction 
@@ -512,7 +531,7 @@ Press </font><font color="#ff8000">? </font><font color="#ffffff">for commands t
 
 <a name="Looking"></a></font><font color="#c00000">Looking Commands
 
-  </font><font color="#c08040">Display Monster List (</font><font color="#ff8000">Y</font><font color="#c08040">) or (</font><font color="#ff8000">[</font><font color="#c08040">)
+  </font><font color="#c08040">Display Monster List (</font><font color="#ff8000">[</font><font color="#c08040">)
   </font><font color="#ffffff">This command displays a list of all monsters currently visible. This 
   is a quick way to tell if there are any uniques or other threatening 
   monsters nearby, and is most commonly used immediately after a summon 
@@ -635,6 +654,10 @@ Press </font><font color="#ff8000">? </font><font color="#ffffff">for commands t
     combat, spell repertoire, quest history, and other information. 
     From this screen, you can use the </font><font color="#ff8000">| </font><font color="#ffffff">command to create a character 
     dump.
+
+    </font><font color="#c08040">Quest Log (</font><font color="#ff8000">Q</font><font color="#c08040">)
+    </font><font color="#ffffff">Displays a list of your current and completed quests, including the
+    quest source, description, and suggested level.
   
     </font><font color="#c08040">Knowledge Menu (</font><font color="#ff8000">~</font><font color="#c08040">)
     </font><font color="#ffffff">The command opens a menu from which you can select or recall 
@@ -658,7 +681,7 @@ Press </font><font color="#ff8000">? </font><font color="#ffffff">for commands t
     As you can see, there is a lot of information here; poke around and 
     you will see what's available.
   
-    </font><font color="#c08040">Display game time (</font><font color="#ff8000">^T</font><font color="#c08040">) or (</font><font color="#ff8000">'</font><font color="#c08040">)
+    </font><font color="#c08040">Display Game Time (</font><font color="#ff8000">^T</font><font color="#c08040">) or (</font><font color="#ff8000">'</font><font color="#c08040">)
     </font><font color="#ffffff">This command shows you current date and time in the game, usually 
     with a short comment. (The basic information, without the comments, 
     is also available through the </font><font color="#ff8000">C </font><font color="#ffffff">character sheet.)
@@ -676,7 +699,7 @@ Press </font><font color="#ff8000">? </font><font color="#ffffff">for commands t
     if you are paranoid about having the computer crash while you are 
     playing.
   
-    </font><font color="#c08040">Quit (commit suicide) (</font><font color="#ff8000">Q</font><font color="#c08040">)
+    </font><font color="#c08040">Quit (Commit Suicide) (</font><font color="#ff8000">^K</font><font color="#c08040">)
     </font><font color="#ffffff">Kills your character and exits the game. You will be prompted to 
     make sure you really want to do this, and then asked to verify that 
     choice. Note that dead characters are dead forever.
@@ -753,6 +776,10 @@ Press </font><font color="#ff8000">? </font><font color="#ffffff">for commands t
     </font><font color="#ffffff">This command repeats the previously executed command with all its 
     arguments. Very useful for repeatedly firing at or casting the same 
     spell at a given enemy.
+
+    </font><font color="#c08040">Command your pets (</font><font color="#ff8000">p</font><font color="#c08040">)
+    </font><font color="#ffffff">If you have pets, use this command to give orders or toggle pet 
+    options. See <a href="monster.html#PetCommands"></font><font color="#00ff00">[g]</a> </font><font color="#ffffff">for details.
   
     </font><font color="#c08040">Record Command (</font><font color="#ff8000">"</font><font color="#c08040">)
     </font><font color="#ffffff">Commands that you enter may be recorded to any normal ASCII 
@@ -782,7 +809,7 @@ Press </font><font color="#ff8000">? </font><font color="#ffffff">for commands t
     The playback command is rarely used, as macros and keymaps (<a href="pref.html#Macros"></font><font color="#00ff00">[f]</a></font><font color="#ffffff">) 
     are usually preferable.
   
-    </font><font color="#c08040">Toggle Choice Window (</font><font color="#ff8000">^I</font><font color="#c08040">)
+    </font><font color="#c08040">Toggle Choice Window (</font><font color="#ff8000">Tab</font><font color="#c08040">)
     </font><font color="#ffffff">Toggles subwindow display between your inventory and your 
     equipment. This command only applies if you have an 
     inventory/equipment subwindow.
@@ -795,7 +822,7 @@ Press </font><font color="#ff8000">? </font><font color="#ffffff">for commands t
     game has not properly responded to visual changes you made. When in 
     doubt, use it.
           
-    </font><font color="#c08040">Create screen dump (</font><font color="#ff8000">)</font><font color="#c08040">)
+    </font><font color="#c08040">Create Screen Dump (</font><font color="#ff8000">)</font><font color="#c08040">)
     </font><font color="#ffffff">This command creates a document of the current screen and then 
     displays that document to you in the game's internal file viewer. 
     You may then save the document as either plaintext or as html, 
@@ -804,21 +831,19 @@ Press </font><font color="#ff8000">? </font><font color="#ffffff">for commands t
     enabled, then this command will attempt to convert to normal 
     textual display before creating the screen dump.
   
-    </font><font color="#c08040">Command your pets (</font><font color="#ff8000">p</font><font color="#c08040">)
-    </font><font color="#ffffff">If you have pets, use this command to give orders or toggle pet 
-    options. See <a href="monster.html#PetCommands"></font><font color="#00ff00">[g]</a> </font><font color="#ffffff">for details.
-  
 <a name="Summary"></a>  </font><font color="#c00000">Summary
   
   </font><font color="#c08040">Inventory Commands         Original        Roguelike
-    </font><font color="#ffffff">Inventory List              </font><font color="#ff8000">i                 
-    </font><font color="#ffffff">Equipment List              </font><font color="#ff8000">e                 
-    </font><font color="#ffffff">Inspect Item                </font><font color="#ff8000">I                 
+    </font><font color="#ffffff">Inventory View              </font><font color="#ff8000">i                 
+    </font><font color="#ffffff">Equipment View              </font><font color="#ff8000">e                 
+    </font><font color="#ffffff">Bag View                    </font><font color="#ff8000">b                 
+    </font><font color="#ffffff">Place Item into Bag         </font><font color="#ff8000">P                 
     </font><font color="#ffffff">Get Objects                 </font><font color="#ff8000">g                 
+    </font><font color="#ffffff">Auto-Get Nearby Objects    </font><font color="#ff8000">^G                 
     </font><font color="#ffffff">Drop Item                   </font><font color="#ff8000">d                 
     </font><font color="#ffffff">Destroy Item                </font><font color="#ff8000">k               ^D
     </font><font color="#ffffff">Wear/Wield Equipment        </font><font color="#ff8000">w                 
-    </font><font color="#ffffff">Take Off Equipment          </font><font color="#ff8000">t                T
+    </font><font color="#ffffff">Take Out/Off Equipment      </font><font color="#ff8000">t                T
   
   </font><font color="#c08040">Movement Commands          Original        Roguelike
     </font><font color="#ffffff">Walk (with pickup)          </font><font color="#ff8000">;                 
@@ -826,12 +851,13 @@ Press </font><font color="#ff8000">? </font><font color="#ffffff">for commands t
     </font><font color="#ffffff">Run                         </font><font color="#ff8000">.                ,
     </font><font color="#ffffff">Go Up Staircase             </font><font color="#ff8000">&lt;                 
     </font><font color="#ffffff">Go Down Staircase           </font><font color="#ff8000">&gt;                 
+    </font><font color="#ffffff">Travel to Interesting Item  </font><font color="#ff8000">G               ^E
+    </font><font color="#ffffff">Resume Journey/Travelling   </font><font color="#ff8000">J                (
+    </font><font color="#ffffff">Autoexplore                 </font><font color="#ff8000">x
     </font><font color="#ffffff">Direction Keys (DIR)     </font><font color="#ff8000">7  8  9          y  k  u
                              4     6          h     l
                              1  2  3          b  j  n
     </font><font color="#ffffff">Run                     </font><font color="#ff8000">SHIFT+DIR             
-    </font><font color="#ffffff">Travel to Interesting Item  </font><font color="#ff8000">H               ^E
-    </font><font color="#ffffff">Resume Travelling           </font><font color="#ff8000">J                (
   
   </font><font color="#c08040">Resting Commands           Original        Roguelike
     </font><font color="#ffffff">Stay (pickup)               </font><font color="#ff8000">,                .
@@ -852,9 +878,9 @@ Press </font><font color="#ff8000">? </font><font color="#ffffff">for commands t
     </font><font color="#ffffff">Alter                   </font><font color="#ff8000">CTRL+DIR              
   
   </font><font color="#c08040">Spell Commands             Original        Roguelike
-    </font><font color="#ffffff">Browse/Peruse Spells        </font><font color="#ff8000">b                P
-    </font><font color="#ffffff">Gain Spell                  </font><font color="#ff8000">G                 
-    </font><font color="#ffffff">Cast Spell                  </font><font color="#ff8000">m                 
+    </font><font color="#ffffff">Browse/Peruse Spells       </font><font color="#ff8000">^B                P
+    </font><font color="#ffffff">Learn Spell/Prayer         </font><font color="#ff8000">^L                 
+    </font><font color="#ffffff">Cast Spell/Mental Power     </font><font color="#ff8000">m                 
     </font><font color="#ffffff">Use Power                   </font><font color="#ff8000">U                O
   
   </font><font color="#c08040">Object Commands            Original        Roguelike
@@ -862,11 +888,11 @@ Press </font><font color="#ff8000">? </font><font color="#ffffff">for commands t
     </font><font color="#ffffff">Fuel Lantern/Torch          </font><font color="#ff8000">F                 
     </font><font color="#ffffff">Quaff Potion                </font><font color="#ff8000">q                 
     </font><font color="#ffffff">Read Scroll                 </font><font color="#ff8000">r                 
-    </font><font color="#ffffff">Activate Object             </font><font color="#ff8000">A                 
+    </font><font color="#ffffff">Activate Equipment          </font><font color="#ff8000">A                 
     </font><font color="#ffffff">Aim/Zap Wand                </font><font color="#ff8000">a                z
     </font><font color="#ffffff">Use/Zap Staff               </font><font color="#ff8000">u                Z
     </font><font color="#ffffff">Zap/Activate Rod            </font><font color="#ff8000">z                a
-    </font><font color="#ffffff">Inscribe Object             </font><font color="#ff8000">Z                {
+    </font><font color="#ffffff">Inscribe Object             </font><font color="#ff8000">{                 
     </font><font color="#ffffff">Uninscribe Object           </font><font color="#ff8000">}                 
   
   </font><font color="#c08040">Missile Commands           Original        Roguelike
@@ -875,7 +901,7 @@ Press </font><font color="#ff8000">? </font><font color="#ffffff">for commands t
     </font><font color="#ffffff">Set Target/Look Around      </font><font color="#ff8000">*                 
   
   </font><font color="#c08040">Looking Commands           Original        Roguelike
-    </font><font color="#ffffff">Display Monster List        </font><font color="#ff8000">Y                [
+    </font><font color="#ffffff">Display Monster List        </font><font color="#ff8000">[                
     </font><font color="#ffffff">Display Object List         </font><font color="#ff8000">]                 
     </font><font color="#ffffff">Full Screen Map             </font><font color="#ff8000">M                 
     </font><font color="#ffffff">Locate Player on Map        </font><font color="#ff8000">L                W
@@ -889,13 +915,14 @@ Press </font><font color="#ff8000">? </font><font color="#ffffff">for commands t
   
   </font><font color="#c08040">Game Status Commands       Original        Roguelike
     </font><font color="#ffffff">Character Sheet             </font><font color="#ff8000">C                 
+    </font><font color="#ffffff">Quest Log                   </font><font color="#ff8000">Q                 
     </font><font color="#ffffff">Knowledge Menu              </font><font color="#ff8000">~                 
     </font><font color="#ffffff">Display Game Time          </font><font color="#ff8000">^T                '
   
   </font><font color="#c08040">Save/Quit Commands         Original        Roguelike
     </font><font color="#ffffff">Save and Quit              </font><font color="#ff8000">^X
     </font><font color="#ffffff">Save                       </font><font color="#ff8000">^S
-    </font><font color="#ffffff">Quit/Commit Suicide         </font><font color="#ff8000">Q
+    </font><font color="#ffffff">Quit (Commit Suicide)      </font><font color="#ff8000">^K
   
   </font><font color="#c08040">User Preference Commands   Original        Roguelike
     </font><font color="#ffffff">Interact with Options       </font><font color="#ff8000">=
@@ -912,10 +939,10 @@ Press </font><font color="#ff8000">? </font><font color="#ffffff">for commands t
   
   </font><font color="#c08040">Extra Commands             Original        Roguelike
     </font><font color="#ffffff">Repeat Last Command         </font><font color="#ff8000">n                X
-    </font><font color="#ffffff">Toggle Choice Window       </font><font color="#ff8000">^I                 
+    </font><font color="#ffffff">Command Pets                </font><font color="#ff8000">p                 
+    </font><font color="#ffffff">Toggle Choice Window        </font><font color="#ff8000">Tab                 
     </font><font color="#ffffff">Redraw Screen              </font><font color="#ff8000">^R                 
     </font><font color="#ffffff">Create Screen Dump          </font><font color="#ff8000">)                 
-    </font><font color="#ffffff">Command Pets                </font><font color="#ff8000">p                 
   
   
   </font><font color="#404040">Original   : Alexander Cutler and Andy Astrand
@@ -926,6 +953,7 @@ Press </font><font color="#ff8000">? </font><font color="#ffffff">for commands t
   Updated    : Hengband 1.7.0
   Updated    : PosChengband 4.0.0
   Updated    : FrogComposband 7.1.liquorice
+  Updated    : FrogComposband 7.2.toffee
   
   
 </font></pre></body></html>

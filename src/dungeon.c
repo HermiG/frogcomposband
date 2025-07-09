@@ -3596,14 +3596,14 @@ static void _dispatch_command(int old_now_turn)
 
 
         /*** Various commands ***/
-
+#if 0
         /* Identify an object */
         case 'I':
         {
             obj_inspect_ui();
             break;
         }
-
+#endif
         /* Hack -- toggle windows */
         case KTRL('I'): // TAB maps to ^I
         {
@@ -3700,16 +3700,18 @@ static void _dispatch_command(int old_now_turn)
             break;
         }
 
-        case KTRL('G'):
-        {
-            do_cmd_autoget();
-            break;
-        }
-        case 'H':
+        case 'G':
         {
             if (!p_ptr->wild_mode) do_cmd_get_nearest();
             break;
         }
+        
+        case KTRL('G'):
+        {
+            if (!p_ptr->wild_mode) do_cmd_autoget();
+            break;
+        }
+
         /* Rest -- Arg is time */
         case 'R':
         {
@@ -3812,8 +3814,8 @@ static void _dispatch_command(int old_now_turn)
 
         /*** Magic and Prayers ***/
 
-        /* Gain new spells/prayers */
-        case 'G':
+        /* Learn new spells/prayers */
+        case KTRL('L'):
         {
             if (p_ptr->pclass == CLASS_SORCERER || p_ptr->pclass == CLASS_RED_MAGE)
                 msg_print("You don't have to learn spells!");
@@ -4014,7 +4016,6 @@ static void _dispatch_command(int old_now_turn)
         /*** Use various objects ***/
 
         /* Inscribe an object */
-        case 'Z':
         case '{':
         {
             obj_inscribe_ui();
@@ -4202,7 +4203,6 @@ static void _dispatch_command(int old_now_turn)
             break;
         }
 
-        case 'Y':
         case '[':
             if (!p_ptr->image)
                 do_cmd_list_monsters(MON_LIST_NORMAL);
@@ -4336,7 +4336,7 @@ static void _dispatch_command(int old_now_turn)
         }
 
         /* Show quest status -KMW- */
-        case KTRL('Q'):
+        case 'Q':
         {
             quests_display();
             break;
@@ -4375,8 +4375,8 @@ static void _dispatch_command(int old_now_turn)
             break;
         }
 
-        /* Quit (commit suicide) */
-        case 'Q':
+        /* Kill yourself */
+        case KTRL('K'):
         {
             do_cmd_suicide();
             break;

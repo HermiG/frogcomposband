@@ -2342,7 +2342,7 @@ static void castle_quest(void)
     else if (quest->status == QS_TAKEN)
     {
         put_str("You have not completed your current quest yet!", 8, 0);
-        put_str("Use CTRL-Q to check the status of your quest.", 9, 0);
+        put_str("Use Q to check the status of your quest.", 9, 0);
         put_str("Return when you have completed your quest.", 12, 0);
     }
     else if (quest->status == QS_UNTAKEN)

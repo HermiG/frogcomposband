@@ -1537,7 +1537,7 @@ void skillmaster_gain_skill(void)
 static void _birth(void)
 {
     _reset_groups();
-    p_ptr->au += 500; /* build your own class, so buy your own gear! */
+    p_ptr->au += 150; /* build your own class, so buy your own gear! */
 }
 
 static void _gain_level(int new_lvl)

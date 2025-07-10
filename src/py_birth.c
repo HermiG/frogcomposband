@@ -273,10 +273,8 @@ bool num_to_roman(int _num, char *buf)
     int i, jaljella = _num, pituus = 0;
     while (jaljella > 0)
     {
-        for (i = 0; i < _MAX_ROMAN_CAT; i++)
-        {
-            if (jaljella >= _roman_cats[i].val) break;
-        }
+        for (i = 0; i < _MAX_ROMAN_CAT; i++) if (jaljella >= _roman_cats[i].val) break;
+        
         if ((pituus + (i % 2)) >= PY_NAME_LEN) return FALSE;
         if (!pituus) strcpy(buf, " ");
         strcat(buf, _roman_cats[i].lisays);
@@ -297,10 +295,7 @@ int find_arabic_numeral(char *nimi, int *paikka)
         {
             int lisa = nimi[i] - '0';
             pituus++;
-            for (int j = 1; j < pituus; j++)
-            {
-                lisa *= 10;
-            }
+            for (int j = 1; j < pituus; j++) lisa *= 10;
             arvo += lisa;
         }
         else
@@ -448,7 +443,6 @@ static int _welcome_ui(void)
             _birth_options();
         else if (cmd == 'q' && previous_char.quick_ok)
         {
-            int i;
             game_mode = previous_char.game_mode;
             p_ptr->psex = previous_char.psex;
             p_ptr->prace = previous_char.prace;
@@ -460,14 +454,13 @@ static int _welcome_ui(void)
             p_ptr->realm2 = previous_char.realm2;
             p_ptr->dragon_realm = previous_char.dragon_realm;
             p_ptr->au = previous_char.au;            
-            for (i = 0; i < MAX_STATS; i++)
+            for (int i = 0; i < MAX_STATS; i++)
             {
                 p_ptr->stat_cur[i] = previous_char.stat_max[i];
                 p_ptr->stat_max[i] = previous_char.stat_max[i];
             }
             _stats_changed = p_ptr->pclass; /* block default stat allocation via _stats_init */
-            if (_race_class_ui() == UI_OK)
-                return UI_OK;
+            if (_race_class_ui() == UI_OK) return UI_OK;
         }
         else if (cmd == 'Q' && previous_char.quick_ok)
             doc_display_help("birth.txt", "QuickStart");
@@ -3336,8 +3329,6 @@ static void _reduce_uniques(void)
 
 static void _birth_finalize(void)
 {
-    int i;
-
     p_ptr->id = scores_next_id();
 
     /* Quick Start */
@@ -3354,8 +3345,7 @@ static void _birth_finalize(void)
     previous_char.dragon_realm = p_ptr->dragon_realm;
     previous_char.au = p_ptr->au;
 
-    for (i = 0; i < MAX_STATS; i++)
-        previous_char.stat_max[i] = p_ptr->stat_max[i];
+    for (int i = 0; i < MAX_STATS; i++) previous_char.stat_max[i] = p_ptr->stat_max[i];
 
     /* Other Initialization */
     if (game_mode == GAME_MODE_BEGINNER)
@@ -3434,19 +3424,18 @@ static void _birth_finalize(void)
     /* Suppress any deprecated monsters for this new game. Upgrading an existing
      * game should continue to generate deprecated monsters, since they may be wanted
      * or questors. We do this before choosing questors and bounty uniques, of course. */
-    for (i = 0; i < max_r_idx; i++)
+    for (int i = 0; i < max_r_idx; i++)
     {
         monster_race *r_ptr = &r_info[i];
 
-        if (r_ptr->flags9 & RF9_DEPRECATED)
-            r_ptr->flagsx |= RFX_SUPPRESS;
+        if (r_ptr->flags9 & RF9_DEPRECATED) r_ptr->flagsx |= RFX_SUPPRESS;
     }
 
     quests_on_birth();
     _bounty_uniques(); /* go before reducing uniques for speed ... (e.g. 10% uniques) */
     _reduce_uniques(); /* quests go first, rolling up random quest uniques without restriction */
 
-    p_ptr->au = randint1(300) + randint1(300) + 200;
+    p_ptr->au = randint1(50) + randint1(50);
 
     /* Everybody gets a chaos patron. The chaos warrior is obvious,
      * but anybody else can acquire MUT_CHAOS_GIFT during the game */
@@ -3468,10 +3457,8 @@ static void _birth_finalize(void)
     /* Hack ... external files always make easy stuff hard ... Burglary is natural for rogues!!!*/
     if (p_ptr->pclass == CLASS_ROGUE)
     {
-        if (p_ptr->realm1 == REALM_BURGLARY)
-            mp_ptr->spell_first = 1;
-        else
-            mp_ptr->spell_first = 5;
+        if (p_ptr->realm1 == REALM_BURGLARY) mp_ptr->spell_first = 1;
+        else mp_ptr->spell_first = 5;
     }
 
     if (!ironman_shops) birth_shop_items();

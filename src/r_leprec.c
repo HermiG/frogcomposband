@@ -255,8 +255,7 @@ static void _calc_bonuses(void)
 
 static void _get_flags(u32b flgs[OF_ARRAY_SIZE])
 {
-    if (p_ptr->au >= 5 * 1000 * 1000)
-        add_flag(flgs, OF_DEVICE_POWER);
+    if (p_ptr->au >= 5 * 1000 * 1000) add_flag(flgs, OF_DEVICE_POWER);
 
     switch (p_ptr->current_r_idx)
     {
@@ -449,11 +448,9 @@ race_t *mon_leprechaun_get_race(void)
     }
 
     me.life = 80;
-    if (!spoiler_hack)
-        me.life += MIN(p_ptr->au / 500000, 20);
+    if (!spoiler_hack) me.life += MIN(p_ptr->au / 500000, 20);
 
-    if (!birth_hack && !spoiler_hack)
-        me.subname = titles[rank];
+    if (!birth_hack && !spoiler_hack) me.subname = titles[rank];
     me.stats[A_STR] = -2 - 2*rank;
     me.stats[A_INT] = 1;
     me.stats[A_WIS] = 1;

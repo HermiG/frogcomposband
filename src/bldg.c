@@ -3872,8 +3872,7 @@ static void bldg_process_command(building_type *bldg, int i)
         bcost = bldg->member_costs[i];
         is_guild = TRUE;
     }
-    else
-        bcost = bldg->other_costs[i];
+    else bcost = bldg->other_costs[i];
 
     /* Adjst price for race, charisma and fame */
     bcost = town_service_price(bcost);
@@ -4032,14 +4031,8 @@ static void bldg_process_command(building_type *bldg, int i)
         break;
     }
     case BACT_LOSE_MUTATION:
-        if (mut_count(mut_unlocked_pred))
-        {
-            paid = mut_lose_random(NULL);
-        }
-        else
-        {
-            msg_print("You have no mutations that I can cure.");
-        }
+        if (mut_count(mut_unlocked_pred)) paid = mut_lose_random(NULL);
+        msg_print("You have no mutations that I can cure.");
         break;
     case BACT_BATTLE:
         kakutoujou();
@@ -4141,8 +4134,7 @@ static void bldg_process_command(building_type *bldg, int i)
     {
         p_ptr->au -= bcost;
         stats_on_gold_services(bcost);
-        if (prace_is_(RACE_MON_LEPRECHAUN))
-            p_ptr->update |= (PU_BONUS | PU_HP | PU_MANA);
+        if (prace_is_(RACE_MON_LEPRECHAUN)) p_ptr->update |= PU_BONUS | PU_HP | PU_MANA;
     }
 }
 

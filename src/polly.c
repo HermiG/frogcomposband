@@ -877,7 +877,7 @@ static void _birth(void)
     py_birth_obj_aux(TV_SCROLL, SV_SCROLL_PHASE_DOOR, 3 + randint1(3));
     py_birth_spellbooks();
 
-    p_ptr->au += 150;
+    p_ptr->au += 50;
     _peak_au = 0;
     _peak_exp = 0;
     _spent_exp = 0;

@@ -160,7 +160,7 @@ static void _birth(void)
     py_birth_obj_aux(TV_SPIKE, 0, rand_range(15, 20));
     py_birth_spellbooks();
 
-    p_ptr->au += 100;
+    p_ptr->au += 50;
 }
 
 class_t *ninja_lawyer_get_class(void)

@@ -4026,9 +4026,9 @@ extern int PlayerUID;
 #define SOUND_SHUTDOOR  23
 #define SOUND_TPLEVEL   24
 #define SOUND_SCROLL    25
-#define SOUND_BUY        26
-#define SOUND_SELL        27
-#define SOUND_WARN        28
+#define SOUND_BUY       26
+#define SOUND_SELL      27
+#define SOUND_WARN      28
 #define SOUND_ROCKET    29 /* Somebody's shooting rockets */
 #define SOUND_N_KILL    30 /* The player kills a non-living/undead monster */
 #define SOUND_U_KILL    31 /* The player kills a unique */

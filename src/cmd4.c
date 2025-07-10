@@ -3194,20 +3194,20 @@ void do_cmd_colors(void)
                 for (j = 0; j < 16; j++)
                 {
                     /* Exhibit this color */
-                    Term_putstr(j*4, 19, -1, a, "###");
+                    Term_putstr(j*5, 19, -1, a, "####");
 
                     /* Exhibit all colors */
-                    Term_putstr(j*4, 20, -1, j, format("%3d", j));
+                    Term_putstr(j*5, 20, -1, j, format("%c%3d", color_char[j], j));
                 }
                 if (MAX_COLOR > 16)
                 {
                     for (j = 0; j < MAX_COLOR - 16; j++)
                     {
                         /* Exhibit this color */
-                        Term_putstr(j*4, 21, -1, a, "###");
+                        Term_putstr(j*5, 21, -1, a, "####");
 
                         /* Exhibit all colors */
-                        Term_putstr(j*4, 22, -1, j + 16, format("%3d", j + 16));
+                        Term_putstr(j*5, 22, -1, j + 16, format("%c%3d", color_char[j+16], j+16));
                     }
                 }
 

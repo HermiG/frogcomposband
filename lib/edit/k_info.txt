@@ -950,6 +950,7 @@ W:0:0:0:100:3
 A:0/1
 P:0:1d5:0:0:0
 F:SHOW_MODS | TOWN
+D:A simply-carved wooden branch. Cheap, blunt, and better than bare hands.
 
 N:*:& Whip~
 G:\:D
@@ -959,7 +960,7 @@ A:3/1
 P:0:1d7:0:0:0
 F:SHOW_MODS | TOWN
 D:A heavy whip, this thick coil is thrown from the shoulder and can
-D:knock down a large man.
+D:knock down a large man. Not ideal for armored foes.
 
 N:*:& Quarterstaff~
 G:\:U
@@ -978,6 +979,8 @@ W:16:0:0:60:120
 A:16/2
 P:0:2d4:0:0:0
 F:SHOW_MODS | TOWN
+D:A pair of wooden rods joined by chain. Requires coordination--impressive when
+D:used well, painful when not.
 
 N:*:& Mace~
 G:\:D
@@ -987,6 +990,7 @@ A:5/1
 P:0:2d5:0:0:0
 F:SHOW_MODS | TOWN
 D:A war club with an iron head, usually flanged.
+D:Favored by clerics and those who prefer to mete out blunt trauma.
 
 N:*:& Ball-and-Chain~
 G:\:D
@@ -996,6 +1000,7 @@ A:20/1
 P:0:2d5:0:0:0
 F:SHOW_MODS | RIDING | TOWN
 D:A weighty iron ball, suspended by a chain from a sturdy oaken handle.
+D:Momentum gives it devastating power, just watch out for the backswing.
 
 N:*:& Jo Staff~
 G:\:U
@@ -1004,6 +1009,8 @@ W:11:0:0:70:200
 A:11/2
 P:0:1d8:0:0:0
 F:SHOW_MODS | TOWN
+D:A short wooden staff favored in Eastern martial arts.
+D:Swift, simple, and surprisingly effective.
 
 N:*:& War Hammer~
 G:\:D
@@ -1013,14 +1020,17 @@ A:5/1
 P:0:3d4:0:0:0
 F:SHOW_MODS | RIDING | TOWN
 D:A mallet with a tapered head and a long handle.
+D:Designed to smash through plate armor ane enemy morale alike.
 
-N:*:& Three Piece Rod~
+N:*:& Three-Piece Rod~
 G:\:u
 I:21:11:0
 W:20:0:0:120:350
 A:20/3
 P:0:4d3:0:0:0
 F:SHOW_MODS | TOWN
+D:A complex weapon of three rods linked by chain, spinning into a whirlwind
+D:of pain when used by a master.
 
 N:*:& Morning Star~
 G:\:D
@@ -1029,7 +1039,7 @@ W:10:0:0:150:396
 A:10/1
 P:0:2d7:0:0:0
 F:SHOW_MODS | TOWN
-D:A war club with an spiked iron ball on the head.
+D:A brutal weapon with a spiked iron head, designed to crumple armor and crush bone.
 
 N:*:& Flail~
 G:\:D
@@ -1039,7 +1049,7 @@ A:10/1
 P:0:2d7:0:0:0
 F:SHOW_MODS | RIDING | TOWN
 D:Two heavy bars of wood connected by a short link of chain, capable of
-D:delivering crushing blows.
+D:delivering crushing blows. Difficult to block, harder to dodge.
 
 N:*:& Bo Staff~
 G:\:U
@@ -1048,6 +1058,8 @@ W:20:0:0:160:310
 A:20/1
 P:0:1d12:0:0:0
 F:SHOW_MODS | TOWN
+D:A six-foot hardwood staff, versatile and durable.
+D:In the right hands, it becomes an elegant blunt-force instrument.
 
 N:*:& Lead-Filled Mace~
 G:\:D
@@ -1057,7 +1069,7 @@ A:15/1
 P:0:3d5:0:0:0
 F:SHOW_MODS | TOWN
 D:A heavy war club topped with a mass of lead-filled steel, capable of
-D:landing crushing blows.
+D:landing crushing blows. Leaves a lasting impression.
 
 N:*:& Tetsubo~
 G:\:u
@@ -1066,6 +1078,8 @@ W:25:0:0:190:570
 A:25/2
 P:0:2d8:0:0:0
 F:SHOW_MODS
+D:A great iron-shod staff from the East, forged to battle ogres and demons.
+D:Heavy, brutal, and highly respected.
 
 N:*:& Two-Handed Flail~
 G:\:y
@@ -1084,6 +1098,8 @@ W:45:0:0:300:350
 A:45/3
 P:0:4d7:0:0:0
 F:SHOW_MODS | TOWN
+D:A colossal hammer once used to break stone -- now used to break everything else.
+D:Wielded with two hands and no mercy.
 
 N:*:& Mace~ of Disruption
 G:\:v
@@ -1093,7 +1109,7 @@ A:80/8
 P:0:5d8:0:0:0
 F:SLAY_UNDEAD | SHOW_MODS
 D:A giant's weapon, enchanted with shattering power that breaks bones, bodies,
-D:and spirit.
+D:and spirit. Undead crumble under its blows.
 
 N:*:& Wizardstaff~
 G:\:y
@@ -1102,6 +1118,8 @@ W:25:0:0:40:4000
 A:25/4
 P:0:1d2:0:0:0
 F:SHOW_MODS | DEC_MANA
+D:A gnarled staff crowned with crystal, pulsing faintly with magic.
+D:Empowers spells, but little use in melee.
 
 N:*:& Mighty Hammer~
 G:\:D
@@ -1109,6 +1127,8 @@ I:21:50:0
 W:15:0:0:200:1000
 P:0:3d9:0:0:0
 F:SHOW_MODS | INSTA_ART | RIDING
+D:A legendary hammer said to strike with the force of a charging bull.
+D:Its weight demands strength; its impact speaks for itself.
 
 N:*:& Baseball Bat~
 G:\:w
@@ -1116,6 +1136,7 @@ I:21:51:0
 W:15:0:0:15:1000
 P:0:1d4:0:0:0
 F:SHOW_MODS | INSTA_ART
+D:A blunt wooden club from another world.
 
 N:*:& Stick~
 G:\:y
@@ -1123,6 +1144,7 @@ I:21:63:0
 W:1:0:0:333:1000000
 P:0:1d11:0:0:0
 F:INSTA_ART
+D:Just a stick. Perfectly ordinary. Terrifyingly effective.
 
 ########################################################################
 # Diggers (TV_DIGGING)

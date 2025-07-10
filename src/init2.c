@@ -423,9 +423,7 @@ static errr init_info(cptr filename, header *head, void **info, char **name, cha
     errr err = 1;
     FILE *fp;
 
-    /* General buffer */
     char buf[1024];
-
 
     /* Allocate the "*_info" array */
     C_MAKE(head->info_ptr, head->info_size, char);
@@ -433,7 +431,7 @@ static errr init_info(cptr filename, header *head, void **info, char **name, cha
     /* Hack -- make "fake" arrays */
     if (name) C_MAKE(head->name_ptr, FAKE_NAME_SIZE, char);
     if (text) C_MAKE(head->text_ptr, FAKE_TEXT_SIZE, char);
-    if (tag)  C_MAKE(head->tag_ptr, FAKE_TAG_SIZE, char);
+    if (tag)  C_MAKE(head->tag_ptr,  FAKE_TAG_SIZE,  char);
 
     if (info) (*info) = head->info_ptr;
     if (name) (*name) = head->name_ptr;
@@ -452,7 +450,6 @@ static errr init_info(cptr filename, header *head, void **info, char **name, cha
     /* Parse it */
     if (!fp) quit(format("Cannot open '%s.txt' file.", filename));
 
-
     /* Parse the file */
     err = init_info_txt(fp, buf, head, head->parse_info_txt);
 
@@ -462,32 +459,21 @@ static errr init_info(cptr filename, header *head, void **info, char **name, cha
     /* Errors */
     if (err)
     {
-        cptr oops;
+        cptr oops = (((err > 0) && (err < PARSE_ERROR_MAX)) ? err_str[err] : "unknown");
 
-        /* Error string */
-        oops = (((err > 0) && (err < PARSE_ERROR_MAX)) ? err_str[err] : "unknown");
-
-        /* Oops */
         msg_format("Error %d at line %d of '%s.txt'.", err, error_line, filename);
         msg_format("Record %d contains a '%s' error.", error_idx, oops);
         msg_format("Parsing '%s'.", buf);
         msg_print(NULL);
 
-        /* Quit */
         quit(format("Error in '%s.txt' file.", filename));
-
     }
-
 
     /*** Make final retouch on fake tags ***/
 
-    if (head->retouch)
-    {
-        (*head->retouch)(head);
-    }
+    if (head->retouch) (*head->retouch)(head);
 
-    /* Success */
-    return (0);
+    return 0;
 }
 
 

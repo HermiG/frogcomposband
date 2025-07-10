@@ -22,14 +22,9 @@ static bool paivitys_no_inkey_hack = FALSE;
 
 int get_bldg_member_code(cptr name)
 {
-    if (strcmp(name, "None") == 0)
-        return BUILDING_NON_MEMBER;
-
-    if (strcmp(name, "Owner") == 0)
-        return BUILDING_OWNER;
-
-    if (strcmp(name, "Member") == 0)
-        return BUILDING_MEMBER;
+    if (strcmp(name,   "None") == 0) return BUILDING_NON_MEMBER;
+    if (strcmp(name,  "Owner") == 0) return BUILDING_OWNER;
+    if (strcmp(name, "Member") == 0) return BUILDING_MEMBER;
 
     return -1;
 }
@@ -38,23 +33,16 @@ static bool is_owner(building_type *bldg)
 {
     int race_idx = (p_ptr->mimic_form != MIMIC_NONE) ? p_ptr->mimic_form : p_ptr->prace;
 
-    if (bldg->member_class[p_ptr->pclass] == BUILDING_OWNER)
-    {
-        return (TRUE);
-    }
-
-    if (race_idx < MAX_RACES && bldg->member_race[race_idx] == BUILDING_OWNER)
-    {
-        return (TRUE);
-    }
-
+    if (bldg->member_class[p_ptr->pclass] == BUILDING_OWNER) return TRUE;
+    if (race_idx < MAX_RACES && bldg->member_race[race_idx] == BUILDING_OWNER) return TRUE;
+    
     if ((is_magic(p_ptr->realm1) && (bldg->member_realm[p_ptr->realm1] == BUILDING_OWNER)) ||
         (is_magic(p_ptr->realm2) && (bldg->member_realm[p_ptr->realm2] == BUILDING_OWNER)))
     {
-        return (TRUE);
+        return TRUE;
     }
 
-    return (FALSE);
+    return FALSE;
 }
 
 
@@ -62,34 +50,21 @@ static bool is_member(building_type *bldg)
 {
     int race_idx = (p_ptr->mimic_form != MIMIC_NONE) ? p_ptr->mimic_form : p_ptr->prace;
 
-    if (bldg->member_class[p_ptr->pclass])
-    {
-        return (TRUE);
-    }
-
-    if (race_idx < MAX_RACES && bldg->member_race[race_idx])
-    {
-        return (TRUE);
-    }
+    if (bldg->member_class[p_ptr->pclass]) return TRUE;
+    if (race_idx < MAX_RACES && bldg->member_race[race_idx]) return TRUE;
 
     if ((is_magic(p_ptr->realm1) && bldg->member_realm[p_ptr->realm1]) ||
         (is_magic(p_ptr->realm2) && bldg->member_realm[p_ptr->realm2]))
     {
-        return (TRUE);
+        return TRUE;
     }
 
 
     if (p_ptr->pclass == CLASS_SORCERER)
     {
-        int i;
-        bool OK = FALSE;
-        for (i = 0; i < MAX_MAGIC; i++)
-        {
-            if (bldg->member_realm[i+1]) OK = TRUE;
-        }
-        return OK;
+        for (int i = 0; i < MAX_MAGIC; i++) if (bldg->member_realm[i+1]) return TRUE;
     }
-    return (FALSE);
+    return FALSE;
 }
 
 
@@ -98,10 +73,7 @@ static bool is_member(building_type *bldg)
  */
 static void clear_bldg(int min_row, int max_row)
 {
-    int   i;
-
-    for (i = min_row; i <= max_row; i++)
-        prt("", i, 0);
+    for (int i = min_row; i <= max_row; i++) prt("", i, 0);
 }
 
 static void building_prt_gold(void)
@@ -123,7 +95,6 @@ static void building_prt_gold(void)
 static void show_building(building_type* bldg)
 {
     char buff[20];
-    int i;
     byte action_color;
     char tmp_str[80];
 
@@ -132,7 +103,7 @@ static void show_building(building_type* bldg)
     prt(tmp_str, 3, 1);
 
 
-    for (i = 0; i < 8; i++)
+    for (int i = 0; i < 8; i++)
     {
         if (bldg->letters[i])
         {
@@ -1720,15 +1691,11 @@ static struct {
 static int _prize_count = 0;
 static bool _is_captured_tsuchinoko(obj_ptr obj)
 {
-    if (obj->tval == TV_CAPTURE && obj->pval == MON_TSUCHINOKO)
-        return TRUE;
-    return FALSE;
+    return (obj->tval == TV_CAPTURE && obj->pval == MON_TSUCHINOKO);
 }
 static bool _is_corpse_tsuchinoko(obj_ptr obj)
 {
-    if (obj->tval == TV_CORPSE && obj->pval == MON_TSUCHINOKO)
-        return TRUE;
-    return FALSE;
+    return (obj->tval == TV_CORPSE && obj->pval == MON_TSUCHINOKO);
 }
 static int _tsuchinoko_amt(obj_ptr obj)
 {
@@ -1820,9 +1787,7 @@ static bool _is_wanted_corpse(obj_ptr obj)
 }
 static bool _is_wanted_captureball(obj_ptr obj)
 {
-    if (obj->tval == TV_CAPTURE && obj->pval > 0 && _is_wanted_monster(obj->pval))
-        return TRUE;
-    return FALSE;
+    return (obj->tval == TV_CAPTURE && obj->pval > 0 && _is_wanted_monster(obj->pval));
 }
 static void _process_wanted_corpse(obj_ptr obj)
 {
@@ -2304,14 +2269,10 @@ static void refresh_buildings(void)
  */
 static void castle_quest(void)
 {
-    int             quest_id = 0;
-    quest_ptr       quest;
-
-
     clear_bldg(4, 18);
 
     /* Current quest of the building */
-    quest_id = cave[py][px].special;
+    int quest_id = cave[py][px].special;
 
     /* Is there a quest available at the building? */
     if (!quest_id)
@@ -2320,7 +2281,7 @@ static void castle_quest(void)
         return;
     }
 
-    quest = quests_get(quest_id);
+    quest_ptr quest = quests_get(quest_id);
 
     if (quest->status == QS_COMPLETED)
     {
@@ -2358,14 +2319,11 @@ static void castle_quest(void)
  */
 static void town_history(void)
 {
-    /* Save screen */
     screen_save();
 
     /* Peruse the building help file */
     doc_display_help("town.txt#TheShops", NULL);
 
-
-    /* Load screen */
     screen_load();
 }
 
@@ -2373,7 +2331,7 @@ static void town_history(void)
 /*
  * Hook to specify "ammo"
  */
-static bool item_tester_hook_ammo(object_type *o_ptr)
+static bool _item_tester_hook_ammo(object_type *o_ptr)
 {
     switch (o_ptr->tval)
     {
@@ -4032,7 +3990,7 @@ static void bldg_process_command(building_type *bldg, int i)
         if (lp_player(1000)) paid = TRUE;
         break;
     case BACT_ENCHANT_ARROWS:
-        enchant_item(item_tester_hook_ammo, bcost, 1, 1, 0, is_guild);
+        enchant_item(_item_tester_hook_ammo, bcost, 1, 1, 0, is_guild);
         break;
     case BACT_ENCHANT_BOW:
         enchant_item(object_is_bow, bcost, 1, 1, 0, is_guild);
@@ -4235,23 +4193,20 @@ void do_cmd_quest(void)
  */
 void do_cmd_bldg(void)
 {
-    int             i, which;
-    char            command;
-    bool            validcmd;
-    building_type   *bldg;
+    int  i;
+    char command;
+    bool validcmd;
 
     energy_use = 100;
 
     if (!cave_have_flag_bold(py, px, FF_BLDG))
     {
         msg_print("You see no building here.");
-
         return;
     }
 
-    which = f_info[cave[py][px].feat].subtype;
-
-    bldg = &building[which];
+    int which = f_info[cave[py][px].feat].subtype;
+    building_type *bldg = &building[which];
 
     /* Don't re-init the wilderness */
     reinit_wilderness = FALSE;
@@ -4383,10 +4338,8 @@ void do_cmd_bldg(void)
             }
         }
 
-        if (validcmd)
-        {
-            bldg_process_command(bldg, i);
-        }
+        if (validcmd) bldg_process_command(bldg, i);
+        
 
         if (pack_overflow_count())
         {

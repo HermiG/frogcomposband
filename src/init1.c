@@ -1061,10 +1061,8 @@ errr init_info_txt(FILE *fp, char *buf, header *head, parse_info_txt_func parse_
         }
 
         /* Parse the line */
-        if ((err = (*parse_info_txt_line)(buf, head)) != 0)
-            return (err);
+        if ((err = (*parse_info_txt_line)(buf, head)) != 0) return (err);
     }
-
 
     /* Complete the "name" and "text" sizes */
     if (head->name_size) head->name_size++;
@@ -1076,9 +1074,7 @@ errr init_info_txt(FILE *fp, char *buf, header *head, parse_info_txt_func parse_
 
 static bool _is_digit(char c)
 {
-    if ('0' <= c && c <= '9')
-        return TRUE;
-    return FALSE;
+    return ('0' <= c && c <= '9');
 }
 
 static bool _is_numeric(const char *token) /* [0-9]+ */
@@ -1086,21 +1082,14 @@ static bool _is_numeric(const char *token) /* [0-9]+ */
     const char *c = token;
     if (!*c) return FALSE;
     if (!_is_digit(*c)) return FALSE;
-    for (c++; *c; c++)
-    {
-        if (!_is_digit(*c)) return FALSE;
-    }
+    for (c++; *c; c++) if (!_is_digit(*c)) return FALSE;
     return TRUE;
 }
 
 static bool _is_d_char(const char *token)
 {
-    int i;
     if (strlen(token) != 1) return FALSE;
-    for (i = 0; i < max_r_idx; i++)
-    {
-        if (token[0] == r_info[i].d_char) return TRUE;
-    }
+    for (int i = 0; i < max_r_idx; i++) if (token[0] == r_info[i].d_char) return TRUE;
     return FALSE;
 }
 
@@ -1114,8 +1103,7 @@ static void _prep_name_aux(char *dest, const char *src)
 {
     char *t;
 
-    while (*src == ' ' || *src == '&' || *src == '[' || *src == '(')
-        src++;
+    while (*src == ' ' || *src == '&' || *src == '[' || *src == '(') src++;
 
     for (t = dest; *src; src++)
     {

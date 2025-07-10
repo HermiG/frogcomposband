@@ -2323,8 +2323,7 @@ static void _shuffle_stock(shop_ptr shop)
         stats_on_gold_services(cost);
 
         p_ptr->redraw |= PR_GOLD;
-        if (prace_is_(RACE_MON_LEPRECHAUN))
-            p_ptr->update |= (PU_BONUS | PU_HP | PU_MANA);
+        if (prace_is_(RACE_MON_LEPRECHAUN)) p_ptr->update |= (PU_BONUS | PU_HP | PU_MANA);
     }
     _cull(shop, 0);
     _restock(shop, _stock_base(shop), TRUE);
@@ -2774,7 +2773,6 @@ void birth_shop_items(void)
  ***********************************************************************/
 static errr _parse_building(char *buf, int options) /* moved w/o change from init1.c */
 {
-    int i;
     char *zz[128];
     int index;
     char *s;
@@ -2867,19 +2865,16 @@ static errr _parse_building(char *buf, int options) /* moved w/o change from ini
             {
                 int c = get_bldg_member_code(zz[1]);
 
-                if (c < 0)
-                    return PARSE_ERROR_GENERIC;
+                if (c < 0) return PARSE_ERROR_GENERIC;
 
                 if (strcmp(zz[0], "*") == 0)
                 {
-                    for (i = 0; i < MAX_CLASS; i++)
-                        building[index].member_class[i] = c;
+                    for (int i = 0; i < MAX_CLASS; i++) building[index].member_class[i] = c;
                 }
                 else
                 {
                     int idx = lookup_class_idx(zz[0]);
-                    if (idx < 0 || idx >= MAX_CLASS)
-                        return PARSE_ERROR_GENERIC;
+                    if (idx < 0 || idx >= MAX_CLASS) return PARSE_ERROR_GENERIC;
                     building[index].member_class[idx] = c;
                 }
                 break;
@@ -2897,19 +2892,16 @@ static errr _parse_building(char *buf, int options) /* moved w/o change from ini
             {
                 int c = get_bldg_member_code(zz[1]);
 
-                if (c < 0)
-                    return PARSE_ERROR_GENERIC;
+                if (c < 0) return PARSE_ERROR_GENERIC;
 
                 if (strcmp(zz[0], "*") == 0)
                 {
-                    for (i = 0; i < MAX_RACES; i++)
-                        building[index].member_race[i] = c;
+                    for (int i = 0; i < MAX_RACES; i++) building[index].member_race[i] = c;
                 }
                 else
                 {
                     int idx = get_race_idx(zz[0]);
-                    if (idx < 0 || idx >= MAX_RACES)
-                        return PARSE_ERROR_GENERIC;
+                    if (idx < 0 || idx >= MAX_RACES) return PARSE_ERROR_GENERIC;
                     building[index].member_race[idx] = c;
                     if (idx == RACE_VAMPIRE) /* We have 2 races with the same name! */
                         building[index].member_race[RACE_MON_VAMPIRE] = c;
@@ -2927,19 +2919,16 @@ static errr _parse_building(char *buf, int options) /* moved w/o change from ini
             {
                 int c = get_bldg_member_code(zz[1]);
 
-                if (c < 0)
-                    return PARSE_ERROR_GENERIC;
+                if (c < 0) return PARSE_ERROR_GENERIC;
 
                 if (strcmp(zz[0], "*") == 0)
                 {
-                    for (i = 0; i <= MAX_REALM; i++)
-                        building[index].member_realm[i] = c;
+                    for (int i = 0; i <= MAX_REALM; i++) building[index].member_realm[i] = c;
                 }
                 else
                 {
                     int idx = get_realm_idx(zz[0]);
-                    if (idx < 0 || idx > MAX_REALM)
-                        return PARSE_ERROR_GENERIC;
+                    if (idx < 0 || idx > MAX_REALM) return PARSE_ERROR_GENERIC;
                     building[index].member_realm[idx] = c;
                 }
                 break;
@@ -2962,6 +2951,7 @@ static errr _parse_building(char *buf, int options) /* moved w/o change from ini
 
     return (0);
 }
+
 static room_ptr _temp_room;
 static errr _parse_town(char *line, int options)
 {

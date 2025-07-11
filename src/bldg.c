@@ -3703,7 +3703,7 @@ static bool research_mon(void)
             i = 0;
             if (!expand_list) break;
         }
-        else if (query == '-' || query == SKEY_LEFT || query == '4' || query == SKEY_UP || query == '8')
+        else if (query == '-' || query == '4' || query == '8')
         {
             if (i-- == 0) // previous monster
             {

@@ -577,6 +577,8 @@ struct monster_race
     byte stolen_ct;           /* For uniques in this lifetime only. Prevents PickPocket scumming of excellent drop uniques */
 
     monster_body_t body;      /* For The Possessor */
+
+    byte probed;              /* Whether we have probed this monster */
 };
 
 

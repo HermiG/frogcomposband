@@ -5268,8 +5268,7 @@ void health_track(int m_idx)
  */
 void mon_track(mon_ptr mon)
 {
-    if (!(mon->mflag2 & MFLAG2_FUZZY))
-        monster_race_track(mon->ap_r_idx);
+    if (!(mon->mflag2 & MFLAG2_FUZZY)) monster_race_track(mon->ap_r_idx);
 }
 void monster_race_track(int r_idx)
 {

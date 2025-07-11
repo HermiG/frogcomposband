@@ -232,8 +232,7 @@ static void rd_lore_aux(savefile_ptr file, mon_race_ptr race)
     race->r_flags3 &= race->flags3;
     race->r_flagsr &= race->flagsr;
 
-    if (pact)
-        race->r_flagsr |= RFR_PACT_MONSTER;
+    if (pact) race->r_flagsr |= RFR_PACT_MONSTER;
 }
 static void rd_randomizer(savefile_ptr file)
 {
@@ -1259,18 +1258,17 @@ static errr rd_savefile_new_aux(savefile_ptr file)
     {
         mon_race_ptr race = &r_info[i];
         byte header = savefile_read_byte(file);
+        race->probed = !!(header & 0x04);
 
         race->max_num = savefile_read_byte(file);
+
         if (!savefile_is_older_than(file, 7, 0, 5, 1))
-        {
             race->ball_num = savefile_read_byte(file);
-        }
+        
         race->floor_id = savefile_read_s16b(file);
         race->stolen_ct = savefile_read_byte(file);
-        if (header & 0x01)
-            race->flagsx = savefile_read_u32b(file);
-        if (header & 0x02)
-            rd_lore_aux(file, race);
+        if (header & 0x01) race->flagsx = savefile_read_u32b(file);
+        if (header & 0x02) rd_lore_aux(file, race);
     }
     if (arg_fiddle) note("Loaded Monster Memory");
 

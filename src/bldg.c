@@ -3976,6 +3976,8 @@ static void bldg_process_command(building_type *bldg, int i)
             (void)hp_mon(m_ptr, 500, FALSE);
         }
 
+        msg_print("You feel much better.");
+
         paid = TRUE;
         break;
     case BACT_RESTORE: /* needs work */
@@ -3987,6 +3989,8 @@ static void bldg_process_command(building_type *bldg, int i)
         if (do_res_stat(A_CHR)) paid = TRUE;
         if (restore_level()) paid = TRUE;
         if (lp_player(1000)) paid = TRUE;
+        
+        msg_print("Your body and mind are revitalized.");
         break;
     case BACT_ENCHANT_ARROWS:
         enchant_item(_item_tester_hook_ammo, bcost, 1, 1, 0, is_guild);

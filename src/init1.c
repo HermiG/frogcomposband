@@ -5375,8 +5375,7 @@ errr parse_edit_file(cptr name, parser_f parser, int options)
         {
             if (trace_doc && (buf[0] == 'L' || buf[0] == 'R'))
             {
-                doc_printf(trace_doc, "<color:R>%s:%d</color> <indent>%s</indent>\n",
-                    name, line_num, buf);
+                doc_printf(trace_doc, "<color:R>%s:%d</color> <indent>%s</indent>\n", name, line_num, buf);
             }
             err = parser(buf, options);
             if ((err) && (!(options & INIT_SILENT))) /* report now for recursion */

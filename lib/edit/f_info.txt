@@ -17,23 +17,36 @@
 # === Understanding f_info.txt ===
 
 # N:serial number:terrain name
+# E:display name
 # G:symbol:color
 # M:mimic
+# W:priority
+# K:condition:new state
 
 # 'N' indicates the beginning of an entry. The serial number must
-# increase for each new item.
+#     increase for each new item.
 
-# 'G' is for graphics - symbol and color. There are 16 colors, as
-# follows:
+# 'E' is the display name.
 
-# 'M' is for fixed mimicing terrain type.  Pretend other terrain with
-# all visual effects.  No effect on temporal mimic.
+# 'G' is for graphics - symbol and color. There are 32 colors, as
+#     follows:
 
 # D - Black        w - White          s - Gray          o - Orange
 # r - Red          g - Green          b - Blue          u - Brown
 # d - Dark Gray    W - Light Gray     v - Violet        y - Yellow
 # R - Light Red    G - Light Green    B - Light Blue    U - Light Brown
 
+# 'M' is for fixed mimicing terrain type.  Pretend other terrain with
+#     all visual effects.  No effect on temporal mimic.
+
+# 'F' is for flags.
+
+# 'W' sets the 'priority' value for the terrain.
+
+# 'K' specifies transitions to a new terrain upon a condition,
+#     like a destroyed flower becoming grass, or a closed door becoming open.
+
+# === Terrain features ===
 
 # 0x00 --> nothing
 

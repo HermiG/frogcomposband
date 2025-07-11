@@ -4163,10 +4163,8 @@ static int target_set_aux(int y, int x, int mode, cptr info)
            or the position that the monster happens to currently occupy.
            This happens after a fat finger incident or a failed <dir>
            navigation that really should have worked.*/
-        if (strstr(info, "o,"))
-            s1 = (mode == TARGET_LOOK) ? "Feature: " : "Monster: ";
-        else if (strstr(info, "m,"))
-            s1 = "Position: ";
+        if (strstr(info, "o,")) s1 = (mode == TARGET_LOOK) ? "Feature: " : "Monster: ";
+        else if (strstr(info, "m,")) s1 = "Position: ";
     }
 
     /* Hack -- hallucination */
@@ -4190,8 +4188,7 @@ static int target_set_aux(int y, int x, int mode, cptr info)
 
     inv = inv_filter_floor(point(x, y), obj_is_found);
     obj_ct = inv_count_slots(inv, obj_exists);
-    if (obj_ct)
-        x_info = "x,";
+    if (obj_ct) x_info = "x,";
 
     /* Actual monsters */
     if (c_ptr->m_idx && m_list[c_ptr->m_idx].ml)

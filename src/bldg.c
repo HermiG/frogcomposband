@@ -251,10 +251,9 @@ static void arena_comm(int cmd)
         case BACT_POSTER:
             if (p_ptr->arena_number == MAX_ARENA_MONS)
                 msg_print("You are victorious. Enter the arena for the ceremony.");
-
             else if (p_ptr->arena_number > MAX_ARENA_MONS)
             {
-                msg_print("You have won against all foes.");
+                msg_print("You have defeated all foes.");
             }
             else
             {
@@ -264,17 +263,9 @@ static void arena_comm(int cmd)
             }
             break;
         case BACT_ARENA_RULES:
-
-            /* Save screen */
             screen_save();
-
-            /* Peruse the arena help file */
             (void)show_file(TRUE, "arena.txt", NULL, 0, 0);
-
-
-            /* Load screen */
             screen_load();
-
             break;
     }
 }
@@ -3850,8 +3841,7 @@ static void bldg_process_command(building_type *bldg, int i)
     bcost = town_service_price(bcost);
 
     /* action restrictions */
-    if (((bldg->action_restr[i] == 1) && !is_member(bldg)) ||
-        ((bldg->action_restr[i] == 2) && !is_owner(bldg)))
+    if (((bldg->action_restr[i] == 1) && !is_member(bldg)) || ((bldg->action_restr[i] == 2) && !is_owner(bldg)))
     {
         msg_print("You have no right to choose that!");
         return;

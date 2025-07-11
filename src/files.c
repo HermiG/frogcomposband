@@ -3976,10 +3976,8 @@ static void handle_signal_abort(int sig)
     /* Disable handler */
     (void)signal(sig, SIG_IGN);
 
-
     /* Nothing to save, just quit */
     if (!character_generated || character_saved) quit(NULL);
-
 
     forget_lite();
     forget_view();
@@ -3989,14 +3987,10 @@ static void handle_signal_abort(int sig)
     Term_erase(0, hgt - 1, 255);
 
     /* Give a warning */
-    Term_putstr(0, hgt - 1, -1, TERM_RED,
-            "A gruesome software bug LEAPS out at you!");
-
+    Term_putstr(0, hgt - 1, -1, TERM_RED, "A gruesome software bug LEAPS out at you!");
 
     /* Message */
     Term_putstr(45, hgt - 1, -1, TERM_RED, "Panic save...");
-
-
 
     /* Flush output */
     Term_fresh();

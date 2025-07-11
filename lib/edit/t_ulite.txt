@@ -21,13 +21,13 @@ L:E:GRASS
 L:F:PERMANENT
 L:v:DIRT
 L:u:GRASS
-L:s:PERMANENT
+L:H:PERMANENT
 L:S:GRASS
 L:t:PERMANENT
 L:U:PERMANENT
 L:G:FLOOR
 L:B:RUBBLE
-L:r:PERMANENT
+L:A:PERMANENT
 L:P:BRAKE
 L:y:PERMANENT
 L:O:TREE
@@ -92,7 +92,7 @@ L:a:BUILDING_0(0)
 ############### Quest Chain 3 - Thieves' Guild ##################
 ############### Quest 30 - Mimics' Treasure ###############
 ?:[EQU $QUEST30 Taken]
-L:s:QUEST_ENTER(30)
+L:H:QUEST_ENTER(30)
 ?:[EQU $QUEST30 Untaken Taken Completed Failed]
 L:k:BUILDING_10(30)
 ?:[EQU $QUEST30 Finished FailedDone]
@@ -146,37 +146,25 @@ B:2:A:0:Enter in arena:0:0:e:10:0
 B:2:A:1:Look at poster:0:0:p:8:0
 #B:2:A:2:Palace of heros:0:0:s:11:0
 
-B:3:N:Library:Astinus:Human?
-B:3:A:0:Research item:1500:1500:a:1:0
+B:3:N:Casino:Materim:Human
+B:3:A:0:In-Between:0:0:b:12:0
+B:3:A:2:Play craps:0:0:c:14:0
+B:3:A:3:Spin the wheel:0:0:s:15:0
+B:3:A:4:Play dice slots:0:0:d:16:0
+B:3:A:4:Monster arena:0:0:m:36:0
+B:3:A:5:Poker:0:0:p:43:0
+B:3:A:1:Game rules:0:0:r:13:0
+
+B:4:N:Library:Astinus:Human?
+B:4:A:0:Research item:1500:1500:a:1:0
 ?:[EQU $QUEST5 Finished]
-B:3:A:0:Research item:750:750:a:1:0
+B:4:A:0:Research item:750:750:a:1:0
 ?:1
-B:3:A:1:Town Overview:0:0:h:2:0
-B:3:A:2:Research monster:10000:10000:r:20:0
+B:4:A:1:Town Overview:0:0:h:2:0
+B:4:A:2:Research monster:10000:10000:r:20:0
 ?:[EQU $QUEST5 Finished]
-B:3:A:2:Research monster:1200:1200:r:20:0
+B:4:A:2:Research monster:1200:1200:r:20:0
 ?:1
-
-B:4:N:Chaos Tower:Xeno:Beastman
-B:4:A:0:Cure mutation:1000:5000:m:35:0
-B:4:R:*:None
-B:4:R:Beastman:Member
-B:4:M:*:None
-B:4:M:Chaos:Owner
-
-B:5:N:Nature Tower:Josh:Elf
-B:5:A:0:Ritual of balance:2000:10000:n:41:0
-B:5:M:*:None
-B:5:M:Nature:Owner
-
-B:6:N:Casino:Materim:Human
-B:6:A:0:In-Between:0:0:b:12:0
-B:6:A:2:Play craps:0:0:c:14:0
-B:6:A:3:Spin the wheel:0:0:s:15:0
-B:6:A:4:Play dice slots:0:0:d:16:0
-B:6:A:4:Monster arena:0:0:m:36:0
-B:6:A:5:Poker:0:0:p:43:0
-B:6:A:1:Game rules:0:0:r:13:0
 
 B:7:N:Fighters' Hall:Barak:Human
 B:7:A:0:Enchant weapon:400:800:w:23:0
@@ -235,22 +223,34 @@ B:13:A:2:Request quest:0:0:q:6:0
 B:13:M:*:None
 B:13:M:Trump:Owner
 
-B:14:N:Gamble Shop:Hector:Half-Giant
-B:14:A:0:Random Potion:10000:10000:a:47:0
-B:14:A:1:Random Scroll:12000:12000:b:48:0
-B:14:A:2:Random Staff:15000:15000:c:49:0
-B:14:A:3:Random Wand:15000:15000:d:50:0
-B:14:A:4:Random Rod:20000:20000:e:51:0
-B:14:A:5:Random Armor:50000:50000:f:52:0
-B:14:A:6:Random Weapon:30000:30000:g:53:0
-#This costs so much it overflows a 32-bit int on scaling!
-#B:14:A:7:Random Artifact:10000000:10000000:h:54:0
+B:14:N:Hunter's office:Kopei:Human
+B:14:A:0:Today's wanted:0:0:a:38:0
+B:14:A:1:Wanted unique list:0:0:b:39:0
+B:14:A:2:Special target:0:0:s:37:0
+B:14:A:3:Receive prize:0:0:c:40:0
 
-B:15:N:Hunter's office:Kopei:Human
-B:15:A:0:Today's wanted:0:0:a:38:0
-B:15:A:1:Wanted unique list:0:0:b:39:0
-B:15:A:2:Special target:0:0:s:37:0
-B:15:A:3:Receive prize:0:0:c:40:0
+B:15:N:Gamble Shop:Hector:Half-Giant
+B:15:A:0:Random Potion:10000:10000:a:47:0
+B:15:A:1:Random Scroll:12000:12000:b:48:0
+B:15:A:2:Random Staff:15000:15000:c:49:0
+B:15:A:3:Random Wand:15000:15000:d:50:0
+B:15:A:4:Random Rod:20000:20000:e:51:0
+B:15:A:5:Random Armor:50000:50000:f:52:0
+B:15:A:6:Random Weapon:30000:30000:g:53:0
+#This costs so much it overflows a 32-bit int on scaling!
+#B:15:A:7:Random Artifact:10000000:10000000:h:54:0
+
+B:17:N:Nature Tower:Josh:Elf
+B:17:A:0:Ritual of balance:2000:10000:n:41:0
+B:17:M:*:None
+B:17:M:Nature:Owner
+
+B:18:N:Chaos Tower:Xeno:Beastman
+B:18:A:0:Cure mutation:1000:5000:m:35:0
+B:18:R:*:None
+B:18:R:Beastman:Member
+B:18:M:*:None
+B:18:M:Chaos:Owner
 
 ############### Town Layout ###############
 
@@ -271,7 +271,7 @@ M:#TTTTTTTTTTTTTTTTTTTTTTTTTTTT::TTT:T:TT::TTTTTTTTTTTTTTTTTTTTTTTTTTTTT.T.TTTTT
 M:#TTTTWWWWWVTTTTTTTTTTTTTTTTTTTTT::T::TT:TTTTTTTTTTTTTTTDT-------ETTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT#TTTT#TTTT#TTTTTTT-------T##TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT#
 M:#WWWWVTTTTWWWWWWWWVTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT---------------------------------TTTTTTTTTTTTTTTTTTT---TTT###TT###TT###TTT-----------l#TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT#
 M:#TTTTTTTTTTTTTTTTTWTTTTTTTTTTTTTTTT####TTTTTTTTTTTTTTTTT---------------------------------TTTTTTTTTTTTTTTTTTT---TT###############TT-----------##TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT#
-M:#TTTTTTTTTTTTTTTTTVWWTTTTTTTTTTTTTT#y##TTTTTTTTTTTTTTTTTT-------------------------------------T-------T--------T########r########T-----------TTTTTTTTTTTT.............TTTTTTTT-----TTTTTTTTTTTTTTTTTT#
+M:#TTTTTTTTTTTTTTTTTVWWTTTTTTTTTTTTTT#y##TTTTTTTTTTTTTTTTTT-------------------------------------T-------T--------T########A########T-----------TTTTTTTTTTTT.............TTTTTTTT-----TTTTTTTTTTTTTTTTTT#
 M:#TTTTTTTTTTTTTTTTTTTVWWWWWWVTTTTTTT--##TTTTTTTTTTTTTTTTTT---.................................................----T-###--.--###-T--------------TTTTTT.....TTTTTTTTTTTT......T---------TTTTTTTTTTTTTTTT#
 M:#TTTTTTTTTTTTTTTTTTTTTTTTTTWWWWTTTTT-TTTTTTTTTTTTTTTTTTTT---.,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,..------T---.---T------------------.....TTTTTTTTTTTTTTTTTTTTTT-----------TTTTTTTTTTTTTTTT#
 M:#TTTTTTTTTTTTTTTTTTTTTTTTTTTTTVWWWWWVTTTTTTTTTTTTTTTTTTTT---.,WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW,,............................----...TTTTTTTTTTTTTTTTTTTTTTTTTT------S-----TTTTTTTTTTTTTTT#
@@ -281,29 +281,29 @@ M:#TTTTTTTTTT-----------TTTTTTTTTTTTT-TTTTTWTTTTTTTTTTTTTTT---.,WW##############
 M:#TTTT-----------#######-TTT-----TT--TTTTTWVTTTTTTTTTTTTTT---.,WW##-T---T--T#...........##WW######bbb######WW##########################W,.---TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT.TTTTTTTTTTTTTTTTTTTTTTTT#
 M:#--------T----T-######F-----TT-----TTTTTTWWTTTTTTTTTTTTTT---.,WW##-T--#-T--#.##.######.##WW####T-...-T####WW##########################W,.----TTTTTTTTTTTTTTTTTTTTTTTTTTTTTT..TTTTTTTTTTTTTTTTTTTTTTTT#
 M:#--------------T#######---TTTTTTTTTTTTTTTTWWTTTTTTTTTTTT----.,WW##--T-#----#.##.######.##WWWWW---...---WWWWW##.....................###W,.---TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT.TTTTTTTTTTTTTTTTTTTTTTTTT#
-M:#--------------TT----------TTTTTTTTTTTTTTTTVWWWWVTTTTTTTTT--.,WW##---###-T-#.#k....#p#.###WWWWWWW...WWWWWWWW##.#########.#########.##WW,.---TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT.TTTTTTTTTTTTTTTTTTTTTTTTT#
+M:#--------------TT----------TTTTTTTTTTTTTTTTVWWWWVTTTTTTTTT--.,WW##---###-T-#.#k....#o#.###WWWWWWW...WWWWWWWW##.#########.#########.##WW,.---TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT.TTTTTTTTTTTTTTTTTTTTTTTTT#
 M:#---------------?-----------TTTTTTTTTTTTTTTTTTTTWTTTTTTTT---.,WW##T-#####--#.##........##########...##########.#########.#########.##WW,.---TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT.TTTTTTTTTTTTTTTTTTTTTTTTT#
 M:#-?-?-------------------------TTTTTTTTTTTTTTTTTTWTTTTTTTT---.,WW##--#####-T#............#########...#########..####2####.####Z####.##WW,.---TTTTTTTTT;-;-;TTTTTTTTTTTTTTTTT.TTTTTTTTTTTTTTTTTTTTTTTTT#
 M:#-----?------------?-----------TTTTTTTTTTTT###TTVWWVTTTT----WWWW##-###4###-#....###...........###.&.###............................##WW,.---TTTTTTTT;-;;-T-TTTTTTTTTTTTTTT..TTTTTTTTTTTTTTTTTTTTTTTTT#
 M:#--T--%?---------??------------TTTTTTTTTTT#####TTTTWW-----WWV,WW##-#j#.#m#-#...#####..................................######..####.##WW,.----TTTTTT;;CCBC-;TTTTTTTTTTTTTT..TTTTTTTTTTTTTTTTTTTTTTTTTT#
 M:#-----??----------------------TTTTTTTTTTTT####iTTTTTVWV-WWV-.,WW##T---.----#...#####..................................###8##..3###.###W,.-----TTTTTT;C.CC;TTTTTTTTTTTTTTT.TTTTTTTTTTTTTTTT##TTTTTTTTT#
 M:#-----------------------?----TTTTTTTTTTTTT#####TTTTWWWWWV---.,W#######.#####....#n#...................................---.##..####.###W,.------------..CTTTTT...............TTTTTTTTTTTTT####TTTTTTTT#
-M:#--------------------------TTTTTTTTTTTTTTTT###TTTTWV--------.,W###.................................................................###W,......................TTTTTTTTTTTTT..TTTTTTTTTT..e###TTTTTTTT#
+M:#--------------------------TTTTTTTTTTTTTTTT###TTTTWV--------.,W###.................................................................###W,......................TTTTTTTTTTTTT..TTTTTTTTTT..s###TTTTTTTT#
 M:#--------------------TTTTTTTTTTTTTTTTTTTTTTTTTWWWWV---------.............................................................................-------------TTTTTTTTTTTTTTTTTTTTTT............T####TTTTTTTT#
 M:#-------??------TTTTTTTTTTTTTTTTTTTTTTTTTTTTTWVTTTTT--------.,W###..............................##6##........##cc####....###a####..###W,.-----TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT##TTTTTTTTT#
 M:#T-------?TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTWTTTTTTTTT------.,W###...........###...............#######......##########...########..###W,.---TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT#
 M:#TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTVWTTTTTTTTTTT-----.,WW##..........####<..............#######.....###$$$$#####..########,.##WW,.--TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT#
-M:#TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTWWTTTTTTTTTTTTTT---.,WW##.####....#######.............#######.....c#$$$$$$##g......#####..##WW,.--TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT^#
-M:#TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTWWWWVTTTTTTTTTTTTTT----.,WW##.###1....#######..............z###t......c#$$$$$$##g.....,#####..##WW,.--TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT,,^^#
+M:#TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTWWTTTTTTTTTTTTTT---.,WW##.####....#######.............#######.....c#$$$$$$##d......#####..##WW,.--TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT^#
+M:#TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTWWWWVTTTTTTTTTTTTTT----.,WW##.###1....#######..............z###t......c#$$$$$$##d.....,#####..##WW,.--TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT,,^^#
 M:#TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTWWWTTTTTTTTTTTTTTTTTTTT---.,WW##.####.....#####..............#######.....###$$$$#####,..#######.,##WW,.--TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT,Q^^#
-M:#TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTWWWVTTTTTTTTTTTTTTTTTTTTTTT--.,WW##.####......###...............h#####o...,..##########....#####x#..##WW,.--TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT,,!!^#
+M:#TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTWWWVTTTTTTTTTTTTTTTTTTTTTTT--.,WW##.####......###...............h#####p...,..##########....#####x#..##WW,.--TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT,,!!^#
 M:#TTTTTTTTTTTTTTTTTTTTTTTTTTTTTWTTTTTTTTTTTTTTTTTTTTTTTTT----.,WW##.............................#######....,,.##cc####.,,.,.,..,..,.##WW,.--TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT,,^^^#
-M:#TTTTTTTTTTTTTTTTTTTTTTTTTTTTVWTTTTTTTTTTTTTTTTTTTTTTTTTT---.,WW##,####..##5##..#####d#####.................,.,.,....,,T#.##7T##T..##WW,.---TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT^^#
+M:#TTTTTTTTTTTTTTTTTTTTTTTTTTTTVWTTTTTTTTTTTTTTTTTTTTTTTTTT---.,WW##,####..##5##..#####e#####.................,.,.,....,,T#.##7T##T..##WW,.---TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT^^#
 M:#TTTTTTTTTTTTTTTTTTTTTTTTTTVWW?TTTTTTTTTTTTTTTTTTTTTTTTTT---.,WW##,####.#######.##########9....-----......##0##.#w#,#TK##.#######,.##WW,.----TTTTTTTTTTTTTTTTTT..................TTTTTTTTTTTTTTTTTT^^#
-M:#TTTTTTTTTTTTTTTTTTTTTTTTTWW????TTTTTTTTTTTTTTTTTTTTTTTTT---.,WW##,####..#####..###########....-T-T-......#####.###,#####,#####s#..##WW,.----TTTTT.............TTTTTTTTTTTTTTTTTT.TTTTTTTTTTTTTTTTTT^#
+M:#TTTTTTTTTTTTTTTTTTTTTTTTTWW????TTTTTTTTTTTTTTTTTTTTTTTTT---.,WW##,####..#####..###########....-T-T-......#####.###,#####,#####H#..##WW,.----TTTTT.............TTTTTTTTTTTTTTTTTT.TTTTTTTTTTTTTTTTTT^#
 M:#TTTTTTTTTTTTTTTTTTTTTTTWWV?????TTTTTTTTTTTTTTTTTTTTTTTTT---.,W###--G..........................##M##...........,..,..,,..,......,.,##WW,..........TTTTT##U##TTTTTTTTTTTTTTTTTTTTTT.TTTTTTTTTTTTTTTTTT#
 M:#TTTTTTTTTTTTTTTTTTTWWWWVTTT????TTTTTTTTTTTTTTTTTTTTTTTTT---.,W#######################################################################W,.----TTTTTTTTTT#####TTTTTTTTTTTTTTTTTTTTTTT.TTTTTTTTTTTTTTTTT#
-M:#TTTTTTTTTTTTTTTTTTWVTTTTTTT#ff#TTTTTTTTTTTTTTTTTTTTTTTT----.,W#######################################################################W,.---TTTTTTTTTTT#####TTTTTTTTTTTTTTTTTTTTTTTT.TTTTTTTTTTTTTTTT#
+M:#TTTTTTTTTTTTTTTTTTWVTTTTTTT#rr#TTTTTTTTTTTTTTTTTTTTTTTT----.,W#######################################################################W,.---TTTTTTTTTTT#####TTTTTTTTTTTTTTTTTTTTTTTT.TTTTTTTTTTTTTTTT#
 M:#TTTTTTTTTTTTTTTVWWTTTTTTTT######TTTTTT::TTTTTTTTTTTTTTTTT--.,W####WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW####W,.---TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT.TTTTTTTTTTTTTTT#
 M:#TTTTTTTTTTTTTTTWTTTTTTTTTT######TTTTT::TTTTTTTTTTTTTTTTT---.,WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW,.---TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT.TTTTTTTTTTTTTT#
 M:#TTTTTTTTTTTTTTWVTTTTTTTTTT######TTTTTTTNTTTTTTTTTTTTTTTT---.,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,.----TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT...TTTTTTTTTTT#

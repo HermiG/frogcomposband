@@ -158,7 +158,7 @@ Many towns have a holy temple, usually connected to or in the immediate vicinity
 
 There is only one Arena in the game (in either Thalos or Lite-Town). The Arena is a special building where you may fight a single monster at a time, for the entertainment of the townsfolk. During these fights, you cannot use magical devices, read scrolls, quaff potions, activate equipment or (usually) summon help. Winning an Arena fight increases your fame (some enemies also drop fixed valuable items); but losing a fight severely damages your fame and results in a ban from further Arena fights. You cannot physically die in the Arena; you will exit at 0 HP, with cuts and poisoning healed. Do be careful not to die just outside the Arena, though...
 
-<color:B>Gambling Dens</color> (<$:FF_BUILDING_6>)
+<color:B>Gambling Dens</color> (<$:FF_BUILDING_3>)
 
 Casinos that may offer varied entertainment such as card games or even betting on fights between monsters.
 
@@ -190,7 +190,7 @@ vampires, you will be well rewarded.
  ESC) Exit building                                  Gold Remaining: 27.8k
 </style>
 
-Most town quests take place on special <color:keyword>town quest levels</color>, which can be accessed from the town or its immediate vicinity. Quest entrances are indicated on the map with the symbol <$:FF_QUEST_ENTER>, and will appear at the top of the <color:keypress>]</color> object list, making them easy to spot. You do not have to take them immediately; feel free to delay the quest until you are confident in your ability to succeed. Press <color:keypress>Ctrl-Q</color> every once in a while to check your quest history, which includes an ordered list of uncompleted quests; this will make sure you won't forget to complete them.
+Most town quests take place on special <color:keyword>town quest levels</color>, which can be accessed from the town or its immediate vicinity. Quest entrances are indicated on the map with the symbol <$:FF_QUEST_ENTER>, and will appear at the top of the <color:keypress>]</color> object list, making them easy to spot. You do not have to take them immediately; feel free to delay the quest until you are confident in your ability to succeed. Press <color:keypress>Q</color> every once in a while to check your quest history, which includes an ordered list of uncompleted quests; this will make sure you won't forget to complete them.
 
 Rarely, you will be assigned a <color:keyword>dungeon quest</color>; instead of a special quest level, these quests occur on normal dungeon levels. See <link:dungeon.txt#FixedQuests> for more information on dungeon quests.
 

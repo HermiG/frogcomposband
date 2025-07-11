@@ -357,7 +357,7 @@ accessed from the town or its immediate vicinity. Quest entrances are
 indicated on the map with the symbol >, and will appear at the top of 
 the ] object list, making them easy to spot. You do not have to take 
 them immediately; feel free to delay the quest until you are confident 
-in your ability to succeed. Press Ctrl-Q every once in a while to check 
+in your ability to succeed. Press Q every once in a while to check 
 your quest history, which includes an ordered list of uncompleted 
 quests; this will make sure you won't forget to complete them.
 

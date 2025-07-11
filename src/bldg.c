@@ -113,6 +113,8 @@ static void show_building(building_type* bldg)
             bool member = is_member(bldg);
             int cost = owner ? member_cost : other_cost;
 
+            if(bldg->actions[i] == BACT_RESEARCH_MONSTER) cost = cost * p_ptr->lev;
+
             if (bldg->action_restr[i] == 0)
             {
                 if (cost == 0)
@@ -165,8 +167,7 @@ static void show_building(building_type* bldg)
                 }
             }
 
-            if (cost > p_ptr->au)
-                action_color = TERM_L_DARK;
+            if (cost > p_ptr->au) action_color = TERM_L_DARK;
 
             sprintf(tmp_str," %c) %s %s", bldg->letters[i], bldg->act_names[i], buff);
             c_put_str(action_color, tmp_str, 19+(i/2), 35*(i%2));
@@ -3239,8 +3240,7 @@ static bool enchant_item(obj_p filter, int cost, int to_hit, int to_dam, int to_
     int          maxenchant;
     char         tmp_str[MAX_NLEN];
 
-    if (cost == 0)
-        cost = town_service_price(1500);
+    if (cost == 0) cost = town_service_price(1500);
 
     if ((p_ptr->prace == RACE_MON_SWORD) || (p_ptr->prace == RACE_MON_ARMOR))
     {
@@ -3837,7 +3837,6 @@ static void bldg_process_command(building_type *bldg, int i)
     int amt;
     bool is_guild = FALSE;
 
-    /* Flush messages XXX XXX XXX */
     msg_line_clear();
 
     if (is_owner(bldg))
@@ -3905,6 +3904,7 @@ static void bldg_process_command(building_type *bldg, int i)
         paid = inn_comm(bact);
         break;
     case BACT_RESEARCH_MONSTER:
+        bcost = bcost * p_ptr->lev;
         paid = research_mon();
         break;
     case BACT_COMPARE_WEAPONS:

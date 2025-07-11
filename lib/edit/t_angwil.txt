@@ -108,7 +108,7 @@ B:4:A:1:Town Overview:0:0:h:2:0
 B:4:A:2:Identify item:50:50:i:44:0
 
 B:5:N:Beastmaster:Aradreth:Elf
-B:5:A:0:Research monster:1000:1000:r:20:0
+B:5:A:0:Research monster:30:30:r:20:0
 
 B:6:N:Weaponmaster:Rodonwin:Human
 B:6:A:0:Evaluate AC:400:400:a:46:0

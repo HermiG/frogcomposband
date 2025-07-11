@@ -309,9 +309,9 @@ B:4:A:0:Research item:1500:1500:a:1:0
 B:4:A:0:Research item:750:750:a:1:0
 ?:1
 B:4:A:1:Town Overview:0:0:h:2:0
-B:4:A:2:Research monster:10000:10000:r:20:0
+B:4:A:2:Research monster:60:60:r:20:0
 ?:[EQU $QUEST5 Finished]
-B:4:A:2:Research monster:1200:1200:r:20:0
+B:4:A:2:Research monster:20:20:r:20:0
 ?:1
 
 B:7:N:Fighters' Hall:Barak:Human

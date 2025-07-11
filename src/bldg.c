@@ -4203,7 +4203,7 @@ void do_cmd_bldg(void)
     /* Don't re-init the wilderness */
     reinit_wilderness = FALSE;
 
-    if ((no_wilderness) && (p_ptr->lev < 10) && (which == 6))
+    if ((no_wilderness) && (p_ptr->lev < 10) && (which == 3))
     {
         msg_print("Get some adventuring under your belt before you start gambling!");
         return;

@@ -2196,8 +2196,7 @@ void monster_desc(char *desc, monster_type *m_ptr, int mode)
 int lore_do_probe(int r_idx)
 {
     monster_race *r_ptr = &r_info[r_idx];
-    int i, n = 0;
-    byte tmp_byte;
+    int n = 0;
 
     /* Maximal info about awareness */
     if (r_ptr->r_wake != MAX_UCHAR) n++;
@@ -2205,7 +2204,7 @@ int lore_do_probe(int r_idx)
     r_ptr->r_wake = r_ptr->r_ignore = MAX_UCHAR;
 
     /* Maximal drops */
-    tmp_byte =
+    byte tmp_byte =
         (((r_ptr->flags1 & RF1_DROP_4D2) ? 8 : 0) +
          ((r_ptr->flags1 & RF1_DROP_3D2) ? 6 : 0) +
          ((r_ptr->flags1 & RF1_DROP_2D2) ? 4 : 0) +
@@ -2226,22 +2225,14 @@ int lore_do_probe(int r_idx)
     }
 
     /* Count unknown flags */
-    for (i = 0; i < 32; i++)
+    for (int i = 0; i < 32; i++)
     {
-        if (!(r_ptr->r_flags1 & (1L << i)) &&
-            (r_ptr->flags1 & (1L << i))) n++;
-        if (!(r_ptr->r_flags2 & (1L << i)) &&
-            (r_ptr->flags2 & (1L << i))) n++;
-        if (!(r_ptr->r_flags3 & (1L << i)) &&
-            (r_ptr->flags3 & (1L << i))) n++;
-        if (!(r_ptr->r_flagsr & (1L << i)) &&
-            (r_ptr->flagsr & (1L << i))) n++;
+        if (!(r_ptr->r_flags1 & (1L << i)) && (r_ptr->flags1 & (1L << i))) n++;
+        if (!(r_ptr->r_flags2 & (1L << i)) && (r_ptr->flags2 & (1L << i))) n++;
+        if (!(r_ptr->r_flags3 & (1L << i)) && (r_ptr->flags3 & (1L << i))) n++;
+        if (!(r_ptr->r_flagsr & (1L << i)) && (r_ptr->flagsr & (1L << i))) n++;
 
-        /* r_flags7 is actually unused */
-#if 0
-        if (!(r_ptr->r_flags7 & (1L << i)) &&
-            (r_ptr->flags7 & (1L << i))) n++;
-#endif
+        //if (!(r_ptr->r_flags7 & (1L << i)) && (r_ptr->flags7 & (1L << i))) n++; // r_flags7 is unused
     }
 
     /* Know all the flags */
@@ -2264,14 +2255,11 @@ int lore_do_probe(int r_idx)
     r_ptr->r_xtra1 |= MR1_LORE;
 
     /* Update monster recall window */
-    if (p_ptr->monster_race_idx == r_idx)
-    {
-        /* Window stuff */
-        p_ptr->window |= (PW_MONSTER);
-    }
+    if (p_ptr->monster_race_idx == r_idx) p_ptr->window |= PW_MONSTER;
 
-    /* Return the number of new flags learnt */
-    return n;
+    r_ptr->probed = TRUE;
+
+    return n; // Return the number of new flags learnt
 }
 
 

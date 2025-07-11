@@ -300,15 +300,15 @@ static bool _race_has_lore(mon_race_ptr race)
 }
 static void wr_r_info(savefile_ptr file)
 {
-    int i;
     savefile_write_u16b(file, max_r_idx);
-    for (i = 0; i < max_r_idx; i++)
+    for (int i = 0; i < max_r_idx; i++)
     {
         mon_race_ptr race = &r_info[i];
         byte         header = 0;
 
-        if (race->flagsx) header |= 0x01;
+        if (race->flagsx)         header |= 0x01;
         if (_race_has_lore(race)) header |= 0x02;
+        if (race->probed)         header |= 0x04;
 
         savefile_write_byte(file, header);
         savefile_write_byte(file, race->max_num);
@@ -316,10 +316,8 @@ static void wr_r_info(savefile_ptr file)
         savefile_write_s16b(file, race->floor_id);
         savefile_write_byte(file, race->stolen_ct);
 
-        if (race->flagsx)
-            savefile_write_u32b(file, race->flagsx);
-        if (_race_has_lore(race))
-            wr_race_lore(file, race);
+        if (race->flagsx) savefile_write_u32b(file, race->flagsx);
+        if (_race_has_lore(race)) wr_race_lore(file, race);
     }
 }
 

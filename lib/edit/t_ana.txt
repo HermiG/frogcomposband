@@ -40,31 +40,31 @@ L:t:GRASS
 ############### Quest 74 - Cop Quest 1
 ?:[EQU $QUEST74 Taken]
 L:8:QUEST_ENTER(74)
-L:o:BUILDING_13(74)
+L:o:BUILDING_14(74)
 ?:[EQU $QUEST74 Untaken Completed Failed]
 L:8:PERMANENT
-L:o:BUILDING_13(74)
+L:o:BUILDING_14(74)
 ?:[EQU $QUEST74 FailedDone]
 L:8:PERMANENT
-L:o:BUILDING_13(73)
+L:o:BUILDING_14(73)
 ?:[EQU $QUEST74 Finished]
-L:o:BUILDING_13(73)
+L:o:BUILDING_14(73)
 ?:1
 ############### Quest 73 - Smugglers' Den
 ?:[EQU $QUEST73 Taken]
 L:y:QUEST_ENTER(73)
 ?:[EQU $QUEST73 Taken Completed Failed]
-L:o:BUILDING_13(73)
+L:o:BUILDING_14(73)
 ?:[EQU $QUEST73 Finished FailedDone]
-L:o:BUILDING_13(72)
+L:o:BUILDING_14(72)
 ?:1
 ############### Quest 72 - The Killer in the Cellar
 ?:[EQU $QUEST72 Taken]
 L:x:QUEST_ENTER(72)
 ?:[EQU $QUEST72 Taken Completed Failed]
-L:o:BUILDING_13(72)
+L:o:BUILDING_14(72)
 ?:[EQU $QUEST72 Finished FailedDone]
-L:o:BUILDING_13(0)
+L:o:BUILDING_14(0)
 ?:1
 
 ################## Mayor's Quests ##############

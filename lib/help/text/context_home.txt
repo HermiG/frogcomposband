@@ -80,18 +80,18 @@ potentially buy it back.
 Quick Reference
   Basic Commands
   s d       Store an item from your pack to your home
-  g p b     Get an item from your home to your pack
+  g p       Get an item from your home to your pack
   x         Examine items in your home
   r         Permanently remove (destroy) items in your home
   q Esc     Leave your home
   
   Extra Commands
-  w         Wear an item
-  t T       Take off an item
+  w         Wear/wield an item
+  t T       Take off equipment / item out of bag
   k ^D      Destroy items in your pack
   e         Display equipment
   i         Display inventory
-  I         Inspect objects in your pack
+  b         Display bag
   Tab       Toggle inventory/equipment subwindows
   {         Inscribe objects in your pack
   }         Uninscribe objects in your pack

@@ -40,7 +40,7 @@ Once there are more objects than can be displayed on your screen, the inventory 
 
 If you find your home too cluttered, you may want to clean up a bit. The simple solution is to <color:keypress>g</color>et items into your pack, walk outside, and drop them on the town commons; but this is littering, and also a bit of work. There's an alternative way to clean up, with the <color:keypress>r</color> command; be careful, though, since using it <color:v>permanently destroys</color> the selected items, you are not allowed to specify a quantity, and you will stay in item-removal mode until you press <color:keypress>ESC</color>. 
 
-Note that you can view your home inventory not just at your home, but also through your Character Sheet (<color:keypress>C</color>); although you cannot select (or inspect) individual items this way, it is often the fastest and most convenient way to locate useful items hidden in pages of trash, especially if you are shuffling your equipment. This reduces the need to clean up.
+Note that you can view your home inventory not just at your home, but also through your <color:keypress>C</color>haracter Sheet; although you cannot select (or inspect) individual items this way, it is often the fastest and most convenient way to locate useful items hidden in pages of trash, especially if you are shuffling your equipment. This reduces the need to clean up.
 
 <topic:Museum><style:heading>The Museum</style>
 
@@ -51,18 +51,18 @@ Another difference between the Museum and your home is that items given to the M
 <topic:QuickRef><style:heading>Quick Reference</style>
   <indent><color:G>Basic Commands</color>
 <color:keypress>s d</color>       Store an item from your pack to your home
-<color:keypress>g p b</color>     Get an item from your home to your pack
+<color:keypress>g p</color>       Get an item from your home to your pack
 <color:keypress>x</color>         Examine items in your home
 <color:keypress>r</color>         Permanently remove (destroy) items in your home
 <color:keypress>q Esc</color>     Leave your home
 
 <color:G>Extra Commands</color>
-<color:keypress>w</color>         Wear an item
-<color:keypress>t T</color>       Take off an item
+<color:keypress>w</color>         Wear/wield an item
+<color:keypress>t T</color>       Take off equipment / item out of bag
 <color:keypress>k ^D</color>      Destroy items in your pack
 <color:keypress>e</color>         Display equipment
 <color:keypress>i</color>         Display inventory
-<color:keypress>I</color>         Inspect objects in your pack
+<color:keypress>b</color>         Display bag
 <color:keypress>Tab</color>       Toggle inventory/equipment subwindows
 <color:keypress>{</color>         Inscribe objects in your pack
 <color:keypress>}</color>         Uninscribe objects in your pack

@@ -3069,7 +3069,6 @@ void do_cmd_colors(void)
         prt("(3) Modify colors", 6, 5);
         prt("(4) Load simple color set", 7, 5);
         prt("(5) Load Windows color set", 8, 5);
-
 #endif
 
         /* Prompt */
@@ -3088,10 +3087,8 @@ void do_cmd_colors(void)
             /* Prompt */
             prt("Command: Load a user pref file", 10, 0);
 
-
             /* Prompt */
             prt("File: ", 12, 0);
-
 
             /* Default file */
             sprintf(tmp, "%s.prf", pref_save_base);
@@ -3110,7 +3107,6 @@ void do_cmd_colors(void)
         }
 
 #ifdef ALLOW_COLORS
-
         /* Dump colors */
         else if (i == '2')
         {
@@ -3184,10 +3180,7 @@ void do_cmd_colors(void)
             /* Hack -- query until done */
             while (1)
             {
-                cptr name;
                 byte j;
-
-                /* Clear */
                 clear_from(10);
 
                 /* Exhibit the normal colors */
@@ -3212,13 +3205,10 @@ void do_cmd_colors(void)
                 }
 
                 /* Describe the color */
-                name = ((a < MAX_COLOR) ? color_names[a] : "undefined");
-
+                cptr name = ((a < MAX_COLOR) ? color_names[a] : "undefined");
 
                 /* Describe the color */
-                Term_putstr(5, 12, -1, TERM_WHITE,
-                        format("Color = %d, Name = %s", a, name));
-
+                Term_putstr(5, 12, -1, TERM_WHITE, format("Color = %d, Char = %c, Name = %s", a, color_char[a], name));
 
                 /* Label the Current values */
                 Term_putstr(5, 14, -1, TERM_WHITE,
@@ -3229,8 +3219,7 @@ void do_cmd_colors(void)
                            angband_color_table[a][3]));
 
                 /* Prompt */
-                Term_putstr(0, 16, -1, TERM_WHITE,
-                        "Command (n/N/k/K/r/R/g/G/b/B): ");
+                Term_putstr(0, 16, -1, TERM_WHITE, "Command (n/N/k/K/r/R/g/G/b/B): ");
 
 
                 /* Get a command */
@@ -3272,7 +3261,6 @@ void do_cmd_colors(void)
             Term_xtra(TERM_XTRA_REACT, 0);
             Term_redraw();
         }
-
 #endif
 
         /* Unknown option */

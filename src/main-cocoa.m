@@ -21,11 +21,6 @@
 # undef BOOL
 #endif
 
-/* Default creator signature */
-#ifndef ANGBAND_CREATOR
-# define ANGBAND_CREATOR 'Heng'
-#endif
-
 /* Mac headers */
 #import <Cocoa/Cocoa.h>
 #import <Carbon/Carbon.h> // For keycodes
@@ -218,18 +213,10 @@ static NSFont *default_font;
  */
 u32b AngbandMaskForValidSubwindowFlags(void)
 {
-    int maxBits = 16;
-    u32b mask = 0;
-
-    for( int i = 0; i < maxBits; i++ )
-    {
-        if( window_flag_desc[i] != NULL )
-        {
-            mask |= (1 << i);
-        }
-    }
-
-    return mask;
+  u32b mask = 0;
+  for(int i = 0; i < 16; i++) if(window_flag_desc[i]) mask |= (1 << i);
+  
+  return mask;
 }
 
 /**
@@ -241,10 +228,7 @@ static void AngbandUpdateWindowVisibility(void)
     // because this function is called frequently, we'll make the mask static. it doesn't change between calls, since the flags themselves are hardcoded.
     static u32b validWindowFlagsMask = 0;
 
-    if( validWindowFlagsMask == 0 )
-    {
-        validWindowFlagsMask = AngbandMaskForValidSubwindowFlags();
-    }
+    if( validWindowFlagsMask == 0 ) validWindowFlagsMask = AngbandMaskForValidSubwindowFlags();
 
     // loop through all of the subwindows and see if there is a change in the flags. if so, show or hide the corresponding window.
     // we don't care about the flags themselves; we just want to know if any are set.
@@ -1639,28 +1623,58 @@ static errr Term_curs_cocoa(int x, int y)
  */
 static errr Term_wipe_cocoa(int x, int y, int n)
 {
-    NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
-    AngbandContext *angbandContext = Term->data;
+  NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+  AngbandContext *angbandContext = Term->data;
+  
+  /* clear our overdraw cache for subpixel rendering */
+  [angbandContext clearOverdrawCacheFromX:x y:y width:n];
+  
+  /* Set the rect to the first character */
+  NSRect rect = [angbandContext rectInImageForTileAtX:x Y:y];
+  
+  /* Expand rect out to the last character */
+  if (n > 1) rect = NSUnionRect(rect, [angbandContext rectInImageForTileAtX:x + n-1 Y:y]);
+
+  rect = crack_rect(rect, AngbandScaleIdentity, PUSH_TOP | PUSH_LEFT | PUSH_RIGHT);
+
+  /* Lock focus and clear */
+  [angbandContext lockFocus];
+  [[NSColor blackColor] set];
+  NSRectFill(rect);
+
+  /* Handle overdraws */
+  const int overdraws[2] = {x-1, x+n}; //left, right
+  for (int i=0; i < 2; i++) {
+    int overdrawX = overdraws[i];
     
-    /* clear our overdraw cache for subpixel rendering */
-    [angbandContext clearOverdrawCacheFromX:x y:y width:n];
-    
-    /* Erase the block of characters */
-    NSRect rect = [angbandContext rectInImageForTileAtX:x Y:y];
-    
-    /* Maybe there's more than one */
-    if (n > 1) rect = NSUnionRect(rect, [angbandContext rectInImageForTileAtX:x + n-1 Y:y]);
-    
-    /* Lock focus and clear */
-    [angbandContext lockFocus];
-    [[NSColor blackColor] set];
-    NSRectFill(rect);
-    [angbandContext unlockFocus];    
-    [angbandContext setNeedsDisplayInBaseRect:rect];
-    
-    [pool drain];
-    
-    return (0);
+    // Nothing to overdraw if we're at an edge
+    if (overdrawX >= 0 && (size_t)overdrawX < angbandContext->cols)
+    {
+      wchar_t previouslyDrawnVal = angbandContext->charOverdrawCache[y * angbandContext->cols + overdrawX];
+      
+      NSRect overdrawRect = [angbandContext rectInImageForTileAtX:overdrawX Y:y];
+      NSRect expandedRect = crack_rect(overdrawRect, AngbandScaleIdentity, push_options(overdrawX, y));
+      
+      [[NSColor blackColor] set];
+      NSRectFill(expandedRect);
+      rect = NSUnionRect(rect, expandedRect);
+      
+      if (previouslyDrawnVal && previouslyDrawnVal != NO_OVERDRAW)
+      {
+        byte color = angbandContext->attrOverdrawCache[y * angbandContext->cols + overdrawX];
+        
+        set_color_for_index(color);
+        [angbandContext drawWChar:previouslyDrawnVal inRect:overdrawRect];
+      }
+    }
+  }
+
+  [angbandContext unlockFocus];
+  [angbandContext setNeedsDisplayInBaseRect:rect];
+  
+  [pool drain];
+  
+  return 0;
 }
 #if 0
 static void draw_image_tile(CGImageRef image, NSRect srcRect, NSRect dstRect, NSCompositingOperation op)
@@ -1773,7 +1787,7 @@ static errr Term_text_cocoa(int x, int y, int n, byte a, cptr cp)
      and then re-blit the previous and next character (if any).
      */
     
-    if(a >= MAX_COLORS) a=1;
+    if(a >= MAX_COLORS) a = 1;
     
     NSRect redisplayRect = NSZeroRect;
     AngbandContext* angbandContext = Term->data;

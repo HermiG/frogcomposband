@@ -210,6 +210,18 @@ B:16:A:3:Claim reward or compensation:0:0:r:62:0
 B:16:A:4:Help:0:0:h:63:0
 B:16:A:5:View poster:0:0:v:64:0
 
+B:18:N:Abandoned Building::vacant
+?:[EQU $CLASS Berserker]
+B:18:N:Dockmaster's Office:Harbourmaster Al:Naga
+?:1
+B:18:A:0:Rest for the night:0:-10000:r:17:0
+B:18:A:1:Set sail for Thalos:0:1:t:65:0
+B:18:A:2:Set sail for Mt. Doom:0:2:d:65:0
+B:18:C:*:None
+B:18:C:Rogue:Owner
+
+############### Town Layout ###############
+
 M: VVVVVVVVVVVVVVVVVVVVV,,VVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV,,VVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV,,VVVVVVVVVVVVVVVVVV,,VVVVVVVVVVVVV        VVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV -
 M:  VVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV---::-VVVVVVVVVVVVVVVVVVVV,,-V,,VVVVVVVVVVVVVVVVVVVVVVVVV,,VVVVVVVVVVVVVV,VVVVVVVVVVVVVVVVVVVVVVVVVVVVVV                   VVVVVVVVVVVVVVVVVVVVVVVVVVVVVV    ?
 M:    VVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV--::T:T::VVVVVVVVVVVVVVV,VVV,,-,VVVVVVVVVVVVVVVVVVVVVVVVV,T-,VVVVVVVVV,,VVVVVVVVVVVVVVVVVVVVVVVVVVVVVV                          VVVVVVVVVVVVVVVVVVVVVVVV      ?
@@ -218,11 +230,11 @@ M:           VVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV---??VVVVVVVVVVVVVVVVVVVVVVVVVVVVVV
 M:             VVVVVVVVVVVVVVVVVV,,VVVVVVVVVVVVVVVVVVVVVVVVV,VVVVVVVVVVVVVVVVVVV,-VVVVVVVVVVVVVVUVVVVVVVVVV,VVVVVVVV                                          #W#                                      -
 M:              VVVVVVVVVVVVVVVVVV,VVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV,,VVVVVVVVVVVVVVVVVVVVVVVVVVVVVV                                            #####                                     -
 M:               VVVVVVVV,VVVVVVVVVVVVVVVVVVVVVVVVVVV-,VVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV                                              #####                                     -
-M:                VVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV,,VVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV                                               ^###                                      :
-M:                  VVVVVVVVVVVV,VVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV                                                  ^^                                       :
-M:                     VVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV            VVVVVVVVVVVVVVVVVVVVVVVVVVVV                                                                                                    -
-M:                        VVVVVVVVVVVVVVVVVVVVVVVVV                          VVVVVVVVVVVVV                                                                                                             -
-M:                             VVVVVVVVVVVVVVV                                     --..--                                                                                                              ?
+M:                VVVVVVVVVVVVVVVVVVVV==VVVVVVVVVVVV,,VVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV                                               ^###                                      :
+M:                  VVVVVVVVVVVV,VVVVV==VVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV                                                  ^^                                       :
+M:                     VVVVVVVVVVVVVVV==VVVVVVVVVVVVVVVVVVV            VVVVVVVVVVVVVVVVVVVVVVVVVVVV                                                                                                    -
+M:                        VVVVVVVVVVVV==VVVVVVVVVVV                          VVVVVVVVVVVVV                                                                                                             -
+M:                             VVVVVVV==VVVVVV                                     --..--                                                                                                              ?
 M:                                  --..--                                         --..--                                                                                                              :
 M:                                  -.................................................................................................                                                                 -
 M:                                  -....-                                         -....-                                            .                                                                 ?
@@ -233,7 +245,7 @@ M:   ################################....#######################################
 M:   ##------------##..........................................................................................................................                                                        :
 M:   ##------------##..................................................................................................................       ..                                                       ?
 M:   ##------------##.....######....-....TTTTTTTTTTTTTTTTTTTTTTTTTTT.....###T#####??.....TTTTTTTTTTT.....############......T-T-T-T....##       ..                                                      :
-M:   ################.....######....-....T#########################T.....###T#####??.....T----T----T.....############......###T###....#         ..                                                     :
+M:   ################.....#####s....-....T#########################T.....###T#####??.....T----T----T.....############......###T###....#         ..                                                     :
 M:   ################.....######....-....T#########################-.....#y#T#####??.....T------T--T.....############......###Tx##....#          ..                                                    :
 M:   ################.....##########-....T#########################-.....TTTTTTTzT?-.....TT---TT---T.....############......TTTTTTT....#           ..                                                   T
 M:   ################.....##########-....-#########################T.....###T#####??.....T---TTt--TT.....############......###........#            ..                                                 TT

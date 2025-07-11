@@ -3411,7 +3411,7 @@ static bool enchant_item(obj_p filter, int cost, int to_hit, int to_dam, int to_
 
 bool tele_town(void)
 {
-    int i, x, y;
+    int i;
     int num = 0;
     int town_id = 0;
 
@@ -3469,9 +3469,9 @@ bool tele_town(void)
         break;
     }
 
-    for (y = 0; y < max_wild_y; y++)
+    for (int y = 0; y < max_wild_y; y++)
     {
-        for (x = 0; x < max_wild_x; x++)
+        for (int x = 0; x < max_wild_x; x++)
         {
             if(wilderness[y][x].town == town_id)
             {
@@ -3484,11 +3484,47 @@ bool tele_town(void)
         }
     }
 
-    p_ptr->leaving = TRUE;
     leave_bldg = TRUE;
-    p_ptr->teleport_town = TRUE;
+    p_ptr->leaving = TRUE;
+    p_ptr->teleport_town = 1;
     screen_load();
     return TRUE;
+}
+
+
+bool sail_port(int town_id)
+{
+  screen_save();
+  clear_bldg(4, 10);
+    
+  if (town_id < 0 || town_id > TOWN_MAX_STD-1 || town_id == p_ptr->town_num)
+  {
+    screen_load();
+    return FALSE;
+  }
+  
+  msg_format("You set sail for %s.", town_name(town_id));
+  
+  for (int y = 0; y < max_wild_y; y++)
+  {
+    for (int x = 0; x < max_wild_x; x++)
+    {
+      if(wilderness[y][x].town == town_id)
+      {
+        p_ptr->wilderness_y = y;
+        p_ptr->wilderness_x = x;
+        
+        p_ptr->wilderness_dx = 0;
+        p_ptr->wilderness_dy = 0;
+      }
+    }
+  }
+  
+  leave_bldg = TRUE;
+  p_ptr->leaving = TRUE;
+  p_ptr->teleport_town = 2;
+  screen_load();
+  return TRUE;
 }
 
 
@@ -4094,6 +4130,11 @@ static void bldg_process_command(building_type *bldg, int i)
     case BACT_VIEW_POLICY:
     case BACT_VIEW_POSTER:
         cornucopia_do_command(bldg, bact);
+        break;
+    case BACT_SET_SAIL:
+        if     (my_strstr(bldg->act_names[i], "Thalos"))   paid = sail_port(TOWN_THALOS);
+        else if(my_strstr(bldg->act_names[i], "Anambar"))  paid = sail_port(TOWN_ANAMBAR);
+        else msg_print("You don't quite know where to go. ");
         break;
     }
 

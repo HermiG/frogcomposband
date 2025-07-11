@@ -6225,7 +6225,7 @@ void play_game(bool new_game)
 
     creating_savefile = FALSE;
 
-    p_ptr->teleport_town = FALSE;
+    p_ptr->teleport_town = 0;
     p_ptr->sutemi = FALSE;
     world_monster = FALSE;
     now_turn = game_turn;

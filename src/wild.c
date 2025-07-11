@@ -1552,19 +1552,29 @@ void wilderness_gen(void)
                 c_ptr = &cave[y][x];
 
                 f_ptr = &f_info[c_ptr->feat];
-                if (have_flag(f_ptr->flags, FF_BLDG))
+              
+                if (p_ptr->teleport_town == 1 && have_flag(f_ptr->flags, FF_BLDG))
                 {
-                    if ((f_ptr->subtype == 4) || ((p_ptr->town_num == TOWN_OUTPOST) && (f_ptr->subtype == 0))
-                    || ((p_ptr->town_num == TOWN_ZUL) && (f_ptr->subtype == 8)))
+                    if (f_ptr->subtype == 0 || (p_ptr->town_num == TOWN_ZUL && f_ptr->subtype == 8))
                     {
                         if (c_ptr->m_idx) delete_monster_idx(c_ptr->m_idx);
                         p_ptr->oldpy = y;
                         p_ptr->oldpx = x;
+                        y = cur_hgt;
+                        x = cur_wid;
                     }
+                }
+                else if (p_ptr->teleport_town == 2 && f_ptr->mimic == 99)
+                {
+                    if (c_ptr->m_idx) delete_monster_idx(c_ptr->m_idx);
+                    p_ptr->oldpy = y;
+                    p_ptr->oldpx = x;
+                    y = cur_hgt;
+                    x = cur_wid;
                 }
             }
         }
-        p_ptr->teleport_town = FALSE;
+        p_ptr->teleport_town = 0;
     }
     /* When leaving the dungeon, look for the wilderness stairs to place the player */
     else if (p_ptr->leaving_dungeon && !(d_info[p_ptr->leaving_dungeon].flags1 & DF1_RANDOM))
@@ -1588,7 +1598,7 @@ void wilderness_gen(void)
                 }
             }
         }
-        p_ptr->teleport_town = FALSE;
+        p_ptr->teleport_town = 0;
     }
 
     player_place(p_ptr->oldpy, p_ptr->oldpx);

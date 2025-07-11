@@ -4181,6 +4181,7 @@ extern int PlayerUID;
 #define BACT_CORNY_CASH_IN          62
 #define BACT_VIEW_POLICY            63
 #define BACT_VIEW_POSTER            64
+#define BACT_SET_SAIL               65
 
 /*
  * Initialization flags

@@ -126,7 +126,7 @@ B:7:C:Blood-Knight:Owner
 B:7:C:Mauler:Owner
 
 B:8:N:Wizard's Tower:Valceronwe:Sprite
-B:8:A:0:Identify possessions:600:1800:i:26:0
+B:8:A:0:Identify possessions:600:1200:i:26:0
 B:8:C:*:None
 B:8:C:Mage:Owner
 B:8:C:High-Mage:Owner
@@ -146,7 +146,7 @@ B:9:C:Paladin:Member
 
 B:10:N:Thieves' Den:Molvrae:Dark Elf
 B:10:A:1:Rest for the night:0:50:r:17:0
-B:10:A:2:Identify possessions:500:2000:i:26:0
+B:10:A:2:Identify possessions:500:1500:i:26:0
 B:10:C:*:None
 B:10:C:Rogue:Owner
 

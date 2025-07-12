@@ -212,7 +212,7 @@ B:16:A:5:View poster:0:0:v:64:0
 
 B:18:N:Abandoned Building::vacant
 ?:[EQU $CLASS Berserker]
-B:18:N:Dockmaster's Office:Harbourmaster Al:Naga
+B:18:N:Harbourmaster's Office:Captain Jacob:Naga
 ?:1
 B:18:A:0:Rest for the night:0:-10000:r:17:0
 B:18:A:1:Set sail for Thalos:0:1:t:65:0
@@ -235,7 +235,7 @@ M:                  VVVVVVVVVVVV,VVVVV==VVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV
 M:                     VVVVVVVVVVVVVVV==VVVVVVVVVVVVVVVVVVV            VVVVVVVVVVVVVVVVVVVVVVVVVVVV                                                                                                    -
 M:                        VVVVVVVVVVVV==VVVVVVVVVVV                          VVVVVVVVVVVVV                                                                                                             -
 M:                             VVVVVVV==VVVVVV                                     --..--                                                                                                              ?
-M:                                  --..--                                         --..--                                                                                                              :
+M:                                  --==--                                         --..--                                                                                                              :
 M:                                  -.................................................................................................                                                                 -
 M:                                  -....-                                         -....-                                            .                                                                 ?
 M:                                  #....#                                         #....#                                            .                                                                 -

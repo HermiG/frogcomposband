@@ -480,13 +480,10 @@ void do_cmd_query_symbol(void)
     u16b    *who;
 
     /* Get a character, or abort */
-    if (!get_com("Enter character to be identified(^A:All,^U:Uniqs,^N:Non uniqs,^M:Name): ", &sym, FALSE)) return;
+    if (!get_com("Enter character to be identified (^A:All,^U:Uniqs,^N:Non uniqs,^R:Ridable,^M:Name): ", &sym, FALSE)) return;
 
     /* Find that character info, and describe it */
-    for (i = 0; ident_info[i]; ++i)
-    {
-        if (sym == ident_info[i][0]) break;
-    }
+    for (i = 0; ident_info[i]; ++i) if (sym == ident_info[i][0]) break;
 
     /* Describe */
     if (sym == KTRL('A'))
@@ -515,18 +512,18 @@ void do_cmd_query_symbol(void)
         all = TRUE;
         if (!get_string("Enter name:",temp, 70))
         {
-            temp[0]=0;
+            temp[0] = 0;
             return;
         }
         sprintf(buf, "Monsters with a name \"%s\"",temp);
     }
     else if (ident_info[i])
     {
-        sprintf(buf, "%c - %s.", sym, ident_info[i] + 2);
+        sprintf(buf, "%c - %s", sym, ident_info[i] + 2);
     }
     else
     {
-        sprintf(buf, "%c - %s.", sym, "Unknown Symbol");
+        sprintf(buf, "%c - %s", sym, "Unknown Symbol");
     }
 
     /* Display the result */
@@ -541,7 +538,7 @@ void do_cmd_query_symbol(void)
         monster_race *r_ptr = &r_info[i];
 
         /* Nothing to recall */
-		if (!(easy_lore || p_ptr->wizard) && !r_ptr->r_sights) continue;
+        if (!(easy_lore || p_ptr->wizard) && !r_ptr->r_sights) continue;
         if (r_ptr->flagsx & RFX_SUPPRESS) continue;
 
         /* Require non-unique monsters if needed */
@@ -556,20 +553,16 @@ void do_cmd_query_symbol(void)
         /* XTRA HACK WHATSEARCH */
         if (temp[0])
         {
-          int xx;
           char temp2[80];
 
-          for (xx=0; temp[xx] && xx<80; xx++)
-          {
-            if (isupper(temp[xx])) temp[xx]=tolower(temp[xx]);
-          }
+          for (int xx = 0; temp[xx] && xx < 80; xx++)
+              if (isupper(temp[xx])) temp[xx] = tolower(temp[xx]);
 
           strcpy(temp2, r_name+r_ptr->name);
-          for (xx=0; temp2[xx] && xx<80; xx++)
-            if (isupper(temp2[xx])) temp2[xx]=tolower(temp2[xx]);
+          for (int xx = 0; temp2[xx] && xx < 80; xx++)
+              if (isupper(temp2[xx])) temp2[xx] = tolower(temp2[xx]);
 
-          if (my_strstr(temp2, temp))
-              who[n++]=i;
+          if (my_strstr(temp2, temp)) who[n++] = i;
         }
 
         /* Collect "appropriate" monsters */
@@ -577,20 +570,15 @@ void do_cmd_query_symbol(void)
     }
 
     /* Nothing to recall */
-    if (!n)
+    if (n < 1)
     {
-        /* Free the "who" array */
         C_KILL(who, max_r_idx, u16b);
-
+        msg_print("You haven't seen any monsters matching that description.");
         return;
     }
 
+    put_str("Recall details? (Y/n/kills): ", 0, 40);
 
-    /* Prompt XXX XXX XXX */
-    put_str("Recall details? (k/y/n): ", 0, 40);
-
-
-    /* Query */
     query = inkey();
 
     /* Restore */
@@ -613,11 +601,11 @@ void do_cmd_query_symbol(void)
     }
 
     /* Catch "escape" */
-    if (query != 'y')
+    if (query != 'y' && query != 'Y' && query != '\r')
     {
         /* Free the "who" array */
         C_KILL(who, max_r_idx, u16b);
-
+        prt("", 0, 0);
         return;
     }
 
@@ -640,73 +628,57 @@ void do_cmd_query_symbol(void)
     /* Scan the monster memory */
     while (1)
     {
-        /* Extract a race */
         r_idx = who[i];
 
         /* Hack -- Auto-recall */
         monster_race_track(r_idx);
 
-        /* Hack -- Handle stuff */
         handle_stuff();
 
         /* Interact */
         while (1)
         {
-            /* Recall */
-            if (recall)
-            {
-                /* Save the screen */
-                screen_save();
+            screen_save();
 
-                /* Recall on screen
-                screen_roff(who[i], 0);*/
-                doc_clear(doc);
-                mon_display_doc(&r_info[who[i]], doc);
-                doc_sync_term(doc, doc_range_all(doc), doc_pos_create(0, 1));
-            }
+            /* Recall on screen
+            screen_roff(who[i], 0);*/
+            doc_clear(doc);
+            mon_display_doc(&r_info[who[i]], doc);
+            doc_sync_term(doc, doc_range_all(doc), doc_pos_create(0, 1));
 
-            /* Hack -- Begin the prompt */
             roff_top(r_idx);
-
-            /* Hack -- Complete the prompt */
-            Term_addstr(-1, TERM_WHITE, " [(r)ecall, ESC]");
+            Term_addstr(-1, TERM_SLATE, " [Arrow Keys to scroll, r to recall, Esc to exit]");
 
             /* Command */
             query = inkey();
 
-            /* Unrecall */
-            if (recall)
-            {
-                /* Restore*/
-                screen_load();
-            }
+            screen_load();
 
             /* Normal commands */
             if (query != 'r') break;
-
-            /* Toggle recall */
-            recall = !recall;
         }
-
-        /* Stop scanning */
+        
         if (query == ESCAPE) break;
-
-        /* Move to "prev" monster */
-        if (query == '-')
+        
+        // go to start of list
+        if (query == '1' || query == '3' || query == '7' || query == '9')
+        {
+            i = 0;
+            if (!expand_list) break;
+        }
+        else if (query == '-' || query == '4' || query == '8')
+        {
+            if (i-- == 0) // previous monster
+            {
+                i = n - 1;
+                if (!expand_list) break;
+            }
+        }
+        else // next monster
         {
             if (++i == n)
             {
                 i = 0;
-                if (!expand_list) break;
-            }
-        }
-
-        /* Move to "next" monster */
-        else
-        {
-            if (i-- == 0)
-            {
-                i = n - 1;
                 if (!expand_list) break;
             }
         }
@@ -715,9 +687,7 @@ void do_cmd_query_symbol(void)
     /* Free the "who" array */
     C_KILL(who, max_r_idx, u16b);
     doc_free(doc);
-
-    /* Re-display the identity */
-    prt(buf, 0, 0);
+    prt("", 0, 0);
 }
 
 /* Display a List of Nearby Monsters

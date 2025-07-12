@@ -3557,7 +3557,7 @@ static bool research_mon(void)
     screen_save();
 
     /* Get a character, or abort */
-    if (!get_com("Enter character to be identified(^A:All,^U:Uniqs,^N:Non uniqs,^M:Name): ", &sym, FALSE))
+    if (!get_com("Enter character to be identified (^A:All,^U:Uniqs,^N:Non uniqs,^M:Name): ", &sym, FALSE))
     {
         screen_load();
         return FALSE;

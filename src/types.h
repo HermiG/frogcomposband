@@ -1871,12 +1871,12 @@ typedef struct
 #define TRAVEL_MODE_AUTOEXPLORE 3
 typedef struct {
     int run;
-    int cost[MAX_HGT][MAX_WID];
     int x;
     int y;
     int dir;
     int mode;
     bool aborted;
+    float cost[MAX_HGT][MAX_WID];
 } travel_type;
 
 typedef struct {

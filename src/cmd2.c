@@ -21,7 +21,6 @@ static bool do_cmd_bash_aux(int y, int x, int dir);
  */
 void do_cmd_go_up(void)
 {
-    /* Player grid */
     cave_type *c_ptr = &cave[py][px];
     feature_type *f_ptr = &f_info[c_ptr->feat];
 
@@ -29,7 +28,6 @@ void do_cmd_go_up(void)
 
     if (p_ptr->special_defense & KATA_MUSOU) set_action(ACTION_NONE);
 
-    /* Verify stairs */
     if (!have_flag(f_ptr->flags, FF_LESS))
     {
         msg_print("I see no up staircase here.");
@@ -64,7 +62,6 @@ void do_cmd_go_up(void)
     quests_on_leave();
     if (dun_level)
     {
-        /* New depth */
         if (have_flag(f_ptr->flags, FF_SHAFT))
         {
             /* Create a way back */
@@ -3372,7 +3369,7 @@ bool do_cmd_fire(void)
 /*
  * Hack: travel command
  */
-#define TRAVEL_UNABLE 9999
+#define TRAVEL_UNABLE 8192
 
 static int flow_head = 0;
 static int flow_tail = 0;
@@ -3388,7 +3385,7 @@ void forget_travel_flow(void)
             travel.cost[y][x] = TRAVEL_UNABLE; // Forget the old data
 }
 
-static byte _travel_flow_penalty(feature_type *f_ptr)
+static float _travel_flow_penalty(feature_type *f_ptr)
 {
     if (have_flag(f_ptr->flags, FF_LAVA) && !elemental_is_(ELEMENTAL_FIRE) && res_pct(RES_FIRE) < 100)
     {
@@ -3409,19 +3406,20 @@ static byte _travel_flow_penalty(feature_type *f_ptr)
     {
         return 4;
     }
-    else if (have_flag(f_ptr->flags, FF_TREE)) {
-        return 1;
-    }
-    else return 0;
+    else if (have_flag(f_ptr->flags, FF_TREE)) return 0.5f;
+    else if (have_flag(f_ptr->flags, FF_HAS_GOLD) || have_flag(f_ptr->flags, FF_HAS_ITEM)) return -0.2f;
+    else if (f_ptr->mimic == feat_floor) return -0.1f; // Prefer to walk on roads
+    else return 0.0f;
 }
 
-static bool travel_flow_aux(int y, int x, int n, bool wall)
+static bool travel_flow_aux(int y, int x, float n, bool wall)
 {
     cave_type *c_ptr = &cave[y][x];
-    feature_type *f_ptr = &f_info[c_ptr->feat];
+
+    feature_type *f_ptr = &f_info[get_feat_mimic(c_ptr)];
     int old_head = flow_head;
 
-    n = n % TRAVEL_UNABLE;
+    while (n >= TRAVEL_UNABLE) n -= TRAVEL_UNABLE;
 
     /* Ignore out of bounds or undiscovered terrain */
     if (!in_bounds(y, x)) return wall;
@@ -3432,10 +3430,10 @@ static bool travel_flow_aux(int y, int x, int n, bool wall)
      * route around the trap anyway ... */
     if (is_known_trap(c_ptr)) return wall;
 
-    n += _travel_flow_penalty(f_ptr);
+    n += _travel_flow_penalty(f_ptr) + 1;
 
     /* Ignore "pre-stamped" entries */
-    if ((travel.cost[y][x] > TRAVEL_UNABLE) || ((travel.cost[y][x] < TRAVEL_UNABLE) && (travel.cost[y][x] <= n))) return wall;
+    if (travel.cost[y][x] > TRAVEL_UNABLE || (travel.cost[y][x] < TRAVEL_UNABLE && travel.cost[y][x] <= n)) return wall;
 
     /* Ignore "walls" and "rubble" (include "secret doors") */
     if (have_flag(f_ptr->flags, FF_WALL) ||
@@ -3488,11 +3486,11 @@ static void travel_flow(int ty, int tx)
         /* Forget that entry */
         if (++flow_tail == MAX_SHORT) flow_tail = 0;
 
-        /* Add the "children" */
+        /* Add the "children" if legal */
         for (int d = 0; d < 8; d++)
         {
-            /* Add that child if "legal" */
-            wall = travel_flow_aux(y + ddy_ddd[d], x + ddx_ddd[d], travel.cost[y][x] + 1, wall);
+            float step_cost = (d & 1) ? 1.1 : 1.0; // Diagonals cost a bit more
+            wall = travel_flow_aux(y + ddy_cdd[d], x + ddx_cdd[d], travel.cost[y][x] + step_cost, wall);
         }
     }
 
@@ -3669,7 +3667,7 @@ void do_cmd_get_nearest(void)
     int old_x = travel.x;
     int by = 0, bx = 0;
     int _itms = 0;
-    int best = TRAVEL_UNABLE;
+    float best = TRAVEL_UNABLE;
     travel_cancel_fully();
     for (int i = 0; i < max_o_idx; i++)
     {
@@ -3703,7 +3701,7 @@ void do_cmd_get_nearest(void)
         }
         forget_travel_flow();
         travel_flow(o_ptr->loc.y, o_ptr->loc.x);
-        int cost = travel.cost[py][px];
+        float cost = travel.cost[py][px];
         if (cost < best)
         {
             best = cost;

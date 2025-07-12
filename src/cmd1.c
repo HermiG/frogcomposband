@@ -6421,7 +6421,7 @@ static bool travel_abort(void)
     return FALSE;
 }
 
-static int travel_cost(point_t pt)
+static float _travel_cost(point_t pt)
 {
     return travel.cost[pt.y][pt.x];
 }
@@ -6467,7 +6467,7 @@ void travel_step(void)
         int new_dir = cycle[d0 + dd[d]];
         point_t pt = point(px + ddx[new_dir], py + ddy[new_dir]);
         
-        if (!dir || travel_cost(pt) < travel_cost(pt_best))
+        if (!dir || _travel_cost(pt) < _travel_cost(pt_best))
         {
             dir = new_dir;
             pt_best = pt;

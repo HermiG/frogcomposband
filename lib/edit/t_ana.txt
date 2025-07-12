@@ -141,7 +141,7 @@ B:4:N:Library:Toniqua:Human
 B:4:A:0:Research item:1300:1300:a:1:0
 B:4:A:1:Town overview:0:0:h:2:0
 B:4:A:2:Identify item:50:50:i:44:0
-B:4:A:3:Identify possessions:350:350:p:26:0
+B:4:A:3:Identify possessions:800:800:p:26:0
 
 B:5:N:Beastmaster:Gil the Freak:Human
 B:5:A:0:Research monster:30:30:r:20:0
@@ -176,7 +176,7 @@ B:9:C:Paladin:Member
 
 B:10:N:Thieves' Den:Greenback:Ent
 B:10:A:1:Rest for the night:0:50:r:17:0
-B:10:A:2:Identify possessions:175:800:i:26:0
+B:10:A:2:Identify possessions:400:1200:i:26:0
 B:10:C:*:None
 B:10:C:Rogue:Owner
 

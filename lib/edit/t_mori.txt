@@ -204,7 +204,7 @@ B:7:C:Blood-Knight:Owner
 B:7:C:Mauler:Owner
 
 B:8:N:Tower of Sorcery:Tanistil:Elf
-B:8:A:0:Identify possessions:100:500:i:26:0
+B:8:A:0:Identify possessions:600:1200:i:26:0
 B:8:M:*:None
 B:8:M:Sorcery:Owner
 
@@ -216,7 +216,7 @@ B:9:M:Life:Owner
 
 B:10:N:Thieves' Den:Paliro:Yeek
 B:10:A:1:Rest for the Night:0:50:r:17:0
-B:10:A:2:Identify Possessions:100:600:i:26:0
+B:10:A:2:Identify possessions:400:1500:i:26:0
 B:10:A:3:Request Quest:0:0:q:6:0
 B:10:C:*:None
 B:10:C:Rogue:Owner

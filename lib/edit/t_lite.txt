@@ -285,7 +285,7 @@ B:0:R:*:Member
 
 B:1:N:Count:Uldrik:Human
 B:1:A:0:Request quest:0:0:q:6:0
-B:1:A:1:Identify item:100:100:i:44:0
+B:1:A:1:Identify item:80:80:i:44:0
 B:1:A:2:Legal Name Change:10:10:c:57:0
 
 B:2:N:Arena:Hideshi:Human
@@ -333,7 +333,7 @@ B:7:C:Blood-Knight:Owner
 B:7:C:Mauler:Owner
 
 B:8:N:Tower of Sorcery:Tanistil:Elf
-B:8:A:0:Identify possessions:100:800:i:26:0
+B:8:A:0:Identify possessions:800:1600:i:26:0
 B:8:A:1:Request quest:0:0:q:6:2
 B:8:M:*:None
 B:8:M:Sorcery:Owner
@@ -346,7 +346,7 @@ B:9:M:Life:Owner
 
 B:10:N:Thieves' Guild:Lardbottom:Hobbit
 B:10:A:1:Rest for the night:0:100:r:17:0
-B:10:A:2:Identify possessions:100:600:i:26:0
+B:10:A:2:Identify possessions:600:1500:i:26:0
 B:10:A:3:Request quest:0:0:q:6:0
 B:10:C:*:None
 B:10:C:Rogue:Owner

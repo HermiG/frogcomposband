@@ -1626,7 +1626,7 @@ static errr Term_wipe_cocoa(int x, int y, int n)
   NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
   AngbandContext *angbandContext = Term->data;
   
-  /* clear our overdraw cache for subpixel rendering */
+  /* Clear our overdraw cache for subpixel rendering */
   [angbandContext clearOverdrawCacheFromX:x y:y width:n];
   
   /* Set the rect to the first character */
@@ -1634,41 +1634,41 @@ static errr Term_wipe_cocoa(int x, int y, int n)
   
   /* Expand rect out to the last character */
   if (n > 1) rect = NSUnionRect(rect, [angbandContext rectInImageForTileAtX:x + n-1 Y:y]);
-
+  
   rect = crack_rect(rect, AngbandScaleIdentity, PUSH_TOP | PUSH_LEFT | PUSH_RIGHT);
 
   /* Lock focus and clear */
   [angbandContext lockFocus];
   [[NSColor blackColor] set];
   NSRectFill(rect);
-
-  /* Handle overdraws */
+  
+  [[[angbandContext selectionFont] screenFont] set];
+  
+  // Handle overdraws
   const int overdraws[2] = {x-1, x+n}; //left, right
-  for (int i=0; i < 2; i++) {
+  for (int i = 0; i < 2; i++) {
     int overdrawX = overdraws[i];
     
     // Nothing to overdraw if we're at an edge
     if (overdrawX >= 0 && (size_t)overdrawX < angbandContext->cols)
     {
-      wchar_t previouslyDrawnVal = angbandContext->charOverdrawCache[y * angbandContext->cols + overdrawX];
-      
       NSRect overdrawRect = [angbandContext rectInImageForTileAtX:overdrawX Y:y];
       NSRect expandedRect = crack_rect(overdrawRect, AngbandScaleIdentity, push_options(overdrawX, y));
       
-      [[NSColor blackColor] set];
       NSRectFill(expandedRect);
       rect = NSUnionRect(rect, expandedRect);
       
-      if (previouslyDrawnVal && previouslyDrawnVal != NO_OVERDRAW)
+      wchar_t c = angbandContext->charOverdrawCache[y * angbandContext->cols + overdrawX];
+      if (c && c != NO_OVERDRAW)
       {
-        byte color = angbandContext->attrOverdrawCache[y * angbandContext->cols + overdrawX];
+        set_color_for_index(angbandContext->attrOverdrawCache[y * angbandContext->cols + overdrawX]);
         
-        set_color_for_index(color);
-        [angbandContext drawWChar:previouslyDrawnVal inRect:overdrawRect];
+        [angbandContext drawWChar:c inRect:overdrawRect];
+        [[NSColor blackColor] set];
       }
     }
   }
-
+  
   [angbandContext unlockFocus];
   [angbandContext setNeedsDisplayInBaseRect:rect];
   
@@ -1818,32 +1818,28 @@ static errr Term_text_cocoa(int x, int y, int n, byte a, cptr cp)
     rectToClear.size.width = tileWidth * n;
     NSRectFill(crack_rect(rectToClear, AngbandScaleIdentity, leftPushOptions | rightPushOptions));
     
-    NSFont *selectionFont = [[angbandContext selectionFont] screenFont];
-    [selectionFont set];
+    [[[angbandContext selectionFont] screenFont] set];
     
     /* Handle overdraws */
     const int overdraws[2] = {x-1, x+n}; //left, right
-    for (int i=0; i < 2; i++) {
+    for (int i = 0; i < 2; i++) {
         int overdrawX = overdraws[i];
         
         // Nothing to overdraw if we're at an edge
         if (overdrawX >= 0 && (size_t)overdrawX < angbandContext->cols)
         {
-            wchar_t previouslyDrawnVal = angbandContext->charOverdrawCache[y * angbandContext->cols + overdrawX];
-            
             NSRect overdrawRect = [angbandContext rectInImageForTileAtX:overdrawX Y:y];
             NSRect expandedRect = crack_rect(overdrawRect, AngbandScaleIdentity, push_options(overdrawX, y));
             
-            [[NSColor blackColor] set];
             NSRectFill(expandedRect);
             redisplayRect = NSUnionRect(redisplayRect, expandedRect);
-            
-            if (previouslyDrawnVal && previouslyDrawnVal != NO_OVERDRAW)
+          
+            wchar_t c = angbandContext->charOverdrawCache[y * angbandContext->cols + overdrawX];
+            if (c && c != NO_OVERDRAW)
             {
-                byte color = angbandContext->attrOverdrawCache[y * angbandContext->cols + overdrawX];
-                
-                set_color_for_index(color);
-                [angbandContext drawWChar:previouslyDrawnVal inRect:overdrawRect];
+                set_color_for_index(angbandContext->attrOverdrawCache[y * angbandContext->cols + overdrawX]);
+                [angbandContext drawWChar:c inRect:overdrawRect];
+                [[NSColor blackColor] set];
             }
         }
     }
@@ -1852,7 +1848,7 @@ static errr Term_text_cocoa(int x, int y, int n, byte a, cptr cp)
     
     /* Draw each */
     NSRect rectToDraw = charRect;
-    for (int i=0; i < n; i++) {
+    for (int i = 0; i < n; i++) {
         [angbandContext drawWChar:cp[i] inRect:rectToDraw];
         rectToDraw.origin.x += tileWidth;
     }

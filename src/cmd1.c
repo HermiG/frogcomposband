@@ -6434,7 +6434,7 @@ void travel_step(void)
     bool err = FALSE;
     bool door_hack = FALSE;
     errr delay_canceled = 0;
-    int travel_delay = travel.mode == TRAVEL_MODE_AUTOEXPLORE ? 500 : 0 ;
+    int travel_delay = travel.mode == TRAVEL_MODE_AUTOEXPLORE ? 500 : 100 ;
 
     find_prevdir = travel.dir;
 

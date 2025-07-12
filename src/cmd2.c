@@ -3406,7 +3406,8 @@ static float _travel_flow_penalty(feature_type *f_ptr)
     {
         return 4;
     }
-    else if (have_flag(f_ptr->flags, FF_TREE)) return 0.5f;
+    else if (have_flag(f_ptr->flags, FF_WATER) && !elemental_is_(ELEMENTAL_WATER)) return 0.2f;
+    else if (have_flag(f_ptr->flags, FF_TREE)) return 0.9f;
     else if (have_flag(f_ptr->flags, FF_HAS_GOLD) || have_flag(f_ptr->flags, FF_HAS_ITEM)) return -0.2f;
     else if (f_ptr->mimic == feat_floor) return -0.1f; // Prefer to walk on roads
     else return 0.0f;
@@ -3430,7 +3431,7 @@ static bool travel_flow_aux(int y, int x, float n, bool wall)
      * route around the trap anyway ... */
     if (is_known_trap(c_ptr)) return wall;
 
-    n += _travel_flow_penalty(f_ptr) + 1;
+    n += _travel_flow_penalty(f_ptr);
 
     /* Ignore "pre-stamped" entries */
     if (travel.cost[y][x] > TRAVEL_UNABLE || (travel.cost[y][x] < TRAVEL_UNABLE && travel.cost[y][x] <= n)) return wall;
@@ -3489,7 +3490,7 @@ static void travel_flow(int ty, int tx)
         /* Add the "children" if legal */
         for (int d = 0; d < 8; d++)
         {
-            float step_cost = (d & 1) ? 1.1 : 1.0; // Diagonals cost a bit more
+            float step_cost = (d & 1) ? 1.2 : 1.0; // Diagonals cost a bit more
             wall = travel_flow_aux(y + ddy_cdd[d], x + ddx_cdd[d], travel.cost[y][x] + step_cost, wall);
         }
     }

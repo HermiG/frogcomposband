@@ -1149,7 +1149,6 @@ D:Just a stick. Perfectly ordinary. Terrifyingly effective.
 ########################################################################
 # Diggers (TV_DIGGING)
 ########################################################################
-
 N:150:& Shovel~
 G:\:s
 I:20:1:2
@@ -1230,8 +1229,8 @@ W:5:0:0:5:5
 P:0:x2.00:0:0:0
 A:5/1
 F:SHOW_MODS | TOWN
-D:A loop of leather and cords able to hurl stones or shot with tremendous
-D:velocity.
+D:A loop of leather and cord able to hurl stones or shot with tremendous
+D:velocity. Primitive, but not to be underestimated.
 
 N:*:& Short Bow~
 G:}:U
@@ -1250,7 +1249,7 @@ P:0:x3.00:0:0:0
 A:30/2
 F:SHOW_MODS | TOWN
 D:As tall as a man, the longbow can drive an arrow through the heaviest
-D:armour.
+D:armour. Requires both strength and training to wield properly.
 
 N:*:& Light Crossbow~
 G:}:s
@@ -1260,7 +1259,7 @@ P:0:x3.50:0:0:0
 A:25/1
 F:SHOW_MODS | TOWN
 D:A mechanical bow made of wood, it is cocked to augment the strength of
-D:its wielder.
+D:its wielder. Easy to aim, but slow to reload.
 
 N:*:& Heavy Crossbow~
 G:}:s
@@ -1269,24 +1268,30 @@ W:30:0:0:200:500
 P:0:x4.00:0:0:0
 A:40/2
 F:SHOW_MODS | TOWN
+D:This reinforced crossbow fires massive bolts with devastating force.
+D:Deadly from a distance, but cumbersome to rearm.
 
 N:*:& Gun~
 G:}:r
 I:19:50:0
 W:15:0:0:100:1000
 F:INSTA_ART
+D:A finely crafted firearm from another world. It speaks in thunder and smoke.
 
 N:*:& Gun~
 G:}:r
 I:19:51:0
 W:15:0:0:100:1000
 F:INSTA_ART
+D:A strange weapon that launches metal at incredible speed.
 
 N:*:& Yumi~
 G:}:y
 I:19:63:0
 W:1:0:0:50:1000000
 F:INSTA_ART
+D:An elegant asymmetrical longbow from the East, known for its power,
+D:range, and exquisite craftsmanship.
 
 N:*:& Harp~
 G:}:U
@@ -1302,6 +1307,7 @@ I:46:0:0
 W:20:0:0:10:30
 A:20/1
 F:TOWN
+D:A case for carrying arrows, bolts, or shots. Keeps ammunition ready at hand.
 
 N:*:& Flute~
 G:}:y
@@ -1331,6 +1337,8 @@ A:30/2
 P:0:4d4:0:0:0
 F:SHOW_MODS
 M:100:6d7
+D:A broad-headed hunting arrow designed to deliver deep, tearing wounds.
+D:Favored for its stopping power.
 
 N:*:& Mithril Arrow~
 G:{:B
@@ -1341,6 +1349,7 @@ P:0:5d4:0:0:0
 F:SHOW_MODS
 F:IGNORE_ACID | IGNORE_COLD | IGNORE_FIRE | IGNORE_ELEC
 M:100:6d7
+D:A gleaming arrow of forged mithril, lighter than steel but unyielding.
 
 N:*:& Seeker Arrow~
 G:{:G
@@ -1351,8 +1360,8 @@ P:0:6d4:0:0:0
 F:SHOW_MODS
 F:IGNORE_ACID | IGNORE_COLD | IGNORE_FIRE | IGNORE_ELEC
 M:100:6d7
-D:Carved from a rare wood, this arrow is inscribed with fell runes and
-D:fletched with eagle feathers.
+D:Inscribed with occult runes and fletched with roc feathers, this arrow
+D:whispers faintly on the wind as it flies unerringly to its mark.
 
 N:*:& Black Arrow~
 G:{:U
@@ -1360,6 +1369,7 @@ I:17:10:0
 W:35:0:0:2:1
 P:0:3d4:0:0:0
 F:INSTA_ART | SHOW_MODS
+D:Fletched with feathers dark as pitch and a head of glinting obsidian.
 
 ########################################################################
 # Bolts (TV_BOLT)
@@ -1373,6 +1383,7 @@ P:0:3d5:0:0:0
 F:SHOW_MODS | TOWN
 M:100:6d7
 D:A short, heavy arrow shot from a crossbow.
+D:Simple, solid, and brutally effective.
 
 N:*:& Steel Bolt~
 G:{:w
@@ -1382,6 +1393,8 @@ A:40/2
 P:0:4d5:0:0:0
 F:SHOW_MODS
 M:100:6d7
+D:A quarrel with a hardened steel head and sturdy shaft.
+D:Made to punch through armor with unflinching force.
 
 N:*:& Mithril Bolt~
 G:{:B
@@ -1392,6 +1405,7 @@ P:0:5d5:0:0:0
 F:SHOW_MODS
 F:IGNORE_ACID | IGNORE_COLD | IGNORE_FIRE | IGNORE_ELEC
 M:100:6d7
+D:An elegant yet deadly bolt of mithril, crafted by ancient smiths.
 
 N:*:& Seeker Bolt~
 G:{:r
@@ -1403,6 +1417,7 @@ F:SHOW_MODS
 F:IGNORE_ACID | IGNORE_COLD | IGNORE_FIRE | IGNORE_ELEC
 M:100:6d7
 D:A mighty quarrel, bound about with battle magics.
+D:Its path bends subtly, as though guided by fate.
 
 N:189:& Adamantine Bolt~
 G:{:G
@@ -1413,6 +1428,7 @@ P:0:7d5:0:0:0
 F:SHOW_MODS
 F:IGNORE_ACID | IGNORE_COLD | IGNORE_FIRE | IGNORE_ELEC
 M:100:6d7
+D:A heavy bolt forged from adamantine, the hardest metal known to man or dwarf.
 
 ########################################################################
 # Shots (TV_SHOT)
@@ -1425,6 +1441,8 @@ A:0/1
 P:0:2d3:0:0:0
 F:SHOW_MODS | TOWN
 M:100:6d7
+D:A smooth, rounded stone--simple ammunition for slings.
+D:Cheap, common, and occasionally fatal.
 
 N:*:& Iron Shot~
 G:{:s
@@ -1434,6 +1452,7 @@ A:3/1
 P:0:3d3:0:0:0
 F:SHOW_MODS | TOWN
 M:100:6d7
+D:Heavy iron spheres, forged for smashing power.
 
 N:*:& Mithril Shot~
 G:{:B
@@ -1444,6 +1463,7 @@ P:0:5d3:0:0:0
 F:SHOW_MODS
 F:IGNORE_ACID | IGNORE_COLD | IGNORE_FIRE | IGNORE_ELEC
 M:100:6d7
+D:Polished spheres of mithril that fly unerringly true.
 
 ########################################################################
 #  Cloaks (TV_CLOAK)

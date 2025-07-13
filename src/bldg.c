@@ -96,7 +96,7 @@ static void show_building(building_type* bldg)
 {
     char buff[20];
     byte action_color;
-    char tmp_str[80];
+    char tmp_str[100];
 
     Term_clear();
     sprintf(tmp_str, "%s (%s) %35s", bldg->owner_name, bldg->owner_race, bldg->name);
@@ -168,7 +168,8 @@ static void show_building(building_type* bldg)
 
             if (cost > p_ptr->au) action_color = TERM_L_DARK;
 
-            sprintf(tmp_str," %c) %s %s", bldg->letters[i], bldg->act_names[i], buff);
+            if(bldg->letters[i] == ' ') sprintf(tmp_str,"%s", bldg->act_names[i]);
+            else sprintf(tmp_str," %c) %s %s", bldg->letters[i], bldg->act_names[i], buff);
             c_put_str(action_color, tmp_str, 19+(i/2), 35*(i%2));
         }
     }

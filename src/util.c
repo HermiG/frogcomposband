@@ -4504,7 +4504,6 @@ void roff_to_buf(cptr str, int maxlen, char *tbuf, size_t bufsize)
  */
 size_t my_strcpy(char *buf, const char *src, size_t bufsize)
 {
-
     size_t len = strlen(src);
     size_t ret = len;
 
@@ -4520,7 +4519,6 @@ size_t my_strcpy(char *buf, const char *src, size_t bufsize)
 
     /* Return strlen(src) */
     return ret;
-
 }
 
 
@@ -4560,23 +4558,19 @@ size_t my_strcat(char *buf, const char *src, size_t bufsize)
  */
 char *my_strstr(const char *haystack, const char *needle)
 {
-    int i;
     int l1 = strlen(haystack);
     int l2 = strlen(needle);
 
     if (l1 >= l2)
     {
-        for(i = 0; i <= l1 - l2; i++)
+        for(int i = 0; i <= l1 - l2; i++)
         {
-            if(!strncmp(haystack + i, needle, l2))
-                return (char *)haystack + i;
-
+            if(!strncmp(haystack + i, needle, l2)) return (char *)haystack + i;
         }
     }
 
     return NULL;
 }
-
 
 /*
  * A copy of ANSI strchr()
@@ -4585,26 +4579,16 @@ char *my_strstr(const char *haystack, const char *needle)
  */
 char *my_strchr(const char *ptr, char ch)
 {
-    for ( ; *ptr != '\0'; ptr++)
-    {
-        if (*ptr == ch) return (char *)ptr;
-
-    }
-
+    for (; *ptr != '\0'; ptr++) if (*ptr == ch) return (char *)ptr;
     return NULL;
 }
-
 
 /*
  * Convert string to lower case
  */
 void str_tolower(char *str)
 {
-    /* Force to be lower case string */
-    for (; *str; str++)
-    {
-        *str = tolower(*str);
-    }
+    for (; *str; str++) *str = tolower(*str);
 }
 
 /**
@@ -4614,14 +4598,13 @@ void str_tolower(char *str)
  */
 unsigned int strpos(const char *mika, const char *missa)
 {
-	char *loppu = strstr(missa, mika);
-	if (loppu) return ((loppu - missa) + 1); else return 0;
+	const char *loppu = strstr(missa, mika);
+  return loppu ? loppu - missa + 1 : 0 ;
 }
 
 unsigned int chrpos(const char mika, const char *missa)
 {
-    char ch2[2] = "\0\0";
-    ch2[0] = mika;
+    const char ch2[2] = {mika, '\0'};
     return strpos(ch2, missa);
 }
 
@@ -4639,11 +4622,8 @@ void string_clip(char *apu, unsigned int paikka, int pituus)
 		apu[paikka - 1] = '\0';
 		return;
 	}
-	for (i = paikka - 1; i < strlen(apu) - pituus; i++)
-	{
-		apu[i] = apu[i + pituus];
-	}
-	apu[i++] = '\0';
+	for (i = paikka - 1; i < strlen(apu) - pituus; i++) apu[i] = apu[i + pituus];
+	apu[i] = '\0';
 	return;
 }
 

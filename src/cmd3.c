@@ -1455,6 +1455,7 @@ static void _list_monsters_aux(_mon_list_ptr list, rect_t display_rect, int mode
         case 'G':
         case '(':
         case '`':
+        case ' ':
         {
             if (0 <= idx && idx < ct_types)
             {
@@ -2148,6 +2149,7 @@ void do_cmd_list_objects(void)
             case 'G':
             case '(':
             case '`':
+            case ' ':
             {
                 if (0 <= idx && idx < ct_types)
                 {

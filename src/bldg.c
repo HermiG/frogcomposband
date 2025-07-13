@@ -102,7 +102,6 @@ static void show_building(building_type* bldg)
     sprintf(tmp_str, "%s (%s) %35s", bldg->owner_name, bldg->owner_race, bldg->name);
     prt(tmp_str, 3, 1);
 
-
     for (int i = 0; i < 8; i++)
     {
         if (bldg->letters[i])
@@ -115,7 +114,7 @@ static void show_building(building_type* bldg)
 
             if(bldg->actions[i] == BACT_RESEARCH_MONSTER) cost = cost * p_ptr->lev;
 
-            if (bldg->action_restr[i] == 0)
+            if (!(bldg->action_flags[i] & 3)) // No action restriction
             {
                 if (cost == 0)
                 {
@@ -128,7 +127,7 @@ static void show_building(building_type* bldg)
                     sprintf(buff, "(%dgp)", cost);
                 }
             }
-            else if (bldg->action_restr[i] == 1)
+            else if (bldg->action_flags[i] & 1)
             {
                 if (!member)
                 {
@@ -3876,9 +3875,9 @@ static void bldg_process_command(building_type *bldg, int i)
     bcost = town_service_price(bcost);
 
     /* action restrictions */
-    if (((bldg->action_restr[i] == 1) && !is_member(bldg)) || ((bldg->action_restr[i] == 2) && !is_owner(bldg)))
+    if (((bldg->action_flags[i] & 1) && !is_member(bldg)) || ((bldg->action_flags[i] & 2) && !is_owner(bldg)))
     {
-        msg_print("You have no right to choose that!");
+        msg_print("You have no right to do that!");
         return;
     }
 

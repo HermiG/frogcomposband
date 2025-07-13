@@ -763,7 +763,7 @@ errr init_buildings(void)
             building[i].other_costs[j] = 0;
             building[i].letters[j] = 0;
             building[i].actions[j] = 0;
-            building[i].action_restr[j] = 0;
+            building[i].action_flags[j] = 0;
         }
 
         for (j = 0; j < MAX_CLASS; j++)

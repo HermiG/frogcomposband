@@ -1620,8 +1620,8 @@ struct building_type
     s32b member_costs[8];           /* Costs for class members of building */
     s32b other_costs[8];            /* Costs for nonguild members */
     char letters[8];                /* action letters */
-    s16b actions[8];                /* action codes */
-    s16b action_restr[8];           /* action restrictions */
+    u16b actions[8];                /* action codes */
+    u16b action_flags[8];           /* action restrictions */
 
     s16b member_class[MAX_CLASS];   /* which classes are part of guild */
     s16b member_race[MAX_RACES];    /* which races are part of guild */

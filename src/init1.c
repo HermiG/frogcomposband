@@ -5175,8 +5175,7 @@ static cptr process_dungeon_file_expr(char **sp, char *fp)
             else if (prefix(b+1, "DUNGEON"))
             {
                 int  which = atoi(b+8);
-                if ((which >= max_d_idx) || (d_info[which].flags1 & DF1_SUPPRESSED))
-                    sprintf(tmp, "Suppressed");
+                if ((which >= max_d_idx) || (d_info[which].flags1 & DF1_SUPPRESSED)) sprintf(tmp, "Suppressed");
                 else sprintf(tmp, "Active");
                 v = tmp;
             }

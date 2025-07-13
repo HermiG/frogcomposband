@@ -94,8 +94,7 @@ void quest_take(quest_ptr q)
     q->status = QS_TAKEN;
     q->seed = randint0(0x10000000);
     s = quest_get_description(q);
-    msg_format("<color:R>%s</color> (<color:U>Level %d</color>): %s",
-        kayttonimi(q), q->danger_level, string_buffer(s));
+    msg_format("<color:R>%s</color> (<color:U>Level %d</color>): %s", kayttonimi(q), q->danger_level, string_buffer(s));
     string_free(s);
 }
 
@@ -315,8 +314,7 @@ void quest_fail(quest_ptr q)
     msg_format("You have <color:v>failed</color> the quest: <color:R>%s</color>.", kayttonimi(q));
     virtue_add(VIRTUE_VALOUR, -2);
     if (!(q->flags & QF_PURPLE)) fame_on_failure();
-    if (!(q->flags & QF_TOWN))
-        q->status = QS_FAILED_DONE;
+    if (!(q->flags & QF_TOWN)) q->status = QS_FAILED_DONE;
     if ((q->flags & (QF_RANDOM | QF_PURPLE)) && (q->goal == QG_KILL_MON))
     {
         monster_race *r_ptr = &r_info[q->goal_idx];
@@ -660,11 +658,11 @@ static errr _parse_q_info(char *line, int options)
     {
         char *flags[10];
         int   flag_ct = z_string_split(line + 2, flags, 10, "|");
-        int   i, fake_lev;
+        int   i, d;
 
         for (i = 0; i < flag_ct; i++)
         {
-            char* flag = flags[i];
+            char *flag = flags[i];
 
             if (streq(flag, "TOWN"))
                 quest->flags |= QF_TOWN;
@@ -682,10 +680,10 @@ static errr _parse_q_info(char *line, int options)
                 quest->flags |= QF_INVIS;
             else if (streq(flag, "PURPLE"))
                 quest->flags |= QF_PURPLE;
-            else if (1 == sscanf(flag, "DANGER_LEVEL_%d", &fake_lev))
-                quest->danger_level = fake_lev;
-            else if (1 == sscanf(flag, "SUBSTITUTE_%d", &fake_lev))
-                quest->substitute = fake_lev;
+            else if (1 == sscanf(flag, "DANGER_LEVEL_%d", &d))
+                quest->danger_level = d;
+            else if (1 == sscanf(flag, "SUBSTITUTE_%d", &d))
+                quest->substitute = d;
             else
             {
                 msg_format("Error: Invalid quest flag %s.", flag);
@@ -717,9 +715,7 @@ static errr _parse_q_info(char *line, int options)
         {
             quest->goal = QG_KILL_MON;
             quest->goal_idx = parse_lookup_monster(args[0], options);
-            quest->goal_count = 1;
-            if (arg_ct >= 2)
-                quest->goal_count = atoi(args[1]);
+            quest->goal_count = (arg_ct >= 2) ? atoi(args[1]) : 1;
         }
         else if (streq(name, "FIND"))
         {
@@ -1189,8 +1185,7 @@ static quest_ptr _find_quest(int dungeon, int level)
 
     /* Prevent quests from becoming uncompletable in forced-descent mode
      * should the player request them too late (adapted from Pos-R) */
-    if ((!result) && (only_downward()) && (dungeon == DUNGEON_ANGBAND) &&
-        (level < 99))
+    if ((!result) && (only_downward()) && (dungeon == DUNGEON_ANGBAND) && (level < 99))
     {
         for (i = 0; i < vec_length(v); i++)
         {

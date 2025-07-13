@@ -2836,8 +2836,8 @@ static errr _parse_building(char *buf, int options) /* moved w/o change from ini
                 /* Action code */
                 building[index].actions[action_index] = atoi(zz[5]);
 
-                /* Action restriction */
-                building[index].action_restr[action_index] = atoi(zz[6]);
+                /* Action flags */
+                building[index].action_flags[action_index] = atoi(zz[6]);
 
                 break;
             }

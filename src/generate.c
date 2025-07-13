@@ -1511,7 +1511,7 @@ static void build_battle(void)
 
     i = y_height + 1;
     j = xval;
-    cave[i][j].feat = f_tag_to_index("BUILDING_3");
+    cave[i][j].feat = f_tag_to_index("BUILDING_2");
     cave[i][j].info |= (CAVE_GLOW | CAVE_MARK);
     player_place(i, j);
 }

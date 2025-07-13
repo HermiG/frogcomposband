@@ -1,7 +1,7 @@
 # File: misc.txt
 
 # Maximum number of quests
-Q:120
+Q:256
 
 # Maximum x size of the wilderness
 WX:99

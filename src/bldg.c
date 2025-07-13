@@ -3814,8 +3814,7 @@ static void _sell_photo_local_aux(object_type *o_ptr)
         p_ptr->au += tarjous;
         stats_on_gold_selling(tarjous);
         p_ptr->redraw |= PR_GOLD;
-        if (prace_is_(RACE_MON_LEPRECHAUN))
-            p_ptr->update |= (PU_BONUS | PU_HP | PU_MANA);
+        if (prace_is_(RACE_MON_LEPRECHAUN)) p_ptr->update |= (PU_BONUS | PU_HP | PU_MANA);
     }
 
     object_desc(name, o_ptr, OD_COLOR_CODED);

@@ -1671,12 +1671,12 @@ static bool _buy_aux(shop_ptr shop, obj_ptr obj)
 
     object_desc(name, obj, OD_COLOR_CODED);
     if (no_selling)
-        string_printf(s, "Really give %s? <color:y>[y/n]</color>", name);
+        string_printf(s, "Really give %s? <color:y>[Y/n]</color>", name);
     else
-        string_printf(s, "Really sell %s for <color:R>%d</color> gp? <color:y>[y/n]</color>", name, price);
-    c = msg_prompt(string_buffer(s), "ny", PROMPT_YES_NO);
+        string_printf(s, "Really sell %s for <color:R>%d</color> gp? <color:y>[Y/n]</color>", name, price);
+    c = msg_prompt(string_buffer(s), "nyY\r", PROMPT_YES_NO);
     string_free(s);
-    if (c == 'n') return FALSE;
+    if (c == 'n' || c == 'N') return FALSE;
 
     if (!no_selling)
     {

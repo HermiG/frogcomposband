@@ -4676,12 +4676,9 @@ bool target_set(int mode)
             /* Assume no "direction" */
             d = 0;
 
-            if (use_menu)
-            {
-                if (query == '\r') query = 't';
-            }
+            if (use_menu && query == '\r') query = 't';
 
-            if (((query == 'j') || (query == 'J')) && (!rogue_like_commands)) query = '(';
+            if ((query == 'j' || query == 'J') && !rogue_like_commands) query = '(';
           
             /* Analyze */
             switch (query)
@@ -4777,7 +4774,8 @@ bool target_set(int mode)
                       break;
                     }
                   
-                    if (!p_ptr->wild_mode && in_bounds(y,x) && (cave[y][x].info & CAVE_MARK) && (y != py || x != px) && player_can_enter(cave[y][x].feat, 0))
+                    if (!p_ptr->wild_mode && in_bounds(y,x) && (cave[y][x].info & CAVE_MARK) && (y != py || x != px) &&
+                        (player_can_enter(cave[y][x].feat, 0) || is_closed_door(cave[y][x].feat)))
                     {
                         travel_cancel_fully();
                         travel.y = y;

@@ -6434,7 +6434,7 @@ void travel_step(void)
     bool err = FALSE;
     bool door_hack = FALSE;
     errr delay_canceled = 0;
-    int travel_delay = travel.mode == TRAVEL_MODE_AUTOEXPLORE ? 500 : 100 ;
+    int travel_delay = travel.mode == TRAVEL_MODE_AUTOEXPLORE ? 100 : 10 ;
 
     find_prevdir = travel.dir;
 
@@ -6482,7 +6482,7 @@ void travel_step(void)
     }
     else if (is_closed_door(cave[pt_best.y][pt_best.x].feat))
     {
-        if (easy_open) delay_canceled = Term_xtra(TERM_XTRA_DELAY, MAX(delay_time(), MIN(500, travel_delay * 6)));
+        if (easy_open) delay_canceled = Term_xtra(TERM_XTRA_DELAY, MAX(delay_time(), MIN(500, travel_delay * 5)));
         else
         {
             disturb(0, 0);

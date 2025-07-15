@@ -86,6 +86,7 @@ static void building_prt_gold(void)
     big_num_display(p_ptr->au, tmp);
     sprintf(tmp_str, "%6.6s", tmp);
     prt(tmp_str, 23, 68);
+    prt("", 24, 1);
 }
 
 

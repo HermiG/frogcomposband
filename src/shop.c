@@ -377,8 +377,7 @@ static bool _shop_is_basic(shop_ptr shop)
 
 static _owner_ptr _get_owner(_type_ptr type, int which)
 {
-    int i;
-    for (i = 0; i < _MAX_OWNERS; i++)
+    for (int i = 0; i < _MAX_OWNERS; i++)
     {
         _owner_ptr owner = &type->owners[i];
         if (!owner->name) break;
@@ -390,8 +389,7 @@ static _owner_ptr _get_owner(_type_ptr type, int which)
 static int _count_owners(_type_ptr type)
 {
     int ct = 0;
-    int i;
-    for (i = 0; i < _MAX_OWNERS; i++)
+    for (int i = 0; i < _MAX_OWNERS; i++)
     {
         if (!type->owners[i].name) break;
         ct++;
@@ -408,26 +406,23 @@ static bool _will_buy(obj_ptr obj)
 
 static bool _stock_p(int k_idx)
 {
-    if (k_info[k_idx].gen_flags & OFG_INSTA_ART)
-        return FALSE;
+    if (k_info[k_idx].gen_flags & OFG_INSTA_ART) return FALSE;
 
     if (!dun_level && p_ptr->town_num != TOWN_ZUL)
     {
-        if (!(k_info[k_idx].gen_flags & OFG_TOWN))
-            return FALSE;
+        if (!(k_info[k_idx].gen_flags & OFG_TOWN)) return FALSE;
     }
     return TRUE;
 }
 
 static int _get_k_idx(_k_idx_p p, int lvl)
 {
-    int k_idx;
     if (p)
     {
         get_obj_num_hook = p;
         get_obj_num_prep();
     }
-    k_idx = get_obj_num(lvl);
+    int k_idx = get_obj_num(lvl);
     if (p)
     {
         get_obj_num_hook = NULL;
@@ -438,9 +433,7 @@ static int _get_k_idx(_k_idx_p p, int lvl)
 
 static int _mod_lvl(int lvl)
 {
-    if (dun_level > lvl)
-        return (dun_level - lvl)/3 + lvl;
-    return lvl;
+    return (dun_level > lvl) ? (dun_level - lvl)/3 + lvl : lvl;
 }
 
 static void _discount(obj_ptr obj)
@@ -454,8 +447,7 @@ static void _discount(obj_ptr obj)
     else if (one_in_(300)) discount = 75;
     else if (one_in_(500)) discount = 90;
 
-    if (object_is_artifact(obj))
-        discount = 0;
+    if (object_is_artifact(obj)) discount = 0;
 
     obj->discount = discount;
 }
@@ -603,8 +595,7 @@ static bool _armory_will_buy(obj_ptr obj)
 
 static bool _armory_stock_p(int k_idx)
 {
-    if (!_stock_p(k_idx))
-        return FALSE;
+    if (!_stock_p(k_idx)) return FALSE;
 
     switch (k_info[k_idx].tval)
     {
@@ -655,8 +646,7 @@ static bool _weapon_will_buy(obj_ptr obj)
 
 static bool _weapon_stock_p(int k_idx)
 {
-    if (!_stock_p(k_idx))
-        return FALSE;
+    if (!_stock_p(k_idx)) return FALSE;
 
     switch (k_info[k_idx].tval)
     {
@@ -668,8 +658,7 @@ static bool _weapon_stock_p(int k_idx)
 }
 static bool _weapon_book_p(int k_idx)
 {
-    if (!_stock_p(k_idx))
-        return FALSE;
+    if (!_stock_p(k_idx)) return FALSE;
 
     switch (k_info[k_idx].tval)
     {
@@ -778,8 +767,7 @@ static bool _temple_will_buy(obj_ptr obj)
 
 static bool _temple_stock_p(int k_idx)
 {
-    if (!_stock_p(k_idx))
-        return FALSE;
+    if (!_stock_p(k_idx)) return FALSE;
 
     switch (k_info[k_idx].tval)
     {
@@ -877,8 +865,7 @@ static bool _alchemist_stock_p(int k_idx)
     /* Scrolls and Potions are also stocked by the Temple. */
     case TV_SCROLL:
     case TV_POTION:
-        if (!_temple_stock_p(k_idx))
-            return TRUE;
+        if (!_temple_stock_p(k_idx)) return TRUE;
         break;
     }
     return FALSE;
@@ -938,8 +925,7 @@ static bool _magic_will_buy(obj_ptr obj)
 
 static bool _magic_stock_p(int k_idx)
 {
-    if (!_stock_p(k_idx))
-        return FALSE;
+    if (!_stock_p(k_idx)) return FALSE;
     switch (k_info[k_idx].tval)
     {
     case TV_WAND:
@@ -1120,8 +1106,8 @@ static bool _jeweler_will_buy(obj_ptr obj)
 
 static bool _jeweler_stock_p(int k_idx)
 {
-    if (!_stock_p(k_idx))
-        return FALSE;
+    if (!_stock_p(k_idx)) return FALSE;
+
     switch (k_info[k_idx].tval)
     {
     case TV_RING:
@@ -1191,20 +1177,13 @@ static bool _dragon_stock_p(int k_idx)
 
 static bool _dragon_stock_aux_p(int k_idx)
 {
-	if (!_stock_p(k_idx))
-		return FALSE;
-	if (k_info[k_idx].tval == TV_DRAG_ARMOR)
-		return TRUE;
-	if ((k_info[k_idx].tval == TV_CLOAK) && (k_info[k_idx].sval == SV_DRAGON_CLOAK))
-		return TRUE;
-	if ((k_info[k_idx].tval == TV_HELM) && (k_info[k_idx].sval == SV_DRAGON_HELM))
-		return TRUE;
-	if ((k_info[k_idx].tval == TV_BOOTS) && (k_info[k_idx].sval == SV_PAIR_OF_DRAGON_GREAVE))
-		return TRUE;
-	if ((k_info[k_idx].tval == TV_GLOVES) && (k_info[k_idx].sval == SV_SET_OF_DRAGON_GLOVES))
-		return TRUE;
-	if ((k_info[k_idx].tval == TV_SHIELD) && (k_info[k_idx].sval == SV_DRAGON_SHIELD))
-		return TRUE;
+	if (!_stock_p(k_idx)) return FALSE;
+	if (k_info[k_idx].tval == TV_DRAG_ARMOR) return TRUE;
+	if ((k_info[k_idx].tval == TV_CLOAK) && (k_info[k_idx].sval == SV_DRAGON_CLOAK)) return TRUE;
+	if ((k_info[k_idx].tval == TV_HELM) && (k_info[k_idx].sval == SV_DRAGON_HELM)) return TRUE;
+	if ((k_info[k_idx].tval == TV_BOOTS) && (k_info[k_idx].sval == SV_PAIR_OF_DRAGON_GREAVE)) return TRUE;
+	if ((k_info[k_idx].tval == TV_GLOVES) && (k_info[k_idx].sval == SV_SET_OF_DRAGON_GLOVES)) return TRUE;
+	if ((k_info[k_idx].tval == TV_SHIELD) && (k_info[k_idx].sval == SV_DRAGON_SHIELD)) return TRUE;
 	return FALSE;
 }
 
@@ -1263,10 +1242,8 @@ shop_ptr shop_alloc(int which)
 shop_ptr shop_load(savefile_ptr file)
 {
     shop_ptr shop = malloc(sizeof(shop_t));
-    int      tmp;
-    u32b     guard;
 
-    tmp = savefile_read_s16b(file);
+    int tmp = savefile_read_s16b(file);
     shop->type = _get_type(tmp);
     assert(shop->type);
 
@@ -1282,7 +1259,7 @@ shop_ptr shop_load(savefile_ptr file)
     shop->last_restock.level = savefile_read_s16b(file);
     shop->last_restock.exp = savefile_read_s32b(file);
 
-    guard = savefile_read_u32b(file);
+    int guard = savefile_read_u32b(file);
     assert(guard == 0xFEEDFEED);
 
     return shop;
@@ -1327,11 +1304,8 @@ void shop_save(shop_ptr shop, savefile_ptr file)
  ***********************************************************************/
 static int _price_factor_aux(int greed)
 {
-    int factor;
-
-    factor = get_race()->shop_adjust;
-    if (factor == 0)
-        factor = 110;
+    int factor = get_race()->shop_adjust;
+    if (factor == 0) factor = 110;
 
     factor = (factor * adj_gold[p_ptr->stat_ind[A_CHR]] + 50) / 100;
     factor = (factor * (135 - MIN(200, p_ptr->fame)/4) + 50) / 100;
@@ -1344,24 +1318,19 @@ int _price_factor(shop_ptr shop)
 {
     int factor = _price_factor_aux(shop->owner->greed);
 
-    if (prace_is_(shop->owner->race_id))
-        factor = factor * 90 / 100;
+    if (prace_is_(shop->owner->race_id)) factor = factor * 90 / 100;
 
     return factor;
 }
 
 static int _sell_price_aux(int price, int factor)
 {
-    if (factor < 100)
-        factor = 100;
+    if (factor < 100) factor = 100;
 
-    if (price > 1000*1000)
-        price = (price / 100) * factor;
-    else
-        price = (price * factor + 50) / 100;
+    if (price > 1000*1000) price = (price / 100) * factor;
+    else                   price = (price * factor + 50) / 100;
 
-    if (price > 1000)
-        price = big_num_round(price, 3);
+    if (price > 1000)      price = big_num_round(price, 3);
 
     return price;
 }
@@ -1379,29 +1348,23 @@ static int _sell_price(shop_ptr shop, int price)
     price = _sell_price_aux(price, factor);
     if (shop->type->id == SHOP_BLACK_MARKET)
     {
-        if (p_ptr->realm1 != REALM_BURGLARY && !mut_present(MUT_BLACK_MARKETEER))
-            price = price * 2;
+        if (p_ptr->realm1 != REALM_BURGLARY && !mut_present(MUT_BLACK_MARKETEER)) price *= 2;
 
         price = price * (625 + virtue_current(VIRTUE_JUSTICE)) / 625;
     }
-    else if (shop->type->id == SHOP_JEWELER)
-        price = price * 2;
+    else if (shop->type->id == SHOP_JEWELER) price *= 2;
 
     return price;
 }
 
 static int _buy_price_aux(int price, int factor)
 {
-    if (factor < 105)
-        factor = 105;
+    if (factor < 105) factor = 105;
 
-    if (price > 1000*1000)
-        price = (price / factor) * 100;
-    else
-        price = (price * 100) / factor;
+    if (price > 1000*1000) price = (price / factor) * 100;
+    else                   price = (price * 100) / factor;
 
-    if (price > 1000)
-        price = big_num_round(price, 3);
+    if (price > 1000)      price = big_num_round(price, 3);
 
     return price;
 }
@@ -1429,8 +1392,7 @@ static int _buy_price(shop_ptr shop, int price)
 
 int town_service_price(int price)
 {
-    int factor = _price_factor_aux(100);
-    return _sell_price_aux(price, factor);
+    return _sell_price_aux(price, _price_factor_aux(100));
 }
 
 /************************************************************************
@@ -1643,9 +1605,7 @@ static void _display(_ui_context_ptr context)
     doc_insert(doc, "</style>");
 
     Term_clear_rect(r);
-    doc_sync_term(doc,
-        doc_range_top_lines(doc, r.cy),
-        doc_pos_create(r.x, r.y));
+    doc_sync_term(doc, doc_range_top_lines(doc, r.cy), doc_pos_create(r.x, r.y));
 }
 
 static int _add_obj(shop_ptr shop, obj_ptr obj, bool is_restock);
@@ -1684,8 +1644,7 @@ static bool _buy_aux(shop_ptr shop, obj_ptr obj)
         stats_on_gold_selling(price);
 
         p_ptr->redraw |= PR_GOLD;
-        if (prace_is_(RACE_MON_LEPRECHAUN))
-            p_ptr->update |= (PU_BONUS | PU_HP | PU_MANA);
+        if (prace_is_(RACE_MON_LEPRECHAUN)) p_ptr->update |= (PU_BONUS | PU_HP | PU_MANA);
     }
 
     obj->inscription = 0;
@@ -1721,10 +1680,9 @@ static bool _buy_aux(shop_ptr shop, obj_ptr obj)
     }
 
     price = obj_value(obj); /* correctly handle unidentified items */
-    if (price > 0 && _add_obj(shop, obj, FALSE))
-        inv_sort(shop->inv);
-    else
-        obj->number = 0;
+    if (price > 0 && _add_obj(shop, obj, FALSE)) inv_sort(shop->inv);
+    else obj->number = 0;
+
     return TRUE;
 }
 

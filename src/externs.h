@@ -467,7 +467,7 @@ extern bool autosave_t;
 extern bool autosave_l;
 extern bool closing_flag;
 
-extern char mouse_cursor_targeting_state;
+extern byte mouse_cursor_targeting_state;
 extern int mouse_cursor_x;
 extern int mouse_cursor_y;
 

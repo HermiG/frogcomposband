@@ -458,9 +458,9 @@ point_t viewport_origin;
 /*
  * Mouse cursor variables
  */
-char mouse_cursor_targeting_state;
-int mouse_cursor_x;
-int mouse_cursor_y;
+byte mouse_cursor_targeting_state = 0;
+int mouse_cursor_x = -1;
+int mouse_cursor_y = -1;
 
 /*
  * Player location in dungeon

@@ -2421,9 +2421,6 @@ option_type option_info[] =
 	{ &power_tele,			FALSE, OPT_PAGE_BIRTH, 6, 6,
 	"power_tele",			"Use enhanced telepathy (*)" },
 
-	{ &easy_thalos,			TRUE, OPT_PAGE_BIRTH, 6, 28,
-	"easy_thalos",			"Allow easy teleportation to Thalos" },
-
 	{ &never_forget,		FALSE, OPT_PAGE_BIRTH, 6, 27,
 	"never_forget",			"Easy Labyrinth and no amnesia" },
 

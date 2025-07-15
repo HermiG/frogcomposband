@@ -386,7 +386,6 @@ bool no_artifacts;
 bool no_egos;
 bool no_selling;
 bool enable_virtues;
-bool easy_thalos;
 bool never_forget;
 bool no_chris;
 bool no_scrambling;

@@ -2956,8 +2956,7 @@ errr parse_k_info(char *buf, header *head)
         int tval, sval, pval;
 
         /* Scan for the values */
-        if (3 != sscanf(buf+2, "%d:%d:%d",
-                &tval, &sval, &pval)) return (1);
+        if (3 != sscanf(buf+2, "%d:%d:%d", &tval, &sval, &pval)) return (1);
 
         /* Save the values */
         k_ptr->tval = tval;
@@ -2968,42 +2967,39 @@ errr parse_k_info(char *buf, header *head)
     /* Process 'W' for "More Info" (one line only) */
     else if (buf[0] == 'W')
     {
-        int level, extra, wgt, max_level;
-        int cost;
+        int level, unused, wgt, max_level, cost;
 
         /* Scan for the values */
-        if (5 != sscanf(buf+2, "%d:%d:%d:%d:%d",
-                &level, &extra, &max_level, &wgt, &cost)) return (1);
+        if (5 != sscanf(buf+2, "%d:%d:%d:%d:%d", &level, &unused, &max_level, &wgt, &cost)) return (1);
 
         /* Save the values */
-        k_ptr->level = level;
-        k_ptr->extra = extra;
+        k_ptr->level     = level;
+        k_ptr->unused    = unused;
         k_ptr->max_level = max_level;
-        k_ptr->weight = wgt;
-        k_ptr->cost = cost;
+        k_ptr->weight    = wgt;
+        k_ptr->cost      = cost;
     }
 
     /* Process 'A' for "Allocation" (one line only) */
     else if (buf[0] == 'A')
     {
         int i;
-
         /* XXX XXX XXX Simply read each number following a colon */
         for (i = 0, s = buf+1; s && (s[0] == ':') && s[1]; ++i)
         {
-                /* Default chance */
+            /* Default chance */
             k_ptr->chance[i] = 1;
 
-                /* Store the attack damage index */
+            /* Store the attack damage index */
             k_ptr->locale[i] = atoi(s+1);
 
-                /* Find the slash */
+            /* Find the slash */
             t = my_strchr(s+1, '/');
 
-                /* Find the next colon */
+            /* Find the next colon */
             s = my_strchr(s+1, ':');
 
-                /* If the slash is "nearby", use it */
+            /* If the slash is "nearby", use it */
             if (t && (!s || t < s))
             {
                 int chance = atoi(t+1);
@@ -3209,8 +3205,7 @@ errr parse_a_info(char *buf, header *head)
         int cost;
 
         /* Scan for the values */
-        if (4 != sscanf(buf+2, "%d:%d:%d:%d",
-                &level, &rarity, &wgt, &cost)) return (1);
+        if (4 != sscanf(buf+2, "%d:%d:%d:%d", &level, &rarity, &wgt, &cost)) return (1);
 
         /* Save the values */
         a_ptr->level = level;

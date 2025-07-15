@@ -168,7 +168,7 @@ struct object_kind
     byte chance[4];        /* Allocation chance(s) */
 
     byte level;            /* Level */
-    byte extra;            /* Something */
+    byte unused;           /* Unused */
     byte max_level;        /* Level */
 
     effect_t activation;

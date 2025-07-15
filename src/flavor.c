@@ -2266,7 +2266,7 @@ void object_desc(char *buf, object_type *o_ptr, u32b mode)
     if (object_is_device(o_ptr) && obj_is_identified_fully(o_ptr))
     {
         int  fail = device_calc_fail_rate(o_ptr);
-        strcat(tmp_val2, format("%d%%", (fail + 5)/10));
+        strcat(tmp_val2, format("<color:r>%d%%</color>", (fail + 5)/10));
         if ((statistics_hack) || ((!show_power) && (mode & OD_SHOW_DEVICE_INFO)))
         {
             cptr info = do_device(o_ptr, SPELL_INFO, 0);

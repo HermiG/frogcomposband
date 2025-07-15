@@ -992,7 +992,6 @@ s32b quiver_cost(object_type *o_ptr, int options)
 s32b bag_cost(object_type *o_ptr, int options)
 {
   s32b j, y, q, p;
-  int  pval = 0;
   u32b flgs[OF_ARRAY_SIZE];
   char dbg_msg[512];
   
@@ -1001,7 +1000,7 @@ s32b bag_cost(object_type *o_ptr, int options)
   
   remove_opposite_flags(flgs);
   
-  pval = o_ptr->pval;
+  int pval = o_ptr->pval;
   
   j = MIN(o_ptr->xtra4 * 10, 10 * o_ptr->xtra5 / 10); // value: the smaller of 10g per capacity or 10g per pound carry weight
   if (cost_calc_hook)
@@ -1037,7 +1036,7 @@ s32b bag_cost(object_type *o_ptr, int options)
   /* Abilities */
   q = _abilities_q(flgs);
   if (have_flag(flgs, OF_NO_MAGIC)) q += 7000;
-  if (have_flag(flgs, OF_NO_TELE)) q += 5000;
+  if (have_flag(flgs, OF_NO_TELE))  q += 5000;
   p += q;
   
   if (cost_calc_hook)
@@ -1073,7 +1072,7 @@ s32b bag_cost(object_type *o_ptr, int options)
   /* Other Bonuses */
   y = 0;
   if (have_flag(flgs, OF_SEARCH)) y += 200;
-  if (have_flag(flgs, OF_INFRA)) y += 400;
+  if (have_flag(flgs, OF_INFRA))  y += 400;
   
   if (y != 0)
   {

@@ -1025,7 +1025,7 @@ static void _display_extra(object_type *o_ptr, u32b flgs[OF_ARRAY_SIZE], doc_ptr
         doc_insert(doc, "This quiver and its contents weigh absolutely nothing at all.\n");
         break;
     case EGO_BAG_HOLDING:
-        doc_printf(doc, "This %s stretches space in subtle ways, holding far more than its size would suggest.\n"
+        doc_printf(doc, "This %s stretches space in subtle ways, holding far more than its size would suggest. "
                         "The interior seems larger than the outside - unnervingly so.\n", bag_type_name(o_ptr->sval));
         break;
     case EGO_BAG_PROTECTION:
@@ -1034,18 +1034,18 @@ static void _display_extra(object_type *o_ptr, u32b flgs[OF_ARRAY_SIZE], doc_ptr
                         bag_type_name(o_ptr->sval));
         break;
     case EGO_BAG_ETHEREAL:
-        doc_printf(doc, "This %s barely seems to exist, its form light and shifting.\n"
+        doc_printf(doc, "This %s barely seems to exist, its form light and shifting. "
                         "Items within feel strangely insubstantial, as though part of them rests in some other place.\n",
                         bag_type_name(o_ptr->sval));
         break;
     case EGO_BAG_CLASPED:
-        doc_printf(doc, "Reinforced clasps and clever folds make this %s devilishly hard to open - at least for anyone but you.\n"
+        doc_printf(doc, "Reinforced clasps and clever folds make this %s devilishly hard to open - at least for anyone but you. "
                         "A subtle mechanism guards the bag, locking securely at the slightest tug.\n",
                         bag_type_name(o_ptr->sval));
         break;
     case EGO_BAG_BOTTOMLESS:
         if(o_ptr->sval == SV_BAG_POTION_BELT)
-          doc_insert(doc, "It's compartments twist in strange ways; now and then, a potion turns up you don't remember packing.\n"
+          doc_insert(doc, "It's compartments twist in strange ways; now and then, a potion turns up you don't remember packing. "
                           "You swear this pocket was empty a moment ago...\n");
         if(o_ptr->sval == SV_BAG_SCROLL_CASE)
           doc_insert(doc, "Scrolls shift and shuffle within, as if reordering themselves. Occasionally, one seems to appear where none were before.\n");

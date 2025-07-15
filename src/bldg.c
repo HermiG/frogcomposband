@@ -2256,55 +2256,6 @@ static void refresh_buildings(void)
     paivita = TRUE;
 }
 
-/*
- * Request a quest from the Lord.
- */
-static void castle_quest(void)
-{
-    clear_bldg(4, 18);
-
-    /* Current quest of the building */
-    int quest_id = cave[py][px].special;
-
-    /* Is there a quest available at the building? */
-    if (!quest_id)
-    {
-        put_str("I don't have a quest for you at the moment.", 8, 0);
-        return;
-    }
-
-    quest_ptr quest = quests_get(quest_id);
-
-    if (quest->status == QS_COMPLETED)
-    {
-        if (strpos("Eddies", quest->name)) town_on_visit(TOWN_ZUL);
-        quest_reward(quest);
-        reinit_wilderness = TRUE;
-        refresh_buildings();
-    }
-    else if (quest->status == QS_FAILED)
-    {
-        string_ptr s = quest_get_description(quest);
-        msg_format("<color:R>%s</color> (<color:U>Level %d</color>): %s",
-            quest->name, quest->danger_level, string_buffer(s));
-        string_free(s);
-        quest->status = QS_FAILED_DONE;
-        reinit_wilderness = TRUE;
-        refresh_buildings();
-    }
-    else if (quest->status == QS_TAKEN)
-    {
-        put_str("You have not completed your current quest yet!", 8, 0);
-        put_str("Use Q to check the status of your quest.", 9, 0);
-        put_str("Return when you have completed your quest.", 12, 0);
-    }
-    else if (quest->status == QS_UNTAKEN)
-    {
-        quest_take(quest);
-        reinit_wilderness = TRUE;
-    }
-}
-
 
 /*
  * Progress the quest by one stage
@@ -2315,11 +2266,6 @@ static void castle_quest(void)
  */
 static void quest_progress(int mode)
 {
-  if(mode == 0) {
-    castle_quest();
-    return;
-  }
-  
   clear_bldg(4, 18);
   
   /* Current quest of the building */
@@ -2328,27 +2274,52 @@ static void quest_progress(int mode)
   /* Is there a quest available at the building? */
   if (!quest_id)
   {
-    put_str("Error: no quest.", 8, 0);
+    put_str("I don't have a quest for you at the moment.", 8, 0);
     return;
   }
   
   quest_ptr q = quests_get(quest_id);
   
-  if(mode == 1) {
+  if((mode & 3) == 0) {
+    if (q->status == QS_TAKEN)
+    {
+      put_str("You have not completed your current quest yet!", 8, 0);
+      put_str("Use Q to check the status of your quest.", 9, 0);
+      put_str("Return when you have completed your quest.", 12, 0);
+      return;
+    }
+    
+    if (q->status == QS_COMPLETED)
+    {
+      if (strpos("Eddies", q->name)) town_on_visit(TOWN_ZUL);
+      quest_reward(q);
+    }
+    else if (q->status == QS_FAILED)
+    {
+      string_ptr s = quest_get_description(q);
+      msg_format("<color:R>%s</color> (<color:U>Level %d</color>): %s", q->name, q->danger_level, string_buffer(s));
+      string_free(s);
+      q->status = QS_FAILED_DONE;
+    }
+    else if (q->status == QS_UNTAKEN)
+    {
+      quest_take(q);
+    }
+  } else if((mode & 3) == 1) {
     q->status = q->status == QS_IN_PROGRESS ? QS_TAKEN : QS_IN_PROGRESS;
 
     string_ptr s = quest_get_description(q);
     msg_format("%s", string_buffer(s));
     string_free(s);
     
-  } else if(mode == 2) {
+  } else if((mode & 3) == 2) {
     q->status = q->status == QS_COMPLETED ? QS_TAKEN : QS_COMPLETED;
 
     string_ptr s = quest_get_description(q);
     msg_format("%s", string_buffer(s));
     string_free(s);
     
-  } else if(mode == 3) {
+  } else if((mode & 3) == 3) {
     q->status = q->status == QS_FAILED ? QS_UNTAKEN : QS_FAILED;
       
       string_ptr s = quest_get_description(q);
@@ -2357,7 +2328,7 @@ static void quest_progress(int mode)
   }
   
   reinit_wilderness = TRUE;
-  refresh_buildings();
+  if(!(mode & 4)) refresh_buildings();
 }
 
 

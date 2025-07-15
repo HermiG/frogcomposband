@@ -1630,7 +1630,7 @@ void quests_on_leave(void)
         }
         else
         {
-            q->status = QS_TAKEN;
+            //q->status = QS_TAKEN; // Allow quest to retain the QS_IN_PROGRESS flag when leaving a map
             _remove_questors();
         }
     }

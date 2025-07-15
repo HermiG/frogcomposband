@@ -2307,6 +2307,61 @@ static void castle_quest(void)
 
 
 /*
+ * Progress the quest by one stage
+ * mode: 0 default, untaken => taken or completed/failed => finished/failed_done
+ * mode: 1 progress, sets quest to InProgress (to Taken if already InProgress)
+ * mode: 2 complete, sets quest to Completed  (to Taken if already Completed)
+ * mode: 3 fail,     sets quest to Failed   (to Untaken if already Failed)
+ */
+static void quest_progress(int mode)
+{
+  if(mode == 0) {
+    castle_quest();
+    return;
+  }
+  
+  clear_bldg(4, 18);
+  
+  /* Current quest of the building */
+  int quest_id = cave[py][px].special;
+  
+  /* Is there a quest available at the building? */
+  if (!quest_id)
+  {
+    put_str("Error: no quest.", 8, 0);
+    return;
+  }
+  
+  quest_ptr q = quests_get(quest_id);
+  
+  if(mode == 1) {
+    q->status = q->status == QS_IN_PROGRESS ? QS_TAKEN : QS_IN_PROGRESS;
+
+    string_ptr s = quest_get_description(q);
+    msg_format("%s", string_buffer(s));
+    string_free(s);
+    
+  } else if(mode == 2) {
+    q->status = q->status == QS_COMPLETED ? QS_TAKEN : QS_COMPLETED;
+
+    string_ptr s = quest_get_description(q);
+    msg_format("%s", string_buffer(s));
+    string_free(s);
+    
+  } else if(mode == 3) {
+    q->status = q->status == QS_FAILED ? QS_UNTAKEN : QS_FAILED;
+      
+      string_ptr s = quest_get_description(q);
+      msg_format("%s", string_buffer(s));
+      string_free(s);
+  }
+  
+  reinit_wilderness = TRUE;
+  refresh_buildings();
+}
+
+
+/*
  * Display town history
  */
 static void town_history(void)
@@ -3903,7 +3958,7 @@ static void bldg_process_command(building_type *bldg, int i)
         /*race_legends();*/
         break;
     case BACT_QUEST:
-        castle_quest();
+        quest_progress((bldg->action_flags[i] >> 2) & 3);
         break;
     case BACT_KING_LEGENDS:
     case BACT_ARENA_LEGENDS:

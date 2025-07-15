@@ -150,11 +150,9 @@ void quest_complete(quest_ptr q, point_t p)
 
     virtue_add(VIRTUE_VALOUR, 2);
     gain_fame(randint1(2));
-    if (q->id == QUEST_OBERON || q->id == QUEST_SERPENT)
-        p_ptr->fame += 50;
+    if (q->id == QUEST_OBERON || q->id == QUEST_SERPENT) p_ptr->fame += 50;
 
-    if (!(q->flags & QF_NO_MSG))
-        cmsg_print(TERM_L_BLUE, "You just completed your quest!");
+    if (!(q->flags & QF_NO_MSG)) cmsg_print(TERM_L_BLUE, "You just completed your quest!");
     msg_add_tiny_screenshot(50, 24);
 
     /* create stairs before the reward */

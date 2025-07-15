@@ -59,8 +59,7 @@ string_ptr string_copy(string_ptr str)
 
 string_ptr string_copy_s(const char *val)
 {
-    if (!val)
-        val = "";
+    if (!val) val = "";
     return string_copy_sn(val, strlen(val));
 }
 
@@ -100,20 +99,18 @@ void string_append_c(string_ptr str, char ch)
 
 void string_append_s(string_ptr str, const char *val)
 {
-    if (!val)
-        return;
+    if (!val) return;
 
     string_append_sn(str, val, strlen(val));
 }
 
 void string_append_sn(string_ptr str, const char *val, int cb)
 {
-    int cbl;  /* left += right */
+    /* left += right */
 
-    if (!cb)
-        return;
+    if (!cb) return;
 
-    cbl = str->len;
+    int cbl = str->len;
 
     string_grow(str, cbl + cb + 1);
     memcpy(str->buf + cbl, val, cb);
@@ -129,8 +126,7 @@ void string_read_line(string_ptr str, FILE *fp)
         int c = fgetc(fp);
         if (c == EOF) break;
         if (c == '\n') break;
-        if (str->len >= str->size - 1)
-            string_grow(str, str->size * 2);
+        if (str->len >= str->size - 1) string_grow(str, str->size * 2);
         str->buf[str->len++] = c;
     }
     str->buf[str->len] = '\0';
@@ -150,8 +146,7 @@ void string_append_file(string_ptr str, FILE *fp)
         int c = fgetc(fp);
         if (c == EOF) break;
         if (c == '\r') continue; /* \r\n -> \n */
-        if (str->len >= str->size - 1)
-            string_grow(str, str->size * 2);
+        if (str->len >= str->size - 1) string_grow(str, str->size * 2);
         str->buf[str->len++] = c;
     }
     str->buf[str->len] = '\0';
@@ -159,9 +154,7 @@ void string_append_file(string_ptr str, FILE *fp)
 
 void string_write_file(string_ptr str, FILE *fp)
 {
-    int i;
-    for (i = 0; i < str->len; i++)
-        fputc(str->buf[i], fp);
+    for (int i = 0; i < str->len; i++) fputc(str->buf[i], fp);
 }
 
 int string_compare(const string_ptr left, const string_ptr right)
@@ -222,8 +215,7 @@ void string_grow(string_ptr str, int size)
         char *buf;
 
         new_size = str->size * 2;
-        if (new_size < size)
-            new_size = size;
+        if (new_size < size) new_size = size;
 
         buf = malloc(new_size);
         memcpy(buf, str->buf, str->size);
@@ -245,8 +237,7 @@ int string_hash_imp(const char *str) /* djb2 hash algorithm */
     int hash = 5381;
     int c;
 
-    while ((c = *str++))
-        hash = ((hash << 5) + hash) + c; /* hash * 33 + c */
+    while ((c = *str++)) hash = ((hash << 5) + hash) + c; /* hash * 33 + c */
 
     return hash;
 }
@@ -270,8 +261,7 @@ void string_shrink(string_ptr str, int size)
         char *buf;
 
         /* Never shrink below the current strlen() */
-        if (size < cb)
-            size = cb;
+        if (size < cb) size = cb;
 
         buf = malloc(size);
         memcpy(buf, str->buf, cb);
@@ -284,20 +274,14 @@ void string_shrink(string_ptr str, int size)
 
 void string_strip(string_ptr str)
 {
-    int i, j, k;
-    for (i = 0; i < str->len; i++)
-    {
-        if (str->buf[i] != ' ') break;
-    }
-    for (j = str->len - 1; j > i; j--)
-    {
-        if (str->buf[j] != ' ') break;
-    }
-    if (0 < i || j < str->len - 1)
+    int i, j;
+    for (i = 0           ; i < str->len && str->buf[i] == ' '; i++) {}
+    for (j = str->len - 1; j > i        && str->buf[j] == ' '; j--) {}
+    
+    if (i > 0 || j < str->len - 1)
     {
         str->len = j - i + 1;
-        for (k = 0; k < str->len; k++)
-            str->buf[k] = str->buf[i+k];
+        for (int k = 0; k < str->len; k++) str->buf[k] = str->buf[i+k];
         str->buf[str->len] = '\0';
     }
 }
@@ -315,9 +299,7 @@ int string_length(string_ptr str)
 
 const char *string_buffer(string_ptr str)
 {
-    if (str)
-        return str->buf;
-    return NULL;
+  return str ? str->buf : NULL;
 }
 
 char string_get(string_ptr str, int pos)
@@ -328,10 +310,7 @@ char string_get(string_ptr str, int pos)
 
 char string_get_last(string_ptr str)
 {
-    char c = '\0';
-    if (str->len)
-        c = str->buf[str->len - 1];
-    return c;
+  return str->len ? str->buf[str->len - 1] : '\0';
 }
 
 int string_chr(string_ptr str, int start, char ch)
@@ -339,8 +318,7 @@ int string_chr(string_ptr str, int start, char ch)
     if (start < str->len)
     {
         const char *pos = strchr(str->buf + start, ch);
-        if (pos)
-            return pos - str->buf;
+        if (pos) return pos - str->buf;
     }
     return -1;
 }
@@ -366,13 +344,8 @@ int string_last_chr(string_ptr str, char ch)
     for (;;)
     {
         pos = string_chr(str, pos, ch);
-        if (pos >= 0)
-        {
-            result = pos;
-            pos++;
-        }
-        else
-            break;
+        if (pos >= 0) result = pos++;
+        else break;
     }
     return result;
 }
@@ -383,10 +356,7 @@ substring_t string_left(string_ptr str, int len)
 
     result.str = str;
     result.pos = 0;
-    if (len <= str->len)
-        result.len = len;
-    else
-        result.len = str->len;
+    result.len = MIN(str->len, len);
 
     return result;
 }
@@ -430,7 +400,6 @@ vec_ptr string_split(string_ptr str, char sep)
     while (!done && *pos)
     {
         const char *next = strchr(pos, sep);
-        string_ptr  s;
 
         if (!next && *pos)
         {
@@ -439,7 +408,7 @@ vec_ptr string_split(string_ptr str, char sep)
             done = 1;
         }
 
-        s = string_copy_sn(pos, next - pos);
+        string_ptr s = string_copy_sn(pos, next - pos);
         vec_add(v, s);
         pos = next + 1;
     }
@@ -448,14 +417,12 @@ vec_ptr string_split(string_ptr str, char sep)
 
 string_ptr string_join(vec_ptr vec, char sep)
 {
-    int        i;
     string_ptr result = string_alloc();
 
-    for (i = 0; i < vec_length(vec); i++)
+    for (int i = 0; i < vec_length(vec); i++)
     {
         string_ptr s = vec_get(vec, i);
-        if (i > 0)
-            string_append_c(result, sep);
+        if (i > 0) string_append_c(result, sep);
         string_append(result, s);
     }
     return result;

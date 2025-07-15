@@ -1114,7 +1114,7 @@ void object_desc(char *buf, object_type *o_ptr, u32b mode)
             {
                 if (!o_ptr->pval)
                 {
-                    modstr = " (empty)";
+                    modstr = "(empty)";
                 }
                 else
                 {
@@ -1122,13 +1122,13 @@ void object_desc(char *buf, object_type *o_ptr, u32b mode)
 
                     if (!(r_ptr->flags1 & RF1_UNIQUE))
                     {
-                        sprintf(tmp_val2, " (%s%s)", (is_a_vowel(*t) ? "an " : "a "), t);
+                        sprintf(tmp_val2, "(%s%s)", (is_a_vowel(*t) ? "an " : "a "), t);
 
                         modstr = tmp_val2;
                     }
                     else
                     {
-                        sprintf(tmp_val2, " (%s)", t);
+                        sprintf(tmp_val2, "(%s)", t);
 
                         modstr = tmp_val2;
                     }
@@ -2239,14 +2239,14 @@ void object_desc(char *buf, object_type *o_ptr, u32b mode)
         if ((o_ptr->tval == TV_CAPTURE) && (o_ptr->pval > 0))
         { /* Special case */
             if (mode & OD_COLOR_CODED)
-                sprintf(buf, "<color:B>A:Release Pet</color>");
+                sprintf(buf, "<color:T>A:Release Pet</color>");
             else
                 sprintf(buf, "A:Release Pet");
         }
         else
         {            
             if (mode & OD_COLOR_CODED)
-                sprintf(buf, "<color:B>A:%s</color>", do_effect(&e, SPELL_NAME, 0));
+                sprintf(buf, "<color:T>A:%s</color>", do_effect(&e, SPELL_NAME, 0));
             else
                 sprintf(buf, "A:%s", do_effect(&e, SPELL_NAME, 0));
         }

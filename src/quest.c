@@ -451,16 +451,15 @@ static void _generate(room_ptr room)
 
     /* Start with perm walls */
     for (y = 0; y < cur_hgt; y++)
-    {
         for (x = 0; x < cur_wid; x++)
-            cave[y][x].feat = feat_permanent;
-    }
-
+          cave[y][x].feat = feat_permanent;
+    
     /* generate the level */
     get_mon_num_prep(get_monster_hook(), NULL);
     build_room_template_aux(room, xform, NULL);
     transform_free(xform);
 }
+
 void quest_generate(quest_ptr q)
 {
     room_ptr room;
@@ -1213,8 +1212,11 @@ void quests_on_generate(int dungeon, int level)
 	quest_ptr q = _find_quest(dungeon, level);
 
 	/* attempt to handle a quest crash */
-	if ((_current > 0) && (!q || !q->id)) { int ongelma = _current;
-		_current = 0; q = quests_get(ongelma); q->status = QS_TAKEN;
+	if ((_current > 0) && (!q || !q->id)) {
+    int ongelma = _current;
+		_current = 0;
+    q = quests_get(ongelma);
+    q->status = QS_TAKEN;
 	}
 
     if ((!_current) && (!q) && (p_ptr->pclass == CLASS_DISCIPLE))
@@ -1623,8 +1625,7 @@ void quests_on_leave(void)
         if (fail)
         {
             quest_fail(q);
-            if (q->goal == QG_KILL_MON)
-                r_info[q->goal_idx].flagsx &= ~RFX_QUESTOR;
+            if (q->goal == QG_KILL_MON) r_info[q->goal_idx].flagsx &= ~RFX_QUESTOR;
             prepare_change_floor_mode(CFM_NO_RETURN);
         }
         else
@@ -1634,8 +1635,7 @@ void quests_on_leave(void)
         }
     }
     /* Hack: Return to surface */
-    if ((q->flags & QF_GENERATE) && !q->dungeon)
-        dun_level = 0;
+    if ((q->flags & QF_GENERATE) && !q->dungeon) dun_level = 0;
     _current = 0;
 }
 

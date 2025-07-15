@@ -54,18 +54,16 @@ void room_free(room_ptr room)
  ***********************************************************************/
 point_t _transform(point_t p, int which)
 {
-    int i;
     /* transform by
      * [1] rotating counter clockwise: (x,y) -> (-y,x) */
-    for (i = 0; i < (which & 03); i++)
+    for (int i = 0; i < (which & 3); i++)
     {
         int tmp = p.x;
         p.x = -p.y;
         p.y = tmp;
     }
     /* [2] flipping: (x,y) -> (-x,y) */
-    if (which & 04)
-        p.x = -p.x;
+    if (which & 4) p.x = -p.x;
 
     return p;
 }
@@ -75,12 +73,11 @@ transform_ptr transform_alloc(int which, rect_t src)
     transform_ptr result = malloc(sizeof(transform_t));
 
     /* avoid SIGSEGV */
-    if (src.cx > MAX_HGT - 2)
-        which &= ~01;
+    if (src.cx > MAX_HGT - 2) which &= ~1;
 
     result->which = which;
     result->src = src;
-    if (which & 01) /* odd number of rotations: (w,h) -> (h,w) */
+    if (which & 1) /* odd number of rotations: (w,h) -> (h,w) */
         result->dest = rect(0, 0, src.cy, src.cx);
     else
         result->dest = rect(0, 0, src.cx, src.cy);
@@ -106,21 +103,17 @@ transform_ptr transform_alloc_random(rect_t src, point_t max_size)
       && src.cy*100/src.cx > 70   /* make sure odd rotations look ok */
       && one_in_(2) )
     {
-        which |= 01;
+        which |= 1;
     }
-    if (one_in_(2))
-        which |= 02;
+    if (one_in_(2)) which |= 2;
     /* how many flips? (0 .. 1) */
-    if (one_in_(2))
-        which |= 04;
+    if (one_in_(2)) which |= 4;
     return transform_alloc(which, src);
 }
 
 transform_ptr transform_alloc_room(room_ptr room, point_t max_size)
 {
-    if (room->flags & ROOM_NO_ROTATE)
-        return transform_alloc(0, rect(0, 0, room->width, room->height));
-
+    if (room->flags & ROOM_NO_ROTATE) return transform_alloc(0, rect(0, 0, room->width, room->height));
     return transform_alloc_random(rect(0, 0, room->width, room->height), max_size);
 }
 
@@ -1657,8 +1650,7 @@ static bool _obj_kind_hook(int k_idx)
      * found. For monsters with DROP_GOOD, this means they will roll a new object until
      * they get a non-book class of objects. For Quests and Room templates, OBJ(BOOK, DEPTH+5),
      * for example, will yield no object at all which is probably a bad thing. */
-    if (_obj_kind_is_good && !kind_is_good(k_idx) && _obj_kind_hack != OBJ_TYPE_HI_BOOK)
-        return FALSE;
+    if (_obj_kind_is_good && !kind_is_good(k_idx) && _obj_kind_hack != OBJ_TYPE_HI_BOOK) return FALSE;
 
     switch (_obj_kind_hack)
     {
@@ -1949,16 +1941,12 @@ obj_ptr room_grid_make_obj(room_grid_ptr grid, int level)
 
         if (grid->flags & ROOM_GRID_OBJ_TYPE)
         {
-            if (grid->object == TV_JUNK || grid->object == TV_SKELETON)
-                object_level = 1;
+            if (grid->object == TV_JUNK || grid->object == TV_SKELETON) object_level = 1;
 
             /* rings and amulets are L10 objects ... make sure quest rewards generate */
-            if (grid->object == TV_RING || grid->object == TV_AMULET)
-                object_level = MAX(object_level, 10);
+            if (grid->object == TV_RING || grid->object == TV_AMULET) object_level = MAX(object_level, 10);
 
-            _obj_kind_is_good = FALSE;
-            if (grid->object_level > 0)
-                _obj_kind_is_good = TRUE;
+            _obj_kind_is_good = (grid->object_level > 0);
             _obj_kind_hack = grid->object;
             get_obj_num_hook = _obj_kind_hook;
             get_obj_num_prep();
@@ -1985,21 +1973,14 @@ obj_ptr room_grid_make_obj(room_grid_ptr grid, int level)
         {
             int mode = 0;
 
-            if (grid->flags & ROOM_GRID_ART_RANDOM)
-            {
-                mode = AM_GOOD | AM_GREAT | AM_SPECIAL | AM_NO_FIXED_ART;
-            }
-            else if (grid->flags & ROOM_GRID_EGO_RANDOM)
-            {
-                mode = AM_GOOD | AM_GREAT | AM_NO_FIXED_ART;
-            }
+            if      (grid->flags & ROOM_GRID_ART_RANDOM) mode = AM_GOOD | AM_GREAT | AM_SPECIAL | AM_NO_FIXED_ART;
+            else if (grid->flags & ROOM_GRID_EGO_RANDOM) mode = AM_GOOD | AM_GREAT | AM_NO_FIXED_ART;
             else if (grid->flags & ROOM_GRID_OBJ_EGO)
             {
                 mode |= AM_GOOD | AM_GREAT | AM_FORCE_EGO;
                 apply_magic_ego = grid->extra;
             }
-            else if (grid->object_level)
-                mode = AM_GOOD;
+            else if (grid->object_level) mode = AM_GOOD;
 
             object_prep(&forge, k_idx);
             if (object_is_device(&forge) && (grid->flags & ROOM_GRID_OBJ_EFFECT))
@@ -2033,7 +2014,7 @@ obj_ptr room_grid_make_obj(room_grid_ptr grid, int level)
                 apply_magic(&forge, object_level, mode);
                 if (grid->extra2 > 0)
                 {
-                    if ((forge.tval == TV_STATUE) || (forge.tval == TV_FIGURINE))
+                    if (forge.tval == TV_STATUE || forge.tval == TV_FIGURINE)
                     {
                         forge.pval = grid->extra2;
                     }
@@ -2175,8 +2156,7 @@ static void _apply_room_grid_obj(point_t p, room_grid_ptr grid, room_ptr room)
     /* see if tile was trapped in _apply_room_grid_feat */
     if (!cave_drop_bold(p.y, p.x)) return;
 
-    if (0 < grid->obj_pct && randint1(100) > grid->obj_pct)
-        return;
+    if (0 < grid->obj_pct && randint1(100) > grid->obj_pct) return;
 
     if (room->type == ROOM_VAULT) room_object_origin = ORIGIN_VAULT;
     else if (room->type == ROOM_QUEST) room_object_origin = ORIGIN_QUEST;
@@ -2255,8 +2235,7 @@ static bool _init_formation(room_ptr room, point_t p)
     for (i = 0; i < _MAX_FORMATION; i++)
         _formation_monsters[i] = 0;
 
-    if (!grid) 
-        return FALSE;
+    if (!grid) return FALSE;
 
     monster_level = base_level + grid->monster_level;
 

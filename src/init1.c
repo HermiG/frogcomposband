@@ -1487,19 +1487,16 @@ static _object_type_t _object_types[] =
 
 static int _lookup_ego_type(int object)
 {
-    int i;
-    for (i = 0; ; i++)
+    for (int i = 0; ; i++)
     {
         if (!_object_types[i].name) return EGO_TYPE_NONE;
-        if (_object_types[i].type == object)
-            return _object_types[i].ego_type;
+        if (_object_types[i].type == object) return _object_types[i].ego_type;
     }
 }
 
 static int _lookup_ego(cptr name, int type, int options)
 {
-    int i;
-    for (i = 1; i < max_e_idx; i++)
+    for (int i = 1; i < max_e_idx; i++)
     {
         ego_type *e_ptr = &e_info[i];
         char      buf[255];
@@ -1518,8 +1515,7 @@ static int _lookup_ego(cptr name, int type, int options)
 
 static int _lookup_kind(char *arg, int options)
 {
-    int i;
-    for (i = 1; i < max_k_idx; i++)
+    for (int i = 1; i < max_k_idx; i++)
     {
         object_kind *k_ptr = &k_info[i];
         char         buf[255];
@@ -1592,12 +1588,12 @@ static errr _parse_room_grid_object(char **args, int arg_ct, room_grid_ptr grid,
     {
         char *flags[10];
         int   flag_ct = z_string_split(args[1], flags, 10, "|");
-        int   i, n, nn, nnn;
+        int   n, nn, nnn;
         char tyyppi[80] = "";
 
-        for (i = 0; i < flag_ct; i++)
+        for (int i = 0; i < flag_ct; i++)
         {
-            char* flag = flags[i];
+            char *flag = flags[i];
             if (sscanf(flag, "DEPTH+%d", &n) == 1)
             {
                 grid->object_level = n;
@@ -1631,22 +1627,21 @@ static errr _parse_room_grid_object(char **args, int arg_ct, room_grid_ptr grid,
                  * and statues (for marking the monster), and devices and
                  * statues are never generated in piles */
                 grid->extra2 = n;
-//                grid->flags |= ROOM_GRID_EGO;
+                //grid->flags |= ROOM_GRID_EGO;
             }
             else if (streq(flag, "TYPE=*"))
             {
                 grid->extra2 = -1;
-//                grid->flags |= ROOM_GRID_EGO_RANDOM;
+                //grid->flags |= ROOM_GRID_EGO_RANDOM;
             }
             else if (sscanf(flag, "TYPE=%s", tyyppi) == 1)
             {
-                unsigned int j;
-                for (j = 0; j < strlen(tyyppi); j++)
+                for (unsigned int j = 0; j < strlen(tyyppi); j++)
                 {
                     tyyppi[j] = tolower(tyyppi[j]);
                 }
                 grid->extra2 = _lookup_ego(tyyppi, 0, options);
-//                grid->flags |= ROOM_GRID_EGO;
+                //grid->flags |= ROOM_GRID_EGO;
             }
             else if (sscanf(flag, "%d%%", &n) == 1)
             {
@@ -1667,7 +1662,6 @@ static errr _parse_room_grid_object(char **args, int arg_ct, room_grid_ptr grid,
         }
         else
         {
-            int i;
             /* OBJ(WAND_ROCKET) ... note: OBJ(WAND) will fall thru to normal type handling */
             if (prefix(args[0], "WAND_"))
                 return _parse_effect(TV_WAND, args[0] + strlen("WAND_"), grid, options);
@@ -1676,7 +1670,7 @@ static errr _parse_room_grid_object(char **args, int arg_ct, room_grid_ptr grid,
             if (prefix(args[0], "STAFF_"))
                 return _parse_effect(TV_STAFF, args[0] + strlen("STAFF_"), grid, options);
             /* OBJ(SWORD) */
-            for (i = 0; ; i++)
+            for (int i = 0; ; i++)
             {
                 if (!_object_types[i].name) break;
                 if (streq(args[0], _object_types[i].name))

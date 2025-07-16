@@ -5761,9 +5761,6 @@ enum ego_type_e {
     EGO_DEVICE_HOLDING = 255,
     EGO_DEVICE_QUICKNESS,
 
-    /* Special */
-    EGO_SPECIAL_BLASTED = 260,
-
     /* Quivers */
     EGO_QUIVER_HOLDING = 265,
     EGO_QUIVER_PROTECTION,
@@ -5776,6 +5773,9 @@ enum ego_type_e {
     EGO_BAG_ETHEREAL,
     EGO_BAG_CLASPED,
     EGO_BAG_BOTTOMLESS,
+
+    /* Special */
+    EGO_SPECIAL_BLASTED = 999,
 };
 
 #define EGO_DEVICE_START  EGO_DEVICE_RESISTANCE

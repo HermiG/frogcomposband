@@ -1106,15 +1106,8 @@ T:DEVICE
 W:60:*:16
 F:SPEED
 
-#####################
-### Special Items ###
-#####################
-
-N:260:(Blasted)
-T:SPECIAL
-
 ###############
-### Quiver  ###
+### Quivers ###
 ###############
 N:265:of Holding
 T:QUIVER
@@ -1159,3 +1152,14 @@ N:289:& Bottomless Bag~
 T:BAG
 W:50:*:4
 F:FULL_NAME
+
+
+
+
+
+#####################
+### Special Items ###
+#####################
+
+N:999:(Blasted)
+T:SPECIAL

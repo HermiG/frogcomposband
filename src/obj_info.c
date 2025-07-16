@@ -1995,6 +1995,7 @@ void ego_display_doc(ego_type *e_ptr, doc_ptr doc)
     remove_flag(flgs, OF_HIDE_TYPE);
     remove_flag(flgs, OF_SHOW_MODS);
     remove_flag(flgs, OF_FULL_NAME);
+    remove_flag(flgs, OF_PREFIX_NAME);
 
     if (_have_flag(flgs))
     {
@@ -2021,6 +2022,7 @@ void ego_display_doc(ego_type *e_ptr, doc_ptr doc)
     remove_flag(flgs, OF_HIDE_TYPE);
     remove_flag(flgs, OF_SHOW_MODS);
     remove_flag(flgs, OF_FULL_NAME);
+    remove_flag(flgs, OF_PREFIX_NAME);
 
     if (_have_flag(flgs))
     {

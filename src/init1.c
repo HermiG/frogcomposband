@@ -567,6 +567,7 @@ static cptr k_info_flags[OF_COUNT] =
     "HIDE_TYPE",
     "SHOW_MODS",
     "FULL_NAME",
+    "PREFIX_NAME",
     "FIXED_FLAVOR",
     "STR",
     "INT",
@@ -1760,14 +1761,17 @@ int parse_lookup_artifact(cptr name, int options)
             _prep_name(buf, a_name + a_ptr->name);
         else /* ART(bow of bard) matches "long bow of bard" */
         {    /* not "black arrow of bard" or "soft leather boots of bard" */
+            bool         prefix = have_flag(a_ptr->flags, OF_PREFIX_NAME);
             int          k_idx = lookup_kind(a_ptr->tval, a_ptr->sval);
             object_kind *k_ptr = &k_info[k_idx];
+            
             strcpy(buf, "^");
-            _prep_name_aux(buf + strlen(buf), k_name + k_ptr->name);
+            _prep_name_aux(buf + strlen(buf), prefix ? a_name + a_ptr->name : k_name + k_ptr->name);
             strcat(buf, " ");
-            _prep_name_aux(buf + strlen(buf), a_name + a_ptr->name);
+            _prep_name_aux(buf + strlen(buf), prefix ? k_name + k_ptr->name : a_name + a_ptr->name);
             strcat(buf, "$");
         }
+
         if (strstr(buf, name))
         {
             if (trace_doc)

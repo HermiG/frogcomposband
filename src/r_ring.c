@@ -165,7 +165,7 @@ static bool _skip_flag(int which)
     case OF_BLESSED:
     case OF_KILL_ANIMAL:
     case OF_KILL_EVIL:
-	case OF_KILL_LIVING:
+    case OF_KILL_LIVING:
     case OF_KILL_UNDEAD:
     case OF_KILL_DEMON:
     case OF_KILL_ORC:
@@ -173,11 +173,12 @@ static bool _skip_flag(int which)
     case OF_KILL_GIANT:
     case OF_KILL_HUMAN:
     case OF_FULL_NAME:
+    case OF_PREFIX_NAME:
     case OF_FIXED_FLAVOR:
     case OF_BRAND_WILD:
     case OF_BRAND_ORDER:
     case OF_DARKNESS:
-	case OF_KILL_GOOD:
+    case OF_KILL_GOOD:
     case OF_SLAY_GOOD:
     case OF_DEC_STR:
     case OF_DEC_INT:

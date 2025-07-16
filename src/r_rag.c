@@ -85,6 +85,7 @@ static bool _skip_flag(int which)
     case OF_IGNORE_COLD:
     case OF_ACTIVATE:
     case OF_FULL_NAME:
+    case OF_PREFIX_NAME:
     case OF_FIXED_FLAVOR:
     case OF_PLURAL:
         return TRUE;

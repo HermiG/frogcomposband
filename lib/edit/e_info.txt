@@ -1150,9 +1150,10 @@ N:287:of Weightlessness
 T:BAG
 W:50:*:4
 
-N:288:of Retention
+N:288:Clasped
 T:BAG
-W:50:*:4
+W:5:*:1
+F:PREFIX_NAME
 
 N:289:& Bottomless Bag~
 T:BAG

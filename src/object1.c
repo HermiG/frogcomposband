@@ -417,6 +417,7 @@ static void _obj_flags_purify(u32b flgs[OF_ARRAY_SIZE])
     remove_flag(flgs, OF_HIDE_TYPE);
     remove_flag(flgs, OF_SHOW_MODS);
     remove_flag(flgs, OF_FULL_NAME);
+    remove_flag(flgs, OF_PREFIX_NAME);
     remove_flag(flgs, OF_FIXED_FLAVOR);
 }
 

@@ -2857,6 +2857,7 @@ enum obj_flags_e {
     OF_HIDE_TYPE = 0,  /* By design, the 0 flag is useless. cf The Weaponsmith and object_type.xtra3 */
     OF_SHOW_MODS,
     OF_FULL_NAME,
+    OF_PREFIX_NAME,
     OF_FIXED_FLAVOR,
 
     /* Stats (Code often assumes order here: e.g. OF_STR + loop_variable) */

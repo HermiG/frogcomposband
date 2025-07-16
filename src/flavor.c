@@ -1504,6 +1504,58 @@ void object_desc(char *buf, object_type *o_ptr, u32b mode)
         else basenm = kindname;
     }
 
+
+    char mod_prefix_str[MAX_NLEN];
+    t = mod_prefix_str;
+    if (known && !have_flag(flgs, OF_FULL_NAME) && have_flag(flgs, OF_PREFIX_NAME))
+    {
+      if (o_ptr->art_name) // Is it a new random artifact?
+      {
+        if (o_ptr->art_name == 1) /* Out-of-room emergency quark */
+        {
+          char tmpbuf[20] = "'Nameless Thing' ";
+          t = object_desc_str(t, tmpbuf);
+        }
+        else
+        {
+          t = object_desc_str(t, quark_str(o_ptr->art_name));
+          t = object_desc_chr(t, ' ');
+        }
+      }
+      
+      /* Grab any artifact name */
+      else if (object_is_fixed_artifact(o_ptr))
+      {
+        artifact_type *a_ptr = &a_info[o_ptr->name1];
+        
+        t = object_desc_str(t, a_name + a_ptr->name);
+        t = object_desc_chr(t, ' ');
+      }
+      
+      /* Grab any ego-item name */
+      else
+      {
+        if (object_is_ego(o_ptr))
+        {
+          ego_type *e_ptr = &e_info[o_ptr->name2];
+          
+          t = object_desc_str(t, e_name + e_ptr->name);
+          t = object_desc_chr(t, ' ');
+        }
+        
+        if (o_ptr->inscription && my_strchr(quark_str(o_ptr->inscription), '#'))
+        {
+          /* Find the '#' */
+          cptr str = my_strchr(quark_str(o_ptr->inscription), '#');
+          
+          /* Add the false name */
+          t = object_desc_str(t, &str[1]);
+          t = object_desc_chr(t, ' ');
+        }
+      }
+    }
+    *t = '\0';
+  
     /* Start dumping the result */
     t = tmp_val;
 
@@ -1565,6 +1617,7 @@ void object_desc(char *buf, object_type *o_ptr, u32b mode)
             case '%': vowel = is_a_vowel(*kindname); break;
             default:  vowel = is_a_vowel(*s); break;
             }
+            if (mod_prefix_str[0]) vowel = is_a_vowel(mod_prefix_str[0]);
 
             if (vowel)
             {
@@ -1616,6 +1669,8 @@ void object_desc(char *buf, object_type *o_ptr, u32b mode)
             /* Nothing */
         }
     }
+
+    if (mod_prefix_str[0]) t = object_desc_str(t, mod_prefix_str);
 
     /* Copy the string */
     for (s0 = NULL; *s || s0; )
@@ -1683,7 +1738,7 @@ void object_desc(char *buf, object_type *o_ptr, u32b mode)
     }
 
     /* Hack -- Append "Artifact" or "Special" names */
-    if (known && !have_flag(flgs, OF_FULL_NAME))
+    if (known && !have_flag(flgs, OF_FULL_NAME) && !have_flag(flgs, OF_PREFIX_NAME))
     {
         /* Is it a new random artifact ? */
         if (o_ptr->art_name)

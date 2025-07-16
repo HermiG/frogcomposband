@@ -3073,24 +3073,24 @@ enum obj_flags_e {
 
     /* Mana recovery */
     OF_REGEN_MANA,
-  
-  /* Bag effects */
-  OF_HOLDING,      // Extra capacity
-  OF_PROTECTION,   // Protects contents
-  OF_ETHEREAL,     // Reduced carry weight for contents
-  OF_BULKY,        // Increased carry weight for contents {cursed}
-  OF_SECURE,       // Thievery protection
-  OF_AVARICE,      // Thievery vulnerability {cursed}
-  OF_LEAKY,        // Drops items randomly {cursed}
-  
-  /* Potion Belts and Scroll Cases */
-  OF_CONSERVATION, // Consumables sometimes aren't
-  OF_BOTTOMLESS,   // Generates random items
-  OF_ORGANIZED,    // Faster access (energy_use reduced)
-  OF_TANGLED,      // Slower access (energy_use increased) {cursed}
+
+    /* Bag effects */
+    OF_HOLDING,      // Extra capacity
+    OF_PROTECTION,   // Protects contents
+    OF_ETHEREAL,     // Reduced carry weight for contents
+    OF_BULKY,        // Increased carry weight for contents {cursed}
+    OF_SECURE,       // Thievery protection
+    OF_AVARICE,      // Thievery vulnerability {cursed}
+    OF_LEAKY,        // Drops items randomly {cursed}
+
+    /* Potion Belts and Scroll Cases */
+    OF_CONSERVATION, // Consumables sometimes aren't
+    OF_BOTTOMLESS,   // Generates random items
+    OF_ORGANIZED,    // Faster access (energy_use reduced)
+    OF_TANGLED,      // Slower access (energy_use increased) {cursed}
 
     /* A few places loop from 0 <= i < OF_COUNT ... (init1, race_sword and race_ring) */
-    OF_COUNT, /* currently 180 */
+    OF_COUNT, /* currently 180+ */
 };
 #define OF_RES_START OF_RES_ACID
 #define OF_RES_END OF_RES_FEAR
@@ -3107,7 +3107,7 @@ enum obj_flags_e {
 
 /* Object Flags for Generation (OFG_*) */
 #define OFG_INSTA_ART           0x00000001     /* Item must be an artifact */
-#define OFG_QUESTITEM           0x00000002     /* quest level item -KMW- */
+#define OFG_QUESTITEM           0x00000002     /* Quest level item -KMW- */
 #define OFG_XTRA_POWER          0x00000004     /* Extra power */
 #define OFG_ONE_SUSTAIN         0x00000008     /* One sustain */
 #define OFG_XTRA_RES_OR_POWER   0x00000010     /* Extra resistance or power */
@@ -3119,9 +3119,9 @@ enum obj_flags_e {
 #define OFG_CURSED              0x00000400     /* Item is Cursed */
 #define OFG_HEAVY_CURSE         0x00000800     /* Item is Heavily Cursed */
 #define OFG_PERMA_CURSE         0x00001000     /* Item is Perma Cursed */
-#define OFG_RANDOM_CURSE0       0x00002000     /* Item is Random Cursed */
-#define OFG_RANDOM_CURSE1       0x00004000     /* Item is Random Cursed */
-#define OFG_RANDOM_CURSE2       0x00008000     /* Item is Random Cursed */
+#define OFG_RANDOM_CURSE0       0x00002000     /* Item is Random Cursed (power 0) */
+#define OFG_RANDOM_CURSE1       0x00004000     /* Item is Random Cursed (power 1) */
+#define OFG_RANDOM_CURSE2       0x00008000     /* Item is Random Cursed (power 2) */
 #define OFG_AWARE               0x00010000
 #define OFG_TOWN                0x00020000     /* Item is allowed to be stocked in town */
 #define OFG_FIXED_ART           0x00040000     /* Never replace this art when using random_artifacts */
@@ -3129,8 +3129,6 @@ enum obj_flags_e {
 #define OFG_NO_SHUFFLE          0x00100000     /* Disallow shuffling for this item */
 
 /* Object Flags for Curses (OFC_*) */
-
-
 #define OFC_CURSED              0x00000001
 #define OFC_HEAVY_CURSE         0x00000002
 #define OFC_PERMA_CURSE         0x00000004
@@ -3172,7 +3170,7 @@ enum obj_flags_e {
 #define TRC_FLAGGY_MASK \
     (OFC_TELEPORT_SELF | OFC_CHAINSWORD)
 
-#define TRC_HEAVY_MASK   \
+#define TRC_HEAVY_MASK \
     (OFC_TY_CURSE | OFC_AGGRAVATE | OFC_DRAIN_EXP | OFC_ADD_H_CURSE | \
      OFC_CALL_DEMON | OFC_CALL_DRAGON | OFC_TELEPORT | \
      OFC_BY_CURSE | OFC_DANGER | OFC_CRAPPY_MUT)
@@ -3180,7 +3178,7 @@ enum obj_flags_e {
  * horrible curse... but so far haven't done it because it's a classic truly
  * horrible curse */
 
-#define TRC_P_FLAG_MASK  \
+#define TRC_P_FLAG_MASK \
     (OFC_TELEPORT_SELF | OFC_CHAINSWORD | \
      OFC_TY_CURSE | OFC_DRAIN_EXP | OFC_ADD_L_CURSE | OFC_ADD_H_CURSE | \
      OFC_CALL_ANIMAL | OFC_CALL_DEMON | OFC_CALL_DRAGON | OFC_COWARDICE | \

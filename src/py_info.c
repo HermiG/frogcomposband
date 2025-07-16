@@ -506,25 +506,19 @@ static void _build_res_flags(doc_ptr doc, int which, _flagzilla_ptr flagzilla)
 
 static void _build_curse_flags(doc_ptr doc, cptr name)
 {
-    int i;
     doc_printf(doc, " %-11.11s: ", name);
-    for (i = 1; i <= equip_max(); i++)
+    for (int i = 1; i <= equip_max(); i++)
     {
         object_type *o_ptr = equip_obj(i);
 
         if (o_ptr)
         {
-            if (o_ptr->curse_flags & OFC_PERMA_CURSE)
-                doc_insert_char(doc, TERM_VIOLET, '*');
-            else if (o_ptr->curse_flags & OFC_HEAVY_CURSE)
-                doc_insert_char(doc, TERM_L_RED, '+');
-            else if (o_ptr->curse_flags & OFC_CURSED)
-                doc_insert_char(doc, TERM_WHITE, '+');
-            else
-                doc_insert_char(doc, TERM_L_DARK, '.');
+            if      (o_ptr->curse_flags & OFC_PERMA_CURSE) doc_insert_char(doc, TERM_VIOLET, '*');
+            else if (o_ptr->curse_flags & OFC_HEAVY_CURSE) doc_insert_char(doc, TERM_L_RED,  '+');
+            else if (o_ptr->curse_flags & OFC_CURSED)      doc_insert_char(doc, TERM_WHITE,  '+');
+            else                                           doc_insert_char(doc, TERM_L_DARK, '.');
         }
-        else
-            doc_insert_char(doc, TERM_L_DARK, '.');
+        else doc_insert_char(doc, TERM_L_DARK, '.');
     }
     doc_insert_char(doc, TERM_L_DARK, '.');
     doc_newline(doc);
@@ -677,8 +671,7 @@ static void _build_flags1(doc_ptr doc, _flagzilla_ptr flagzilla)
 static void _display_known_count(doc_ptr doc, int total, int flg)
 {
     int ct = total;
-    slot_t slot;
-    for (slot = 1; slot <= equip_max(); slot++)
+    for (slot_t slot = 1; slot <= equip_max(); slot++)
     {
         obj_ptr obj = equip_obj(slot);
         u32b    flgs[OF_ARRAY_SIZE];
@@ -687,11 +680,9 @@ static void _display_known_count(doc_ptr doc, int total, int flg)
         if (!obj) continue;
         obj_flags(obj, flgs);
         obj_flags_known(obj, flgs_known);
-        if (have_flag(flgs, flg) && !have_flag(flgs_known, flg))
-            ct--;
+        if (have_flag(flgs, flg) && !have_flag(flgs_known, flg)) ct--;
     }
-    if (ct)
-        doc_printf(doc, " %3dx", ct);
+    if (ct) doc_printf(doc, " %3dx", ct);
     doc_newline(doc);
 }
 static void _build_flags2(doc_ptr doc, _flagzilla_ptr flagzilla)
@@ -791,7 +782,7 @@ static void _build_flags2(doc_ptr doc, _flagzilla_ptr flagzilla)
     _build_flags(doc, "Telepathy", OF_TELEPATHY, OF_INVALID, flagzilla);
     _build_flags(doc, "ESP Evil", OF_ESP_EVIL, OF_INVALID, flagzilla);
     _build_flags(doc, "ESP Nonliv", OF_ESP_NONLIVING, OF_INVALID, flagzilla);
-	_build_flags(doc, "ESP Living", OF_ESP_LIVING, OF_INVALID, flagzilla);
+    _build_flags(doc, "ESP Living", OF_ESP_LIVING, OF_INVALID, flagzilla);
     _build_flags(doc, "ESP Good", OF_ESP_GOOD, OF_INVALID, flagzilla);
     _build_flags(doc, "ESP Undead", OF_ESP_UNDEAD, OF_INVALID, flagzilla);
     _build_flags(doc, "ESP Demon", OF_ESP_DEMON, OF_INVALID, flagzilla);
@@ -815,7 +806,6 @@ static void _build_flags2(doc_ptr doc, _flagzilla_ptr flagzilla)
 
 static void _build_stats(doc_ptr doc, _flagzilla_ptr flagzilla)
 {
-    int              i, j;
     char             buf[255];
     race_t          *race_ptr = get_race();
     class_t         *class_ptr = get_class();
@@ -835,7 +825,7 @@ static void _build_stats(doc_ptr doc, _flagzilla_ptr flagzilla)
     _equippy_heading_aux(doc, "", 14);
     doc_insert(doc, "   Base  R  C  P  E  Total\n");
 
-    for (i = 0; i < MAX_STATS; i++)
+    for (int i = 0; i < MAX_STATS; i++)
     {
         int flg = OF_STR + i;
         int dec_flg = OF_DEC_STR + i;
@@ -853,7 +843,7 @@ static void _build_stats(doc_ptr doc, _flagzilla_ptr flagzilla)
             doc_insert(doc, "  : ");
 
         /* abcdefghijkl */
-        for (j = 1; j <= equip_max(); j++)
+        for (int j = 1; j <= equip_max(); j++)
         {
             object_type *o_ptr = equip_obj(j);
 

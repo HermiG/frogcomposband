@@ -1160,8 +1160,7 @@ static void _calc_bonuses(void)
     if (p_ptr->tim_resist_curses)
     {
         p_ptr->skills.sav += 20;
-        if (p_ptr->shero)
-            p_ptr->skills.sav += 20;
+        if (p_ptr->shero) p_ptr->skills.sav += 20;
     }
 }
 

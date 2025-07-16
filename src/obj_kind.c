@@ -18,8 +18,7 @@ const int pval_flags[] = {
 
 bool is_pval_flag(int which)
 {
-    int i;
-    for (i = 0; ; i++)
+    for (int i = 0; ; i++)
     {
         int flg = pval_flags[i];
         if (flg == OF_INVALID) break;
@@ -29,8 +28,7 @@ bool is_pval_flag(int which)
 }
 bool have_pval_flag(u32b flgs[OF_ARRAY_SIZE])
 {
-    int i;
-    for (i = 0; ; i++)
+    for (int i = 0; ; i++)
     {
         int flg = pval_flags[i];
         if (flg == OF_INVALID) break;

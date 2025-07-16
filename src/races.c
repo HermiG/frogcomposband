@@ -7,18 +7,15 @@
  ****************************************************************/
 bool prace_is_(int which)
 {
-    if (p_ptr->mimic_form == which)
-        return TRUE;
-    else if (p_ptr->mimic_form == MIMIC_NONE && p_ptr->prace == which)
-        return TRUE;
+    if (p_ptr->mimic_form == which) return TRUE;
+    else if (p_ptr->mimic_form == MIMIC_NONE && p_ptr->prace == which) return TRUE;
 
     return FALSE;
 }
 
 int get_race_idx(cptr name)
 {
-    int i;
-    for (i = 0; i < MAX_RACES; i++)
+    for (int i = 0; i < MAX_RACES; i++)
     {
         race_t *race_ptr;
 
@@ -58,8 +55,7 @@ int get_race_idx(cptr name)
         }
 
         race_ptr = get_race_aux(i, 0);
-        if (race_ptr && strcmp(name, race_ptr->name) == 0)
-            return i;
+        if (race_ptr && strcmp(name, race_ptr->name) == 0) return i;
     }
     return -1;
 }
@@ -135,8 +131,8 @@ race_t *get_race_aux(int prace, int psubrace)
         result = half_giant_get_race();
         break;
     case RACE_HALF_ORC:
-	result = half_orc_get_race();
-	break;
+        result = half_orc_get_race();
+        break;
     case RACE_HALF_TITAN:
         result = half_titan_get_race();
         break;

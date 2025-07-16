@@ -463,12 +463,10 @@ void _return(py_throw_ptr context)
             /* Figurines transform into pets (enemies if cursed) */
             if (context->obj->tval == TV_FIGURINE && !p_ptr->inside_arena)
             {
-                if (!summon_named_creature(0, y, x, context->obj->pval,
-                                !object_is_cursed(context->obj) ? PM_FORCE_PET : 0))
+                if (!summon_named_creature(0, y, x, context->obj->pval, !object_is_cursed(context->obj) ? PM_FORCE_PET : 0))
                     msg_print("The Figurine writhes and then shatters.");
 
-                else if (object_is_cursed(context->obj))
-                    msg_print("You have a bad feeling about this.");
+                else if (object_is_cursed(context->obj)) msg_print("You have a bad feeling about this.");
 
                 context->obj->number--;
                 obj_release(context->obj, OBJ_RELEASE_QUIET);

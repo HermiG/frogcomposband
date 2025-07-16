@@ -704,7 +704,7 @@ void karrot_quest_finished(quest_ptr q, bool success)
                     if (slot)
                     {
                         object_type *o_ptr = equip_obj(slot);
-                        if ((o_ptr) && (o_ptr->name1 != ART_UROG)) curse_weapon(FALSE, slot);
+                        if (o_ptr && (o_ptr->name1 != ART_UROG)) curse_weapon(FALSE, slot);
                     }
                     else
                     {

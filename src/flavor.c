@@ -1060,8 +1060,7 @@ void object_desc(char *buf, object_type *o_ptr, u32b mode)
 
     /* Hack object_is_aware() is wrong in this case.
        Anybody know how k_info[].aware gets set?  Perhaps flavor_init? */
-    if (o_ptr->name1 == ART_HAND_OF_VECNA || o_ptr->name1 == ART_EYE_OF_VECNA)
-        aware = FALSE;
+    if (o_ptr->name1 == ART_HAND_OF_VECNA || o_ptr->name1 == ART_EYE_OF_VECNA) aware = FALSE;
 
     /* See if the object is "known" */
     if (object_is_known(o_ptr)) known = TRUE;
@@ -1112,10 +1111,7 @@ void object_desc(char *buf, object_type *o_ptr, u32b mode)
 
             if (known)
             {
-                if (!o_ptr->pval)
-                {
-                    modstr = "(empty)";
-                }
+                if (!o_ptr->pval) modstr = "(empty)";
                 else
                 {
                     cptr t = r_name + r_ptr->name;
@@ -1123,13 +1119,11 @@ void object_desc(char *buf, object_type *o_ptr, u32b mode)
                     if (!(r_ptr->flags1 & RF1_UNIQUE))
                     {
                         sprintf(tmp_val2, "(%s%s)", (is_a_vowel(*t) ? "an " : "a "), t);
-
                         modstr = tmp_val2;
                     }
                     else
                     {
                         sprintf(tmp_val2, "(%s)", t);
-
                         modstr = tmp_val2;
                     }
                 }
@@ -1142,19 +1136,14 @@ void object_desc(char *buf, object_type *o_ptr, u32b mode)
         case TV_STATUE:
         {
             monster_race *r_ptr = &r_info[o_ptr->pval];
-
             cptr t = r_name + r_ptr->name;
 
             if (!(r_ptr->flags1 & RF1_UNIQUE))
             {
                 sprintf(tmp_val2, "%s%s", (is_a_vowel(*t) ? "an " : "a "), t);
-
                 modstr = tmp_val2;
             }
-            else
-            {
-                modstr = t;
-            }
+            else modstr = t;
             break;
         }
 
@@ -1199,13 +1188,10 @@ void object_desc(char *buf, object_type *o_ptr, u32b mode)
             else
             {
                 monster_race *r_ptr = &r_info[o_ptr->pval];
-
                 modstr = r_name + r_ptr->name;
 
-                if (r_ptr->flags1 & RF1_UNIQUE)
-                    basenm = "& % of #";
-                else
-                    basenm = "& # %";
+                if (r_ptr->flags1 & RF1_UNIQUE) basenm = "& % of #";
+                else basenm = "& # %";
             }
             break;
         }
@@ -1252,8 +1238,7 @@ void object_desc(char *buf, object_type *o_ptr, u32b mode)
                 else if (aware) break;
                 else            basenm = "& # Hand~";
             }
-            else
-                show_armour = TRUE;
+            else show_armour = TRUE;
             break;
         }
 
@@ -1272,8 +1257,7 @@ void object_desc(char *buf, object_type *o_ptr, u32b mode)
 
         case TV_AMULET:
         case TV_RING:
-            if (o_ptr->to_h || o_ptr->to_d)
-                show_weapon = TRUE;
+            if (o_ptr->to_h || o_ptr->to_d) show_weapon = TRUE;
             break;
 
         case TV_CARD:
@@ -1481,10 +1465,8 @@ void object_desc(char *buf, object_type *o_ptr, u32b mode)
         /* Hack -- Gold/Gems */
         case TV_GOLD:
         {
-            if (mode & OD_COLOR_CODED)
-                sprintf(buf, "<color:%c>%s</color>", tval_to_attr_char(o_ptr->tval), basenm);
-            else
-                strcpy(buf, basenm);
+            if (mode & OD_COLOR_CODED) sprintf(buf, "<color:%c>%s</color>", tval_to_attr_char(o_ptr->tval), basenm);
+            else strcpy(buf, basenm);
             return;
         }
 
@@ -1499,9 +1481,9 @@ void object_desc(char *buf, object_type *o_ptr, u32b mode)
     /* Use full name from k_info or a_info */
     if (aware && have_flag(flgs, OF_FULL_NAME))
     {
-        if (known && o_ptr->name1) basenm = a_name + a_info[o_ptr->name1].name;
+        if      (known && o_ptr->name1) basenm = a_name + a_info[o_ptr->name1].name;
         else if (known && o_ptr->name2) basenm = e_name + e_info[o_ptr->name2].name;
-        else basenm = kindname;
+        else                            basenm = kindname;
     }
 
 
@@ -1559,19 +1541,9 @@ void object_desc(char *buf, object_type *o_ptr, u32b mode)
     /* Start dumping the result */
     t = tmp_val;
 
-    if (o_ptr->marked & OM_RESERVED)
-    {
-        if (mode & OD_COLOR_CODED)
-            t = object_desc_str(t, "<color:B><<Hold>></color> ");
-        else
-            t = object_desc_str(t, "<<Hold>> ");
-    }
-
-    if (o_ptr->marked & OM_SLIPPING)
-        t = object_desc_str(t, "<<Slipped>> ");
-
-    if (o_ptr->marked & OM_WORN)
-        t = object_desc_str(t, "<<Worn>> ");
+    if (o_ptr->marked & OM_RESERVED) t = object_desc_str(t, mode & OD_COLOR_CODED ? "<color:B><<Hold>></color> " : "<<Hold>> ");
+    if (o_ptr->marked & OM_SLIPPING) t = object_desc_str(t, "<<Slipped>> ");
+    if (o_ptr->marked & OM_WORN)     t = object_desc_str(t, "<<Worn>> ");
 
     /* The object "expects" a "number" */
     if (basenm[0] == '&')
@@ -1579,19 +1551,8 @@ void object_desc(char *buf, object_type *o_ptr, u32b mode)
         /* Skip the ampersand (and space) */
         s = basenm + 2;
 
-        /* No prefix */
-        if (mode & OD_OMIT_PREFIX)
-        {
-            /* Nothing */
-        }
-
-        /* Hack -- None left */
-        else if (number <= 0)
-        {
-            t = object_desc_str(t, "no more ");
-        }
-
-        /* Extract the number */
+        if (mode & OD_OMIT_PREFIX) {} // No prefix
+        else if (number <= 0) t = object_desc_str(t, "no more ");
         else if (number > 1)
         {
             t = object_desc_num(t, number);
@@ -1599,9 +1560,7 @@ void object_desc(char *buf, object_type *o_ptr, u32b mode)
         }
 
         /* Hack -- The only one of its kind */
-        else if ((known && object_is_artifact(o_ptr)) ||
-                 ((o_ptr->tval == TV_CORPSE) &&
-                  (r_info[o_ptr->pval].flags1 & RF1_UNIQUE)))
+        else if ((known && object_is_artifact(o_ptr)) || (o_ptr->tval == TV_CORPSE && (r_info[o_ptr->pval].flags1 & RF1_UNIQUE)))
         {
             if (o_ptr->name1 != ART_MOM) t = object_desc_str(t, "The ");
         }
@@ -1619,55 +1578,27 @@ void object_desc(char *buf, object_type *o_ptr, u32b mode)
             }
             if (mod_prefix_str[0]) vowel = is_a_vowel(mod_prefix_str[0]);
 
-            if (vowel)
-            {
-                /* A single one, with a vowel */
-                t = object_desc_str(t, "an ");
-            }
-            else
-            {
-                /* A single one, without a vowel */
-                t = object_desc_str(t, "a ");
-            }
+            t = object_desc_str(t, vowel ? "an " : "a ");
         }
     }
-
-    /* Hack -- objects that "never" take an article */
-    else
+    else // No ampersand, for objects that "never" take an article
     {
-        /* No ampersand */
         s = basenm;
 
-        /* No pref */
-        if (mode & OD_OMIT_PREFIX)
-        {
-            /* Nothing */
-        }
-
-        /* Hack -- all gone */
-        else if (number <= 0)
-        {
-            t = object_desc_str(t, "no more ");
-        }
-
-        /* Prefix a number if required */
+        if (mode & OD_OMIT_PREFIX) {}
+        else if (number <= 0) t = object_desc_str(t, "no more ");
         else if (number > 1)
         {
             t = object_desc_num(t, number);
             t = object_desc_chr(t, ' ');
         }
 
-        /* Hack -- The only one of its kind */
+        // The only one of its kind
         else if (known && object_is_artifact(o_ptr))
         {
             if (o_ptr->name1 != ART_MOM) t = object_desc_str(t, "The ");
         }
-
-        /* Hack -- single items get no prefix */
-        else
-        {
-            /* Nothing */
-        }
+        // Single items get no prefix
     }
 
     if (mod_prefix_str[0]) t = object_desc_str(t, mod_prefix_str);
@@ -1710,32 +1641,18 @@ void object_desc(char *buf, object_type *o_ptr, u32b mode)
             {
                 char k = t[-1];
 
-                /* XXX XXX XXX Mega-Hack */
-
                 /* Hack -- "Cutlass-es" and "Torch-es", but "Photograph-s" */
-                if ((k == 's') || ((k == 'h') && (o_ptr->tval != TV_STATUE))) *t++ = 'e';
-
-                /* Add an 's' */
+                if (k == 's' || (k == 'h' && o_ptr->tval != TV_STATUE)) *t++ = 'e';
                 *t++ = 's';
             }
             s++;
         }
         /* Normal */
-        else
-        {
-            /* Copy */
-            *t++ = *s++;
-        }
+        else *t++ = *s++;
     }
-
-    /* Terminate */
     *t = '\0';
 
-
-    if (object_is_smith(o_ptr))
-    {
-        t = object_desc_str(t,format(" of %s the Smith",player_name));
-    }
+    if (object_is_smith(o_ptr)) t = object_desc_str(t,format(" of %s the Smith", player_name));
 
     /* Hack -- Append "Artifact" or "Special" names */
     if (known && !have_flag(flgs, OF_FULL_NAME) && !have_flag(flgs, OF_PREFIX_NAME))
@@ -1794,15 +1711,11 @@ void object_desc(char *buf, object_type *o_ptr, u32b mode)
             char buf[255];
             if (mode & OD_COLOR_CODED)
             {
-                byte color = effect_color(&o_ptr->activation);
-                sprintf(buf, ": <color:%c>%s</color>",
-                        attr_to_attr_char(color),
-                        do_effect(&o_ptr->activation, SPELL_NAME, 0));
+                char c = attr_to_attr_char(effect_color(&o_ptr->activation));
+                sprintf(buf, ": <color:%c>%s</color>", c, do_effect(&o_ptr->activation, SPELL_NAME, 0));
             }
-            else
-            {
-                sprintf(buf, ": %s", do_effect(&o_ptr->activation, SPELL_NAME, 0));
-            }
+            else sprintf(buf, ": %s", do_effect(&o_ptr->activation, SPELL_NAME, 0));
+            
             t = object_desc_str(t, buf);
         }
     }
@@ -1824,33 +1737,10 @@ void object_desc(char *buf, object_type *o_ptr, u32b mode)
     /* Hack -- Chests must be described in detail */
     if (o_ptr->tval == TV_CHEST)
     {
-        /* Not searched yet */
-        if (!known)
-        {
-            /* Nothing */
-        }
-
-        /* May be "empty" */
-        else if (!o_ptr->pval)
-        {
-            t = object_desc_str(t, " (empty)");
-        }
-
-        /* May be "disarmed" */
-        else if (o_ptr->pval < 0)
-        {
-            if (chest_traps[0 - o_ptr->pval])
-            {
-                t = object_desc_str(t, " (disarmed)");
-            }
-            else
-            {
-                t = object_desc_str(t, " (unlocked)");
-            }
-        }
-
-        /* Describe the traps, if any */
-        else
+        if (!known) {}
+        else if (!o_ptr->pval)    t = object_desc_str(t, " (empty)");
+        else if (o_ptr->pval < 0) t = object_desc_str(t, chest_traps[0 - o_ptr->pval] ? " (disarmed)" : " (unlocked)");
+        else /* Describe the traps, if any */
         {
             /* Describe the traps */
             switch (chest_traps[o_ptr->pval])
@@ -1912,7 +1802,6 @@ void object_desc(char *buf, object_type *o_ptr, u32b mode)
         }
     }
 
-
     /* Display the item like a weapon */
     if (have_flag(flgs, OF_SHOW_MODS)) show_weapon = TRUE;
 
@@ -1942,8 +1831,7 @@ void object_desc(char *buf, object_type *o_ptr, u32b mode)
             int dd = o_ptr->dd;
             int ds = o_ptr->ds;
 
-            if (p_ptr->big_shot && object_is_suitable_ammo(o_ptr))
-                ds += 2;
+            if (p_ptr->big_shot && object_is_suitable_ammo(o_ptr)) ds += 2;
 
             if (hand >= 0 && hand < MAX_HANDS && !(mode & OD_THROWING))
             {
@@ -1959,7 +1847,6 @@ void object_desc(char *buf, object_type *o_ptr, u32b mode)
             t = object_desc_num(t, ds);
             t = object_desc_chr(t, p2);
         }
-        /* All done */
         break;
     case TV_CORPSE:
     {
@@ -1985,21 +1872,16 @@ void object_desc(char *buf, object_type *o_ptr, u32b mode)
         power = o_ptr->mult;
 
         /* Are we describing a wielded bow? */
-        if (equip_is_worn(o_ptr))
-            power += p_ptr->shooter_info.to_mult;
+        if (equip_is_worn(o_ptr)) power += p_ptr->shooter_info.to_mult;
 
-        if (power % 100)
-            sprintf(tmp, "x%d.%2.2d", power / 100, power % 100);
-        else
-            sprintf(tmp, "x%d", power / 100);
+        if (power % 100) sprintf(tmp, "x%d.%2.2d", power / 100, power % 100);
+        else             sprintf(tmp, "x%d", power / 100);
 
         /* Append a special "damage" string */
         t = object_desc_chr(t, ' ');
         t = object_desc_chr(t, p1);
         t = object_desc_str(t, tmp);
         t = object_desc_chr(t, p2);
-
-        /* All done */
         break;
     }
     case TV_QUIVER: /* show capacity */
@@ -2013,12 +1895,12 @@ void object_desc(char *buf, object_type *o_ptr, u32b mode)
           if (o_ptr->loc.where == INV_EQUIP)
             t = object_desc_str(t, format(" [%.1f of %d lbs]", bag_weight(NULL) * 0.1f, o_ptr->xtra5/10));
           else
-            t = object_desc_str(t, format(" [%d lbs]", o_ptr->xtra5/10));
+            t = object_desc_str(t, format(" [%d] [%d lbs]", o_ptr->xtra4, o_ptr->xtra5/10));
         } else if (o_ptr->sval == SV_BAG_POTION_BELT || o_ptr->sval == SV_BAG_SCROLL_CASE) {
           if (o_ptr->loc.where == INV_EQUIP)
             t = object_desc_str(t, format(" [%d of %d]", bag_count(NULL), o_ptr->xtra4));
           else
-            t = object_desc_str(t, format(" [%d]", o_ptr->xtra4));
+            t = object_desc_str(t, format(" [%d] [%d lbs]", o_ptr->xtra4, o_ptr->xtra5/10));
         }
         break;
     }
@@ -2127,11 +2009,9 @@ void object_desc(char *buf, object_type *o_ptr, u32b mode)
     if (o_ptr->rune)
     {
         t = object_desc_chr(t, ' ');
-        if (mode & OD_COLOR_CODED)
-            t = object_desc_str(t, "<color:B>");
+        if (mode & OD_COLOR_CODED) t = object_desc_str(t, "<color:B>");
         t = object_desc_str(t, rune_desc(o_ptr->rune));
-        if (mode & OD_COLOR_CODED)
-            t = object_desc_str(t, "</color>");
+        if (mode & OD_COLOR_CODED) t = object_desc_str(t, "</color>");
     }
 
     /* No more details wanted */
@@ -2260,7 +2140,6 @@ void object_desc(char *buf, object_type *o_ptr, u32b mode)
         }
     }
 
-
     /* No more details wanted */
     if (mode & OD_OMIT_INSCRIPTION) goto object_desc_done;
 
@@ -2274,8 +2153,7 @@ void object_desc(char *buf, object_type *o_ptr, u32b mode)
         if (!o_ptr->inscription || !my_strchr(quark_str(o_ptr->inscription), '%'))
         {
             bool all = abbrev_all;
-            if (!obj_is_identified(o_ptr)) /* otherwise, this pseudo leaks the underlying name */
-                all = TRUE;
+            if (!obj_is_identified(o_ptr)) all = TRUE; // otherwise, this pseudo leaks the underlying name
             get_ability_abbreviation(tmp_val2, o_ptr, all);
         }
     }
@@ -2288,33 +2166,25 @@ void object_desc(char *buf, object_type *o_ptr, u32b mode)
         char     buf[255];
         effect_t e = obj_get_effect(o_ptr);
 
-        if (strlen(tmp_val2) > 0)
-            strcat(tmp_val2, " ");
+        if (strlen(tmp_val2) > 0) strcat(tmp_val2, " ");
 
         if ((o_ptr->tval == TV_CAPTURE) && (o_ptr->pval > 0))
         { /* Special case */
-            if (mode & OD_COLOR_CODED)
-                sprintf(buf, "<color:T>A:Release Pet</color>");
-            else
-                sprintf(buf, "A:Release Pet");
+            sprintf(buf, (mode & OD_COLOR_CODED) ? "<color:T>A:Release Pet</color>" : "A:Release Pet");
         }
         else
-        {            
-            if (mode & OD_COLOR_CODED)
-                sprintf(buf, "<color:T>A:%s</color>", do_effect(&e, SPELL_NAME, 0));
-            else
-                sprintf(buf, "A:%s", do_effect(&e, SPELL_NAME, 0));
+        {
+            sprintf(buf, (mode & OD_COLOR_CODED) ? "<color:T>A:%s</color>" : "A:%s", do_effect(&e, SPELL_NAME, 0));
         }
         strcat(tmp_val2, buf);
     }
 
-    if ((o_ptr->tval == TV_CORPSE) && (o_ptr->xtra5))
+    if ((o_ptr->tval == TV_CORPSE) && o_ptr->xtra5)
     {
         gf_info_ptr gf = gf_lookup(o_ptr->xtra5);
         char buf[255];
         sprintf(buf, "%sU:Breathe %s%s", (mode & OD_COLOR_CODED) ? "<color:G>" : "", gf ? gf->name : "Buggy", (mode & OD_COLOR_CODED) ? "</color>" : "");
-        if (strlen(tmp_val2) > 0)
-            strcat(tmp_val2, " ");
+        if (strlen(tmp_val2) > 0) strcat(tmp_val2, " ");
         strcat(tmp_val2, buf);
     }
 
@@ -2322,7 +2192,7 @@ void object_desc(char *buf, object_type *o_ptr, u32b mode)
     {
         int  fail = device_calc_fail_rate(o_ptr);
         strcat(tmp_val2, format("%d%%", (fail + 5)/10));
-        if ((statistics_hack) || ((!show_power) && (mode & OD_SHOW_DEVICE_INFO)))
+        if (statistics_hack || ((!show_power) && (mode & OD_SHOW_DEVICE_INFO)))
         {
             cptr info = do_device(o_ptr, SPELL_INFO, 0);
             if (info && strlen(info))
@@ -2344,7 +2214,7 @@ void object_desc(char *buf, object_type *o_ptr, u32b mode)
 
     if (o_ptr->name3 && object_is_known(o_ptr) && abbrev_all)
     {
-        cptr  t = a_name + a_info[o_ptr->name3].name;
+        cptr t = a_name + a_info[o_ptr->name3].name;
         if ((strlen(t) > 2) && (t[0] == '&')) t += 2;
 
         if (!o_ptr->art_name || !strpos(t, quark_str(o_ptr->art_name)))
@@ -2352,30 +2222,24 @@ void object_desc(char *buf, object_type *o_ptr, u32b mode)
             {
                 char  buf[255];
                 char *u = buf;
-    
+
                 /* of Hammerhand -> Hammerhand
                    'Thalkettoth' -> Thalkettoth
                    of the Dwarves -> Dwarves
                 */
-                if (*t == 'o' && *(t+1) == 'f')
-                     t += 2;
+                if (*t == 'o' && *(t+1) == 'f') t += 2;
 
-                while (*t && *t == ' ')
-                    t++;
+                while (*t && *t == ' ') t++;
 
-                if (*t == 't' && *(t+1) == 'h' && *(t+2) == 'e')
-                     t += 3;
+                if (*t == 't' && *(t+1) == 'h' && *(t+2) == 'e') t += 3;
 
-                while (*t && *t == ' ')
-                    t++;
+                while (*t && *t == ' ') t++;
 
                 *u++ = ' ';
                 while (*t)
                 {
-                    if (*t == '\'' || *t == '&' || *t == '~')
-                        t++;
-                    else
-                        *u++ = *t++;
+                    if (*t == '\'' || *t == '&' || *t == '~') t++;
+                    else *u++ = *t++;
                 }
 
                 *u = '\0';
@@ -2403,13 +2267,9 @@ void object_desc(char *buf, object_type *o_ptr, u32b mode)
     fake_insc_buf[0] = '\0';
 
     /* Use the game-generated "feeling" otherwise, if available */
-    if (o_ptr->feeling)
-    {
-        strcpy(fake_insc_buf, game_inscriptions[o_ptr->feeling]);
-    }
+    if (o_ptr->feeling) strcpy(fake_insc_buf, game_inscriptions[o_ptr->feeling]);
 
-    else if ((p_ptr->munchkin_pseudo_id) && ((obj_can_sense1(o_ptr)) || (obj_can_sense2(o_ptr))) &&
-             (!(o_ptr->ident & IDENT_SENSE)) && (!object_is_known(o_ptr)))
+    else if (p_ptr->munchkin_pseudo_id && (obj_can_sense1(o_ptr) || obj_can_sense2(o_ptr)) && !(o_ptr->ident & IDENT_SENSE) && !object_is_known(o_ptr))
     {
         o_ptr->feeling = value_check_aux1(o_ptr, TRUE);
         if (!(o_ptr->ident & IDENT_KNOWN)) o_ptr->ident |= IDENT_SENSE; 
@@ -2423,8 +2283,7 @@ void object_desc(char *buf, object_type *o_ptr, u32b mode)
         {
             /* Hide cursed status of devices until *Identified* */
         }
-        else
-            strcpy(fake_insc_buf, "cursed");
+        else strcpy(fake_insc_buf, "cursed");
     }
 
     /* Note "unidentified" if the item is unidentified */
@@ -2436,20 +2295,12 @@ void object_desc(char *buf, object_type *o_ptr, u32b mode)
         strcpy(fake_insc_buf, "unidentified");
     }
     /* Mega-Hack -- note empty wands/staffs */
-    else if (!known && (o_ptr->ident & IDENT_EMPTY))
-    {
-        strcpy(fake_insc_buf, "empty");
-    }
-
+    else if (!known && (o_ptr->ident & IDENT_EMPTY)) strcpy(fake_insc_buf, "empty");
+    
     /* Note "tried" if the object has been tested unsuccessfully */
-    else if (!known && object_is_device(o_ptr) && object_is_tried(o_ptr))
-    {
-        strcpy(fake_insc_buf, "tried");
-    }
-    else if (!aware && object_is_tried(o_ptr))
-    {
-        strcpy(fake_insc_buf, "tried");
-    }
+    else if (!known && object_is_device(o_ptr) && object_is_tried(o_ptr)) strcpy(fake_insc_buf, "tried");
+    else if (!aware && object_is_tried(o_ptr))                            strcpy(fake_insc_buf, "tried");
+    
     else if ((shops_mark_unseen) && (aware) && (!object_is_aware(o_ptr)) && (object_is_flavor(o_ptr)) && (o_ptr->loc.where == INV_SHOP))
     {
         strcpy(fake_insc_buf, "unseen");
@@ -2471,7 +2322,6 @@ void object_desc(char *buf, object_type *o_ptr, u32b mode)
         }
     }
 
-
     /* Append the inscription, if any */
     if (fake_insc_buf[0] || tmp_val2[0])
     {
@@ -2480,11 +2330,8 @@ void object_desc(char *buf, object_type *o_ptr, u32b mode)
         t = object_desc_chr(t, c1);
 
         /* Append fake inscriptions */
-        if (fake_insc_buf[0])
-        {
-            t = object_desc_str(t, fake_insc_buf);
-        }
-
+        if (fake_insc_buf[0]) t = object_desc_str(t, fake_insc_buf);
+        
         /* Append a separater */
         if (fake_insc_buf[0] && tmp_val2[0])
         {
@@ -2493,11 +2340,8 @@ void object_desc(char *buf, object_type *o_ptr, u32b mode)
         }
 
         /* Append real inscriptions */
-        if (tmp_val2[0])
-        {
-            t = object_desc_str(t, tmp_val2);
-        }
-
+        if (tmp_val2[0]) t = object_desc_str(t, tmp_val2);
+        
         t = object_desc_chr(t, c2);
     }
 

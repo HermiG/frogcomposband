@@ -707,11 +707,10 @@ bool obj_can_combine(obj_ptr dest, obj_ptr obj, int loc)
         if (!object_is_known(dest) || !object_is_known(obj)) return FALSE;
     }
 
-    /* Hack -- Identical art_flags! */
-    for (i = 0; i < OF_ARRAY_SIZE; i++)
-        if (dest->flags[i] != obj->flags[i]) return FALSE;
+    /* Require identical flags */
+    for (int i = 0; i < OF_ARRAY_SIZE; i++) if (dest->flags[i] != obj->flags[i]) return FALSE;
 
-    /* Hack -- Require identical "cursed" status */
+    /* Require identical "cursed" status */
     if (dest->curse_flags != obj->curse_flags) return FALSE;
 
     /* Require identical activations */

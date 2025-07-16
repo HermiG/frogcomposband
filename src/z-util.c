@@ -146,22 +146,18 @@ void s64b_add(s32b *A1, u32b *A2, s32b B1, u32b B2)
 {
     (*A2) += B2;
 
-    /* Overflawed? */
-    if ((*A2) < B2)
-        (*A1) += B1 + 1;
-    else
-        (*A1) += B1;
+    /* Overflowed? */
+    if ((*A2) < B2) (*A1) += B1 + 1;
+    else            (*A1) += B1;
 }
 
 
 /* Subtract B from A */
 void s64b_sub(s32b *A1, u32b *A2, s32b B1, u32b B2)
 {
-    /* Underflaw? */
-    if ((*A2) < B2)
-        (*A1) -= B1 + 1;
-    else
-        (*A1) -= B1;
+    /* Underflow? */
+    if ((*A2) < B2) (*A1) -= B1 + 1;
+    else            (*A1) -= B1;
 
     (*A2) -= B2;
 }
@@ -200,9 +196,9 @@ void s64b_mul(s32b *A1, u32b *A2, s32b B1, u32b B2)
 /* Compare A to B */
 int s64b_cmp(s32b A1, u32b A2, s32b B1, u32b B2)
 {
-    if (A1 > B1) return 1;
+    if (A1 > B1) return  1;
     if (A1 < B1) return -1;
-    if (A2 > B2) return 1;
+    if (A2 > B2) return  1;
     if (A2 < B2) return -1;
     return 0;
 }

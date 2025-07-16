@@ -200,13 +200,14 @@ u32b get_curse(int power, object_type *o_ptr)
             if (new_curse & TRC_HEAVY_MASK) continue;
         }
         if (new_curse == OFC_LOW_MELEE && !object_is_weapon(o_ptr)) continue;
-        if (new_curse == OFC_LOW_AC && !object_is_armour(o_ptr)) continue;
+        if (new_curse == OFC_LOW_AC    && !object_is_armour(o_ptr)) continue;
         break;
     }
     return new_curse;
 }
 
 static bool _object_is_any(object_type *o_ptr) { return TRUE; }
+
 void curse_equipment(int chance, int heavy_chance)
 {
     int slot = equip_random_slot(_object_is_any);
@@ -226,25 +227,22 @@ void curse_equipment(int chance, int heavy_chance)
         obj_flags(o_ptr, oflgs);
         object_desc(o_name, o_ptr, (OD_OMIT_PREFIX | OD_NAME_ONLY));
 
-        if (have_flag(oflgs, OF_BLESSED) && (randint1(888) > chance))
+        if (have_flag(oflgs, OF_BLESSED) && randint1(888) > chance)
         {
             msg_format("Your %s resists cursing!", o_name);
             return;
         }
 
-        if ((randint1(100) <= heavy_chance) &&
-            (object_is_artifact(o_ptr) || object_is_ego(o_ptr)))
+        if (randint1(100) <= heavy_chance && (object_is_artifact(o_ptr) || object_is_ego(o_ptr)))
         {
-            if (!(o_ptr->curse_flags & OFC_HEAVY_CURSE))
-                changed = TRUE;
+            if (!(o_ptr->curse_flags & OFC_HEAVY_CURSE)) changed = TRUE;
             o_ptr->curse_flags |= OFC_HEAVY_CURSE;
             o_ptr->curse_flags |= OFC_CURSED;
             curse_power++;
         }
         else
         {
-            if (!object_is_cursed(o_ptr))
-                changed = TRUE;
+            if (!object_is_cursed(o_ptr)) changed = TRUE;
             o_ptr->curse_flags |= OFC_CURSED;
         }
         if (heavy_chance >= 50) curse_power++;

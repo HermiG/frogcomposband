@@ -1102,21 +1102,15 @@ static bool _is_d_char(const char *token)
  * my fingers happy. */
 static void _prep_name_aux(char *dest, const char *src)
 {
-    char *t;
-
     while (*src == ' ' || *src == '&' || *src == '[' || *src == '(') src++;
 
-    for (t = dest; *src; src++)
+    for (; *src; src++)
     {
         char c = *src;
-        if (c != '~' && c != ']' && c != ')')
-        {
-            if (isupper(c)) c = tolower(c);
-            *t++ = c;
-        }
+        if (c != '~' && c != ']' && c != ')') *dest++ = isupper(c) ? tolower(c) : c;
     }
 
-    *t = '\0';
+    *dest = '\0';
 }
 
 static void _prep_name(char *dest, const char *src)
@@ -1751,14 +1745,12 @@ static errr _parse_room_grid_ego(char **args, int arg_ct, room_grid_ptr grid, in
 
 int parse_lookup_artifact(cptr name, int options)
 {
-    int i;
-    for (i = 1; i < max_a_idx; i++)
+    for (int i = 1; i < max_a_idx; i++)
     {
         artifact_type *a_ptr = &a_info[i];
         char           buf[255];
         if (!a_ptr->name) continue;
-        if (have_flag(a_ptr->flags, OF_FULL_NAME))
-            _prep_name(buf, a_name + a_ptr->name);
+        if (have_flag(a_ptr->flags, OF_FULL_NAME)) _prep_name(buf, a_name + a_ptr->name);
         else /* ART(bow of bard) matches "long bow of bard" */
         {    /* not "black arrow of bard" or "soft leather boots of bard" */
             bool         prefix = have_flag(a_ptr->flags, OF_PREFIX_NAME);
@@ -2814,7 +2806,6 @@ static errr grab_one_kind_flag(object_kind *k_ptr, cptr what)
 
     msg_format("Unknown object flag '%s'.", what);
 
-    /* Error */
     return 1;
 }
 
@@ -3075,27 +3066,20 @@ errr parse_k_info(char *buf, header *head)
  */
 static errr grab_one_artifact_flag(artifact_type *a_ptr, cptr what)
 {
-    int i;
-
-    /* Check flags */
-    for (i = 0; i < OF_COUNT; i++)
+    for (int i = 0; i < OF_COUNT; i++)
     {
         if (streq(what, k_info_flags[i]))
         {
             add_flag(a_ptr->flags, i);
-            return (0);
+            return 0;
         }
     }
 
-    if (grab_one_flag(&a_ptr->gen_flags, k_info_gen_flags, what) == 0)
-        return 0;
+    if (grab_one_flag(&a_ptr->gen_flags, k_info_gen_flags, what) == 0) return 0;
 
-    /* Oops */
     msg_format("Unknown artifact flag '%s'.", what);
 
-
-    /* Error */
-    return (1);
+    return 1;
 }
 
 
@@ -3282,29 +3266,22 @@ errr parse_a_info(char *buf, header *head)
 /*
  * Grab one flag in a ego-item_type from a textual string
  */
-static bool grab_one_ego_item_flag(ego_type *e_ptr, cptr what)
+static errr grab_one_ego_item_flag(ego_type *e_ptr, cptr what)
 {
-    int i;
-
-    /* Check flags */
-    for (i = 0; i < OF_COUNT; i++)
+    for (int i = 0; i < OF_COUNT; i++)
     {
         if (streq(what, k_info_flags[i]))
         {
             add_flag(e_ptr->flags, i);
-            return (0);
+            return 0;
         }
     }
 
-    if (grab_one_flag(&e_ptr->gen_flags, k_info_gen_flags, what) == 0)
-        return 0;
+    if (grab_one_flag(&e_ptr->gen_flags, k_info_gen_flags, what) == 0) return 0;
 
-    /* Oops */
     msg_format("Unknown ego-item flag '%s'.", what);
 
-
-    /* Error */
-    return (1);
+    return 1;
 }
 
 static bool grab_one_ego_type_flag(ego_type *e_ptr, cptr what)

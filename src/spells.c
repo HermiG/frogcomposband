@@ -942,20 +942,21 @@ int get_spell_table(power_info* spells, int max, bool with_class)
     return ct;
 }
 
-static int _puhdista(power_info* spells, int ct, byte liput)
+static int _puhdista(power_info* spells, int ct, byte flags)
 {
-    int i, confirmed_spells = 0;
+    if (!flags) return ct;
+
+    int confirmed_spells = 0;
     byte vanha_paikka[MAX_SPELLS] = {0};
-    if (!liput) return ct; /* paranoia */
-    for (i = 0; i < ct; i++)
+    for (int i = 0; i < ct; i++)
     {
-        if ((get_spell_flags(spells[i].spell.fn) & liput) == liput)
+        if ((get_spell_flags(spells[i].spell.fn) & flags) == flags)
         {
             vanha_paikka[confirmed_spells] = i;
             confirmed_spells++;
         }
     }
-    for (i = 0; i < ct; i++)
+    for (int i = 0; i < ct; i++)
     {
         if ((i < confirmed_spells) && (i != vanha_paikka[i]))
         {

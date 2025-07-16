@@ -1409,7 +1409,7 @@ extern void obj_learn_store(object_type *o_ptr);
    a message to the player. */
 extern bool obj_learn_flag(object_type *o_ptr, int which);
 extern void obj_learn_activation(object_type *o_ptr);
-extern bool obj_learn_curse(object_type *o_ptr, int flag);
+extern bool obj_learn_curse(object_type *o_ptr, u64b flag);
 
 /* Learn a weapon slay *and* alert the user. */
 extern void obj_learn_slay(object_type *o_ptr, int which, cptr msg);

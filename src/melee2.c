@@ -2361,6 +2361,7 @@ static void process_monster(int m_idx)
         int tmp = p_ptr->lev*6+(p_ptr->skills.stl+10)*4;
         if (p_ptr->monlite) tmp /= 3;
         if (p_ptr->cursed & OFC_AGGRAVATE) tmp /= 2;
+        if (p_ptr->cursed & OFC_GAUDY) tmp = tmp * 8 / 10;
         if (r_ptr->level > (p_ptr->lev*p_ptr->lev/20+10)) tmp /= 3;
         /* Low-level monsters will find it difficult to locate the player. */
         if (randint0(tmp) > (r_ptr->level+20)) aware = FALSE;
@@ -2552,8 +2553,7 @@ static void process_monster(int m_idx)
     }
 
     /* No one wants to be your friend if you're aggravating */
-    if (is_friendly(m_ptr) && (p_ptr->cursed & OFC_AGGRAVATE) && (!p_ptr->uimapuku))
-        gets_angry = TRUE;
+    if (is_friendly(m_ptr) && (p_ptr->cursed & OFC_AGGRAVATE) && (!p_ptr->uimapuku)) gets_angry = TRUE;
 
     /* Uniques are hard to keep tame */
     if (is_pet(m_ptr) &&

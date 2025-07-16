@@ -145,7 +145,7 @@ int effect_calc_fail_rate(effect_t *effect)
 
 int device_calc_fail_rate(object_type *o_ptr)
 {
-    int lev, chance, fail;
+    int fail;
 
     if (o_ptr->activation.type)
     {
@@ -173,23 +173,20 @@ int device_calc_fail_rate(object_type *o_ptr)
             effect.difficulty = d;
         }
 
-        if (o_ptr->curse_flags & OFC_CURSED)
-            effect.difficulty += effect.difficulty / 5;
+        if (o_ptr->curse_flags & OFC_CURSED) effect.difficulty += effect.difficulty / 5;
 
         return effect_calc_fail_rate_aux(&effect, skill_boost);
     }
     if (p_ptr->pclass == CLASS_BERSERKER) return 1000;
     if (beorning_is_(BEORNING_FORM_BEAR)) return 1000;
 
-    lev = k_info[o_ptr->k_idx].level;
+    int lev = k_info[o_ptr->k_idx].level;
     if (lev > 50) lev = 50 + (lev - 50)/2;
-    chance = p_ptr->skills.dev;
+    int chance = p_ptr->skills.dev;
     if (p_ptr->confused) chance = chance / 2;
     chance = chance - lev;
-    if (chance < USE_DEVICE)
-        fail = 1000 - 1000/(3 * (USE_DEVICE - chance + 1));
-    else
-        fail = (USE_DEVICE-1)*1000/chance;
+    if (chance < USE_DEVICE) fail = 1000 - 1000/(3 * (USE_DEVICE - chance + 1));
+    else                     fail = (USE_DEVICE-1)*1000/chance;
 
     if ((p_ptr->stun) && (fail < 950))
     {
@@ -7276,8 +7273,7 @@ cptr do_effect(effect_t *effect, int mode, int boost)
                 msg_print("You feel as if someone is watching over you.");
                 device_noticed = TRUE;
             }
-            if (probing())
-                device_noticed = TRUE;
+            if (probing()) device_noticed = TRUE;
         }
         break;
     case EFFECT_GONG:

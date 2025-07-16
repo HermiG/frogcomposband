@@ -81,15 +81,13 @@ bool bag_tolerates(obj_ptr obj)
 int bag_capacity(void)
 {
     slot_t slot = equip_find_obj(TV_BAG, SV_ANY);
-    if (!slot) return 0;
-    return equip_obj(slot)->xtra4;
+    return slot ? equip_obj(slot)->xtra4 : 0;
 }
 
 int bag_weight_capacity(void)
 {
   slot_t slot = equip_find_obj(TV_BAG, SV_ANY);
-  if (!slot) return 0;
-  return equip_obj(slot)->xtra5;
+  return slot ? equip_obj(slot)->xtra5 : 0;
 }
 
 void bag_carry(obj_ptr obj)
@@ -146,13 +144,11 @@ void bag_remove(slot_t slot)
 
 void bag_remove_all(void)
 {
-    slot_t slot;
-    for (slot = 1; slot <= BAG_MAX; slot++)
+    for (slot_t slot = 1; slot <= BAG_MAX; slot++)
     {
         obj_ptr obj = bag_obj(slot);
 
         if (!obj) continue;
-        obj->marked |= OM_WORN;
         pack_carry_aux(obj);
         obj_release(obj, OBJ_RELEASE_QUIET);
     }
@@ -166,10 +162,10 @@ void bag_drop(obj_ptr obj)
 
     int amt = obj->number;
 
-    if (obj->number > 1)
+    if (amt > 1)
     {
-        amt = get_quantity(NULL, obj->number);
-        if (amt <= 0)
+        amt = get_quantity(NULL, amt);
+        if (amt < 1)
         {
             energy_use = 0;
             return;

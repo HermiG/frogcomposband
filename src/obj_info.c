@@ -58,10 +58,8 @@ static int _calc_net_bonus(int amt, u32b flgs[OF_ARRAY_SIZE], int flg, int flg_d
 {
     int net = 0;
 
-    if (flg != OF_INVALID && have_flag(flgs, flg))
-        net += amt;
-    if (flg_dec != OF_INVALID && have_flag(flgs, flg_dec))
-        net -= amt;
+    if (flg     != OF_INVALID && have_flag(flgs, flg))     net += amt;
+    if (flg_dec != OF_INVALID && have_flag(flgs, flg_dec)) net -= amt;
 
     return net;
 }
@@ -1194,7 +1192,7 @@ static void _display_curses(object_type *o_ptr, u32b flgs[OF_ARRAY_SIZE], doc_pt
 
     /* Note: Object may not actually be cursed, but still might have
        Aggravate or TY Curse. */
-    if ((obj_is_identified(o_ptr)) || (o_ptr->loc.where == INV_EQUIP))
+    if (obj_is_identified(o_ptr) || o_ptr->loc.where == INV_EQUIP)
     {
         /* Basic Curse Status is always obvious (light, heavy, permanent) */
         if (o_ptr->curse_flags & OFC_PERMA_CURSE)
@@ -1527,13 +1525,11 @@ void obj_display_doc(object_type *o_ptr, doc_ptr doc)
     if (show_origins || show_discovery)
     {
         if (display_origin(o_ptr, doc)) doc_printf(doc, "\n\n");
-
     }
     _display_desc(o_ptr, doc);
     doc_insert(doc, "<style:indent>"); /* Indent a bit when word wrapping long lines */
 
-    if (o_ptr->tval == TV_LITE)
-        _lite_display_doc(o_ptr, doc);
+    if (o_ptr->tval == TV_LITE) _lite_display_doc(o_ptr, doc);
 
     _display_stats(o_ptr, flgs, doc);
     _display_sustains(flgs, doc);
@@ -1990,8 +1986,7 @@ void ego_display_doc(ego_type *e_ptr, doc_ptr doc)
     _ego_display_name(e_ptr, doc);
 
     /* First, the fixed flags always present */
-    for (i = 0; i < OF_ARRAY_SIZE; i++)
-        flgs[i] = e_ptr->known_flags[i] & e_ptr->flags[i];
+    for (i = 0; i < OF_ARRAY_SIZE; i++) flgs[i] = e_ptr->known_flags[i] & e_ptr->flags[i];
     remove_flag(flgs, OF_HIDE_TYPE);
     remove_flag(flgs, OF_SHOW_MODS);
     remove_flag(flgs, OF_FULL_NAME);
@@ -2017,8 +2012,7 @@ void ego_display_doc(ego_type *e_ptr, doc_ptr doc)
     }
 
     /* Next, the optional flags */
-    for (i = 0; i < OF_ARRAY_SIZE; i++)
-        flgs[i] = e_ptr->known_flags[i] & e_ptr->xtra_flags[i];
+    for (i = 0; i < OF_ARRAY_SIZE; i++) flgs[i] = e_ptr->known_flags[i] & e_ptr->xtra_flags[i];
     remove_flag(flgs, OF_HIDE_TYPE);
     remove_flag(flgs, OF_SHOW_MODS);
     remove_flag(flgs, OF_FULL_NAME);

@@ -445,49 +445,42 @@ void chaos_warrior_reward(void)
             break;
         }
         case REW_GOOD_OBS:
-            msg_format("The voice of %s booms out:",
-                chaos_patrons[p_ptr->chaos_patron]);
+            msg_format("The voice of %s booms out:", chaos_patrons[p_ptr->chaos_patron]);
             msg_print("'Thy deed hath earned thee a worthy reward.'");
 
             acquirement(py, px, randint1(2) + 1, FALSE, FALSE, ORIGIN_PATRON);
             break;
         case REW_GREA_OBS:
-            msg_format("The voice of %s booms out:",
-                chaos_patrons[p_ptr->chaos_patron]);
+            msg_format("The voice of %s booms out:", chaos_patrons[p_ptr->chaos_patron]);
             msg_print("'Behold, mortal, how generously I reward thy loyalty.'");
 
             acquirement(py, px, randint1(2) + 1, TRUE, FALSE, ORIGIN_PATRON);
             break;
         case REW_TY_CURSE:
-            msg_format("The voice of %s thunders:",
-                chaos_patrons[p_ptr->chaos_patron]);
+            msg_format("The voice of %s thunders:", chaos_patrons[p_ptr->chaos_patron]);
             msg_print("'Thou art growing arrogant, mortal.'");
 
             if (p_ptr->lev < 35) nonlethal_ty_substitute(TRUE);
             else activate_ty_curse(FALSE, &count);
             break;
         case REW_SUMMON_M:
-            msg_format("The voice of %s booms out:",
-                chaos_patrons[p_ptr->chaos_patron]);
+            msg_format("The voice of %s booms out:", chaos_patrons[p_ptr->chaos_patron]);
             msg_print("'My pets, destroy the arrogant mortal!'");
             for (dummy = 0; dummy < randint1(5) + 1; dummy++)
                 summon_specific(0, py, px, dun_level, 0, (PM_ALLOW_GROUP | PM_ALLOW_UNIQUE | PM_NO_PET));
             break;
         case REW_H_SUMMON:
-            msg_format("The voice of %s booms out:",
-                chaos_patrons[p_ptr->chaos_patron]);
+            msg_format("The voice of %s booms out:", chaos_patrons[p_ptr->chaos_patron]);
             msg_print("'Thou needst worthier opponents!'");
             activate_hi_summon(py, px, FALSE);
             break;
         case REW_DO_HAVOC:
-            msg_format("The voice of %s booms out:",
-                chaos_patrons[p_ptr->chaos_patron]);
+            msg_format("The voice of %s booms out:", chaos_patrons[p_ptr->chaos_patron]);
             msg_print("'Death and destruction! This pleaseth me!'");
             call_chaos(100);
             break;
         case REW_GAIN_ABL:
-            msg_format("The voice of %s rings out:",
-                chaos_patrons[p_ptr->chaos_patron]);
+            msg_format("The voice of %s rings out:", chaos_patrons[p_ptr->chaos_patron]);
             msg_print("'Stay, mortal, and let me mold thee.'");
             if (one_in_(3) && !(chaos_stats[p_ptr->chaos_patron] < 0))
                 do_inc_stat(chaos_stats[p_ptr->chaos_patron]);
@@ -495,18 +488,14 @@ void chaos_warrior_reward(void)
                 do_inc_stat(randint0(6));
             break;
         case REW_LOSE_ABL:
-            msg_format("The voice of %s booms out:",
-                chaos_patrons[p_ptr->chaos_patron]);
+            msg_format("The voice of %s booms out:", chaos_patrons[p_ptr->chaos_patron]);
             msg_print("'I grow tired of thee, mortal.'");
 
-            if (one_in_(3) && !(chaos_stats[p_ptr->chaos_patron] < 0))
-                do_dec_stat(chaos_stats[p_ptr->chaos_patron]);
-            else
-                do_dec_stat(randint0(6));
+            if (one_in_(3) && !(chaos_stats[p_ptr->chaos_patron] < 0)) do_dec_stat(chaos_stats[p_ptr->chaos_patron]);
+            else                                                       do_dec_stat(randint0(MAX_STATS));
             break;
         case REW_RUIN_ABL:
-            msg_format("The voice of %s thunders:",
-                chaos_patrons[p_ptr->chaos_patron]);
+            msg_format("The voice of %s thunders:", chaos_patrons[p_ptr->chaos_patron]);
             msg_print("'Thou needst a lesson in humility, mortal!'");
             msg_print("You feel less powerful!");
 
@@ -518,22 +507,18 @@ void chaos_warrior_reward(void)
             do_poly_wounds();
             break;
         case REW_AUGM_ABL:
-            msg_format("The voice of %s booms out:",
-                chaos_patrons[p_ptr->chaos_patron]);
+            msg_format("The voice of %s booms out:", chaos_patrons[p_ptr->chaos_patron]);
             msg_print("'Receive this modest gift from me!'");
-            for (dummy = 0; dummy < 6; dummy++)
-                do_inc_stat(dummy);
+            for (dummy = 0; dummy < MAX_STATS; dummy++) do_inc_stat(dummy);
             break;
         case REW_HURT_LOT:
-            msg_format("The voice of %s booms out:",
-                chaos_patrons[p_ptr->chaos_patron]);
+            msg_format("The voice of %s booms out:", chaos_patrons[p_ptr->chaos_patron]);
             msg_print("'Suffer, pathetic fool!'");
             fire_ball(GF_DISINTEGRATE, 0, MIN(p_ptr->lev * 4, p_ptr->mhp * 2 / 5), 4);
             take_hit(DAMAGE_NOESCAPE, MIN(p_ptr->lev * 4, p_ptr->mhp * 2 / 5), wrath_reason);
             break;
        case REW_HEAL_FUL:
-            msg_format("The voice of %s booms out:",
-                chaos_patrons[p_ptr->chaos_patron]);
+            msg_format("The voice of %s booms out:", chaos_patrons[p_ptr->chaos_patron]);
             msg_print("'Rise, my servant!'");
             restore_level();
             set_poisoned(0, TRUE);
@@ -551,16 +536,14 @@ void chaos_warrior_reward(void)
             int slot = equip_random_slot(object_is_melee_weapon);
             if (prace_is_(RACE_MON_SWORD) || prace_is_(RACE_MON_RING) || prace_is_(RACE_MON_ARMOR))
             {
-                msg_format("The voice of %s booms out:",
-                    chaos_patrons[p_ptr->chaos_patron]);
+                msg_format("The voice of %s booms out:", chaos_patrons[p_ptr->chaos_patron]);
                 msg_print("'Now shalt thou pay for annoying me.'");
                 nonlethal_ty_substitute(TRUE);
                 break;
             }
             if (slot)
             {
-                msg_format("The voice of %s booms out:",
-                    chaos_patrons[p_ptr->chaos_patron]);
+                msg_format("The voice of %s booms out:", chaos_patrons[p_ptr->chaos_patron]);
                 msg_print("'Thou reliest too much on thy weapon.'");
                 curse_weapon(FALSE, slot);
             }
@@ -571,24 +554,21 @@ void chaos_warrior_reward(void)
             int slot = equip_random_slot(object_is_armour);
             if (prace_is_(RACE_MON_SWORD) || prace_is_(RACE_MON_RING) || prace_is_(RACE_MON_ARMOR))
             {
-                msg_format("The voice of %s booms out:",
-                    chaos_patrons[p_ptr->chaos_patron]);
+                msg_format("The voice of %s booms out:", chaos_patrons[p_ptr->chaos_patron]);
                 msg_print("'Now shalt thou pay for annoying me.'");
                 nonlethal_ty_substitute(TRUE);
                 break;
             }
             if (slot)
             {
-                msg_format("The voice of %s booms out:",
-                    chaos_patrons[p_ptr->chaos_patron]);
+                msg_format("The voice of %s booms out:", chaos_patrons[p_ptr->chaos_patron]);
                 msg_print("'Thou reliest too much on thine equipment.'");
                 curse_armor(slot);
             }
             break;
         }
         case REW_PISS_OFF:
-            msg_format("The voice of %s whispers:",
-                chaos_patrons[p_ptr->chaos_patron]);
+            msg_format("The voice of %s whispers:", chaos_patrons[p_ptr->chaos_patron]);
             msg_print("'Now thou shalt pay for annoying me.'");
             switch (randint1(4))
             {
@@ -607,19 +587,16 @@ void chaos_warrior_reward(void)
                     else if (one_in_(2))
                     {
                         int slot = equip_random_slot(object_is_melee_weapon);
-                        if (slot)
-                            curse_weapon(FALSE, slot);
+                        if (slot) curse_weapon(FALSE, slot);
                     }
                     else
                     {
                         int slot = equip_random_slot(object_is_armour);
-                        if (slot)
-                            curse_armor(slot);
+                        if (slot) curse_armor(slot);
                     }
                     break;
                 default:
-                    for (dummy = 0; dummy < 6; dummy++)
-                        dec_stat(dummy, 10 + randint1(15), TRUE);
+                    for (dummy = 0; dummy < MAX_STATS; dummy++) dec_stat(dummy, 10 + randint1(15), TRUE);
                     break;
             }
             break;
@@ -629,50 +606,42 @@ void chaos_warrior_reward(void)
 
             take_hit(DAMAGE_LOSELIFE, MIN(p_ptr->mhp * 2 / 3, p_ptr->lev * 4), wrath_reason);
             if (p_ptr->chp < 0) break; /* We've probably done enough */
-            for (dummy = 0; dummy < 6; dummy++)
-                dec_stat(dummy, 10 + randint1(15), FALSE);
+            for (dummy = 0; dummy < MAX_STATS; dummy++) dec_stat(dummy, 10 + randint1(15), FALSE);
             activate_hi_summon(py, px, FALSE);
             if ((p_ptr->lev < 39) || (!one_in_(8))) nonlethal_ty_substitute(TRUE);
             else activate_ty_curse(FALSE, &count);
             if (one_in_(2))
             {
                 int slot = equip_random_slot(object_is_melee_weapon);
-                if (slot)
-                    curse_weapon(FALSE, slot);
+                if (slot) curse_weapon(FALSE, slot);
             }
             if (one_in_(2))
             {
                 int slot = equip_random_slot(object_is_armour);
-                if (slot)
-                    curse_armor(slot);
+                if (slot) curse_armor(slot);
             }
             break;
         case REW_DESTRUCT:
-            msg_format("The voice of %s booms out:",
-                chaos_patrons[p_ptr->chaos_patron]);
+            msg_format("The voice of %s booms out:", chaos_patrons[p_ptr->chaos_patron]);
             msg_print("'Death and destruction! This pleaseth me!'");
             destroy_area(py, px, 25, 3 * p_ptr->lev);
             break;
         case REW_GENOCIDE:
-            msg_format("The voice of %s booms out:",
-                chaos_patrons[p_ptr->chaos_patron]);
+            msg_format("The voice of %s booms out:", chaos_patrons[p_ptr->chaos_patron]);
             msg_print("'Let me relieve thee of thine oppressors!'");
             symbol_genocide(0, FALSE);
             break;
         case REW_MASS_GEN:
-            msg_format("The voice of %s booms out:",
-                chaos_patrons[p_ptr->chaos_patron]);
+            msg_format("The voice of %s booms out:", chaos_patrons[p_ptr->chaos_patron]);
             msg_print("'Let me relieve thee of thine oppressors!'");
             mass_genocide(0, FALSE);
             break;
         case REW_DISPEL_C:
-            msg_format("You can feel the power of %s assault your enemies!",
-                chaos_patrons[p_ptr->chaos_patron]);
+            msg_format("You can feel the power of %s assault your enemies!", chaos_patrons[p_ptr->chaos_patron]);
             dispel_monsters(p_ptr->lev * 4);
             break;
         case REW_IGNORE:
-            msg_format("%s ignores you.",
-                chaos_patrons[p_ptr->chaos_patron]);
+            msg_format("%s ignores you.", chaos_patrons[p_ptr->chaos_patron]);
             break;
         case REW_SER_DEMO:
             msg_format("%s rewards you with a demonic servant!",chaos_patrons[p_ptr->chaos_patron]);

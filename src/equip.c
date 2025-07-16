@@ -592,10 +592,7 @@ static bool _wield_confirm(obj_ptr obj, slot_t slot)
     {
         bool do_prompt = FALSE;
 
-        if (object_is_known(obj) && object_is_cursed(obj))
-        {
-            do_prompt = TRUE;
-        }
+        if (object_is_known(obj) && object_is_cursed(obj)) do_prompt = TRUE;
         else if (obj->ident & IDENT_SENSE)
         {
             switch (obj->feeling)
@@ -611,10 +608,10 @@ static bool _wield_confirm(obj_ptr obj, slot_t slot)
         }
         if (do_prompt)
         {
-            char dummy[MAX_NLEN+80];
+            char buf[MAX_NLEN+80];
             object_desc(o_name, obj, OD_OMIT_PREFIX | OD_NAME_ONLY | OD_COLOR_CODED);
-            sprintf(dummy, "Really use the %s {cursed}? ", o_name);
-            if (!get_check(dummy)) return FALSE;
+            sprintf(buf, "Really use the %s {cursed}? ", o_name);
+            if (!get_check(buf)) return FALSE;
         }
     }
     if ( obj->name1 == ART_STONEMASK
@@ -628,11 +625,11 @@ static bool _wield_confirm(obj_ptr obj, slot_t slot)
       && p_ptr->pclass != CLASS_BLOOD_KNIGHT
       && !comp_mode)
     {
-        char dummy[MAX_NLEN+80];
+        char buf[MAX_NLEN+80];
         object_desc(o_name, obj, OD_OMIT_PREFIX | OD_NAME_ONLY);
         msg_format("%s will permanently transform you into a vampire when equipped.", o_name);
-        sprintf(dummy, "Do you become a vampire?");
-        if (!get_check(dummy)) return FALSE;
+        sprintf(buf, "Do you become a vampire?");
+        if (!get_check(buf)) return FALSE;
     }
     return TRUE;
 }
@@ -852,8 +849,8 @@ bool _unwield_verify(obj_ptr obj)
         {
             msg_print("You tear the cursed equipment off by sheer strength!");
             obj->ident |= IDENT_SENSE;
-            obj->curse_flags = 0L;
-            obj->known_curse_flags = 0L;
+            obj->curse_flags = 0;
+            obj->known_curse_flags = 0;
             obj->feeling = FEEL_NONE;
             p_ptr->update |= PU_BONUS;
             p_ptr->window |= PW_EQUIP;
@@ -910,7 +907,7 @@ void _unwield(obj_ptr obj, bool drop)
             obj->number -= amt;
 
             obj_release(obj, obj->number ? OBJ_RELEASE_DELAYED_MSG : OBJ_RELEASE_QUIET);
-            energy_use = 50;
+            energy_use = 100;
         }
     }
     else
@@ -918,14 +915,9 @@ void _unwield(obj_ptr obj, bool drop)
         char name[MAX_NLEN];
         object_desc(name, obj, OD_COLOR_CODED);
         if (obj->loc.where == INV_EQUIP) msg_format("You are no longer wearing %s.", name);
-        if (object_is_cursed(obj))
-        {
-            p_ptr->redraw |= PR_EFFECTS;
-        }
-        if (drop)
-        {
-            obj_drop(obj, obj->number);
-        }
+        if (object_is_cursed(obj)) p_ptr->redraw |= PR_EFFECTS;
+        
+        if (drop) obj_drop(obj, obj->number);
         else
         {
             pack_carry_aux(obj);
@@ -1160,15 +1152,10 @@ void object_calc_bonuses(obj_ptr obj, slot_t slot)
     obj_flags_known(obj, known_flgs);
 
     p_ptr->cursed |= obj->curse_flags;
-    if (p_ptr->cursed)
-        p_ptr->redraw |= PR_EFFECTS;
+    if (p_ptr->cursed) p_ptr->redraw |= PR_EFFECTS;
     if (obj->name1 == ART_CHAINSWORD) p_ptr->cursed |= OFC_CHAINSWORD;
-
-    if (obj->name1 == ART_MAUL_OF_VICE)
-        p_ptr->maul_of_vice = TRUE;
-
-    if (have_flag(flgs, OF_LORE2))
-        p_ptr->auto_id = TRUE;
+    if (obj->name1 == ART_MAUL_OF_VICE) p_ptr->maul_of_vice = TRUE;
+    if (have_flag(flgs, OF_LORE2)) p_ptr->auto_id = TRUE;
 
     if (obj->name2 == EGO_GLOVES_GIANT)
     {
@@ -1335,17 +1322,13 @@ void object_calc_bonuses(obj_ptr obj, slot_t slot)
         _weapon_info_flag(slot, flgs, known_flgs, OF_BRAND_DARK); /* Allow possible future use */
     }
 
-    if (have_flag(flgs, OF_XTRA_SHOTS))
-        p_ptr->shooter_info.xtra_shot += 15 * obj->pval;
+    if (have_flag(flgs, OF_XTRA_SHOTS)) p_ptr->shooter_info.xtra_shot += obj->pval * 15;
+    if (have_flag(flgs, OF_LIFE))       p_ptr->life += obj->pval * 3;
+    if (have_flag(flgs, OF_DEC_LIFE))   p_ptr->life -= obj->pval * 3;
 
-    if (have_flag(flgs, OF_LIFE))
-        p_ptr->life += 3*obj->pval;
-    if (have_flag(flgs, OF_DEC_LIFE))
-        p_ptr->life -= 3*obj->pval;
-
-    if (have_flag(flgs, OF_AGGRAVATE))   p_ptr->cursed |= OFC_AGGRAVATE;
-    if (have_flag(flgs, OF_DRAIN_EXP))   p_ptr->cursed |= OFC_DRAIN_EXP;
-    if (have_flag(flgs, OF_TY_CURSE))    p_ptr->cursed |= OFC_TY_CURSE;
+    if (have_flag(flgs, OF_AGGRAVATE))  p_ptr->cursed |= OFC_AGGRAVATE;
+    if (have_flag(flgs, OF_DRAIN_EXP))  p_ptr->cursed |= OFC_DRAIN_EXP;
+    if (have_flag(flgs, OF_TY_CURSE))   p_ptr->cursed |= OFC_TY_CURSE;
 
     /* Whether these two flags should be available to the player is now
      * calculated in obj_flags_effective() */
@@ -1448,13 +1431,7 @@ void object_calc_bonuses(obj_ptr obj, slot_t slot)
         p_ptr->no_passwall_dam = TRUE;
     }
 
-    if (obj->curse_flags & OFC_LOW_MAGIC)
-    {
-        if (obj->curse_flags & OFC_HEAVY_CURSE)
-            p_ptr->to_m_chance += 10;
-        else
-            p_ptr->to_m_chance += 3;
-    }
+    if (obj->curse_flags & OFC_LOW_MAGIC) p_ptr->to_m_chance += (obj->curse_flags & OFC_HEAVY_CURSE) ? 10 : 3;
 
     if (obj->curse_flags & OFC_LOW_DEVICE)
     {
@@ -1473,7 +1450,7 @@ void object_calc_bonuses(obj_ptr obj, slot_t slot)
     if (obj->tval == TV_CAPTURE) return;
 
     /* Modify the base armor class */
-    p_ptr->ac += obj->ac;
+    p_ptr->ac     += obj->ac;
     p_ptr->dis_ac += obj->ac;
 
     /* Apply the bonuses to armor class */
@@ -1487,16 +1464,14 @@ void object_calc_bonuses(obj_ptr obj, slot_t slot)
         {
             case EQUIP_SLOT_BOW:
                 p_ptr->shooter_info.to_h += penalty;
-                if (obj->known_curse_flags & OFC_LOW_MELEE)
-                    p_ptr->shooter_info.dis_to_h += penalty;
+                if (obj->known_curse_flags & OFC_LOW_MELEE) p_ptr->shooter_info.dis_to_h += penalty;
                 break;
             case EQUIP_SLOT_WEAPON_SHIELD:
             case EQUIP_SLOT_WEAPON:
             {
                 int hand = _template->slots[slot].hand;
                 p_ptr->weapon_info[hand].to_h += penalty;
-                if (obj->known_curse_flags & OFC_LOW_MELEE)
-                    p_ptr->weapon_info[hand].dis_to_h += penalty;
+                if (obj->known_curse_flags & OFC_LOW_MELEE) p_ptr->weapon_info[hand].dis_to_h += penalty;
                 break;
             }
         }
@@ -1507,14 +1482,12 @@ void object_calc_bonuses(obj_ptr obj, slot_t slot)
         if (obj->curse_flags & OFC_HEAVY_CURSE)
         {
             p_ptr->to_a -= 30;
-            if (obj->known_curse_flags & OFC_LOW_AC)
-                p_ptr->dis_to_a -= 30;
+            if (obj->known_curse_flags & OFC_LOW_AC) p_ptr->dis_to_a -= 30;
         }
         else
         {
             p_ptr->to_a -= 10;
-            if (obj->known_curse_flags & OFC_LOW_AC)
-               p_ptr->dis_to_a -= 10;
+            if (obj->known_curse_flags & OFC_LOW_AC) p_ptr->dis_to_a -= 10;
         }
     }
 
@@ -1589,10 +1562,7 @@ void object_calc_bonuses(obj_ptr obj, slot_t slot)
     p_ptr->to_d_m += bonus_to_d;
 
     _weapon_bonus(slot, bonus_to_h, bonus_to_d, object_is_known(obj));
-    if (have_flag(flgs, OF_WEAPONMASTERY))
-    {
-        _weaponmastery(slot, obj->pval);
-    }
+    if (have_flag(flgs, OF_WEAPONMASTERY)) _weaponmastery(slot, obj->pval);
 }
 
 
@@ -1832,26 +1802,23 @@ void equip_on_change_race(void)
     equip_template_ptr old_template = _template;
     equip_template_ptr new_template = get_race()->equip_template;
 
-    if (!new_template)
-        new_template = &b_info[0];
+    if (!new_template) new_template = &b_info[0];
 
     if (old_template != new_template)
     {
-        slot_t  slot;
         inv_ptr temp = inv_copy(_inv);
 
         inv_clear(_inv);
         _template = new_template;
 
-        for (slot = 1; slot <= old_template->max; slot++)
+        for (slot_t slot = 1; slot <= old_template->max; slot++)
         {
             obj_ptr src = inv_obj(temp, slot);
             slot_t  new_slot;
 
             if (!src) continue;
             new_slot = equip_first_empty_slot(src);
-            if (new_slot)
-                inv_add_at(_inv, src, new_slot);
+            if (new_slot) inv_add_at(_inv, src, new_slot);
             else
             {
                 char name[MAX_NLEN];
@@ -1861,8 +1828,7 @@ void equip_on_change_race(void)
 
                 /* Mark the object as previously worn. Next time we shift bodies,
                    we will attempt to wield this item again automatically */
-                if (!src->inscription)
-                    src->marked |= OM_WORN;
+                if (!src->inscription) src->marked |= OM_WORN;
                 else
                 {
                     cptr inscription = quark_str(src->inscription);
@@ -1885,10 +1851,9 @@ void equip_on_change_race(void)
         if (!equip_find_obj(TV_BAG,    SV_ANY)) bag_remove_all();
 
         pack_overflow();
-        for (slot = 1; slot <= pack_max(); slot++)
+        for (slot_t slot = 1; slot <= pack_max(); slot++)
         {
             obj_ptr obj = pack_obj(slot);
-            slot_t  new_slot;
 
             if (!obj) continue;
             if (!(obj->marked & OM_WORN)) continue;
@@ -1904,7 +1869,7 @@ void equip_on_change_race(void)
             }
             else
             {
-                new_slot = equip_first_empty_slot(obj);
+                slot_t new_slot = equip_first_empty_slot(obj);
                 if (new_slot && obj->number == 1)
                 {
                     obj->marked &= ~OM_WORN;
@@ -1922,10 +1887,9 @@ void equip_on_change_race(void)
     }
 }
 
-void equip_learn_curse(int flag)
+void equip_learn_curse(u64b flag)
 {
-    slot_t slot;
-    for (slot = 1; slot <= _template->max; slot++)
+    for (slot_t slot = 1; slot <= _template->max; slot++)
     {
         obj_ptr obj = inv_obj(_inv, slot);
         if (obj && obj_learn_curse(obj, flag))
@@ -1939,8 +1903,7 @@ void equip_learn_curse(int flag)
 
 void _learn_resist_aux(int obj_flag, cptr desc)
 {
-    slot_t slot;
-    for (slot = 1; slot <= _template->max; slot++)
+    for (slot_t slot = 1; slot <= _template->max; slot++)
     {
         obj_ptr obj = inv_obj(_inv, slot);
         if (obj && obj_learn_flag(obj, obj_flag))
@@ -2068,7 +2031,7 @@ void _ring_finger_sanity_check(void)
         int other_hand = (hand == rhand) ? lhand : rhand;
         bool hand_is_weapon = FALSE, hand_is_combat_ring = FALSE;
         object_type *obj = equip_obj(slot);
-        if ((obj) && (obj->known_curse_flags)) return;
+        if (obj && obj->known_curse_flags) return;
         if (p_ptr->weapon_info[hand].wield_how != WIELD_NONE) hand_is_weapon = TRUE;
         else if ((_template->slots[slot].type == EQUIP_SLOT_RING) && (p_ptr->weapon_info[other_hand].wield_how == WIELD_TWO_HANDS)) hand_is_weapon = TRUE;
         if (obj) hand_is_combat_ring = _object_is_combat_ring(obj);

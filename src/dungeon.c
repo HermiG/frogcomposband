@@ -1186,18 +1186,14 @@ void recharged_notice(object_type *o_ptr, unsigned char neula)
 /* Choose one of items that have cursed flag */
 static u32b _curse_flag = 0;
 static bool _object_is_cursed(object_type *o_ptr) {
-    if (o_ptr->curse_flags & _curse_flag)
-        return TRUE;
-    return FALSE;
+    return (o_ptr->curse_flags & _curse_flag);
 }
 static object_type *choose_cursed_obj_name(u32b flag)
 {
-    int slot;
     _curse_flag = flag;
-    slot = equip_random_slot(_object_is_cursed);
-    if (slot)
-        return equip_obj(slot);
-    return NULL;
+    int slot = equip_random_slot(_object_is_cursed);
+
+    return slot ? equip_obj(slot) : NULL;
 }
 
 void do_alter_reality(void)
@@ -2189,10 +2185,10 @@ static void process_world_aux_curse(void)
         {
             char o_name[MAX_NLEN];
             object_type *o_ptr;
-            int i, i_keep = 0, count = 0;
+            int i_keep = 0, count = 0;
 
             /* Scan the equipment with random teleport ability */
-            for (i = 1; i <= equip_max(); i++)
+            for (int i = 1; i <= equip_max(); i++)
             {
                 u32b flgs[OF_ARRAY_SIZE];
                 o_ptr = equip_obj(i);
@@ -2233,8 +2229,7 @@ static void process_world_aux_curse(void)
         if ((p_ptr->cursed & OFC_CHAINSWORD) && one_in_(CHAINSWORD_NOISE))
         {
             char noise[1024];
-            if (!get_rnd_line("chainswd.txt", 0, noise))
-                msg_print(noise);
+            if (!get_rnd_line("chainswd.txt", 0, noise)) msg_print(noise);
             disturb(0, 0);
         }
         /* TY Curse */
@@ -2256,9 +2251,9 @@ static void process_world_aux_curse(void)
         /* Normality */
         if ((p_ptr->cursed & OFC_NORMALITY) && (one_in_(128)))
         {
-            int ii, yrkat = randint1(20);
+            int yrkat = randint1(20);
             bool osui = FALSE;
-            for (ii = 0; ii < yrkat; ii++)
+            for (int ii = 0; ii < yrkat; ii++)
             {
                 if (disenchant_player()) osui = TRUE;
             }
@@ -2266,6 +2261,7 @@ static void process_world_aux_curse(void)
             {
                 msg_print("You feel awfully normal...");
                 equip_learn_curse(OFC_NORMALITY);
+                disturb(0, 0);
             }
         }
 
@@ -2273,22 +2269,21 @@ static void process_world_aux_curse(void)
         if ((p_ptr->cursed & OFC_ALLERGY) && (!p_ptr->unwell) && (one_in_(888)) && !(get_race()->flags & RACE_IS_NONLIVING))
         {
             msg_print("Your eyes suddenly feel very itchy...");
-            disturb(0, 0);
             set_unwell(70, TRUE);
             equip_learn_curse(OFC_ALLERGY);
+            disturb(0, 0);
         }
 
         if ((p_ptr->cursed & OFC_CRAPPY_MUT) && (one_in_(1500)))
         {
             msg_print("You mutate!");
             mut_gain_random(mut_bad_pred);
-            disturb(0, 0);
             equip_learn_curse(OFC_CRAPPY_MUT);
+            disturb(0, 0);
         }
 
         /* Handle experience draining */
-        if (p_ptr->prace != RACE_ANDROID &&
-            ((p_ptr->cursed & OFC_DRAIN_EXP) && one_in_(4)))
+        if (p_ptr->prace != RACE_ANDROID && ((p_ptr->cursed & OFC_DRAIN_EXP) && one_in_(4)))
         {
             p_ptr->exp -= (p_ptr->lev+1)/2;
             if (p_ptr->exp < 0) p_ptr->exp = 0;
@@ -2297,6 +2292,7 @@ static void process_world_aux_curse(void)
             check_experience();
             equip_learn_curse(OFC_DRAIN_EXP);
             equip_learn_flag(OF_DRAIN_EXP);
+            disturb(0, 0);
         }
         /* Add light curse (Later) */
         if ((p_ptr->cursed & OFC_ADD_L_CURSE) && one_in_(2000))
@@ -2320,6 +2316,7 @@ static void process_world_aux_curse(void)
 
                 p_ptr->update |= (PU_BONUS);
                 obj_learn_curse(o_ptr, OFC_ADD_L_CURSE);
+                disturb(0, 0);
             }
         }
         /* Add heavy curse (Later) */
@@ -2344,6 +2341,7 @@ static void process_world_aux_curse(void)
 
                 p_ptr->update |= (PU_BONUS);
                 obj_learn_curse(o_ptr, OFC_ADD_H_CURSE);
+                disturb(0, 0);
             }
         }
         /* Call animal */
@@ -2358,8 +2356,8 @@ static void process_world_aux_curse(void)
                 object_desc(o_name, o_ptr, (OD_OMIT_PREFIX | OD_NAME_ONLY));
                 msg_format("Your %s %s attracted an animal!", o_name, object_plural(o_ptr) ? "have" : "has");
 
-                disturb(0, 0);
                 obj_learn_curse(o_ptr, OFC_CALL_ANIMAL);
+                disturb(0, 0);
             }
         }
         /* Call demon */
@@ -2373,8 +2371,8 @@ static void process_world_aux_curse(void)
                 object_desc(o_name, o_ptr, (OD_OMIT_PREFIX | OD_NAME_ONLY));
                 msg_format("Your %s %s attracted a demon!", o_name, object_plural(o_ptr) ? "have" : "has");
 
-                disturb(0, 0);
                 obj_learn_curse(o_ptr, OFC_CALL_DEMON);
+                disturb(0, 0);
             }
         }
         /* Call dragon */
@@ -2389,30 +2387,28 @@ static void process_world_aux_curse(void)
                 object_desc(o_name, o_ptr, (OD_OMIT_PREFIX | OD_NAME_ONLY));
                 msg_format("Your %s %s attracted a dragon!", o_name, object_plural(o_ptr) ? "have" : "has");
 
-                disturb(0, 0);
                 obj_learn_curse(o_ptr, OFC_CALL_DRAGON);
+                disturb(0, 0);
             }
         }
         if ((p_ptr->cursed & OFC_COWARDICE) && one_in_(1500))
         {
             if (!fear_save_p(fear_threat_level()))
             {
-                disturb(0, 0);
                 msg_print("It's so dark... so scary!");
 
                 fear_add_p(FEAR_SCARED);
                 equip_learn_curse(OFC_COWARDICE);
+                disturb(0, 0);
             }
         }
         /* Teleport player */
         if ((p_ptr->cursed & OFC_TELEPORT) && one_in_(200) && !p_ptr->anti_tele)
         {
-            disturb(0, 0);
-
-            /* Teleport player */
             teleport_player(40, TELEPORT_PASSIVE);
             equip_learn_curse(OFC_TELEPORT);
             equip_learn_flag(OF_TELEPORT);
+            disturb(0, 0);
         }
         /* Handle HP draining */
         if ((p_ptr->cursed & OFC_DRAIN_HP) && one_in_(666))
@@ -2424,6 +2420,7 @@ static void process_world_aux_curse(void)
             msg_format("Your %s %s HP from you!", o_name, object_plural(o_ptr) ? "drain" : "drains");
             take_hit(DAMAGE_LOSELIFE, MIN(p_ptr->lev*2, 100), "an equipment curse");
             obj_learn_curse(o_ptr, OFC_DRAIN_HP);
+            disturb(0, 0);
         }
         /* Handle mana draining */
         if ((p_ptr->cursed & OFC_DRAIN_MANA) && p_ptr->csp && one_in_(666))
@@ -2441,6 +2438,7 @@ static void process_world_aux_curse(void)
             }
             p_ptr->redraw |= PR_MANA;
             obj_learn_curse(o_ptr, OFC_DRAIN_MANA);
+            disturb(0, 0);
         }
 
         /* Handle charge draining */
@@ -2455,6 +2453,7 @@ static void process_world_aux_curse(void)
                 object_desc(o_name, o_ptr, (OD_OMIT_PREFIX | OD_NAME_ONLY));
                 msg_format("Your %s %s a strange sizzling sound...", o_name, object_plural(o_ptr) ? "make" : "makes");
                 obj_learn_curse(o_ptr, OFC_DRAIN_PACK);
+                disturb(0, 0);
             }
         }
     }
@@ -2466,11 +2465,10 @@ static void process_world_aux_curse(void)
         if (slot)
         {
             object_type *o_ptr = equip_obj(slot);
-            if (object_is_known(o_ptr))
-                msg_print("The Jewel of Judgement drains life from you!");
-            else
-                msg_print("Something drains life from you!");
+            if (object_is_known(o_ptr)) msg_print("The Jewel of Judgement drains life from you!");
+            else                        msg_print("Something drains life from you!");
             take_hit(DAMAGE_LOSELIFE, MIN(p_ptr->lev, 50), "the Jewel of Judgement");
+            disturb(0, 0);
         }
     }
 
@@ -2502,10 +2500,9 @@ static void process_world_aux_curse(void)
                 msg_print("You forget yourself in utter terror!");
                 lose_all_info();
             }
-            if (one_in_(2))
-                set_stun(p_ptr->stun + randint1(40), FALSE);
-            if (one_in_(2))
-                set_confused(p_ptr->confused + randint1(5) + 5, FALSE);
+            if (one_in_(2)) set_stun(p_ptr->stun + randint1(40), FALSE);
+            if (one_in_(2)) set_confused(p_ptr->confused + randint1(5) + 5, FALSE);
+            disturb(0, 0);
         }
     }
 
@@ -2520,6 +2517,7 @@ static void process_world_aux_curse(void)
             else
                 msg_print("The Hand strangles you!");
             take_hit(DAMAGE_LOSELIFE, MIN(p_ptr->lev, 50), "the Hand of Vecna");
+            disturb(0, 0);
         }
     }
 
@@ -2541,6 +2539,7 @@ static void process_world_aux_curse(void)
                 p_ptr->csp_frac = 0;
             }
             p_ptr->redraw |= PR_MANA;
+            disturb(0, 0);
         }
     }
 }
@@ -3312,16 +3311,12 @@ static void process_world(void)
             int digestion = SPEED_TO_ENERGY(p_ptr->pspeed);
 
             /* Regeneration takes more food */
-            if (p_ptr->regen > 100)
-                digestion += 10*(p_ptr->regen-100)/100;
-            if (p_ptr->special_defense & (KAMAE_MASK | KATA_MASK))
-                digestion += 20;
-            if (p_ptr->cursed & OFC_FAST_DIGEST)
-                digestion += 30;
+            if (p_ptr->regen > 100)                                digestion += 10*(p_ptr->regen-100)/100;
+            if (p_ptr->special_defense & (KAMAE_MASK | KATA_MASK)) digestion += 20;
+            if (p_ptr->cursed & OFC_FAST_DIGEST)                   digestion += 30;
 
             /* Slow digestion takes less food */
-            if (p_ptr->slow_digest)
-                digestion /= 2;
+            if (p_ptr->slow_digest) digestion /= 2;
 
             /* Temperance slows digestion */
             digestion = digestion * (375 - virtue_current(VIRTUE_TEMPERANCE)) / 375;

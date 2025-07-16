@@ -173,7 +173,7 @@ void werewolf_change_shape_spell(int cmd, variant *res)
         break;
     case SPELL_CAST:
         var_set_bool(res, FALSE);
-        if (p_ptr->cursed & 0x0000000F)
+        if (p_ptr->cursed & 0xF)
         {
             msg_print("Your cursed equipment prevents you from changing shape!");
             break;

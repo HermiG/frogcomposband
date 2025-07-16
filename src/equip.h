@@ -97,7 +97,7 @@ extern bool    equip_is_empty_hand(int hand);
 extern bool    equip_is_valid_hand(int hand);
 extern bool    equip_is_empty_two_handed_slot(slot_t slot);
 
-extern void    equip_learn_curse(int flag);
+extern void    equip_learn_curse(u64b flag);
 extern void    equip_learn_resist(int obj_flag); /* pass OF_RES_FIRE rather than RES_FIRE */
 extern void    equip_learn_vuln(int obj_flag);
 extern void    equip_learn_flag(int obj_flag);

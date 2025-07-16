@@ -2000,9 +2000,8 @@ void generate_cave(void)
         msg_format("Objects=%d", ct);
     }
     {
-        int i;
         int lvl = 0, ct = 0, uniques = 0, ct_drops = 0;
-        for (i = 1; i < max_m_idx; i++)
+        for (int i = 1; i < max_m_idx; i++)
         {
         monster_type *m_ptr = &m_list[i];
         monster_race *r_ptr;
@@ -2016,7 +2015,7 @@ void generate_cave(void)
                 uniques++;
         }
         msg_format("DL=%d, Monsters=%d, Drops=%d, <ML>= %d, Uniques=%d", dun_level, ct, ct_drops, lvl/MAX(ct, 1), uniques);
-        for (i = 0; i < ct_drops; i++)
+        for (int i = 0; i < ct_drops; i++)
         {
             object_type forge;
             char        buf[MAX_NLEN];

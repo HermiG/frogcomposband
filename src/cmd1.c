@@ -228,8 +228,7 @@ static int _max_vampiric_drain(void)
 
         if (feed)
         {
-            if (!have_flag(o_ptr->flags, OF_TY_CURSE)
-              && o_ptr->dd * o_ptr->ds > 60 )
+            if (!have_flag(o_ptr->flags, OF_TY_CURSE) && o_ptr->dd * o_ptr->ds > 60 )
             {
                 add_flag(o_ptr->flags, OF_TY_CURSE);
                 msg_print("Your Rune Sword seeks to dominate you!");
@@ -690,44 +689,34 @@ static void hit_trap(bool break_trap, bool do_jump)
     int i, num, dam;
     int x = px, y = py;
 
-    /* Get the cave grid */
     cave_type *c_ptr = &cave[y][x];
     feature_type *f_ptr = &f_info[c_ptr->feat];
     int trap_feat_type = have_flag(f_ptr->flags, FF_TRAP) ? f_ptr->subtype : NOT_TRAP;
 
     cptr name = "a trap";
 
-    /* Disturb the player */
     disturb(0, 0);
 
     cave_alter_feat(y, x, FF_HIT_TRAP);
 
-    /* Analyze XXX XXX XXX */
     switch (trap_feat_type)
     {
         case TRAP_TRAPDOOR:
         {
-            if (p_ptr->levitation && !do_jump)
-            {
-                msg_print("You fly over a trap door.");
-
-            }
+            if (p_ptr->levitation && !do_jump) msg_print("You fly over a trap door.");
             else
             {
                 msg_print("You have fallen through a trap door!");
-                sound(SOUND_FALL);
-                dam = damroll(2, 8);
                 name = "a trap door";
-
+                sound(SOUND_FALL);
+              
+                dam = damroll(2, 8);
                 take_hit(DAMAGE_NOESCAPE, dam, name);
 
-                /* Still alive and autosave enabled */
-                if (autosave_l && (p_ptr->chp >= 0))
-                    do_cmd_save_game(TRUE);
+                if (autosave_l && (p_ptr->chp >= 0)) do_cmd_save_game(TRUE);
 
                 prepare_change_floor_mode(CFM_SAVE_FLOORS | CFM_DOWN | CFM_RAND_PLACE | CFM_RAND_CONNECT);
 
-                /* Leaving */
                 p_ptr->leaving = TRUE;
             }
             break;
@@ -735,18 +724,13 @@ static void hit_trap(bool break_trap, bool do_jump)
 
         case TRAP_PIT:
         {
-            if (p_ptr->levitation)
-            {
-                msg_print("You fly over a pit trap.");
-
-            }
+            if (p_ptr->levitation) msg_print("You fly over a pit trap.");
             else
             {
                 msg_print("You have fallen into a pit!");
-
-                dam = damroll(2, 6);
                 name = "a pit trap";
 
+                dam = damroll(2, 6);
                 take_hit(DAMAGE_NOESCAPE, dam, name);
             }
             break;
@@ -754,17 +738,10 @@ static void hit_trap(bool break_trap, bool do_jump)
 
         case TRAP_SPIKED_PIT:
         {
-            if (p_ptr->levitation)
-            {
-                msg_print("You fly over a spiked pit.");
-
-            }
+            if (p_ptr->levitation) msg_print("You fly over a spiked pit.");
             else
             {
                 msg_print("You fall into a spiked pit!");
-
-
-                /* Base damage */
                 name = "a pit trap";
 
                 dam = damroll(2, 6);
@@ -773,15 +750,12 @@ static void hit_trap(bool break_trap, bool do_jump)
                 if (randint0(100) < 50)
                 {
                     msg_print("You are impaled!");
-
-
                     name = "a spiked pit";
 
                     dam = dam * 2;
                     (void)set_cut(p_ptr->cut + randint1(dam), FALSE);
                 }
 
-                /* Take the damage */
                 take_hit(DAMAGE_NOESCAPE, dam, name);
             }
             break;
@@ -797,22 +771,15 @@ static void hit_trap(bool break_trap, bool do_jump)
             else
             {
                 msg_print("You fall into a spiked pit!");
-
-
-                /* Base damage */
                 dam = damroll(2, 6);
 
                 name = "a pit trap";
-
 
                 /* Extra spike damage */
                 if (randint0(100) < 50)
                 {
                     msg_print("You are impaled on poisonous spikes!");
-
-
                     name = "a spiked pit";
-
 
                     dam = dam * 2;
                     (void)set_cut(p_ptr->cut + randint1(dam), FALSE);
@@ -825,7 +792,6 @@ static void hit_trap(bool break_trap, bool do_jump)
                     }
                 }
 
-                /* Take the damage */
                 take_hit(DAMAGE_NOESCAPE, dam, name);
             }
 
@@ -1053,7 +1019,7 @@ static void hit_trap(bool break_trap, bool do_jump)
             for (lev = dun_level; lev >= 20; lev -= 1 + lev/16)
             {
                 num = levs[MIN(lev/10, 9)];
-                for (i = 0; i < num; i++)
+                for (int i = 0; i < num; i++)
                 {
                     int x1 = rand_spread(x, 7);
                     int y1 = rand_spread(y, 5);
@@ -1096,7 +1062,7 @@ static void hit_trap(bool break_trap, bool do_jump)
 
             /* Summon Piranhas */
             num = 1 + dun_level/20;
-            for (i = 0; i < num; i++)
+            for (int i = 0; i < num; i++)
             {
                 (void)summon_specific(0, y, x, dun_level, SUMMON_PIRANHA, (PM_ALLOW_GROUP | PM_NO_PET));
             }
@@ -1442,6 +1408,7 @@ static void innate_attacks(s16b m_idx, bool *fear, bool *mdeath, int mode)
                 int tmp = p_ptr->lev * 6 + (p_ptr->skills.stl + 10) * 4;
                 if (p_ptr->monlite && (mode != HISSATSU_NYUSIN)) tmp /= 3;
                 if (p_ptr->cursed & OFC_AGGRAVATE) tmp /= 2;
+                if (p_ptr->cursed & OFC_GAUDY) tmp = tmp * 8 / 10;
                 if (r_ptr->level > (p_ptr->lev * p_ptr->lev / 20 + 10)) tmp /= 3;
                 if (sleep_hit)
                 {
@@ -1453,17 +1420,13 @@ static void innate_attacks(s16b m_idx, bool *fear, bool *mdeath, int mode)
                 {
                     fuiuchi = TRUE;
                 }
-                else if (MON_MONFEAR(m_ptr))
-                {
-                    stab_fleeing = TRUE;
-                }
+                else if (MON_MONFEAR(m_ptr)) stab_fleeing = TRUE;
             }
             break;
         case CLASS_SCOUT:
             if (p_ptr->ambush)
             {
-                if (sleep_hit && m_ptr->ml)
-                    backstab = TRUE;
+                if (sleep_hit && m_ptr->ml) backstab = TRUE;
             }
             break;
         }
@@ -2150,8 +2113,7 @@ static bool py_attack_aux(int y, int x, bool *fear, bool *mdeath, s16b hand, int
         break;
 
     case CLASS_WEAPONMASTER:
-        if (!p_ptr->sneak_attack)
-            break;
+        if (!p_ptr->sneak_attack) break;
         /* vvvvv FALL THRU vvvvvv */
     case CLASS_ROGUE:
     case CLASS_NINJA_LAWYER:
@@ -2161,6 +2123,7 @@ static bool py_attack_aux(int y, int x, bool *fear, bool *mdeath, s16b hand, int
             int tmp = p_ptr->lev * 6 + (p_ptr->skills.stl + 10) * 4;
             if (p_ptr->monlite && (mode != HISSATSU_NYUSIN)) tmp /= 3;
             if (p_ptr->cursed & OFC_AGGRAVATE) tmp /= 2;
+            if (p_ptr->cursed & OFC_GAUDY) tmp = tmp * 8 / 10;
             if (r_ptr->level > (p_ptr->lev * p_ptr->lev / 20 + 10)) tmp /= 3;
             if (MON_CSLEEP(m_ptr) && m_ptr->ml)
             {

@@ -1729,7 +1729,6 @@ static void a_m_aux_4(object_type *o_ptr, int level, int power, int mode)
             if (cheat_peek)
             {
                 msg_format("Figurine of %s, depth +%d%s",
-
                               r_name + r_ptr->name, check - 1,
                               !object_is_cursed(o_ptr) ? "" : " {cursed}");
             }
@@ -2002,7 +2001,7 @@ bool apply_magic(object_type *o_ptr, int lev, u32b mode)
         /* Assume 'cursed' */
         if (power > 0)
         {
-            power = 0 - power;
+            power = -power;
         }
         /* Everything else gets more badly cursed */
         else
@@ -2096,12 +2095,12 @@ bool apply_magic(object_type *o_ptr, int lev, u32b mode)
         if (!a_ptr->cost) o_ptr->ident |= (IDENT_BROKEN);
 
         /* Hack -- extract the "cursed" flag */
-        if (a_ptr->gen_flags & OFG_CURSED) o_ptr->curse_flags |= (OFC_CURSED);
-        if (a_ptr->gen_flags & OFG_HEAVY_CURSE) o_ptr->curse_flags |= (OFC_HEAVY_CURSE);
-        if (a_ptr->gen_flags & OFG_PERMA_CURSE) o_ptr->curse_flags |= (OFC_PERMA_CURSE);
-        if (a_ptr->gen_flags & (OFG_RANDOM_CURSE0)) o_ptr->curse_flags |= get_curse(0, o_ptr);
-        if (a_ptr->gen_flags & (OFG_RANDOM_CURSE1)) o_ptr->curse_flags |= get_curse(1, o_ptr);
-        if (a_ptr->gen_flags & (OFG_RANDOM_CURSE2)) o_ptr->curse_flags |= get_curse(2, o_ptr);
+        if (a_ptr->gen_flags & OFG_CURSED       ) o_ptr->curse_flags |= OFC_CURSED;
+        if (a_ptr->gen_flags & OFG_HEAVY_CURSE  ) o_ptr->curse_flags |= OFC_HEAVY_CURSE;
+        if (a_ptr->gen_flags & OFG_PERMA_CURSE  ) o_ptr->curse_flags |= OFC_PERMA_CURSE;
+        if (a_ptr->gen_flags & OFG_RANDOM_CURSE0) o_ptr->curse_flags |= get_curse(0, o_ptr);
+        if (a_ptr->gen_flags & OFG_RANDOM_CURSE1) o_ptr->curse_flags |= get_curse(1, o_ptr);
+        if (a_ptr->gen_flags & OFG_RANDOM_CURSE2) o_ptr->curse_flags |= get_curse(2, o_ptr);
 
 
         /* Cheat -- peek at the item */
@@ -2162,7 +2161,7 @@ bool apply_magic(object_type *o_ptr, int lev, u32b mode)
 
             if (o_ptr->sval == SV_RUNESWORD)
             {
-                o_ptr->curse_flags |= (OFC_PERMA_CURSE);
+                o_ptr->curse_flags |= OFC_PERMA_CURSE;
             }
             else
             {
@@ -2242,15 +2241,15 @@ bool apply_magic(object_type *o_ptr, int lev, u32b mode)
         object_kind *k_ptr = &k_info[o_ptr->k_idx];
 
         /* Hack -- acquire "broken" flag */
-        if (!k_info[o_ptr->k_idx].cost) o_ptr->ident |= (IDENT_BROKEN);
+        if (!k_info[o_ptr->k_idx].cost) o_ptr->ident |= IDENT_BROKEN;
 
         /* Hack -- acquire "cursed" flag */
-        if (k_ptr->gen_flags & (OFG_CURSED)) o_ptr->curse_flags |= (OFC_CURSED);
-        if (k_ptr->gen_flags & (OFG_HEAVY_CURSE)) o_ptr->curse_flags |= OFC_HEAVY_CURSE;
-        if (k_ptr->gen_flags & (OFG_PERMA_CURSE)) o_ptr->curse_flags |= OFC_PERMA_CURSE;
-        if (k_ptr->gen_flags & (OFG_RANDOM_CURSE0)) o_ptr->curse_flags |= get_curse(0, o_ptr);
-        if (k_ptr->gen_flags & (OFG_RANDOM_CURSE1)) o_ptr->curse_flags |= get_curse(1, o_ptr);
-        if (k_ptr->gen_flags & (OFG_RANDOM_CURSE2)) o_ptr->curse_flags |= get_curse(2, o_ptr);
+        if (k_ptr->gen_flags & OFG_CURSED       ) o_ptr->curse_flags |= OFC_CURSED;
+        if (k_ptr->gen_flags & OFG_HEAVY_CURSE  ) o_ptr->curse_flags |= OFC_HEAVY_CURSE;
+        if (k_ptr->gen_flags & OFG_PERMA_CURSE  ) o_ptr->curse_flags |= OFC_PERMA_CURSE;
+        if (k_ptr->gen_flags & OFG_RANDOM_CURSE0) o_ptr->curse_flags |= get_curse(0, o_ptr);
+        if (k_ptr->gen_flags & OFG_RANDOM_CURSE1) o_ptr->curse_flags |= get_curse(1, o_ptr);
+        if (k_ptr->gen_flags & OFG_RANDOM_CURSE2) o_ptr->curse_flags |= get_curse(2, o_ptr);
     }
     return TRUE;
 }
@@ -3586,8 +3585,7 @@ static bool _make_object_aux(object_type *j_ptr, u32b mode)
     if (j_ptr->name3) obj_level = a_info[j_ptr->name3].level;
 
     /* Notice "okay" out-of-depth objects */
-    if (!object_is_cursed(j_ptr) && !object_is_broken(j_ptr) &&
-        (obj_level > dun_level))
+    if (!object_is_cursed(j_ptr) && !object_is_broken(j_ptr) && (obj_level > dun_level))
     {
         /* Cheat -- peek at items */
         if (cheat_peek) object_mention(j_ptr);

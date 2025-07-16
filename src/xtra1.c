@@ -986,9 +986,9 @@ static void prt_status(void)
     if (p_ptr->tim_res_disenchantment) ADD_FLG(BAR_RES_DISENCHANTMENT);
 
     if (p_ptr->tim_spell_reaction) ADD_FLG(BAR_SPELL_REACTION);
-    if (p_ptr->tim_resist_curses) ADD_FLG(BAR_RESIST_CURSES);
-    if (p_ptr->tim_armor_of_fury) ADD_FLG(BAR_ARMOR_OF_FURY);
-    if (p_ptr->tim_spell_turning) ADD_FLG(BAR_SPELL_TURNING);
+    if (p_ptr->tim_resist_curses)  ADD_FLG(BAR_RESIST_CURSES);
+    if (p_ptr->tim_armor_of_fury)  ADD_FLG(BAR_ARMOR_OF_FURY);
+    if (p_ptr->tim_spell_turning)  ADD_FLG(BAR_SPELL_TURNING);
 
     if (p_ptr->dustrobe) ADD_FLG(BAR_DUSTROBE);
 
@@ -1983,26 +1983,19 @@ static void prt_food(int row, int col)
 
 static void prt_effects(void)
 {
-    int i, row, col;
+    int row, col;
     rect_t r = ui_char_info_rect();
 
     row = r.y + ROW_EFFECTS;
     col = r.x + COL_EFFECTS;
 
-    for (i = 0; i < COUNT_EFFECTS; i++)
-        Term_erase(col, row + i, r.cx);
+    for (int i = 0; i < COUNT_EFFECTS; i++) Term_erase(col, row + i, r.cx);
 
-    if (prt_speed(row, col))
-        row++;
-    if (p_ptr->cursed & 0x0000000F)
+    if (prt_speed(row, col)) row++;
+    if (p_ptr->cursed & 0xF)
     {
-        byte a = TERM_L_DARK;
-        if (p_ptr->cursed & OFC_PERMA_CURSE)
-            c_put_str(a, "*CURSED*", row++, col);
-        else if (p_ptr->cursed & OFC_HEAVY_CURSE)
-            c_put_str(a, "CURSED", row++, col);
-        else
-            c_put_str(a, "Cursed", row++, col);
+        c_put_str(TERM_L_DARK, (p_ptr->cursed & OFC_PERMA_CURSE) ? "*CURSED*" :
+                               (p_ptr->cursed & OFC_HEAVY_CURSE) ? "CURSED" : "Cursed", row++, col);
     }
 
     if (p_ptr->mimic_form != MIMIC_NONE)
@@ -2026,11 +2019,9 @@ static void prt_effects(void)
         else sprintf(buf, "[Bear]");
         c_put_str(TERM_ORANGE, buf, row++, col);
     }
-    if (monk_armour_aux)
-        c_put_str(TERM_RED, "Heavy Armor", row++, col);
-    if (p_ptr->cumber_glove)
-        c_put_str(TERM_RED, "Encumbrance", row++, col);
-    for (i = 0; i < MAX_HANDS; i++)
+    if (monk_armour_aux) c_put_str(TERM_RED, "Heavy Armor", row++, col);
+    if (p_ptr->cumber_glove) c_put_str(TERM_RED, "Encumbrance", row++, col);
+    for (int i = 0; i < MAX_HANDS; i++)
     {
         if (p_ptr->weapon_info[i].heavy_wield)
         {
@@ -2038,7 +2029,7 @@ static void prt_effects(void)
             break;
         }
     }
-    for (i = 0; i < MAX_HANDS; i++)
+    for (int i = 0; i < MAX_HANDS; i++)
     {
         if (p_ptr->weapon_info[i].icky_wield)
         {
@@ -2088,10 +2079,8 @@ static void prt_effects(void)
         c_put_str(color, tmp, row, col + 6);
         row++;
     }
-    if (p_ptr->food >= PY_FOOD_FULL || p_ptr->food < PY_FOOD_ALERT)
-        prt_food(row++, col);
-    if (p_ptr->wizard)
-        c_put_str(TERM_L_BLUE, "Wizard", row++, col);
+    if (p_ptr->food >= PY_FOOD_FULL || p_ptr->food < PY_FOOD_ALERT) prt_food(row++, col);
+    if (p_ptr->wizard) c_put_str(TERM_L_BLUE, "Wizard", row++, col);
     if (p_ptr->pclass == CLASS_SKILLMASTER)
     {
         int amt = skillmaster_new_skills();
@@ -2119,9 +2108,9 @@ static void prt_effects(void)
         c_put_str(TERM_YELLOW, "  b  j  n   ", row++, col);
         p_ptr->redraw |= PR_ROGUE_KEYS;
     }
-    else if (p_ptr->redraw & (PR_ROGUE_KEYS))
+    else if (p_ptr->redraw & PR_ROGUE_KEYS)
     {
-        for (i = row + 1; i < Term->hgt - 1; i++)
+        for (int i = row + 1; i < Term->hgt - 1; i++)
         {
             Term_erase(col, i, r.cx);
         }
@@ -2129,10 +2118,8 @@ static void prt_effects(void)
     }
     if ((game_mode == GAME_MODE_BEGINNER) && (row < Term->hgt - 1))
     {
-        if (row < Term->hgt - 2)
-        {
-            Term_erase(col, row++, r.cx);
-        }
+        if (row < Term->hgt - 2) Term_erase(col, row++, r.cx);
+        
         c_put_str(TERM_ORANGE, "?", row, col);
         c_put_str(TERM_L_GREEN, " for help  ", row++, col + 1);
     }
@@ -2142,10 +2129,8 @@ static void prt_effects(void)
         s32b norm = (p_ptr->wild_mode) ? 13200L : 100;
         if (energy_cost_hack >= (norm * 2)) attr = TERM_RED;
         else if (energy_cost_hack > norm) attr = TERM_ORANGE;
-        if (row < Term->hgt - 2)
-        {
-            Term_erase(col, row++, r.cx);
-        }
+        if (row < Term->hgt - 2) Term_erase(col, row++, r.cx);
+
         if (energy_cost_hack >= 10000) c_put_str(attr, format("Energy:%-3dK", 0 - (energy_cost_hack / 1000)), row++, col);
         else c_put_str(attr, format("Energy:%-5d", 0 - energy_cost_hack), row++, col);
     }
@@ -3822,7 +3807,7 @@ void calc_bonuses(void)
     s16b stats[MAX_STATS] = {0};
 
     /* Clear the stat modifiers */
-    for (i = 0; i < 6; i++) p_ptr->stat_add[i] = 0;
+    for (int i = 0; i < 6; i++) p_ptr->stat_add[i] = 0;
 
     /* Clear the Displayed/Real armor class */
     p_ptr->dis_ac = p_ptr->ac = 0;
@@ -3839,11 +3824,9 @@ void calc_bonuses(void)
     p_ptr->shooter_info.tval_ammo = 0;
     p_ptr->shooter_info.breakage = 100;
 
-    for (i = 0; i < OF_ARRAY_SIZE; i++)
-        p_ptr->shooter_info.flags[i] = 0;
+    for (int i = 0; i < OF_ARRAY_SIZE; i++) p_ptr->shooter_info.flags[i] = 0;
 
-    if (p_ptr->tim_weaponmastery)
-        equip_xtra_might(p_ptr->lev/23);
+    if (p_ptr->tim_weaponmastery) equip_xtra_might(p_ptr->lev/23);
 
     p_ptr->dis_to_a = p_ptr->to_a = 0;
     p_ptr->to_h_m = 0;
@@ -3857,7 +3840,7 @@ void calc_bonuses(void)
     p_ptr->to_m_chance = 0;
 
     p_ptr->weapon_ct = 0;
-    for (i = 0; i < MAX_HANDS; i++)
+    for (int i = 0; i < MAX_HANDS; i++)
     {
         p_ptr->weapon_info[i].wield_how = WIELD_NONE;
         p_ptr->weapon_info[i].omoi = FALSE;
@@ -3893,12 +3876,10 @@ void calc_bonuses(void)
     if (!p_ptr->innate_attack_lock)
     {
         p_ptr->innate_attack_ct = 0;
-        for (i = 0; i < MAX_INNATE_ATTACKS; i++)
-            memset(&p_ptr->innate_attacks[i], 0, sizeof(innate_attack_t));
+        for (int i = 0; i < MAX_INNATE_ATTACKS; i++) memset(&p_ptr->innate_attacks[i], 0, sizeof(innate_attack_t));
         p_ptr->innate_attack_info.to_dd = 0;
         p_ptr->innate_attack_info.xtra_blow = 0;
-        for (i = 0; i < OF_ARRAY_SIZE; i++)
-            p_ptr->innate_attack_info.flags[i] = 0;
+        for (int i = 0; i < OF_ARRAY_SIZE; i++) p_ptr->innate_attack_info.flags[i] = 0;
     }
     p_ptr->spells_per_round = 100;
 
@@ -3906,7 +3887,7 @@ void calc_bonuses(void)
     p_ptr->pspeed = 110;
 
     /* Clear all the flags */
-    p_ptr->cursed = 0L;
+    p_ptr->cursed = 0;
     p_ptr->pass_wall = FALSE;
     p_ptr->kill_wall = FALSE;
     p_ptr->dec_mana = FALSE;
@@ -4015,10 +3996,8 @@ void calc_bonuses(void)
     p_ptr->align = friend_align;
     p_ptr->maul_of_vice = FALSE;
 
-    if ((easy_id) || (p_ptr->tim_understanding))
-        p_ptr->auto_id = TRUE;
-    else if ((p_ptr->lev >= 20) || (coffee_break))
-        p_ptr->auto_pseudo_id = TRUE;
+    if ((easy_id) || (p_ptr->tim_understanding)) p_ptr->auto_id = TRUE;
+    else if ((p_ptr->lev >= 20) || (coffee_break)) p_ptr->auto_pseudo_id = TRUE;
 
     if (p_ptr->tim_sustain_str) p_ptr->sustain_str = TRUE;
     if (p_ptr->tim_sustain_int) p_ptr->sustain_int = TRUE;
@@ -4108,8 +4087,7 @@ void calc_bonuses(void)
     p_ptr->skill_tht = p_ptr->skills.thb;
     p_ptr->skill_dig = 0;
 
-    if (p_ptr->tim_superstealth)
-        p_ptr->see_nocto = TRUE;
+    if (p_ptr->tim_superstealth) p_ptr->see_nocto = TRUE;
 
     slot = equip_find_obj(TV_LITE, SV_ANY);
     if (slot)
@@ -4217,10 +4195,8 @@ void calc_bonuses(void)
     if (p_ptr->tim_sh_elements)
     {
         p_ptr->sh_fire++;
-        if (p_ptr->lev >= 25)
-            p_ptr->sh_cold++;
-        if (p_ptr->lev >= 35)
-            p_ptr->sh_elec++;
+        if (p_ptr->lev >= 25) p_ptr->sh_cold++;
+        if (p_ptr->lev >= 35) p_ptr->sh_elec++;
     }
 
     if (IS_INVULN())
@@ -4238,7 +4214,7 @@ void calc_bonuses(void)
 
     /* Hack -- apply racial/class stat maxes */
     /* Apply the racial modifiers */
-    for (i = 0; i < MAX_STATS; i++)
+    for (int i = 0; i < MAX_STATS; i++)
     {
         p_ptr->stat_add[i] += (race_ptr->stats[i] + class_ptr->stats[i] + pers_ptr->stats[i]);
     }
@@ -4274,16 +4250,14 @@ void calc_bonuses(void)
     if ((race_ptr->calc_stats) && (!prace_is_(RACE_IGOR)))
         race_ptr->calc_stats(stats);
 
-    for (i = 0; i < MAX_STATS; i++)
-        p_ptr->stat_add[i] += stats[i];
+    for (int i = 0; i < MAX_STATS; i++) p_ptr->stat_add[i] += stats[i];
 
     if (p_ptr->cursed & OFC_TELEPORT) p_ptr->cursed &= ~(OFC_TELEPORT_SELF);
 
     /* Hack -- aura of fire also provides light */
     if (p_ptr->sh_fire) p_ptr->lite = TRUE;
 
-    if (p_ptr->tim_building_up)
-        p_ptr->skills.thn += 60*p_ptr->lev/50;
+    if (p_ptr->tim_building_up) p_ptr->skills.thn += 60*p_ptr->lev/50;
 
     /* Hex bonuses */
     if (p_ptr->realm1 == REALM_HEX)
@@ -4310,7 +4284,7 @@ void calc_bonuses(void)
             p_ptr->sh_elec++;
             p_ptr->pspeed += 3;
         }
-        for (i = 1; i <= equip_max(); i++)
+        for (int i = 1; i <= equip_max(); i++)
         {
             int ac = 0;
             o_ptr = equip_obj(i);
@@ -5229,14 +5203,9 @@ void calc_bonuses(void)
         p_ptr->redraw |= PR_EFFECTS;
 
     /* Regeneration */
-    if (p_ptr->special_defense & (KAMAE_MASK | KATA_MASK))
-        p_ptr->regen /= 2;
-
-    if (p_ptr->cursed & OFC_SLOW_REGEN)
-        p_ptr->regen /= 5;
-
-    if (p_ptr->regen < 0)
-        p_ptr->regen = 0;
+    if (p_ptr->special_defense & (KAMAE_MASK | KATA_MASK)) p_ptr->regen /= 2;
+    if (p_ptr->cursed & OFC_SLOW_REGEN)                    p_ptr->regen /= 5;
+    if (p_ptr->regen < 0)                                  p_ptr->regen = 0;
 
     /* Robe of the Twilight forces AC to 0 */
     if (equip_find_ego(EGO_ROBE_TWILIGHT))

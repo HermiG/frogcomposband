@@ -1781,12 +1781,10 @@ static bool is_autopick_aux(object_type *o_ptr, autopick_type *entry, cptr o_nam
                 return FALSE;
 
             /* Cursed or broken objects are not okay */
-            if (object_is_cursed(o_ptr) || object_is_broken(o_ptr))
-                return FALSE;
+            if (object_is_cursed(o_ptr) || object_is_broken(o_ptr)) return FALSE;
 
             /* Good are not okay */
-            if (o_ptr->to_a > 0 || (o_ptr->to_h + o_ptr->to_d) > 0)
-                return FALSE;
+            if (o_ptr->to_a > 0 || (o_ptr->to_h + o_ptr->to_d) > 0) return FALSE;
         }
 
         /* Pseudo-identified */

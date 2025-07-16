@@ -1109,7 +1109,9 @@ void recharging_spell(int cmd, variant *res)
         break;
     }
 }
-bool cast_recharging(void) { return cast_spell(recharging_spell); }
+bool cast_recharging(void) {
+    return cast_spell(recharging_spell);
+}
 
 void remove_curse_I_spell(int cmd, variant *res)
 {
@@ -1122,8 +1124,7 @@ void remove_curse_I_spell(int cmd, variant *res)
         var_set_string(res, "Uncurses an item so that you may remove it.");
         break;
     case SPELL_CAST:
-        if (remove_curse())
-            msg_print("You feel as if someone is watching over you.");
+        if (remove_curse()) msg_print("You feel as if someone is watching over you.");
         var_set_bool(res, TRUE);
         break;
     default:
@@ -1131,7 +1132,9 @@ void remove_curse_I_spell(int cmd, variant *res)
         break;
     }
 }
-bool cast_remove_curse_I(void) { return cast_spell(remove_curse_I_spell); }
+bool cast_remove_curse_I(void) {
+    return cast_spell(remove_curse_I_spell);
+}
 
 void remove_curse_II_spell(int cmd, variant *res)
 {
@@ -1144,8 +1147,7 @@ void remove_curse_II_spell(int cmd, variant *res)
         var_set_string(res, "Uncurses an item so that you may remove it. Even heavily cursed items can be removed.");
         break;
     case SPELL_CAST:
-        if (remove_all_curse())
-            msg_print("You feel as if someone is watching over you.");
+        if (remove_all_curse()) msg_print("You feel as if someone is watching over you.");
         var_set_bool(res, TRUE);
         break;
     default:
@@ -1153,7 +1155,9 @@ void remove_curse_II_spell(int cmd, variant *res)
         break;
     }
 }
-bool cast_remove_curse_II(void) { return cast_spell(remove_curse_II_spell); }
+bool cast_remove_curse_II(void) {
+    return cast_spell(remove_curse_II_spell);
+}
 
 void remove_fear_spell(int cmd, variant *res)
 {
@@ -1177,7 +1181,9 @@ void remove_fear_spell(int cmd, variant *res)
         break;
     }
 }
-bool cast_remove_fear(void) { return cast_spell(remove_fear_spell); }
+bool cast_remove_fear(void) {
+    return cast_spell(remove_fear_spell);
+}
 
 void resistance_spell(int cmd, variant *res)
 {

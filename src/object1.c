@@ -113,8 +113,7 @@ void weapon_flags(int hand, u32b flgs[OF_ARRAY_SIZE])
     {
         int i;
         obj_flags(o_ptr, flgs);
-        for (i = 0; i < OF_ARRAY_SIZE; i++)
-            flgs[i] |= p_ptr->weapon_info[hand].flags[i];
+        for (i = 0; i < OF_ARRAY_SIZE; i++) flgs[i] |= p_ptr->weapon_info[hand].flags[i];
         if ((disciple_is_(DISCIPLE_TROIKA)) && (object_is_melee_weapon(o_ptr))) troika_bonus_flags(o_ptr, flgs);
     }
 }
@@ -147,8 +146,7 @@ void missile_flags(object_type *arrow, u32b flgs[OF_ARRAY_SIZE])
         u32b         bow_flgs[OF_ARRAY_SIZE];
 
         obj_flags(bow, bow_flgs);
-        for (i = 0; i < OF_ARRAY_SIZE; i++)
-            flgs[i] |= bow_flgs[i]; /* Mask? */
+        for (i = 0; i < OF_ARRAY_SIZE; i++) flgs[i] |= bow_flgs[i]; /* Mask? */
     }
 }
 
@@ -175,19 +173,16 @@ void missile_flags_known(object_type *arrow, u32b flgs[OF_ARRAY_SIZE])
 void obj_flags(object_type *o_ptr, u32b flgs[OF_ARRAY_SIZE])
 {
     object_kind *k_ptr = &k_info[o_ptr->k_idx];
-    int i;
 
     /* Base object */
-    for (i = 0; i < OF_ARRAY_SIZE; i++)
-        flgs[i] = k_ptr->flags[i];
+    for (int i = 0; i < OF_ARRAY_SIZE; i++) flgs[i] = k_ptr->flags[i];
 
     /* Artifact */
     if (object_is_fixed_artifact(o_ptr))
     {
         artifact_type *a_ptr = &a_info[o_ptr->name1];
 
-        for (i = 0; i < OF_ARRAY_SIZE; i++)
-            flgs[i] |= a_ptr->flags[i];
+        for (int i = 0; i < OF_ARRAY_SIZE; i++) flgs[i] |= a_ptr->flags[i];
     }
 
     /* Ego-item */
@@ -202,26 +197,21 @@ void obj_flags(object_type *o_ptr, u32b flgs[OF_ARRAY_SIZE])
         case EGO_LITE_IMMOLATION:
         case EGO_LITE_INFRAVISION:
         case EGO_LITE_IMMORTAL_EYE:
-            if (o_ptr->sval <= SV_LITE_LANTERN && !o_ptr->xtra4)
-                skip = TRUE;
+            if (o_ptr->sval <= SV_LITE_LANTERN && !o_ptr->xtra4) skip = TRUE;
             break;
         }
 
         if (!skip)
         {
-            for (i = 0; i < OF_ARRAY_SIZE; i++)
-                flgs[i] |= e_ptr->flags[i];
+            for (int i = 0; i < OF_ARRAY_SIZE; i++) flgs[i] |= e_ptr->flags[i];
         }
     }
 
     /* Random artifact ! */
-    for (i = 0; i < OF_ARRAY_SIZE; i++)
-        flgs[i] |= o_ptr->flags[i];
+    for (int i = 0; i < OF_ARRAY_SIZE; i++) flgs[i] |= o_ptr->flags[i];
 
-    if (object_is_smith(o_ptr))
-        weaponsmith_object_flags(o_ptr, flgs);
-    if (object_is_deaggravated(o_ptr))
-        remove_flag(flgs, OF_AGGRAVATE);
+    if (object_is_smith(o_ptr)) weaponsmith_object_flags(o_ptr, flgs);
+    if (object_is_deaggravated(o_ptr)) remove_flag(flgs, OF_AGGRAVATE);
 }
 
 /*************************************************************
@@ -239,15 +229,13 @@ void obj_flags_known(object_type *o_ptr, u32b flgs[OF_ARRAY_SIZE])
         return;
     }
 
-    for (i = 0; i < OF_ARRAY_SIZE; i++)
-        flgs[i] = 0;
+    for (i = 0; i < OF_ARRAY_SIZE; i++) flgs[i] = 0;
 
     /* Base object: Note you still know an unidentified blade of chaos
        grants resist chaos, provided your aware of the object kind.*/
     if (k_ptr->aware)
     {
-        for (i = 0; i < OF_ARRAY_SIZE; i++)
-            flgs[i] = k_ptr->flags[i];
+        for (i = 0; i < OF_ARRAY_SIZE; i++) flgs[i] = k_ptr->flags[i];
     }
 
     /* Unidentified objects require special work. Anything you learn about
@@ -258,8 +246,7 @@ void obj_flags_known(object_type *o_ptr, u32b flgs[OF_ARRAY_SIZE])
     {
         u32b actual[OF_ARRAY_SIZE];
         obj_flags(o_ptr, actual);
-        for (i = 0; i < OF_ARRAY_SIZE; i++)
-            flgs[i] = actual[i] & o_ptr->known_flags[i];
+        for (i = 0; i < OF_ARRAY_SIZE; i++) flgs[i] = actual[i] & o_ptr->known_flags[i];
         return;
     }
 
@@ -268,8 +255,7 @@ void obj_flags_known(object_type *o_ptr, u32b flgs[OF_ARRAY_SIZE])
     {
         artifact_type *a_ptr = &a_info[o_ptr->name1];
 
-        for (i = 0; i < OF_ARRAY_SIZE; i++)
-            flgs[i] |= (a_ptr->flags[i] & a_ptr->known_flags[i]);
+        for (i = 0; i < OF_ARRAY_SIZE; i++) flgs[i] |= (a_ptr->flags[i] & a_ptr->known_flags[i]);
     }
     else if (object_is_ego(o_ptr))
     {
@@ -282,8 +268,7 @@ void obj_flags_known(object_type *o_ptr, u32b flgs[OF_ARRAY_SIZE])
         case EGO_LITE_IMMOLATION:
         case EGO_LITE_INFRAVISION:
         case EGO_LITE_IMMORTAL_EYE:
-            if (o_ptr->sval <= SV_LITE_LANTERN && !o_ptr->xtra4)
-                skip = TRUE;
+            if (o_ptr->sval <= SV_LITE_LANTERN && !o_ptr->xtra4) skip = TRUE;
             break;
         }
 
@@ -298,8 +283,7 @@ void obj_flags_known(object_type *o_ptr, u32b flgs[OF_ARRAY_SIZE])
     }
 
     /* Random artifacts, extra resists, biffs on cursed egos, etc. */
-    for (i = 0; i < OF_ARRAY_SIZE; i++)
-        flgs[i] |= (o_ptr->flags[i] & o_ptr->known_flags[i]);
+    for (int i = 0; i < OF_ARRAY_SIZE; i++) flgs[i] |= (o_ptr->flags[i] & o_ptr->known_flags[i]);
 
     /* Patch Up Activation overrides. For example, ego dragon scale
        mail might have an unlearned activation override. So, the player
@@ -312,10 +296,8 @@ void obj_flags_known(object_type *o_ptr, u32b flgs[OF_ARRAY_SIZE])
         remove_flag(flgs, OF_ACTIVATE);
     }
 
-    if (object_is_smith(o_ptr))
-        weaponsmith_object_flags(o_ptr, flgs);
-    if (object_is_deaggravated(o_ptr))
-        remove_flag(flgs, OF_AGGRAVATE);
+    if (object_is_smith(o_ptr)) weaponsmith_object_flags(o_ptr, flgs);
+    if (object_is_deaggravated(o_ptr)) remove_flag(flgs, OF_AGGRAVATE);
 }
 
 static bool _object_gives_esdm(object_type *o_ptr, u32b flgs[OF_ARRAY_SIZE],  bool easy_spell)
@@ -525,12 +507,10 @@ static void _obj_learn_curses(object_type *o_ptr)
 
 static void _obj_identify_fully_aux(object_type *o_ptr)
 {
-    int i;
-
     if (o_ptr->name1)
     {
         artifact_type *a_ptr = &a_info[o_ptr->name1];
-        for (i = 0; i < OF_ARRAY_SIZE; i++)
+        for (int i = 0; i < OF_ARRAY_SIZE; i++)
         {
             a_ptr->known_flags[i] |= a_ptr->flags[i];
             o_ptr->known_flags[i] |= o_ptr->flags[i] & (~a_ptr->flags[i]);
@@ -539,7 +519,7 @@ static void _obj_identify_fully_aux(object_type *o_ptr)
     else if (o_ptr->name2)
     {
         ego_type *e_ptr = &e_info[o_ptr->name2];
-        for (i = 0; i < OF_ARRAY_SIZE; i++)
+        for (int i = 0; i < OF_ARRAY_SIZE; i++)
         {
             e_ptr->known_flags[i] |= e_ptr->flags[i];
             o_ptr->known_flags[i] |= o_ptr->flags[i] & (~e_ptr->flags[i]);
@@ -547,18 +527,14 @@ static void _obj_identify_fully_aux(object_type *o_ptr)
             /* Mark variable ego attributes as possibilities for future.
                Note: The next time an ego of this type spawns with a known
                possible flag, it will be learned on Identify. See above. */
-            if (object_is_cursed(o_ptr))
-                e_ptr->known_flags[i] |= (o_ptr->flags[i] & e_ptr->xtra_flags[i]);
-            else
-                e_ptr->known_flags[i] |= o_ptr->flags[i];
+            if (object_is_cursed(o_ptr)) e_ptr->known_flags[i] |= (o_ptr->flags[i] & e_ptr->xtra_flags[i]);
+            else                         e_ptr->known_flags[i] |= o_ptr->flags[i];
         }
-        if (object_is_device(o_ptr))
-            remove_flag(e_ptr->known_flags, OF_ACTIVATE);
+        if (object_is_device(o_ptr)) remove_flag(e_ptr->known_flags, OF_ACTIVATE);
     }
     else /* perhaps a rand-art? */
     {
-        for (i = 0; i < OF_ARRAY_SIZE; i++)
-            o_ptr->known_flags[i] |= o_ptr->flags[i];
+        for (int i = 0; i < OF_ARRAY_SIZE; i++) o_ptr->known_flags[i] |= o_ptr->flags[i];
     }
 
     /* Learn random activations */
@@ -575,13 +551,14 @@ static void _obj_identify_fully_aux(object_type *o_ptr)
 bool obj_is_identified(object_type *o_ptr)
 {
     assert(o_ptr);
-    return (o_ptr->ident & (IDENT_KNOWN | IDENT_STORE)) ? TRUE : FALSE;
+    return !! (o_ptr->ident & (IDENT_KNOWN | IDENT_STORE));
 }
 
 bool obj_is_identified_fully(object_type *o_ptr)
 {
-    u32b flgs[OF_ARRAY_SIZE];
     if (o_ptr->ident & IDENT_STORE) return TRUE;
+  
+    u32b flgs[OF_ARRAY_SIZE];
     obj_flags_unknown(o_ptr, flgs);
     return !_obj_flags_any(flgs);
 }
@@ -589,22 +566,16 @@ bool obj_is_identified_fully(object_type *o_ptr)
 void obj_identify(object_type *o_ptr)
 {
     assert(o_ptr);
-	if (easy_id)
-		obj_identify_fully(o_ptr);
-	else if (!obj_is_identified(o_ptr))
-        _obj_identify_aux(o_ptr);
+    if (easy_id) obj_identify_fully(o_ptr);
+    else if (!obj_is_identified(o_ptr)) _obj_identify_aux(o_ptr);
 }
 
 void obj_identify_fully(object_type *o_ptr)
 {
     if ((!o_ptr) || (!o_ptr->k_idx)) return;
-    if (!obj_is_identified(o_ptr))
-        _obj_identify_aux(o_ptr);
-    if ((!o_ptr) || (!o_ptr->k_idx)) return;
-    if (!obj_is_identified_fully(o_ptr))
-        _obj_identify_fully_aux(o_ptr);
-    else
-        _obj_learn_curses(o_ptr);
+    if (!obj_is_identified(o_ptr))       _obj_identify_aux(o_ptr);
+    if (!obj_is_identified_fully(o_ptr)) _obj_identify_fully_aux(o_ptr);
+    else                                 _obj_learn_curses(o_ptr);
 }
 
 void obj_learn_store(object_type *o_ptr)
@@ -717,7 +688,7 @@ void obj_learn_activation(object_type *o_ptr)
     }
 }
 
-bool obj_learn_curse(object_type *o_ptr, int flag)
+bool obj_learn_curse(object_type *o_ptr, u64b flag)
 {
     assert(o_ptr);
     if (o_ptr->curse_flags & flag)

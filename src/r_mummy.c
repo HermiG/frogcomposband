@@ -277,7 +277,7 @@ static bool _mummy_pick_curse(object_type *o_ptr)
 
     if ((!o_ptr) || (!o_ptr->k_idx)) return FALSE;
 
-    for (i = 0; i < _MAX_MUMMY_CURSE; i++)
+    for (int i = 0; i < _MAX_MUMMY_CURSE; i++)
     {
         _curse_type *_curse = &_mummy_curses[i];
         if ((_curse->flag == OFC_LOW_MELEE) && (!object_is_melee_weapon(o_ptr))) continue;
@@ -476,9 +476,9 @@ static bool _inflict_curse_aux(int pow, monster_type *m_ptr, int m_idx, bool DoD
             if (p == 5 || p == 3 || p == 7){ refunds++; continue; }
         }
         if (dType > 0){
-            u32b liput = PROJECT_KILL | PROJECT_HIDE | PROJECT_JUMP;
-            if ((ct < rolls) || (DoDamage)) liput |= PROJECT_NO_PAIN;
-            project(0, 0, m_ptr->fy, m_ptr->fx, dmg, dType, liput);
+            u32b flags = PROJECT_KILL | PROJECT_HIDE | PROJECT_JUMP;
+            if ((ct < rolls) || (DoDamage)) flags |= PROJECT_NO_PAIN;
+            project(0, 0, m_ptr->fy, m_ptr->fx, dmg, dType, flags);
         }
     }
     // In addition to these things, we also have some damage
@@ -1251,7 +1251,7 @@ static void _calc_bonuses_aux(void)
         return; /* Easy */
     }
 
-    for (slot = equip_find_first(object_is_cursed); slot; slot = equip_find_next(object_is_cursed, slot))
+    for (slot_t slot = equip_find_first(object_is_cursed); slot; slot = equip_find_next(object_is_cursed, slot))
     {
         object_type *o_ptr = equip_obj(slot);
         u32b flgs[OF_ARRAY_SIZE];

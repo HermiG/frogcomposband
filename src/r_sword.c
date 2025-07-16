@@ -28,35 +28,26 @@ static int _essences[_MAX_ESSENCE] = {0};
 
 static void _load(savefile_ptr file)
 {
-    int ct, i;
+    for (int i = 0; i < _MAX_ESSENCE; i++) _essences[i] = 0;
 
-    for (i = 0; i < _MAX_ESSENCE; i++)
-        _essences[i] = 0;
-
-    ct = savefile_read_s16b(file);
-    for (i = 0; i < ct; i++)
+    int ct = savefile_read_s16b(file);
+    for (int i = 0; i < ct; i++)
     {
         int j = savefile_read_s16b(file);
         int n = savefile_read_s16b(file);
 
-        if (0 <= j && j < _MAX_ESSENCE)
-            _essences[j] += n;
+        if (0 <= j && j < _MAX_ESSENCE) _essences[j] += n;
     }
 }
 
 static void _save(savefile_ptr file)
 {
-    int ct = 0, i;
-
-    for (i = 0; i < _MAX_ESSENCE; i++)
-    {
-        if (_essences[i])
-            ct++;
-    }
+    int ct = 0;
+    for (int i = 0; i < _MAX_ESSENCE; i++) if (_essences[i]) ct++;
 
     savefile_write_s16b(file, ct);
 
-    for (i = 0; i < _MAX_ESSENCE; i++)
+    for (int i = 0; i < _MAX_ESSENCE; i++)
     {
         if (_essences[i])
         {
@@ -90,14 +81,10 @@ static bool _skip_flag(int which)
 static bool _add_essence(int which, int amount)
 {
     int n = _essences[which];
+    if (amount > 0) n += amount;
+    if (n > 10000)  n = 10000;
 
-    if (amount > 0)
-        n += amount;
-
-    if (n > 10000)
-        n = 10000;
-
-    if (n != _essences[which])
+    if (_essences[which] != n)
     {
         _essences[which] = n;
         return TRUE;
@@ -111,23 +98,22 @@ void obj_essence_flags(object_type *o_ptr, u32b flgs[OF_ARRAY_SIZE])
     obj_flags(o_ptr, flgs);
     
     /* Make sure the Slay flag exists if the Kill flag exists */
-    if (have_flag(flgs, OF_KILL_EVIL)) add_flag(flgs, OF_SLAY_EVIL);
-    if (have_flag(flgs, OF_KILL_GOOD)) add_flag(flgs, OF_SLAY_GOOD);
+    if (have_flag(flgs, OF_KILL_EVIL))   add_flag(flgs, OF_SLAY_EVIL);
+    if (have_flag(flgs, OF_KILL_GOOD))   add_flag(flgs, OF_SLAY_GOOD);
     if (have_flag(flgs, OF_KILL_LIVING)) add_flag(flgs, OF_SLAY_LIVING);
     if (have_flag(flgs, OF_KILL_DRAGON)) add_flag(flgs, OF_SLAY_DRAGON);
-    if (have_flag(flgs, OF_KILL_DEMON)) add_flag(flgs, OF_SLAY_DEMON);
+    if (have_flag(flgs, OF_KILL_DEMON))  add_flag(flgs, OF_SLAY_DEMON);
     if (have_flag(flgs, OF_KILL_ANIMAL)) add_flag(flgs, OF_SLAY_ANIMAL);
     if (have_flag(flgs, OF_KILL_UNDEAD)) add_flag(flgs, OF_SLAY_UNDEAD);
-    if (have_flag(flgs, OF_KILL_HUMAN)) add_flag(flgs, OF_SLAY_HUMAN);
-    if (have_flag(flgs, OF_KILL_ORC)) add_flag(flgs, OF_SLAY_ORC);
-    if (have_flag(flgs, OF_KILL_TROLL)) add_flag(flgs, OF_SLAY_TROLL);
-    if (have_flag(flgs, OF_KILL_GIANT)) add_flag(flgs, OF_SLAY_GIANT);
+    if (have_flag(flgs, OF_KILL_HUMAN))  add_flag(flgs, OF_SLAY_HUMAN);
+    if (have_flag(flgs, OF_KILL_ORC))    add_flag(flgs, OF_SLAY_ORC);
+    if (have_flag(flgs, OF_KILL_TROLL))  add_flag(flgs, OF_SLAY_TROLL);
+    if (have_flag(flgs, OF_KILL_GIANT))  add_flag(flgs, OF_SLAY_GIANT);
 }
 
 static bool _absorb(object_type *o_ptr)
 {
     bool result = FALSE;
-    int i;
     int mult = o_ptr->number, div = 1;
     object_kind *k_ptr = &k_info[o_ptr->k_idx];
     u32b flags[OF_ARRAY_SIZE];
@@ -147,28 +133,23 @@ static bool _absorb(object_type *o_ptr)
         stats_rand_art_counts.found += o_ptr->number;
     }
 
-    if (o_ptr->curse_flags & OFC_AGGRAVATE)
-        div++;
-    if (o_ptr->curse_flags & (OFC_TY_CURSE | OFC_HEAVY_CURSE))
-        div++;
+    if (o_ptr->curse_flags & OFC_AGGRAVATE) div++;
+    if (o_ptr->curse_flags & (OFC_TY_CURSE | OFC_HEAVY_CURSE)) div++;
 
     if (!have_flag(flags, OF_BRAND_ORDER) && !have_flag(flags, OF_BRAND_WILD))
     {
-        if (_add_essence(_ESSENCE_XTRA_DICE, (o_ptr->ds - k_ptr->ds)*mult/1/*div?*/))
-            result = TRUE;
-        if (_add_essence(_ESSENCE_XTRA_DICE, (o_ptr->dd - k_ptr->dd)*mult/1/*div?*/))
-            result = TRUE;
+        if (_add_essence(_ESSENCE_XTRA_DICE, (o_ptr->ds - k_ptr->ds)*mult/1/*div?*/)) result = TRUE;
+        if (_add_essence(_ESSENCE_XTRA_DICE, (o_ptr->dd - k_ptr->dd)*mult/1/*div?*/)) result = TRUE;
     }
 
-    for (i = 0; i < OF_COUNT; i++)
+    for (int i = 0; i < OF_COUNT; i++)
     {
         if (_skip_flag(i)) continue;
         if (have_flag(flags, i))
         {
             if (is_pval_flag(i))
             {
-                if (_add_essence(i, o_ptr->pval*mult/div))
-                    result = TRUE;
+                if (_add_essence(i, o_ptr->pval*mult/div)) result = TRUE;
             }
             else
             {
@@ -178,12 +159,9 @@ static bool _absorb(object_type *o_ptr)
         }
     }
 
-    if (_add_essence(_ESSENCE_AC, o_ptr->to_a*mult/div))
-        result = TRUE;
-    if (_add_essence(_ESSENCE_TO_HIT, o_ptr->to_h*mult/div))
-        result = TRUE;
-    if (_add_essence(_ESSENCE_TO_DAM, o_ptr->to_d*mult/div))
-        result = TRUE;
+    if (_add_essence(_ESSENCE_AC,     o_ptr->to_a*mult/div)) result = TRUE;
+    if (_add_essence(_ESSENCE_TO_HIT, o_ptr->to_h*mult/div)) result = TRUE;
+    if (_add_essence(_ESSENCE_TO_DAM, o_ptr->to_d*mult/div)) result = TRUE;
 
     if (result)
     {
@@ -233,8 +211,7 @@ static int _calc_amount(int amount, int power, int rep)
         if (ct % rep == 0)
         {
             power *= 2;
-            if (power > 1024)
-                power = 1024;
+            if (power > 1024) power = 1024;
         }
     }
 
@@ -249,17 +226,14 @@ static int _calc_needed(int amount, int power, int rep)
        power required increases exponentially! */
     for (;;)
     {
-        if (amount >= power)
-            ct++;
+        if (amount >= power) ct++;
         result += power;
         amount -= power;
-        if (amount < 0)
-            break;
+        if (amount < 0) break;
         if (ct % rep == 0)
         {
             power *= 2;
-            if (power > 1024)
-                power = 1024;
+            if (power > 1024) power = 1024;
         }
     }
 
@@ -277,8 +251,8 @@ static int _free_act_needed(void)
 static int _see_invis_needed(void)
 {
     int paljonko = 3;
-    if (_essences[OF_SEE_INVIS] >= 3) paljonko = 9;
-    if (_essences[OF_SEE_INVIS] >= 9) paljonko = 19;
+    if (_essences[OF_SEE_INVIS] >=  3) paljonko = 9;
+    if (_essences[OF_SEE_INVIS] >=  9) paljonko = 19;
     if (_essences[OF_SEE_INVIS] >= 19) paljonko = 33;
     return paljonko;
 }
@@ -290,8 +264,7 @@ static int _calc_stat_bonus(int flag)
 
 static void _add_stat_flag(int flag, u32b flgs[OF_ARRAY_SIZE])
 {
-    if (_calc_stat_bonus(flag))
-        add_flag(flgs, flag);
+    if (_calc_stat_bonus(flag)) add_flag(flgs, flag);
 }
 
 static int _res_power(int which)
@@ -570,15 +543,11 @@ static void _calc_bonuses(void)
 
 static void _calc_stats(s16b stats[MAX_STATS])
 {
-    int i;
-    for (i = 0; i < 6; i++)
-        stats[i] += _calc_stat_bonus(OF_STR + i);
+    for (int i = 0; i < 6; i++) stats[i] += _calc_stat_bonus(OF_STR + i);
 }
 
 static void _get_flags(u32b flgs[OF_ARRAY_SIZE]) 
 {
-    int i;
-
     add_flag(flgs, OF_SPEED);
     add_flag(flgs, OF_LITE);
     add_flag(flgs, OF_RES_BLIND);
@@ -587,21 +556,18 @@ static void _get_flags(u32b flgs[OF_ARRAY_SIZE])
     add_flag(flgs, OF_LEVITATION);
     if (p_ptr->lev >= 45) add_flag(flgs, OF_AURA_REVENGE);
 
-    for (i = 0; i < 6; i++) /* Assume in order */
+    for (int i = 0; i < 6; i++)
     {
-        if (i != 0) /* Bug: Giving TR_STR marks the player as cursed ... */
-            _add_stat_flag(OF_STR + i, flgs);
-        if (_essences[OF_SUST_STR + i] >= 5)
-            add_flag(flgs, OF_SUST_STR + i);
+        _add_stat_flag(OF_STR + i, flgs);
+        if (_essences[OF_SUST_STR + i] >= 5) add_flag(flgs, OF_SUST_STR + i);
     }
 
-    for (i = 0; i < RES_MAX; i++)
+    for (int i = 0; i < RES_MAX; i++)
     {
         int j = res_get_object_flag(i);
         int n = _calc_amount(_essences[j], _res_power(i), 1);
 
-        if (n)
-            add_flag(flgs, j);
+        if (n) add_flag(flgs, j);
     }
 
     if (_calc_amount(_essences[OF_STEALTH], 2, 1))
@@ -736,19 +702,18 @@ static void _detect_spell(int cmd, variant *res)
     case SPELL_CAST:
     {
         int rng = DETECT_RAD_DEFAULT;
-        int i, y, x;
         bool detect = FALSE;
 
         if (d_info[dungeon_type].flags1 & DF1_DARKNESS) rng /= 3;
 
-        for (i = 1; i < o_max; i++)
+        for (int i = 1; i < o_max; i++)
         {
             object_type *o_ptr = &o_list[i];
 
             if (!o_ptr->k_idx) continue;
             if (o_ptr->held_m_idx) continue;
-            y = o_ptr->loc.y;
-            x = o_ptr->loc.x;
+            int y = o_ptr->loc.y;
+            int x = o_ptr->loc.x;
             if (distance(py, px, y, x) > rng) continue;
             if (!object_is_melee_weapon(o_ptr)) continue;
             o_ptr->marked |= OM_FOUND;
@@ -756,11 +721,8 @@ static void _detect_spell(int cmd, variant *res)
             lite_spot(y, x);
             detect = TRUE;
         }
-        if (detect_monsters_string(DETECT_RAD_DEFAULT, "|/"))
-            detect = TRUE;
-
-        if (detect)
-            msg_print("You sense your kind.");
+        if (detect_monsters_string(DETECT_RAD_DEFAULT, "|/")) detect = TRUE;
+        if (detect) msg_print("You sense your kind.");
 
         var_set_bool(res, TRUE);
         break;
@@ -806,16 +768,13 @@ static power_info _get_powers[] =
  * Birth and Evolution
  **********************************************************************/
 static void _birth(void) 
-{ 
-    object_type forge;
-    int i;
-
-    for (i = 0; i < _MAX_ESSENCE; i++)
-        _essences[i] = 0;
+{
+    for (int i = 0; i < _MAX_ESSENCE; i++) _essences[i] = 0;
 
     p_ptr->current_r_idx = MON_BROKEN_DEATH_SWORD;
     equip_on_change_race();
 
+    object_type forge;
     object_prep(&forge, lookup_kind(TV_SWORD, SV_BROKEN_SWORD));
     add_flag(forge.flags, OF_NO_REMOVE);
     forge.to_h =  1;
@@ -956,10 +915,9 @@ static void _dump_bonus_flag(doc_ptr doc, int which, int power, int rep, cptr na
 
 static void _character_dump(doc_ptr doc)
 {
-    int i;
     doc_printf(doc, "<topic:Essences>=================================== <color:keypress>E</color>ssences ==================================\n\n");
     doc_printf(doc, "   <color:G>%-22.22s Total  Need Bonus</color>\n", "Stats");
-    for (i = 0; i < 6; i++) /* Assume in order */
+    for (int i = 0; i < 6; i++) /* Assume in order */
         _dump_bonus_flag(doc, OF_STR + i, 3, 1, stat_name_true[A_STR + i]);
 
     doc_printf(doc, "\n   <color:G>%-22.22s Total  Need Bonus</color>\n", "Skills");
@@ -989,7 +947,7 @@ static void _character_dump(doc_ptr doc)
     _dump_bonus_flag(doc, OF_LITE, 1, 1, "Light");
  
     doc_printf(doc, "\n   <color:G>%-22.22s Total  Need Bonus</color>\n", "Slays");
-    for (i = 0; ; i++)
+    for (int i = 0; ; i++)
     {
         int j = _slay_flag_info[i].flag;
         if (j < 0) break;
@@ -997,7 +955,7 @@ static void _character_dump(doc_ptr doc)
     }
 
     doc_printf(doc, "\n   <color:G>%-22.22s Total  Need Bonus</color>\n", "Resistances");
-    for (i = 0; i < RES_MAX; i++)
+    for (int i = 0; i < RES_MAX; i++)
         _dump_bonus_flag(doc, res_get_object_flag(i), _res_power(i), 1, format("%^s", res_name(i)));
 
     _dump_ability_flag(doc, OF_IM_ACID, 3, "Immune Acid");
@@ -1015,7 +973,7 @@ static void _character_dump(doc_ptr doc)
     _dump_ability_flag(doc, OF_AURA_FIRE, 7, "Aura Fire");
     _dump_ability_flag(doc, OF_AURA_ELEC, 7, "Aura Elec");
     _dump_ability_flag(doc, OF_AURA_COLD, 7, "Aura Cold");
-    for (i = 0; i < 6; i++) /* Assume in order */
+    for (int i = 0; i < 6; i++) /* Assume in order */
         _dump_ability_flag(doc, OF_SUST_STR + i, 5, format("Sustain %s", stat_name_true[A_STR + i]));
 
     doc_printf(doc, "\n   <color:G>%-22.22s Total  Need Bonus</color>\n", "ESP");
@@ -1031,7 +989,7 @@ static void _character_dump(doc_ptr doc)
     _dump_ability_flag(doc, OF_ESP_EVIL, 2, "ESP Evil");
     _dump_ability_flag(doc, OF_ESP_GOOD, 2, "ESP Good");
     _dump_ability_flag(doc, OF_ESP_NONLIVING, 2, "ESP Nonliving");
-	_dump_ability_flag(doc, OF_ESP_LIVING, 2, "ESP Living");
+    _dump_ability_flag(doc, OF_ESP_LIVING, 2, "ESP Living");
     _dump_ability_flag(doc, OF_ESP_UNIQUE, 2, "ESP Unique");
 
     doc_newline(doc);
@@ -1116,9 +1074,8 @@ bool sword_disenchant(void)
 {
     bool result = FALSE;
     int  r = _rank();
-    int  i;
 
-    for (i = 0; i < _MAX_ESSENCE; i++)
+    for (int i = 0; i < _MAX_ESSENCE; i++)
     {
         int n = _essences[i];
         

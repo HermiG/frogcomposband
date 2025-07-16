@@ -597,7 +597,7 @@ void teleport_player_to(int ny, int nx, u32b mode)
 }
 
 static u32b _flag = 0;
-static bool _has_flag(object_type *o_ptr) {
+static bool _has_flag_uncursed(object_type *o_ptr) {
     if (!object_is_cursed(o_ptr))
     {
         u32b flgs[OF_ARRAY_SIZE];
@@ -630,8 +630,7 @@ void teleport_away_followable(int m_idx)
         else
         {
             _flag = OF_TELEPORT;
-            if (equip_find_first(_has_flag))
-                follow = TRUE;
+            if (equip_find_first(_has_flag_uncursed)) follow = TRUE;
         }
 
         if (follow)
@@ -1418,8 +1417,7 @@ bool brand_weapon_slaying(int brand_flag, int res_flag)
 
     prompt.obj->name2 = EGO_WEAPON_SLAYING;
     add_flag(prompt.obj->flags, brand_flag);
-    if (res_flag != OF_INVALID)
-        add_flag(prompt.obj->flags, res_flag);
+    if (res_flag != OF_INVALID) add_flag(prompt.obj->flags, res_flag);
 
     enchant(prompt.obj, randint0(3) + 4, ENCH_TOHIT | ENCH_TODAM);
     prompt.obj->discount = 99;
@@ -1432,8 +1430,7 @@ bool brand_weapon_slaying(int brand_flag, int res_flag)
 }
 bool brand_weapon_aux(object_type *o_ptr)
 {
-    if (have_flag(o_ptr->flags, OF_NO_REMOVE))
-        return FALSE;
+    if (have_flag(o_ptr->flags, OF_NO_REMOVE)) return FALSE;
     apply_magic(o_ptr, p_ptr->lev, AM_GOOD | AM_GREAT | AM_NO_FIXED_ART | AM_CRAFTING);
     return TRUE;
 }
@@ -1951,12 +1948,9 @@ static int enchant_table[16] =
 
 static int remove_curse_aux(int all)
 {
-    int slot;
     int ct = 0;
 
-    for (slot = equip_find_first(object_is_cursed);
-            slot;
-            slot = equip_find_next(object_is_cursed, slot))
+    for (slot_t slot = equip_find_first(object_is_cursed); slot; slot = equip_find_next(object_is_cursed, slot))
     {
         object_type *o_ptr = equip_obj(slot);
 
@@ -2115,10 +2109,10 @@ void break_curse(object_type *o_ptr)
     {
         msg_print("The curse is broken!");
 
-        o_ptr->curse_flags = 0L;
-        o_ptr->known_curse_flags = 0L;
+        o_ptr->curse_flags = 0;
+        o_ptr->known_curse_flags = 0;
 
-        o_ptr->ident |= (IDENT_SENSE);
+        o_ptr->ident |= IDENT_SENSE;
 
         o_ptr->feeling = FEEL_NONE;
 
@@ -2146,33 +2140,25 @@ void break_curse(object_type *o_ptr)
  */
 bool enchant(object_type *o_ptr, int n, int eflag)
 {
-    int     i, chance, prob;
+    int     chance, prob;
     bool    res = FALSE;
     bool    a = object_is_artifact(o_ptr);
     bool    force = BOOL(eflag & ENCH_FORCE);
     int     minor_limit = 2 + p_ptr->lev/5; /* This matches the town service ... */
     u32b    flgs[OF_ARRAY_SIZE];
 
-
     /* Large piles resist enchantment */
     prob = o_ptr->number * 100;
 
     /* Some objects cannot be enchanted */
     obj_flags(o_ptr, flgs);
-    if (have_flag(flgs, OF_NO_ENCHANT))
-        return FALSE;
-
+    if (have_flag(flgs, OF_NO_ENCHANT)) return FALSE;
 
     /* Missiles are easy to enchant */
-    if ((o_ptr->tval == TV_BOLT) ||
-        (o_ptr->tval == TV_ARROW) ||
-        (o_ptr->tval == TV_SHOT))
-    {
-        prob = prob / 20;
-    }
-
+    if (o_ptr->tval == TV_BOLT || o_ptr->tval == TV_ARROW || o_ptr->tval == TV_SHOT) prob /= 20;
+    
     /* Try "n" times */
-    for (i = 0; i < n; i++)
+    for (int i = 0; i < n; i++)
     {
         /* Hack -- Roll for pile resistance */
         if (!force && randint0(prob) >= 100) continue;
@@ -2181,17 +2167,13 @@ bool enchant(object_type *o_ptr, int n, int eflag)
         if (eflag & ENCH_TOHIT)
         {
             int idx = o_ptr->to_h;
-            if (eflag & ENCH_PSI_HACK)
-            {
-                idx -= 2*(psion_enchant_power() - 1);
-            }
-
+            if (eflag & ENCH_PSI_HACK) idx -= 2*(psion_enchant_power() - 1);
+            
             if (idx < 0) chance = 0;
             else if (idx > 15) chance = 1000;
             else chance = enchant_table[idx];
 
-            if ((eflag & ENCH_MINOR_HACK) && idx >= minor_limit)
-                chance = 1000;
+            if ((eflag & ENCH_MINOR_HACK) && idx >= minor_limit) chance = 1000;
 
             if (force || ((randint1(1000) > chance) && (!a || (randint0(100) < 50))))
             {
@@ -2199,8 +2181,7 @@ bool enchant(object_type *o_ptr, int n, int eflag)
                 res = TRUE;
 
                 /* only when you get it above -1 -CFT */
-                if (o_ptr->to_h >= 0)
-                    break_curse(o_ptr);
+                if (o_ptr->to_h >= 0) break_curse(o_ptr);
             }
         }
 
@@ -2208,17 +2189,14 @@ bool enchant(object_type *o_ptr, int n, int eflag)
         if (eflag & ENCH_TODAM)
         {
             int idx = o_ptr->to_d;
-            if (eflag & ENCH_PSI_HACK)
-            {
-                idx -= 2*(psion_enchant_power() - 1);
-            }
+            if (eflag & ENCH_PSI_HACK) idx -= 2*(psion_enchant_power() - 1);
+            
 
             if (idx < 0) chance = 0;
             else if (idx > 15) chance = 1000;
             else chance = enchant_table[idx];
 
-            if ((eflag & ENCH_MINOR_HACK) && idx >= minor_limit)
-                chance = 1000;
+            if ((eflag & ENCH_MINOR_HACK) && idx >= minor_limit) chance = 1000;
 
             if (force || ((randint1(1000) > chance) && (!a || (randint0(100) < 50))))
             {
@@ -2226,8 +2204,7 @@ bool enchant(object_type *o_ptr, int n, int eflag)
                 res = TRUE;
 
                 /* only when you get it above -1 -CFT */
-                if (o_ptr->to_d >= 0)
-                    break_curse(o_ptr);
+                if (o_ptr->to_d >= 0) break_curse(o_ptr);
             }
         }
 
@@ -2236,17 +2213,13 @@ bool enchant(object_type *o_ptr, int n, int eflag)
         {
             int idx = o_ptr->to_a;
 
-            if (eflag & ENCH_PSI_HACK)
-            {
-                idx -= 2*(psion_enchant_power() - 1);
-            }
+            if (eflag & ENCH_PSI_HACK) idx -= 2*(psion_enchant_power() - 1);
 
             if (idx < 0) chance = 0;
             else if (idx > 15) chance = 1000;
             else chance = enchant_table[idx];
 
-            if ((eflag & ENCH_MINOR_HACK) && idx >= minor_limit)
-                chance = 1000;
+            if ((eflag & ENCH_MINOR_HACK) && idx >= minor_limit) chance = 1000;
 
             if (force || ((randint1(1000) > chance) && (!a || (randint0(100) < 50))))
             {
@@ -2254,8 +2227,7 @@ bool enchant(object_type *o_ptr, int n, int eflag)
                 res = TRUE;
 
                 /* only when you get it above -1 -CFT */
-                if (o_ptr->to_a >= 0)
-                    break_curse(o_ptr);
+                if (o_ptr->to_a >= 0) break_curse(o_ptr);
             }
         }
     }
@@ -2265,7 +2237,6 @@ bool enchant(object_type *o_ptr, int n, int eflag)
     gear_notice_enchant(o_ptr);
     return TRUE;
 }
-
 
 
 /*
@@ -2541,7 +2512,7 @@ bool mundane_spell(bool only_equip)
     obj_prompt(&prompt);
     if (!prompt.obj) return FALSE;
 
-    if ((prompt.obj->discount == 99) && (object_is_ego(prompt.obj)) && (!(prompt.obj->curse_flags & OFC_PERMA_CURSE)))
+    if (prompt.obj->discount == 99 && object_is_ego(prompt.obj) && !(prompt.obj->curse_flags & OFC_PERMA_CURSE))
     {
         char o_name[MAX_NLEN];
         object_desc(o_name, prompt.obj, (OD_OMIT_PREFIX | OD_NAME_ONLY | OD_SINGULAR));
@@ -2607,16 +2578,16 @@ bool mundane_spell(bool only_equip)
 
 static bool item_tester_hook_identify_fully(object_type *o_ptr)
 {
-    if ( (!object_is_known(o_ptr) || !obj_is_identified_fully(o_ptr))
-      && (!_hack_obj_p || _hack_obj_p(o_ptr)) )
+    if ( (!object_is_known(o_ptr) || !obj_is_identified_fully(o_ptr)) && (!_hack_obj_p || _hack_obj_p(o_ptr)) )
     {
         return TRUE;
     }
-    if ( obj_is_identified_fully(o_ptr)
-      && o_ptr->curse_flags != o_ptr->known_curse_flags )
+
+    if ( obj_is_identified_fully(o_ptr) && o_ptr->curse_flags != o_ptr->known_curse_flags )
     {
         return TRUE;
     }
+
     return FALSE;
 }
 
@@ -2905,18 +2876,19 @@ bool bless_weapon(void)
 
         /* Uncurse it */
         prompt.obj->curse_flags = 0;
+        prompt.obj->known_curse_flags = 0;
 
         /* Hack -- Assume felt */
-        prompt.obj->ident |= (IDENT_SENSE);
+        prompt.obj->ident |= IDENT_SENSE;
 
         /* Take note */
         prompt.obj->feeling = FEEL_NONE;
 
         /* Recalculate the bonuses */
-        p_ptr->update |= (PU_BONUS);
+        p_ptr->update |= PU_BONUS;
 
         /* Window stuff */
-        p_ptr->window |= (PW_EQUIP);
+        p_ptr->window |= PW_EQUIP;
     }
 
     /*
@@ -4101,10 +4073,8 @@ void blast_object(object_type *o_ptr)
 {
     bool is_armor = object_is_armour(o_ptr);
     bool is_weapon = object_is_weapon(o_ptr);
-    int i;
 
-    if (have_flag(o_ptr->flags, OF_NO_REMOVE))
-        return;
+    if (have_flag(o_ptr->flags, OF_NO_REMOVE)) return;
 
     o_ptr->name1 = 0;
     o_ptr->name2 = EGO_SPECIAL_BLASTED;
@@ -4116,8 +4086,7 @@ void blast_object(object_type *o_ptr)
     o_ptr->dd = 0;
     o_ptr->ds = 0;
 
-    if (is_armor)
-        o_ptr->to_a -= randint1(5) + randint1(5);
+    if (is_armor) o_ptr->to_a -= randint1(5) + randint1(5);
 
     if (is_weapon)
     {
@@ -4129,15 +4098,14 @@ void blast_object(object_type *o_ptr)
     if (o_ptr->to_h < -66) o_ptr->to_h = -66;
     if (o_ptr->to_d < -66) o_ptr->to_d = -66;
 
-    for (i = 0; i < OF_ARRAY_SIZE; i++)
-        o_ptr->flags[i] = 0;
+    for (int i = 0; i < OF_ARRAY_SIZE; i++) o_ptr->flags[i] = 0;
 
     o_ptr->rune = 0;
 
-    o_ptr->ident |= (IDENT_BROKEN);
+    o_ptr->ident |= IDENT_BROKEN;
 
-    p_ptr->update |= (PU_BONUS);
-    p_ptr->update |= (PU_MANA);
+    p_ptr->update |= PU_BONUS;
+    p_ptr->update |= PU_MANA;
     p_ptr->window |= (PW_INVEN | PW_EQUIP);
 }
 

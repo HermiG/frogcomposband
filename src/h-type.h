@@ -4,6 +4,7 @@
 #define INCLUDED_H_TYPE_H
 
 #include <limits.h>
+#include <stdint.h>
 
 /*
  * Basic "types".
@@ -124,16 +125,13 @@ typedef unsigned long huge;
 typedef signed short s16b;
 typedef unsigned short u16b;
 
-#if (UINT_MAX == 0xFFFFFFFFUL) && (ULONG_MAX > 0xFFFFFFFFUL)
-    typedef signed int s32b;
-    typedef unsigned int u32b;
-#else
-    typedef signed int s32b;
-    typedef unsigned int u32b;
-#endif
+/* Signed/Unsigned 32 bit value */
+typedef int32_t s32b;
+typedef uint32_t u32b;
 
-
-
+/* Signed/Unsigned 64 bit value */
+typedef int64_t s64b;
+typedef uint64_t u64b;
 
 /*** Pointers to all the basic types defined above ***/
 

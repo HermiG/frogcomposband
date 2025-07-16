@@ -150,7 +150,7 @@ void beorning_change_shape_spell(int cmd, variant *res)
         else var_set_string(res, "Assume the shape of a human. Changing shape costs two turns.");
         break;
     case SPELL_CAST:
-        if (p_ptr->cursed & 0x0000000F)
+        if (p_ptr->cursed & 0xF)
         {
             msg_print("Your cursed equipment prevents you from changing shape!");
             var_set_bool(res, FALSE);

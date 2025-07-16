@@ -241,7 +241,6 @@ static bool _is_ring_effect(int effect);
 static bool _absorb(object_type *o_ptr)
 {
     bool result = FALSE;
-    int i;
     int mult = o_ptr->number, div = 1;
     u32b flags[OF_ARRAY_SIZE];
     obj_flags(o_ptr, flags);
@@ -261,20 +260,17 @@ static bool _absorb(object_type *o_ptr)
         stats_rand_art_counts.found += o_ptr->number;
     }
 
-    if (o_ptr->curse_flags & OFC_AGGRAVATE)
-        div++;
-    if (o_ptr->curse_flags & (OFC_TY_CURSE | OFC_HEAVY_CURSE))
-        div++;
+    if (o_ptr->curse_flags & OFC_AGGRAVATE) div++;
+    if (o_ptr->curse_flags & (OFC_TY_CURSE | OFC_HEAVY_CURSE)) div++;
 
-    for (i = 0; i < OF_COUNT; i++)
+    for (int i = 0; i < OF_COUNT; i++)
     {
         if (_skip_flag(i)) continue;
         if (have_flag(flags, i))
         {
             if (is_pval_flag(i))
             {
-                if (_add_essence(i, o_ptr->pval*mult/div))
-                    result = TRUE;
+                if (_add_essence(i, o_ptr->pval*mult/div)) result = TRUE;
             }
             else
             {
@@ -1519,27 +1515,22 @@ static void _calc_stats(s16b stats[MAX_STATS])
 
 static void _get_flags(u32b flgs[OF_ARRAY_SIZE]) 
 {
-    int i;
-
     add_flag(flgs, OF_LITE);
     add_flag(flgs, OF_VULN_ELEC);
 
-    for (i = 0; i < 6; i++) /* Assume in order */
+    for (int i = 0; i < 6; i++)
     {
-        if (i != 0) /* Bug: Giving TR_STR marks the player as cursed ... */
-            _add_stat_flag(OF_STR + i, flgs);
-        if (_essences[OF_SUST_STR + i] >= 5)
-            add_flag(flgs, OF_SUST_STR + i);
+        _add_stat_flag(OF_STR + i, flgs);
+        if (_essences[OF_SUST_STR + i] >= 5) add_flag(flgs, OF_SUST_STR + i);
     }
 
-    for (i = 0; i < RES_MAX; i++)
+    for (int i = 0; i < RES_MAX; i++)
     {
         int j = res_get_object_flag(i);
         int n = _calc_amount(_essences[j], _res_power(i), 1);
 
         if (j == OF_NO_TELE) continue; /* TODO: Need TR_RES_TELE */
-        if (n)
-            add_flag(flgs, j);
+        if (n) add_flag(flgs, j);
     }
 
     if (_essences[OF_DEC_MANA] >= 7)

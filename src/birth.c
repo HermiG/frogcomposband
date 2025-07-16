@@ -92,21 +92,18 @@ void get_max_stats(void)
 
 int _race_exp_factor(void)
 {
-    if (p_ptr->prace == RACE_DOPPELGANGER)
-        return get_race()->exp;
-    return get_true_race()->exp;
+    return (p_ptr->prace == RACE_DOPPELGANGER) ? get_race()->exp :  get_true_race()->exp;
 }
+
 int calc_exp_factor(void)
 {
-    int exp;
     int r_exp = _race_exp_factor();
     int c_exp = get_class()->exp;
     int a_exp = get_personality()->exp;
 
-    if (p_ptr->prace == RACE_ANDROID)
-        return r_exp;
+    if (p_ptr->prace == RACE_ANDROID) return r_exp;
 
-    exp = r_exp * c_exp / 100;
+    int exp = r_exp * c_exp / 100;
     exp = exp * a_exp / 100;
 
     if (p_ptr->prace == RACE_MON_DRAGON)
@@ -177,8 +174,6 @@ void empty_lore_wipe(void)
  */
 static void player_wipe(void)
 {
-    int i;
-
     /* Hack -- free the "last message" string */
     if (p_ptr->last_message) z_string_free(p_ptr->last_message);
 
@@ -194,7 +189,7 @@ static void player_wipe(void)
     stats_reset();
 
     /* Reset the "monsters" */
-    for (i = 1; i < max_r_idx; i++)
+    for (int i = 1; i < max_r_idx; i++)
     {
         monster_race *r_ptr = &r_info[i];
 
@@ -240,15 +235,15 @@ static void player_wipe(void)
     if (p_ptr->pclass == CLASS_SORCERER)
     {
         p_ptr->spell_learned1 = p_ptr->spell_learned2 = 0xffffffffL;
-        p_ptr->spell_worked1 = p_ptr->spell_worked2 = 0xffffffffL;
+        p_ptr->spell_worked1  = p_ptr->spell_worked2 = 0xffffffffL;
     }
     else
     {
         p_ptr->spell_learned1 = p_ptr->spell_learned2 = 0L;
-        p_ptr->spell_worked1 = p_ptr->spell_worked2 = 0L;
+        p_ptr->spell_worked1  = p_ptr->spell_worked2 = 0L;
     }
     p_ptr->spell_forgotten1 = p_ptr->spell_forgotten2 = 0L;
-    for (i = 0; i < 64; i++) p_ptr->spell_order[i] = 99;
+    for (int i = 0; i < 64; i++) p_ptr->spell_order[i] = 99;
     p_ptr->learned_spells = 0;
     p_ptr->add_spells = 0;
     p_ptr->knowledge = 0;
@@ -297,7 +292,7 @@ static void player_wipe(void)
     p_ptr->pet_extra_flags = (PF_TELEPORT | PF_ATTACK_SPELL | PF_SUMMON_SPELL | PF_HILITE_LISTS);
 
     /* Wipe the recall depths */
-    for (i = 0; i < max_d_idx; i++)
+    for (int i = 0; i < max_d_idx; i++)
     {
         max_dlv[i] = 0;
         dungeon_flags[i] = 0;
@@ -305,7 +300,7 @@ static void player_wipe(void)
 
     p_ptr->wild_mode = FALSE;
 
-    for (i = 0; i < MAX_MAGIC_NUM; i++)
+    for (int i = 0; i < MAX_MAGIC_NUM; i++)
     {
         p_ptr->magic_num1[i] = 0;
         p_ptr->magic_num2[i] = 0;
@@ -318,7 +313,7 @@ static void player_wipe(void)
     /* Initialize arena and rewards information -KMW- */
     p_ptr->arena_number = 0;
     p_ptr->inside_arena = FALSE;
-    for (i = 0; i < MAX_MANE; i++)
+    for (int i = 0; i < MAX_MANE; i++)
     {
         p_ptr->mane_spell[i] = -1;
         p_ptr->mane_dam[i] = 0;
@@ -333,14 +328,13 @@ static void player_wipe(void)
     battle_monsters();
 
     /* Reset mutations */
-    for (i = 0; i < MUT_FLAG_SIZE; ++i)
+    for (int i = 0; i < MUT_FLAG_SIZE; ++i)
     {
         p_ptr->muta[i] = 0;
         p_ptr->muta_lock[i] = 0;
     }
 
-    for (i = 0; i < MAX_DEMIGOD_POWERS; ++i)
-        p_ptr->demigod_power[i] = -1;
+    for (int i = 0; i < MAX_DEMIGOD_POWERS; ++i) p_ptr->demigod_power[i] = -1;
 
     p_ptr->draconian_power = -1;
 
@@ -351,7 +345,7 @@ static void player_wipe(void)
     p_ptr->health_who = 0;
 
     /* Reset virtues*/
-    for (i = 0; i < 8; i++) p_ptr->virtues[i]=0;
+    for (int i = 0; i < 8; i++) p_ptr->virtues[i]=0;
 }
 
 /*
@@ -442,8 +436,7 @@ void player_birth(void)
     player_wipe();
 
     /* Create a new character */
-    if (py_birth() != UI_OK)
-        quit(NULL);
+    if (py_birth() != UI_OK) quit(NULL);
 
     /* Here's a bunch of crap that py_birth() shouldn't need to know */
     init_turn();

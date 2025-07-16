@@ -1961,7 +1961,6 @@ void curse_object(object_type *o_ptr)
 {
     int ct = randint1(2);
     int v = obj_value_real(o_ptr) / 10000;
-    int i;
 
     o_ptr->curse_flags |= OFC_CURSED;
 
@@ -1970,43 +1969,31 @@ void curse_object(object_type *o_ptr)
 
     ct += randint1(randint1(v)); /* TODO */
 
-    for (i = 0; i < ct; i++)
+    for (int i = 0; i < ct; i++)
     {
         int n = randint0(70 + v*v);
         if (n < 25)
         {
             do { o_ptr->curse_flags |= get_curse(0, o_ptr); } while (one_in_(2));
         }
-        else if (n < 35)
-            o_ptr->curse_flags |= get_curse(1, o_ptr);
-        else if (n < 40)
-            o_ptr->curse_flags |= OFC_HEAVY_CURSE;
-        else if (n < 45)
-            o_ptr->curse_flags |= get_curse(2, o_ptr);
-        else if (n < 100)
-            one_biff(o_ptr);
-        else if (n < 105)
-            add_flag(o_ptr->flags, OF_AGGRAVATE);
-        else if (n < 107)
-            add_flag(o_ptr->flags, OF_TY_CURSE);
-        else if (n < 108)
-            o_ptr->curse_flags |= OFC_PERMA_CURSE;
-        else if (n < 250)
-            one_biff(o_ptr);
+        else if (n <  35) o_ptr->curse_flags |= get_curse(1, o_ptr);
+        else if (n <  40) o_ptr->curse_flags |= OFC_HEAVY_CURSE;
+        else if (n <  45) o_ptr->curse_flags |= get_curse(2, o_ptr);
+        else if (n < 100) one_biff(o_ptr);
+        else if (n < 105) add_flag(o_ptr->flags, OF_AGGRAVATE);
+        else if (n < 107) add_flag(o_ptr->flags, OF_TY_CURSE);
+        else if (n < 108) o_ptr->curse_flags |= OFC_PERMA_CURSE;
+        else if (n < 250) one_biff(o_ptr);
         else
         {
             if (one_in_(2))
             {
                 o_ptr->curse_flags |= OFC_PERMA_CURSE;
-                if (one_in_(2))
-                    add_flag(o_ptr->flags, OF_TY_CURSE);
-                if (one_in_(2))
-                    add_flag(o_ptr->flags, OF_NO_TELE);
-                if (one_in_(2))
-                    add_flag(o_ptr->flags, OF_AGGRAVATE);
+                if (one_in_(2)) add_flag(o_ptr->flags, OF_TY_CURSE);
+                if (one_in_(2)) add_flag(o_ptr->flags, OF_NO_TELE);
+                if (one_in_(2)) add_flag(o_ptr->flags, OF_AGGRAVATE);
             }
-            else
-                one_biff(o_ptr);
+            else one_biff(o_ptr);
         }
     }
 }
@@ -2335,11 +2322,9 @@ s32b create_artifact(object_type *o_ptr, u32b mode)
 
     strcpy(new_name, "");
 
-    if (!(mode & CREATE_ART_GOOD) && one_in_(A_CURSED))
-        a_cursed = TRUE;
+    if (!(mode & CREATE_ART_GOOD) && one_in_(A_CURSED)) a_cursed = TRUE;
 
-    if (mode & CREATE_ART_CURSED)
-        a_cursed = TRUE;
+    if (mode & CREATE_ART_CURSED) a_cursed = TRUE;
 
     if ( (o_ptr->tval == TV_AMULET || o_ptr->tval == TV_RING)
       && object_is_cursed(o_ptr) )
@@ -3172,8 +3157,7 @@ s32b create_artifact(object_type *o_ptr, u32b mode)
         if (a_cursed) /* Curse after naming for flavor. ?Art will never curse */
         {
             curse_object(o_ptr);
-            if (has_pval && !o_ptr->pval)
-                o_ptr->pval = randint1(5);
+            if (has_pval && !o_ptr->pval) o_ptr->pval = randint1(5);
             total_flags = new_object_cost(o_ptr, COST_REAL);
         }
     }
@@ -3291,8 +3275,7 @@ void random_artifact_resistance(object_type * o_ptr, artifact_type *a_ptr)
         {
             add_flag(o_ptr->flags, OF_AGGRAVATE);
             add_flag(o_ptr->flags, OF_TY_CURSE);
-            o_ptr->curse_flags |=
-                (OFC_CURSED | OFC_HEAVY_CURSE);
+            o_ptr->curse_flags |= (OFC_CURSED | OFC_HEAVY_CURSE);
             o_ptr->curse_flags |= get_curse(2, o_ptr);
         }
     }
@@ -3307,8 +3290,7 @@ void random_artifact_resistance(object_type * o_ptr, artifact_type *a_ptr)
         {
             add_flag(o_ptr->flags, OF_AGGRAVATE);
             add_flag(o_ptr->flags, OF_DRAIN_EXP);
-            o_ptr->curse_flags |=
-                (OFC_CURSED | OFC_HEAVY_CURSE);
+            o_ptr->curse_flags |= (OFC_CURSED | OFC_HEAVY_CURSE);
         }
     }
 
@@ -3323,8 +3305,7 @@ void random_artifact_resistance(object_type * o_ptr, artifact_type *a_ptr)
             add_flag(o_ptr->flags, OF_AGGRAVATE);
             add_flag(o_ptr->flags, OF_DRAIN_EXP);
             add_flag(o_ptr->flags, OF_TY_CURSE);
-            o_ptr->curse_flags |=
-                (OFC_CURSED | OFC_HEAVY_CURSE | OFC_PERMA_CURSE);
+            o_ptr->curse_flags |= (OFC_CURSED | OFC_HEAVY_CURSE | OFC_PERMA_CURSE);
         }
     }
 
@@ -3345,8 +3326,7 @@ void random_artifact_resistance(object_type * o_ptr, artifact_type *a_ptr)
         {
             add_flag(o_ptr->flags, OF_AGGRAVATE);
             add_flag(o_ptr->flags, OF_TY_CURSE);
-            o_ptr->curse_flags |=
-                (OFC_CURSED | OFC_HEAVY_CURSE);
+            o_ptr->curse_flags |= (OFC_CURSED | OFC_HEAVY_CURSE);
             o_ptr->curse_flags |= get_curse(2, o_ptr);
             return;
         }
@@ -3523,11 +3503,7 @@ bool reforge_artifact(object_type *src, object_type *dest, int fame)
     if (!result)
     {
         /* Failed! Return best or worst */
-        if (worst_power > min_power && worst.k_idx)
-            object_copy(dest, &worst);
-        else
-            object_copy(dest, &best);
-
+        object_copy(dest, (worst_power > min_power && worst.k_idx) ? &worst : &best);
         result = TRUE;
     }
 
@@ -3690,15 +3666,14 @@ bool create_named_art_aux(int a_idx, object_type *o_ptr)
 {
     artifact_type *a_ptr = &a_info[a_idx];
 
-    if (!create_named_art_aux_aux(a_idx, o_ptr))
-        return FALSE;
+    if (!create_named_art_aux_aux(a_idx, o_ptr)) return FALSE;
 
-    if (a_ptr->gen_flags & OFG_CURSED) o_ptr->curse_flags |= (OFC_CURSED);
-    if (a_ptr->gen_flags & OFG_HEAVY_CURSE) o_ptr->curse_flags |= (OFC_HEAVY_CURSE);
-    if (a_ptr->gen_flags & OFG_PERMA_CURSE) o_ptr->curse_flags |= (OFC_PERMA_CURSE);
-    if (a_ptr->gen_flags & (OFG_RANDOM_CURSE0)) o_ptr->curse_flags |= get_curse(0, o_ptr);
-    if (a_ptr->gen_flags & (OFG_RANDOM_CURSE1)) o_ptr->curse_flags |= get_curse(1, o_ptr);
-    if (a_ptr->gen_flags & (OFG_RANDOM_CURSE2)) o_ptr->curse_flags |= get_curse(2, o_ptr);
+    if (a_ptr->gen_flags & OFG_CURSED       ) o_ptr->curse_flags |= OFC_CURSED;
+    if (a_ptr->gen_flags & OFG_HEAVY_CURSE  ) o_ptr->curse_flags |= OFC_HEAVY_CURSE;
+    if (a_ptr->gen_flags & OFG_PERMA_CURSE  ) o_ptr->curse_flags |= OFC_PERMA_CURSE;
+    if (a_ptr->gen_flags & OFG_RANDOM_CURSE0) o_ptr->curse_flags |= get_curse(0, o_ptr);
+    if (a_ptr->gen_flags & OFG_RANDOM_CURSE1) o_ptr->curse_flags |= get_curse(1, o_ptr);
+    if (a_ptr->gen_flags & OFG_RANDOM_CURSE2) o_ptr->curse_flags |= get_curse(2, o_ptr);
 
     random_artifact_resistance(o_ptr, a_ptr);
 

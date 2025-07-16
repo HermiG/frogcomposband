@@ -5349,15 +5349,13 @@ bool craft_enchant(int max, int inc)
         if (prompt.obj->to_h < max)
         {
             prompt.obj->to_h = MIN(max, prompt.obj->to_h + inc);
-            if (prompt.obj->to_h >= 0)
-                break_curse(prompt.obj);
+            if (prompt.obj->to_h >= 0) break_curse(prompt.obj);
             improved = TRUE;
         }
         if (prompt.obj->to_d < max)
         {
             prompt.obj->to_d = MIN(max, prompt.obj->to_d + inc);
-            if (prompt.obj->to_d >= 0)
-                break_curse(prompt.obj);
+            if (prompt.obj->to_d >= 0) break_curse(prompt.obj);
             improved = TRUE;
         }
     }
@@ -5366,8 +5364,7 @@ bool craft_enchant(int max, int inc)
         if (prompt.obj->to_a < max)
         {
             prompt.obj->to_a = MIN(max, prompt.obj->to_a + inc);
-            if (prompt.obj->to_a >= 0)
-                break_curse(prompt.obj);
+            if (prompt.obj->to_a >= 0) break_curse(prompt.obj);
             improved = TRUE;
         }
     }
@@ -8160,21 +8157,21 @@ static cptr do_hex_spell(int spell, int mode)
             {
                 int power = 0;
                 msg_format("A terrible black aura blasts your %s!", o_name);
-                prompt.obj->curse_flags |= (OFC_CURSED);
+                prompt.obj->curse_flags |= OFC_CURSED;
 
                 if (object_is_artifact(prompt.obj) || object_is_ego(prompt.obj))
                 {
 
-                    if (one_in_(3)) prompt.obj->curse_flags |= (OFC_HEAVY_CURSE);
+                    if (one_in_(3)) prompt.obj->curse_flags |= OFC_HEAVY_CURSE;
                     if (one_in_(666))
                     {
-                        prompt.obj->curse_flags |= (OFC_TY_CURSE);
-                        if (one_in_(666)) prompt.obj->curse_flags |= (OFC_PERMA_CURSE);
+                        prompt.obj->curse_flags |= OFC_TY_CURSE;
+                        if (one_in_(666)) prompt.obj->curse_flags |= OFC_PERMA_CURSE;
 
                         add_flag(prompt.obj->flags, OF_AGGRAVATE);
                         add_flag(prompt.obj->flags, OF_VORPAL);
                         add_flag(prompt.obj->flags, OF_BRAND_VAMP);
-                        msg_print("Blood, Blood, Blood!");
+                        cmsg_print(TERM_RED, "Blood, Blood, Blood!");
                         power = 2;
                     }
                 }
@@ -8182,7 +8179,7 @@ static cptr do_hex_spell(int spell, int mode)
                 /* Clouded says getting actual bad curses on Hex objects is annoying,
                  * so we only rarely do it */
                 if ((power > 0) || (one_in_(26))) prompt.obj->curse_flags |= get_curse(power, prompt.obj);
-                else if (one_in_(2)) prompt.obj->curse_flags |= (OFC_ALLERGY);
+                else if (one_in_(2)) prompt.obj->curse_flags |= OFC_ALLERGY;
             }
 
             p_ptr->update |= (PU_BONUS);
@@ -8464,16 +8461,16 @@ static cptr do_hex_spell(int spell, int mode)
             {
                 int power = 0;
                 msg_format("A terrible black aura blasts your %s!", o_name);
-                prompt.obj->curse_flags |= (OFC_CURSED);
+                prompt.obj->curse_flags |= OFC_CURSED;
 
                 if (object_is_artifact(prompt.obj) || object_is_ego(prompt.obj))
                 {
 
-                    if (one_in_(3)) prompt.obj->curse_flags |= (OFC_HEAVY_CURSE);
+                    if (one_in_(3)) prompt.obj->curse_flags |= OFC_HEAVY_CURSE;
                     if (one_in_(666))
                     {
-                        prompt.obj->curse_flags |= (OFC_TY_CURSE);
-                        if (one_in_(666)) prompt.obj->curse_flags |= (OFC_PERMA_CURSE);
+                        prompt.obj->curse_flags |= OFC_TY_CURSE;
+                        if (one_in_(666)) prompt.obj->curse_flags |= OFC_PERMA_CURSE;
 
                         add_flag(prompt.obj->flags, OF_AGGRAVATE);
                         add_flag(prompt.obj->flags, OF_RES_POIS);
@@ -8660,16 +8657,16 @@ static cptr do_hex_spell(int spell, int mode)
             {
                 if (one_in_(7))
                 {
-                    msg_print("Heavy curse vanished away.");
-                    prompt.obj->curse_flags = 0L;
-                    prompt.obj->known_curse_flags = 0L;
+                    msg_print("A heavy curse has been lifted.");
+                    prompt.obj->curse_flags = 0;
+                    prompt.obj->known_curse_flags = 0;
                 }
             }
-            else if ((prompt.obj->curse_flags & (OFC_CURSED)) && one_in_(3))
+            else if ((prompt.obj->curse_flags & OFC_CURSED) && one_in_(3))
             {
-                msg_print("Curse vanished away.");
-                prompt.obj->curse_flags = 0L;
-                prompt.obj->known_curse_flags = 0L;
+                msg_print("A curse has been lifted.");
+                prompt.obj->curse_flags = 0;
+                prompt.obj->known_curse_flags = 0;
             }
 
             add = FALSE;

@@ -461,17 +461,16 @@ static void _absorb_all(object_type *o_ptr, _absorb_essence_f absorb_f)
     obj_essence_flags(&new_obj, new_flgs);
 
     /* Ammo and Curses */
-    if (o_ptr->curse_flags & OFC_PERMA_CURSE) div++;
-    if (have_flag(old_flgs, OF_AGGRAVATE)) div++;
-    if (have_flag(old_flgs, OF_NO_TELE)) div++;
-    if (have_flag(old_flgs, OF_DRAIN_EXP)) div++;
-    if (have_flag(old_flgs, OF_TY_CURSE)) div++;
+    if (object_is_ammo(&old_obj)) div *= _AMMO_DIV;
 
-    if (object_is_ammo(&old_obj))
-        div *= _AMMO_DIV;
+    if (o_ptr->curse_flags & OFC_PERMA_CURSE) div++;
+    if (have_flag(old_flgs, OF_AGGRAVATE))    div++;
+    if (have_flag(old_flgs, OF_NO_TELE))      div++;
+    if (have_flag(old_flgs, OF_DRAIN_EXP))    div++;
+    if (have_flag(old_flgs, OF_TY_CURSE))     div++;
 
     /* Normal Handling */
-    for (i = ESSENCE_TYPE_STATS; i < ESSENCE_TYPE_MAX; i++)
+    for (int i = ESSENCE_TYPE_STATS; i < ESSENCE_TYPE_MAX; i++)
     {
         _essence_group_ptr group_ptr = &_essence_groups[i];
         assert(i == group_ptr->type);

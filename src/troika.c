@@ -417,16 +417,14 @@ static void _troika_event(int effect)
             acquirement(py, px, randint1(2) + 1, TRUE, FALSE, ORIGIN_PATRON);
             break;
         case REW_TY_CURSE:
-            msg_format("The voice of %s thunders:",
-                _troika_names[0]);
+            msg_format("The voice of %s thunders:", _troika_names[0]);
             cmsg_print(TERM_VIOLET, "'Thou art growing arrogant, mortal.'");
 
             if (p_ptr->lev < 30) nonlethal_ty_substitute(TRUE);
             else activate_ty_curse(FALSE, &count);
             break;
         case REW_BY_CURSE:
-            msg_format("The voice of %s thunders:",
-                _troika_names[0]);
+            msg_format("The voice of %s thunders:", _troika_names[0]);
             cmsg_print(TERM_VIOLET, "'Thou art growing arrogant, mortal.'");
 
             nonlethal_ty_substitute(TRUE);
@@ -509,8 +507,7 @@ static void _troika_event(int effect)
             int slot = equip_random_slot(object_is_melee_weapon);
             if (slot)
             {
-                msg_format("The voice of %s booms out:",
-                    _troika_names[0]);
+                msg_format("The voice of %s booms out:", _troika_names[0]);
                 cmsg_print(TERM_VIOLET, "'Thou reliest too much on thy weapon.'");
                 curse_weapon(FALSE, slot);
             }
@@ -600,8 +597,7 @@ static void _troika_event(int effect)
             int slot = equip_random_slot(object_is_armour);
             if (slot)
             {
-                msg_format("The voice of %s booms out:",
-                    _troika_names[0]);
+                msg_format("The voice of %s booms out:", _troika_names[0]);
                 cmsg_print(TERM_VIOLET, "'Thou reliest too much on thine equipment.'");
                 curse_armor(slot);
             }
@@ -663,14 +659,12 @@ static void _troika_event(int effect)
             if (one_in_(2))
             {
                 int slot = equip_random_slot(object_is_melee_weapon);
-                if (slot)
-                    curse_weapon(FALSE, slot);
+                if (slot) curse_weapon(FALSE, slot);
             }
             if (one_in_(2))
             {
                 int slot = equip_random_slot(object_is_armour);
-                if (slot)
-                    curse_armor(slot);
+                if (slot) curse_armor(slot);
             }
             break;
         case REW_NO_BUFFS:

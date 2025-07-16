@@ -931,8 +931,7 @@ bool cast_destruction(void) { return cast_spell(destruction_spell); }
 
 static void _detect_curses(obj_ptr obj)
 {
-    if (object_is_cursed(obj))
-        obj->feeling = FEEL_CURSED;
+    if (object_is_cursed(obj)) obj->feeling = FEEL_CURSED;
 }
 
 void detect_curses_spell(int cmd, variant *res)
@@ -943,7 +942,7 @@ void detect_curses_spell(int cmd, variant *res)
         var_set_string(res, "Detect Curses");
         break;
     case SPELL_DESC:
-        var_set_string(res, "Detected cursed items in your inventory.");
+        var_set_string(res, "Detected any cursed items in your posession.");
         break;
     case SPELL_GAIN_MUT:
         msg_print("You can feel evil magics.");
@@ -968,7 +967,9 @@ void detect_curses_spell(int cmd, variant *res)
         break;
     }
 }
-bool cast_detect_curses(void) { return cast_spell(detect_curses_spell); }
+bool cast_detect_curses(void) {
+    return cast_spell(detect_curses_spell);
+}
 
 void detect_doors_stairs_traps_spell(int cmd, variant *res)
 {

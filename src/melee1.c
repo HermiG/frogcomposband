@@ -605,14 +605,12 @@ bool make_attack_normal(int m_idx)
                     break;
 
                 case RBE_EAT_ITEM:
-
-                    /* Confused monsters cannot steal successfully. -LM-*/
-                    if (MON_CONFUSED(m_ptr)) break;
+                    if (MON_CONFUSED(m_ptr)) break; // Confused monsters cannot steal successfully
 
                     if (p_ptr->is_dead || CHECK_MULTISHADOW()) break;
 
                     /* No stealing from lawyers */
-                    if ((p_ptr->pclass == CLASS_LAWYER) || (p_ptr->pclass == CLASS_NINJA_LAWYER)) 
+                    if (p_ptr->pclass == CLASS_LAWYER || p_ptr->pclass == CLASS_NINJA_LAWYER)
                     { blinked = TRUE; obvious = TRUE; break; }
 
                     if (r_ptr->flags2 & RF2_THIEF) mon_lore_2(m_ptr, RF2_THIEF);
@@ -685,7 +683,7 @@ bool make_attack_normal(int m_idx)
                         }
                         
                         if ((alert_device_gone && object_is_device(obj)) || (alert_insc_gone && obj_is_inscribed(obj)))
-                          msg_print(NULL); /* -more- prompt */
+                          msg_print(NULL); // -more- prompt
                         
                         obj->number--;
                         obj_release(obj, OBJ_RELEASE_QUIET);
@@ -1206,8 +1204,7 @@ bool make_attack_normal(int m_idx)
                         if (slot)
                         {
                             object_type *o_ptr = equip_obj(slot);
-                            if (object_is_cursed(o_ptr))
-                                dam *= 2;
+                            if (object_is_cursed(o_ptr)) dam *= 2;
                         }
 
                         dam = mon_damage_mod(m_ptr, dam, FALSE);
@@ -1221,22 +1218,18 @@ bool make_attack_normal(int m_idx)
                         }
                         else
                         {
-                            for (slot = equip_find_first(object_is_cursed);
-                                    slot;
-                                    slot = equip_find_next(object_is_cursed, slot))
+                            for (slot = equip_find_first(object_is_cursed); slot; slot = equip_find_next(object_is_cursed, slot))
                             {
-                                object_type *o_ptr = equip_obj(slot);
-                                int          effect = 0;
+                                int effect = 0;
 
                                 switch (equip_slot_type(slot))
                                 {
                                 case EQUIP_SLOT_HELMET: effect = GF_OLD_CONF; break;
                                 case EQUIP_SLOT_GLOVES: effect = GF_TURN_ALL; break;
-                                case EQUIP_SLOT_BOOTS: effect = GF_OLD_SLOW; break;
-                                default: if (object_is_shield(o_ptr)) effect = GF_OLD_SLEEP;
+                                case EQUIP_SLOT_BOOTS:  effect = GF_OLD_SLOW; break;
+                                default: if (object_is_shield(equip_obj(slot))) effect = GF_OLD_SLEEP;
                                 }
-                                if (effect)
-                                    gf_affect_m(GF_WHO_PLAYER, m_ptr, effect, p_ptr->lev*2, GF_AFFECT_AURA);
+                                if (effect) gf_affect_m(GF_WHO_PLAYER, m_ptr, effect, p_ptr->lev*2, GF_AFFECT_AURA);
                             }
                         }
                     }

@@ -185,7 +185,7 @@ u32b get_curse(int power, object_type *o_ptr)
 
     while(1)
     {
-        new_curse = (1 << (randint0(MAX_CURSE)+4));
+        new_curse = (1 << (randint0(MAX_CURSE-4)+4)); // The first 4 curse flags are meta flags
         if (new_curse & TRC_FLAGGY_MASK) continue;
         if (power == 2)
         {

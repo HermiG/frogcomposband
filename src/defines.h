@@ -3129,7 +3129,7 @@ enum obj_flags_e {
 #define OFG_NO_SHUFFLE          0x00100000     /* Disallow shuffling for this item */
 
 /* Object Flags for Curses (OFC_*) */
-#define MAX_CURSE 28
+
 
 #define OFC_CURSED              0x00000001
 #define OFC_HEAVY_CURSE         0x00000002
@@ -3163,6 +3163,8 @@ enum obj_flags_e {
 #define OFC_OPEN_WOUNDS         0x20000000
 #define OFC_NORMALITY           0x40000000
 #define OFC_LOW_DEVICE          0x80000000
+
+#define MAX_CURSE 32
 
 #define TRC_SPECIAL_MASK \
     (OFC_TY_CURSE | OFC_AGGRAVATE)

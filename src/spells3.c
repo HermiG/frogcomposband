@@ -3940,7 +3940,7 @@ void inven_damage(int who, inven_func typ, int p1, int which)
     if (slot)
     {
         obj_ptr quiver = equip_obj(slot);
-        if (quiver->name2 != EGO_QUIVER_PROTECTION)
+        if (quiver->name2 != EGO_QUIVER_PROTECTION && !have_flag(quiver->flags, OF_PROTECTION))
         {
             for (slot = 1; slot <= quiver_max(); slot++)
             {
@@ -3959,7 +3959,7 @@ void inven_damage(int who, inven_func typ, int p1, int which)
     if (slot)
     {
         obj_ptr bag = equip_obj(slot);
-        if (bag->name2 != EGO_BAG_PROTECTION)
+        if (bag->name2 != EGO_BAG_PROTECTION && !have_flag(bag->flags, OF_PROTECTION))
         {
             for (slot = 1; slot <= bag_max(); slot++)
             {

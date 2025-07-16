@@ -750,12 +750,13 @@ static cptr k_info_flags[OF_COUNT] =
     "ETHEREAL",
     "BULKY",
     "SECURE",
-    "AVARICE",
-    "LEAKY",
-    "CONSERVATION",
-    "BOTTOMLESS",
+    "GAUDY",
     "ORGANIZED",
-    "TANGLED",
+    "TANGLING",
+    "LEAKY",
+    "DEVOURING",
+    "TEMPERANCE",
+    "BOTTOMLESS",
 };
 
 

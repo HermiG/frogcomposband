@@ -3683,8 +3683,13 @@ void obj_create_bag(object_type *o_ptr, int level, int power, int mode)
   {
     o_ptr->name2 = ego_choose_type(EGO_TYPE_BAG, level);
     
+    if(o_ptr->name2 == EGO_BAG_TEMPERANCE && !(o_ptr->sval == SV_BAG_POTION_BELT || o_ptr->sval == SV_BAG_SCROLL_CASE)) {
+        o_ptr->name2 = EGO_BAG_ORGANIZED; // of Temperance is not valid for regular bags, so replace with Organized
+    }
+    
     switch (o_ptr->name2)
     {
+      case EGO_BAG_BOTTOMLESS:
       case EGO_BAG_HOLDING:
         o_ptr->xtra4 *= 1.5;
         o_ptr->xtra5 *= 1.5;
@@ -3693,12 +3698,12 @@ void obj_create_bag(object_type *o_ptr, int level, int power, int mode)
         o_ptr->weight = 0;
         break;
     }
-    o_ptr->xtra4 *= 1.2;
-    o_ptr->xtra5 *= 1.2;
+    o_ptr->xtra4 *= 1.25;
+    o_ptr->xtra5 *= 1.25;
   }
   else if (power == 1) {
-    o_ptr->xtra4 *= 1.1;
-    o_ptr->xtra5 *= 1.1;
+    o_ptr->xtra4 *= 1.25;
+    o_ptr->xtra5 *= 1.25;
   }
   
   o_ptr->xtra4 = (o_ptr->xtra4 + 5) / 10;

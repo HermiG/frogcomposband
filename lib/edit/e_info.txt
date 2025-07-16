@@ -1135,23 +1135,62 @@ N:285:of Holding
 T:BAG
 W:1:*:1
 
-N:286:of Protection
+#of Protection
+N:286:Insulated
 T:BAG
 W:1:*:1
+F:PREFIX_NAME
 
-N:287:of Weightlessness
+N:287:Ethereal
 T:BAG
-W:50:*:4
+W:50:*:1
+F:PREFIX_NAME
 
-N:288:Clasped
+N:288:Bulky
+T:BAG
+W:50:*:1
+F:PREFIX_NAME | CURSED
+
+N:289:Clasped
 T:BAG
 W:5:*:1
 F:PREFIX_NAME
 
-N:289:& Bottomless Bag~
+N:290:Gaudy
+T:BAG
+W:5:*:1
+F:PREFIX_NAME | CURSED
+
+N:291:Organized
+T:BAG
+W:5:*:1
+F:PREFIX_NAME
+
+N:292:Tangling
+T:BAG
+W:5:*:1
+F:PREFIX_NAME | HEAVY_CURSE
+
+N:293:Leaky
+T:BAG
+W:5:*:1
+F:PREFIX_NAME | HEAVY_CURSE
+
+N:294:Devouring
+T:BAG
+W:50:*:1
+F:PREFIX_NAME | HEAVY_CURSE
+
+N:295:of Temperance
+T:BAG
+W:5:*:1
+
+N:296:Bottomless
 T:BAG
 W:50:*:4
-F:FULL_NAME
+F:PREFIX_NAME
+
+
 
 
 

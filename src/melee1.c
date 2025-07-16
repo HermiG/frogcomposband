@@ -619,6 +619,7 @@ bool make_attack_normal(int m_idx)
                       slot_t slot = use_bag ? equip_find_obj(TV_BAG, SV_ANY) : 0;
                       if(use_bag && !slot) continue;
                       obj_ptr obj_bag = use_bag ? equip_obj(slot) : NULL;
+                      bool gaudy_bag = use_bag && (obj_bag->name2 == EGO_BAG_GAUDY || have_flag(obj_bag->flags, OF_GAUDY));
                       
                       if (p_ptr->tim_inven_prot2)
                       {
@@ -636,7 +637,7 @@ bool make_attack_normal(int m_idx)
                         continue;
                       }
                       
-                      if (use_bag && (obj_bag->name2 == EGO_BAG_CLASPED || have_flag(obj_bag->flags, OF_SECURE)) &&
+                      if (use_bag && !gaudy_bag && (obj_bag->name2 == EGO_BAG_CLASPED || have_flag(obj_bag->flags, OF_SECURE)) &&
                          (randint0(100) < (adj_dex_safe[p_ptr->stat_ind[A_DEX]] + p_ptr->lev)))
                       {
                         msg_print("Your bag is tightly secured!");
@@ -644,7 +645,7 @@ bool make_attack_normal(int m_idx)
                         obvious = TRUE;
                         continue;
                       }
-                      if (use_bag && !p_ptr->paralyzed && (randint0(400) < (adj_dex_safe[p_ptr->stat_ind[A_DEX]] + p_ptr->lev)))
+                      if (use_bag&& !gaudy_bag && !p_ptr->paralyzed && (randint0(400) < (adj_dex_safe[p_ptr->stat_ind[A_DEX]] + p_ptr->lev)))
                       {
                         msg_print("You clutch your bag tightly!");
                         blinked = TRUE;
@@ -652,7 +653,7 @@ bool make_attack_normal(int m_idx)
                         continue;
                       }
                       
-                      for (int k = 0; k < 5; k++)
+                      for (int k = 0; k < (gaudy_bag ? 10 : 5); k++)
                       {
                         slot_t slot = use_bag ? bag_random_slot(one_in_(5) ? obj_exists : NULL) : pack_random_slot(NULL);
                         if (!slot) continue;

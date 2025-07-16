@@ -228,7 +228,7 @@ static int _max_vampiric_drain(void)
 
         if (feed)
         {
-            if (!have_flag(o_ptr->flags, OF_TY_CURSE) && o_ptr->dd * o_ptr->ds > 60 )
+            if (!have_flag(o_ptr->flags, OF_TY_CURSE) && o_ptr->dd * o_ptr->ds > 60)
             {
                 add_flag(o_ptr->flags, OF_TY_CURSE);
                 msg_print("Your Rune Sword seeks to dominate you!");

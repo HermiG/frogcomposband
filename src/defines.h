@@ -3076,18 +3076,20 @@ enum obj_flags_e {
 
     /* Bag effects */
     OF_HOLDING,      // Extra capacity
-    OF_PROTECTION,   // Protects contents
+    OF_PROTECTION,   // Protects contents from damage
     OF_ETHEREAL,     // Reduced carry weight for contents
     OF_BULKY,        // Increased carry weight for contents {cursed}
-    OF_SECURE,       // Thievery protection
-    OF_AVARICE,      // Thievery vulnerability {cursed}
+    OF_SECURE,       // Theft protection
+    OF_GAUDY,        // Theft vulnerability {cursed}
+    OF_ORGANIZED,    // Faster access (energy_use reduced)
+    OF_TANGLING,     // Slower access (energy_use increased) {cursed}
     OF_LEAKY,        // Drops items randomly {cursed}
+    OF_DEVOURING,    // Cannot remove items placed inside {cursed}
 
     /* Potion Belts and Scroll Cases */
-    OF_CONSERVATION, // Consumables sometimes aren't
+    OF_TEMPERANCE,   // Consumables sometimes aren't
     OF_BOTTOMLESS,   // Generates random items
-    OF_ORGANIZED,    // Faster access (energy_use reduced)
-    OF_TANGLED,      // Slower access (energy_use increased) {cursed}
+
 
     /* A few places loop from 0 <= i < OF_COUNT ... (init1, race_sword and race_ring) */
     OF_COUNT, /* currently 180+ */
@@ -3097,7 +3099,7 @@ enum obj_flags_e {
 
 #define OF_ARRAY_SIZE           16
 /* u32b flgs[OF_ARRAY_SIZE];
-   assert((OF_COUNT + 31)/32 == OF_ARRAY_SIZE); is checked during initialization */
+   assert((OF_COUNT + 31)/32 <= OF_ARRAY_SIZE); is checked during initialization */
 
 /* Extra flags for object lore (OFL_*)
  * cf object_type.known_flags and .known_curse_flags for normal stuff.
@@ -5771,7 +5773,14 @@ enum ego_type_e {
     EGO_BAG_HOLDING = 285,
     EGO_BAG_PROTECTION,
     EGO_BAG_ETHEREAL,
+    EGO_BAG_BULKY,
     EGO_BAG_CLASPED,
+    EGO_BAG_GAUDY,
+    EGO_BAG_ORGANIZED,
+    EGO_BAG_TANGLING,
+    EGO_BAG_LEAKY,
+    EGO_BAG_DEVOURING,
+    EGO_BAG_TEMPERANCE,
     EGO_BAG_BOTTOMLESS,
 
     /* Special */

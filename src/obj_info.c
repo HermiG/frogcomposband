@@ -1073,9 +1073,9 @@ static void _display_extra(object_type *o_ptr, u32b flgs[OF_ARRAY_SIZE], doc_ptr
     }
 
     if (have_flag(flgs, OF_SECURE))
-        doc_insert(doc, "Resists theivery.\n");
+        doc_insert(doc, "It foils thieves.\n");
 
-    if (have_flag(flgs, OF_CONSERVATION))
+    if (have_flag(flgs, OF_TEMPERANCE))
         doc_insert(doc, "Items used from this bag may be conserved instead of consumed.\n");
 
     switch (o_ptr->name1)

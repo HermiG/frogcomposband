@@ -1612,8 +1612,8 @@ bool obj_create_device(object_type *o_ptr, int level, int power, int mode)
     /* XXX Let's turn off cursed devices for a bit. While exploding devices
      * have actually killed me once, and nearly so a couple of times, they
      * generally just induce *id* paranoia ...
-    if (power < 0)
-        o_ptr->curse_flags |= OFC_CURSED;*/
+     * Re-enabled for fun. */
+    if (power < 0) o_ptr->curse_flags |= OFC_CURSED;
 
     return TRUE;
 }

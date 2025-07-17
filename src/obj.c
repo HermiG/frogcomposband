@@ -1497,7 +1497,7 @@ void obj_load(obj_ptr obj, savefile_ptr file)
             obj->flags[5] = savefile_read_u32b(file);
             break;
         case OBJ_SAVE_CURSE_FLAGS:
-            obj->curse_flags = savefile_read_u32b(file);
+            obj->curse_flags = savefile_read_u64b(file);
             break;
         case OBJ_SAVE_KNOWN_FLAGS_0:
             obj->known_flags[0] = savefile_read_u32b(file);
@@ -1518,7 +1518,7 @@ void obj_load(obj_ptr obj, savefile_ptr file)
             obj->known_flags[5] = savefile_read_u32b(file);
             break;
         case OBJ_SAVE_KNOWN_CURSE_FLAGS:
-            obj->known_curse_flags = savefile_read_u32b(file);
+            obj->known_curse_flags = savefile_read_u64b(file);
             break;
         case OBJ_SAVE_KNOWN_XTRA:
             obj->known_xtra = savefile_read_u32b(file);
@@ -1698,7 +1698,7 @@ void obj_save(obj_ptr obj, savefile_ptr file)
     if (obj->curse_flags)
     {
         savefile_write_byte(file, OBJ_SAVE_CURSE_FLAGS);
-        savefile_write_u32b(file, obj->curse_flags);
+        savefile_write_u64b(file, obj->curse_flags);
     }
     if (obj->known_flags[0])
     {
@@ -1733,7 +1733,7 @@ void obj_save(obj_ptr obj, savefile_ptr file)
     if (obj->known_curse_flags)
     {
         savefile_write_byte(file, OBJ_SAVE_KNOWN_CURSE_FLAGS);
-        savefile_write_u32b(file, obj->known_curse_flags);
+        savefile_write_u64b(file, obj->known_curse_flags);
     }
     if (obj->known_xtra)
     {

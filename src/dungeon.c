@@ -1184,11 +1184,11 @@ void recharged_notice(object_type *o_ptr, unsigned char neula)
 
 
 /* Choose one of items that have cursed flag */
-static u32b _curse_flag = 0;
+static u64b _curse_flag = 0;
 static bool _object_is_cursed(object_type *o_ptr) {
     return (o_ptr->curse_flags & _curse_flag);
 }
-static object_type *choose_cursed_obj_name(u32b flag)
+static object_type *choose_cursed_obj_name(u64b flag)
 {
     _curse_flag = flag;
     int slot = equip_random_slot(_object_is_cursed);
@@ -2297,12 +2297,9 @@ static void process_world_aux_curse(void)
         /* Add light curse (Later) */
         if ((p_ptr->cursed & OFC_ADD_L_CURSE) && one_in_(2000))
         {
-            u32b new_curse;
-            object_type *o_ptr;
+            object_type *o_ptr = choose_cursed_obj_name(OFC_ADD_L_CURSE);
 
-            o_ptr = choose_cursed_obj_name(OFC_ADD_L_CURSE);
-
-            new_curse = get_curse(0, o_ptr);
+            u64b new_curse = get_curse(0, o_ptr);
             if (!(o_ptr->curse_flags & new_curse))
             {
                 char o_name[MAX_NLEN];
@@ -2322,12 +2319,9 @@ static void process_world_aux_curse(void)
         /* Add heavy curse (Later) */
         if ((p_ptr->cursed & OFC_ADD_H_CURSE) && one_in_(2000))
         {
-            u32b new_curse;
-            object_type *o_ptr;
+            object_type *o_ptr = choose_cursed_obj_name(OFC_ADD_H_CURSE);
 
-            o_ptr = choose_cursed_obj_name(OFC_ADD_H_CURSE);
-
-            new_curse = get_curse(1, o_ptr);
+            u64b new_curse = get_curse(1, o_ptr);
             if (!(o_ptr->curse_flags & new_curse))
             {
                 char o_name[MAX_NLEN];

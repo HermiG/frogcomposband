@@ -179,9 +179,9 @@ bool very_clean_shot(int y1, int x1, int y2, int x2)
     return (TRUE);
 }
 
-u32b get_curse(int power, object_type *o_ptr)
+u64b get_curse(int power, object_type *o_ptr)
 {
-    u32b new_curse;
+    u64b new_curse;
 
     while(1)
     {
@@ -215,7 +215,7 @@ void curse_equipment(int chance, int heavy_chance)
     {
         bool         changed = FALSE;
         int          curse_power = 0;
-        u32b         new_curse;
+        u64b         new_curse;
         u32b         oflgs[OF_ARRAY_SIZE];
         object_type *o_ptr = equip_obj(slot);
         char         o_name[MAX_NLEN];

@@ -367,10 +367,10 @@ struct object_type
 
     u32b flags[OF_ARRAY_SIZE]; /* Extra Flags for ego and artifacts */
 
-    u32b curse_flags;      /* Flags for curse */
+    u64b curse_flags;      /* Flags for curses */
 
     u32b known_flags[OF_ARRAY_SIZE];
-    u32b known_curse_flags;
+    u64b known_curse_flags;
     u32b known_xtra;
 
     u32b rune;
@@ -1416,7 +1416,7 @@ struct player_type
     bool sustain_con;    /* Keep constitution */
     bool sustain_chr;    /* Keep charisma */
 
-    u32b cursed;         /* Player is cursed */
+    u64b cursed;         /* Player is cursed */
 
     bool can_swim;       /* No damage falling */
     bool levitation;     /* No damage falling */

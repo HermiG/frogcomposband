@@ -3164,7 +3164,13 @@ enum obj_flags_e {
 #define OFC_NORMALITY           0x40000000
 #define OFC_LOW_DEVICE          0x80000000
 
-#define MAX_CURSE 32
+#define OFC_BULKY             0x0100000000
+#define OFC_GAUDY             0x0200000000
+#define OFC_TANGLING          0x0400000000
+#define OFC_LEAKY             0x0800000000
+#define OFC_DEVOURING         0x1000000000
+
+#define MAX_CURSE 37
 
 #define TRC_SPECIAL_MASK \
     (OFC_TY_CURSE | OFC_AGGRAVATE)

@@ -1263,6 +1263,18 @@ static void _display_curses(object_type *o_ptr, u32b flgs[OF_ARRAY_SIZE], doc_pt
         vec_add(v, string_copy_s("<color:B>Drains Mana</color>"));
     if (o_ptr->known_curse_flags & OFC_DRAIN_PACK)
         vec_add(v, string_copy_s("<color:g>Drains Devices</color>"));
+
+    if (o_ptr->known_curse_flags & OFC_BULKY)
+      vec_add(v, string_copy_s("<color:o>Extra Weight</color>"));
+    if (o_ptr->known_curse_flags & OFC_GAUDY)
+      vec_add(v, string_copy_s("<color:o>Attracts Thieves</color>"));
+    if (o_ptr->known_curse_flags & OFC_TANGLING)
+      vec_add(v, string_copy_s("<color:o>Tangling Straps</color>"));
+    if (o_ptr->known_curse_flags & OFC_LEAKY)
+      vec_add(v, string_copy_s("<color:o>Drops Items</color>"));
+    if (o_ptr->known_curse_flags & OFC_DEVOURING)
+      vec_add(v, string_copy_s("<color:o>Deposit Only</color>"));
+
     if (object_is_unenchantable(o_ptr))
         vec_add(v, string_copy_s("<color:r>Unenchantable</color>"));
 

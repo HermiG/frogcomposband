@@ -257,7 +257,7 @@ int bag_weight_total(obj_p p)
     }
 
     if(obj->name2 == EGO_BAG_ETHEREAL || have_flag(obj->flags, OF_ETHEREAL)) scale *= 0.5f;
-    if(have_flag(obj->flags, OF_BULKY)) scale *= 2.0f;
+    if(obj->name2 == EGO_BAG_BULKY || have_flag(obj->flags, OF_BULKY)) scale *= 2.0f;
     if(obj->curse_flags) scale += 1.0f;
 
     return (int)(inv_weight(_inv, p) * scale + 0.5f);

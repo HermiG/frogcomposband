@@ -21,7 +21,7 @@ static byte UglyBitTable[256] = {
 
 typedef struct
 {
-    u32b flag;
+    u64b flag;
     int lev;
     char desc[25];
     byte attr;
@@ -67,15 +67,15 @@ static _curse_type _mummy_curses[_MAX_MUMMY_CURSE] =
 
 /* Not sure why we don't just use count_bits()... this *is* somewhat faster
  * with a high number of curses, but count_bits() is "fast enough" */
-static int _count_curses(u32b flg)
+static int _count_curses(u64b flg)
 {
-    int tulos = 0;
+    int count = 0;
     while (flg)
     {
-        tulos += UglyBitTable[(flg & 0xff)];
-        flg>>=8;
+        count += UglyBitTable[(flg & 0xff)];
+        flg >>= 8;
     }
-    return tulos;
+    return count;
 }
 
 static int _get_toggle(void)
@@ -281,7 +281,7 @@ static bool _mummy_pick_curse(object_type *o_ptr)
     {
         _curse_type *_curse = &_mummy_curses[i];
         if ((_curse->flag == OFC_LOW_MELEE) && (!object_is_melee_weapon(o_ptr))) continue;
-        if ((_curse->flag == OFC_LOW_AC) && (!object_is_armour(o_ptr))) continue;
+        if ((_curse->flag == OFC_LOW_AC)    && (!object_is_armour(o_ptr))) continue;
         if (_curse->lev > p_ptr->lev) continue;
         if (o_ptr->curse_flags & _curse->flag) continue;
         choices[ct++] = i;
@@ -309,19 +309,19 @@ static bool _mummy_pick_curse(object_type *o_ptr)
             if (c == 'n') continue;
 
             object_desc(o_name, o_ptr, OD_COLOR_CODED | OD_OMIT_PREFIX | OD_NAME_ONLY);
-            o_ptr->curse_flags |= _curse->flag;
+            o_ptr->curse_flags       |= _curse->flag;
             o_ptr->known_curse_flags |= _curse->flag;
 
             if (_curse->lev >= 30)
             {
                 msg_format("A terrible black aura blasts your %s!", o_name);
-                o_ptr->curse_flags |= (OFC_HEAVY_CURSE | OFC_CURSED);
+                o_ptr->curse_flags       |= (OFC_HEAVY_CURSE | OFC_CURSED);
                 o_ptr->known_curse_flags |= (OFC_HEAVY_CURSE | OFC_CURSED);
             }
             else
             {
                 msg_format("A black aura surrounds your %s!", o_name);
-                o_ptr->curse_flags |= (OFC_CURSED);
+                o_ptr->curse_flags       |= (OFC_CURSED);
                 o_ptr->known_curse_flags |= (OFC_CURSED);
             }
             if ((!object_is_known(o_ptr)) && (o_ptr->ident & IDENT_SENSE))
@@ -435,7 +435,7 @@ static bool _inflict_curse_aux(int pow, monster_type *m_ptr, int m_idx, bool DoD
         ct++;
     }
 
-    switch (highest_power){
+    switch (highest_power) {
     case 1: msg_format("%^s is cursed.", m_name); break;
     case 2: msg_format("An evil curse reaches out for %s.", m_name); break;
     case 3: msg_format("%^s is subjected to an evil curse.", m_name); break;
@@ -447,7 +447,7 @@ static bool _inflict_curse_aux(int pow, monster_type *m_ptr, int m_idx, bool DoD
     }
 
     ct = 0;
-//    msg_format("Rolls: %d", rolls);
+    //msg_format("Rolls: %d", rolls);
     while (ct < rolls)
     {
         if ((!m_ptr) || (!m_ptr->r_idx)) return TRUE;
@@ -462,15 +462,15 @@ static bool _inflict_curse_aux(int pow, monster_type *m_ptr, int m_idx, bool DoD
             case 6:  dType = GF_STASIS; break;
             case 5:  dType = GF_PARALYSIS; break;
             case 4:  dType = GF_OLD_CONF; break;
-            case 3: dType = GF_STUN; break;
-            case 2: dType = GF_TURN_ALL; break;
-            case 1: dType = GF_OLD_SLOW; break;
+            case 3:  dType = GF_STUN; break;
+            case 2:  dType = GF_TURN_ALL; break;
+            case 1:  dType = GF_OLD_SLOW; break;
             default: break;
         }
         p = (nopat[ct] + 1) / 2;
         ct++;
 
-//        msg_format("Roll %d: %d", ct, nopat[ct - 1]);
+        //msg_format("Roll %d: %d", ct, nopat[ct - 1]);
 
         if (r_info[m_ptr->r_idx].flags1 & RF1_UNIQUE){ // if it is an unique, give some refund for high-powered ones...
             if (p == 5 || p == 3 || p == 7){ refunds++; continue; }
@@ -508,9 +508,9 @@ static bool _inflict_curse(int pow){
     {
         monster_desc(m_name, m_ptr, 0);
 
-        if(pow==0) msg_format("<color:R>You curse %s.</color>", m_name);
+        if      (pow == 0) msg_format("<color:R>You curse %s.</color>", m_name);
         else if (pow == 1) msg_format("<color:R>You curse %s.</color>", m_name);
-        else msg_format("<color:R>You curse %s.</color>", m_name);
+        else               msg_format("<color:R>You curse %s.</color>", m_name);
         _inflict_curse_aux(pow, m_ptr, m_idx, TRUE);
         energy_use = 100;
         return TRUE;
@@ -1234,8 +1234,7 @@ void _calc_innate_attacks(void)
 
 static void _calc_bonuses_aux(void)
 {
-    int slot;
-    u32b checklist = 0, perm_flags = 0;
+    u64b checklist = 0, perm_flags = 0;
     int basePow = 0;
     int perm_ct = 0;
     int osumat = 0;
@@ -1255,7 +1254,7 @@ static void _calc_bonuses_aux(void)
     {
         object_type *o_ptr = equip_obj(slot);
         u32b flgs[OF_ARRAY_SIZE];
-        u32b liput = o_ptr->curse_flags;
+        u64b flags = o_ptr->curse_flags;
 
         obj_flags(o_ptr, flgs);
 
@@ -1263,15 +1262,15 @@ static void _calc_bonuses_aux(void)
         {
             basePow += 3;
             perm_ct += 3;
-            liput &= ~(OFC_PERMA_CURSE | OFC_HEAVY_CURSE | OFC_CURSED);
+            flags &= ~(OFC_PERMA_CURSE | OFC_HEAVY_CURSE | OFC_CURSED);
         }
         else if (o_ptr->curse_flags & OFC_HEAVY_CURSE) basePow += 2;
-        else if (o_ptr->curse_flags & OFC_CURSED) basePow++;
-        if (obj_is_blessed(o_ptr)) basePow -= 2;
-        if (have_flag(flgs, OF_TY_CURSE)) perm_flags |= OFC_TY_CURSE;
+        else if (o_ptr->curse_flags & OFC_CURSED)      basePow++;
+        if (obj_is_blessed(o_ptr))                     basePow -= 2;
+        if (have_flag(flgs, OF_TY_CURSE))  perm_flags |= OFC_TY_CURSE;
         if (have_flag(flgs, OF_AGGRAVATE)) perm_flags |= OFC_AGGRAVATE;
         if (have_flag(flgs, OF_DRAIN_EXP)) perm_flags |= OFC_DRAIN_EXP;
-        checklist |= (liput);
+        checklist |= flags;
     }
     checklist &= ~(_IGNORE_MASK);
     osumat = _count_curses(checklist);

@@ -1226,7 +1226,7 @@ extern bool set_monster_monfear(int m_idx, int v);
 extern bool set_monster_invulner(int m_idx, int v, bool energy_need);
 extern bool set_monster_paralyzed(int m_idx, int v);
 extern void dispel_monster_status(int m_idx);
-extern u32b get_curse(int power, object_type *o_ptr);
+extern u64b get_curse(int power, object_type *o_ptr);
 extern void curse_equipment(int chance, int heavy_chance);
 extern void mon_kill_mon(mon_ptr mon, int who);
 extern void mon_take_hit_mon(int m_idx, int dam, bool *fear, cptr note, int who);

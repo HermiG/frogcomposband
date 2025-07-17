@@ -187,7 +187,7 @@ u32b savefile_read_u32b(savefile_ptr file)
 {
     u32b result;
 
-    result = savefile_read_byte(file);
+    result =         savefile_read_byte(file);
     result |= ((u32b)savefile_read_byte(file)) << 8;
     result |= ((u32b)savefile_read_byte(file)) << 16;
     result |= ((u32b)savefile_read_byte(file)) << 24;
@@ -197,10 +197,24 @@ u32b savefile_read_u32b(savefile_ptr file)
 
 void savefile_write_u32b(savefile_ptr file, u32b v)
 {
-    savefile_write_byte(file, v & 0xFF);
-    savefile_write_byte(file, (v >> 8) & 0xFF);
+    savefile_write_byte(file, (v >>  0) & 0xFF);
+    savefile_write_byte(file, (v >>  8) & 0xFF);
     savefile_write_byte(file, (v >> 16) & 0xFF);
     savefile_write_byte(file, (v >> 24) & 0xFF);
+}
+
+u64b savefile_read_u64b(savefile_ptr file)
+{
+  u64b result =    savefile_read_u32b(file);
+  result |= ((u64b)savefile_read_u32b(file)) << 32;
+  
+  return result;
+}
+
+void savefile_write_u64b(savefile_ptr file, u64b v)
+{
+  savefile_write_u32b(file, (v >>  0) & 0xFFFFFFFF);
+  savefile_write_u32b(file, (v >> 32) & 0xFFFFFFFF);
 }
 
 s32b savefile_read_s32b(savefile_ptr file)

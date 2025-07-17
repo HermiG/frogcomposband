@@ -37,6 +37,7 @@ extern u16b         savefile_read_u16b(savefile_ptr file);
 extern s16b         savefile_read_s16b(savefile_ptr file);
 extern u32b         savefile_read_u32b(savefile_ptr file);
 extern s32b         savefile_read_s32b(savefile_ptr file);
+extern u64b         savefile_read_u64b(savefile_ptr file);
 extern void         savefile_read_cptr(savefile_ptr file, char *buf, int max);
 extern string_ptr   savefile_read_string(savefile_ptr file);
 extern void         savefile_read_skip(savefile_ptr file, int cb);
@@ -47,6 +48,7 @@ extern void         savefile_write_u16b(savefile_ptr file, u16b v);
 extern void         savefile_write_s16b(savefile_ptr file, s16b v);
 extern void         savefile_write_u32b(savefile_ptr file, u32b v);
 extern void         savefile_write_s32b(savefile_ptr file, s32b v);
+extern void         savefile_write_u64b(savefile_ptr file, u64b v);
 extern void         savefile_write_cptr(savefile_ptr file, const char *buf);
 
 #endif

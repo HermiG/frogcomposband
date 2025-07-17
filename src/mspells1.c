@@ -201,6 +201,7 @@ u64b get_curse(int power, object_type *o_ptr)
         }
         if (new_curse == OFC_LOW_MELEE && !object_is_weapon(o_ptr)) continue;
         if (new_curse == OFC_LOW_AC    && !object_is_armour(o_ptr)) continue;
+        if ((new_curse & TRC_BAG_MASK) && !obj_is_bag(o_ptr))       continue;
         break;
     }
     return new_curse;

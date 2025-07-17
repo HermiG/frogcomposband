@@ -3193,6 +3193,9 @@ enum obj_flags_e {
      OFC_TELEPORT | OFC_DRAIN_HP | OFC_DRAIN_MANA | OFC_BY_CURSE | \
      OFC_DRAIN_PACK | OFC_CRAPPY_MUT | OFC_ALLERGY | OFC_NORMALITY)
 
+#define TRC_BAG_MASK \
+    (OFC_BULKY | OFC_GAUDY | OFC_TANGLING | OFC_LEAKY | OFC_DEVOURING)
+
 /*
  * Bit flags for apply_magic() (etc)
  */

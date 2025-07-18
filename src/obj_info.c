@@ -1183,12 +1183,9 @@ static void _ego_display_extra(u32b flgs[OF_ARRAY_SIZE], doc_ptr doc)
 
 static void _display_curses(object_type *o_ptr, u32b flgs[OF_ARRAY_SIZE], doc_ptr doc)
 {
-    vec_ptr v;
-
-    if (object_is_device(o_ptr)) return;
     if (!(o_ptr->ident & (IDENT_KNOWN | IDENT_SENSE | IDENT_STORE))) return;
 
-    v = vec_alloc((vec_free_f)string_free);
+    vec_ptr v = vec_alloc((vec_free_f)string_free);
 
     /* Note: Object may not actually be cursed, but still might have
        Aggravate or TY Curse. */
@@ -1795,12 +1792,16 @@ void device_display_doc(object_type *o_ptr, doc_ptr doc)
     _display_insurance(o_ptr, doc);
         
     doc_insert(doc, "<style:indent>"); /* Indent a bit when word wrapping long lines */
+  
+    obj_flags_display(o_ptr, flgs);
+    _display_curses(o_ptr, flgs, doc);
+    _display_ignore(flgs, doc);
     _display_score(o_ptr, doc);
 
     if (!obj_is_identified_fully(o_ptr))
         doc_printf(doc, "\nYou may *identify* or sell this object to learn more about this device. Also, for many device types, you can learn more by actually using this device long enough.\n");
 
-    _display_ignore(flgs, doc);
+    
     _display_autopick(o_ptr, doc);
 
     doc_insert(doc, "</style></indent>\n");
@@ -1888,8 +1889,12 @@ void device_display_smith(object_type *o_ptr, doc_ptr doc)
         doc_printf(doc, "Fail   : <color:G>%d.%d%%</color>\n", fail/10, fail%10);
     }
 
-    _display_score(o_ptr, doc);
+    
+    obj_flags_display(o_ptr, flgs);
+
+    _display_curses(o_ptr, flgs, doc);
     _display_ignore(flgs, doc);
+    _display_score(o_ptr, doc);
     doc_insert(doc, "</indent>\n");
 }
 
@@ -1992,13 +1997,12 @@ static void _ego_display_name(ego_type *e_ptr, doc_ptr doc)
 
 void ego_display_doc(ego_type *e_ptr, doc_ptr doc)
 {
-    int  i;
     u32b flgs[OF_ARRAY_SIZE];
 
     _ego_display_name(e_ptr, doc);
 
-    /* First, the fixed flags always present */
-    for (i = 0; i < OF_ARRAY_SIZE; i++) flgs[i] = e_ptr->known_flags[i] & e_ptr->flags[i];
+    // First, the fixed flags derived from the base ego type
+    for (int i = 0; i < OF_ARRAY_SIZE; i++) flgs[i] = e_ptr->known_flags[i] & e_ptr->flags[i];
     remove_flag(flgs, OF_HIDE_TYPE);
     remove_flag(flgs, OF_SHOW_MODS);
     remove_flag(flgs, OF_FULL_NAME);
@@ -2023,8 +2027,8 @@ void ego_display_doc(ego_type *e_ptr, doc_ptr doc)
         doc_insert(doc, "</style></indent>\n");
     }
 
-    /* Next, the optional flags */
-    for (i = 0; i < OF_ARRAY_SIZE; i++) flgs[i] = e_ptr->known_flags[i] & e_ptr->xtra_flags[i];
+    // Next, any extra flags not present in the base ego type
+    for (int i = 0; i < OF_ARRAY_SIZE; i++) flgs[i] = e_ptr->known_flags[i] & e_ptr->xtra_flags[i];
     remove_flag(flgs, OF_HIDE_TYPE);
     remove_flag(flgs, OF_SHOW_MODS);
     remove_flag(flgs, OF_FULL_NAME);
@@ -2032,7 +2036,7 @@ void ego_display_doc(ego_type *e_ptr, doc_ptr doc)
 
     if (_have_flag(flgs))
     {
-        doc_insert(doc, "<color:B>Optional Bonuses</color>\n");
+        doc_insert(doc, "<color:B>Extra Bonuses</color>\n");
         doc_insert(doc, "  <indent><style:indent>");
         _ego_display_stats(flgs, doc);
         _display_sustains(flgs, doc);

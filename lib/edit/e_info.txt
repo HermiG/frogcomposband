@@ -1148,7 +1148,7 @@ F:PREFIX_NAME
 
 N:288:Bulky
 T:BAG
-W:50:*:1
+W:5:*:1
 F:PREFIX_NAME | CURSED
 
 N:289:Clasped

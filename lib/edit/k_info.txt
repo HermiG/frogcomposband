@@ -4804,7 +4804,7 @@ F:PLURAL
 # Bags (TV_BAG)
 ########################################################################
 N:*:& Linen Bag~
-G:&:U
+G:&:s
 I:47:1:10
 W:5:0:20:10:50
 A:0/3:5/1:10/3
@@ -4812,20 +4812,20 @@ F:TOWN
 D:A small sack of coarse fabric tied shut with a length of twine.
 
 N:*:& Woolen Sack~
-G:&:U
+G:&:W
 I:47:1:15
 W:5:0:20:12:75
 A:5/2:10/2:15/4
 
 N:*:& Drawstring Pouch~
-G:&:U
+G:&:h
 I:47:1:20
 W:10:0:0:10:100
 A:5/4:10/1:20/4
 D:A modest cloth pouch with a simple drawstring closure.
 
 N:*:& Canvas Satchel~
-G:&:U
+G:&:h
 I:47:1:25
 W:15:0:0:25:125
 A:10/4:15/1:25/4
@@ -4840,7 +4840,7 @@ A:15/4:20/1:30/4
 D:Crafted from thick leather and reinforced with metal studs, this pouch is built to endure rough travel and long expeditions.
 
 N:*:& Hide Satchel~
-G:&:U
+G:&:u
 I:47:1:40
 W:25:0:0:40:200
 A:15/4:25/1:35/4
@@ -4855,7 +4855,7 @@ A:20/4:30/1:40/4
 D:Balanced and comfortably worn, this pouch is favored by seasoned adventurers.
 
 N:*:& Oiled Leather Knapsack~
-G:&:U
+G:&:u
 I:47:1:60
 W:35:0:0:60:300
 A:25/4:35/1:45/4
@@ -4863,7 +4863,7 @@ F:IGNORE_ACID
 D:Sturdy and water-resistant, this knapsack gleams faintly from repeated oiling. Holds a surprising amount while keeping contents dry.
 
 N:*:& Fur-lined Pack~
-G:&:U
+G:&:W
 I:47:1:80
 W:40:0:0:80:400
 F:IGNORE_COLD
@@ -4893,7 +4893,7 @@ A:5/4:15/1:25/4
 D:A padded sidebag used by field alchemists to protect potions from shattering.
 
 N:*:& Apothecary's Satchel~
-G:&:g
+G:&:t
 I:47:2:32
 W:25:0:0:20:250
 A:15/4:25/1:35/4
@@ -4901,7 +4901,7 @@ F:IGNORE_ACID
 D:A reinforced satchel lined with vial loops and padded sleeves - ideal for potion mixing on the go.
 
 N:*:& Wyrmhide Vialcase~
-G:&:g
+G:&:t
 I:47:2:64
 W:35:0:0:15:500
 A:30/4:40/1:50/4
@@ -4910,7 +4910,7 @@ D:Fashioned from the scaled hide of a slain wyrm, this reinforced case resists h
 D:The prized companion of a master alchemist.
 
 N:*:& Scroll Case~
-G:&:p
+G:&:P
 I:47:3:8
 W:5:0:20:10:50
 A:0/4:5/1:15/4
@@ -4918,7 +4918,7 @@ F:TOWN
 D:A simple scroll case with a tight clasp to keep delicate parchment safe.
 
 N:*:& Scribe's Folio~
-G:&:p
+G:&:P
 I:47:3:16
 W:15:0:40:15:100
 A:5/4:15/1:25/4
@@ -4941,3 +4941,8 @@ A:30/4:40/1:50/4
 F:IGNORE_ACID | IGNORE_FIRE | IGNORE_COLD
 D:A rune-etched case sealed by ancient wards, built to resist flame, theft, and decay.
 D:Sacred texts and forbidden spells alike are securely sealed within.
+
+# Colors
+# Bags/Pouches: WuUh
+# Potion Belts: gLtTmM
+# Scroll Cases: PphVK

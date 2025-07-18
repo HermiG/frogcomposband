@@ -829,6 +829,26 @@ bool _unwield_verify(obj_ptr obj)
         energy_use = 0;
         return FALSE;
     }
+  
+    if (obj->loc.where == INV_BAG)
+    {
+        slot_t slot = equip_find_obj(TV_BAG, SV_ANY);
+        if (!slot) return FALSE;
+        obj_ptr obj_bag = equip_obj(slot);
+
+        if(obj_bag->curse_flags & OFC_DEVOURING) {
+          char bag_name[MAX_NLEN];
+          object_desc(bag_name, obj_bag, OD_COLOR_CODED | OD_NAME_ONLY | OD_OMIT_PREFIX);
+          char obj_name[MAX_NLEN];
+          object_desc(obj_name, obj, OD_COLOR_CODED | OD_NAME_ONLY | OD_OMIT_PREFIX | OD_SINGULAR);
+          
+          msg_format("Your %s refuses to release the %s!", bag_name, obj_name);
+          obj_learn_curse(obj_bag, OFC_DEVOURING);
+          disturb(0, 0);
+          return FALSE;
+        }
+    }
+
     if (object_is_cursed(obj) && obj->loc.where == INV_EQUIP)
     {
         if ((p_ptr->prace == RACE_MON_MUMMY) && (mummy_can_remove(obj)))
@@ -864,6 +884,7 @@ bool _unwield_verify(obj_ptr obj)
             return FALSE;
         }
     }
+
     return TRUE;
 }
 

@@ -137,6 +137,31 @@ void bag_carry(obj_ptr obj)
     p_ptr->notice |= PN_CARRY;
 }
 
+bool _bag_can_remove(slot_t item_slot) {
+  obj_ptr obj = bag_obj(item_slot);
+  if (!obj) return FALSE;
+  
+  slot_t bag_slot = equip_find_obj(TV_BAG, SV_ANY);
+  if (!bag_slot) return FALSE;
+  
+  obj_ptr obj_bag = equip_obj(bag_slot);
+  if (!obj_bag) return FALSE;
+  
+  if(obj_bag->curse_flags & OFC_DEVOURING) {
+    char bag_name[MAX_NLEN];
+    object_desc(bag_name, obj_bag, OD_COLOR_CODED | OD_NAME_ONLY | OD_OMIT_PREFIX);
+    char obj_name[MAX_NLEN];
+    object_desc(obj_name, obj, OD_COLOR_CODED | OD_NAME_ONLY | OD_OMIT_PREFIX | OD_SINGULAR);
+    
+    msg_format("Your %s refuses to release the %s!", bag_name, obj_name);
+    obj_learn_curse(obj_bag, OFC_DEVOURING);
+    disturb(0, 0);
+    return FALSE;
+  }
+
+  return TRUE;
+}
+
 void bag_remove(slot_t slot)
 {
     inv_remove(_inv, slot);
@@ -159,6 +184,7 @@ void bag_drop(obj_ptr obj)
     assert(obj);
     assert(obj->loc.where == INV_BAG);
     assert(obj->number > 0);
+    if(!_bag_can_remove(obj->loc.slot)) return;
 
     int amt = obj->number;
 

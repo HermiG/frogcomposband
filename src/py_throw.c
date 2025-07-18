@@ -60,8 +60,7 @@ static obj_ptr _get_obj(int type)
     if (type & THROW_BOOMERANG)
     {
         slot_t slot = equip_find_first(object_is_melee_weapon);
-        if (slot && ((type & THROW_DISPLAY) || p_ptr->weapon_ct == 1))
-            return equip_obj(slot);
+        if (slot && ((type & THROW_DISPLAY) || p_ptr->weapon_ct == 1)) return equip_obj(slot);
         prompt.where[0] = INV_EQUIP;
         prompt.filter = object_is_melee_weapon;
     }
@@ -80,8 +79,7 @@ static obj_ptr _get_obj(int type)
 bool _get_target(py_throw_ptr context)
 {
     int tx, ty;
-    if (context->dir == 5 && !target_okay())
-        context->dir = 0;
+    if (context->dir == 5 && !target_okay()) context->dir = 0;
     if (!context->dir)
     {
         project_length = context->range;
@@ -106,8 +104,7 @@ bool _get_target(py_throw_ptr context)
     if (tx == px && ty == py) return FALSE;
 
     assert(context->range <= MAX_SIGHT);
-    context->path_ct = project_path(context->path,
-        context->range, py, px, ty, tx, PROJECT_PATH);
+    context->path_ct = project_path(context->path, context->range, py, px, ty, tx, PROJECT_PATH);
     context->path_pos = 0;
     if (!context->path_ct) return FALSE;
     return TRUE;
@@ -130,6 +127,24 @@ bool _init_context(py_throw_ptr context)
             msg_print("Your bag still contains items. Empty your bag first.");
             return FALSE;
         }
+        if ( context->obj->loc.where == INV_BAG )
+        {
+            slot_t slot = equip_find_obj(TV_BAG, SV_ANY);
+            if (!slot) return FALSE;
+            obj_ptr obj_bag = equip_obj(slot);
+
+            if(obj_bag->curse_flags & OFC_DEVOURING) {
+                char bag_name[MAX_NLEN];
+                object_desc(bag_name, obj_bag, OD_COLOR_CODED | OD_NAME_ONLY | OD_OMIT_PREFIX);
+                char obj_name[MAX_NLEN];
+                object_desc(obj_name, context->obj, OD_COLOR_CODED | OD_NAME_ONLY | OD_OMIT_PREFIX | OD_SINGULAR);
+                
+                msg_format("Your %s refuses to release the %s!", bag_name, obj_name);
+                obj_learn_curse(obj_bag, OFC_DEVOURING);
+                disturb(0, 0);
+                return FALSE;
+            }
+        }
     }
     obj_flags(context->obj, context->flags);
     object_desc(context->obj_name, context->obj, OD_NAME_ONLY | OD_OMIT_PREFIX | OD_NO_PLURAL | OD_OMIT_INSCRIPTION);
@@ -137,7 +152,7 @@ bool _init_context(py_throw_ptr context)
     /* checks before taking a turn */
     if (p_ptr->inside_arena && !(context->type & THROW_BOOMERANG))
     {
-        if ((context->obj->tval != TV_SPIKE) || (!player_is_ninja))
+        if (context->obj->tval != TV_SPIKE || !player_is_ninja)
         {
             msg_print("You're in the arena now. This is hand-to-hand!");
             return FALSE;
@@ -150,10 +165,8 @@ bool _init_context(py_throw_ptr context)
         if (!context->energy)
         {
             context->energy = 100;
-            if (p_ptr->pclass == CLASS_ROGUE || p_ptr->pclass == CLASS_NINJA)
-                context->energy -= p_ptr->lev;
-            if (p_ptr->pclass == CLASS_NINJA_LAWYER)
-                context->energy -= (p_ptr->lev * 2 / 3);
+            if (p_ptr->pclass == CLASS_ROGUE || p_ptr->pclass == CLASS_NINJA) context->energy -= p_ptr->lev;
+            if (p_ptr->pclass == CLASS_NINJA_LAWYER) context->energy -= (p_ptr->lev * 2 / 3);
         }
         energy_use = context->energy;
         if (!fear_allow_shoot())
@@ -161,18 +174,15 @@ bool _init_context(py_throw_ptr context)
             msg_print("You are too scared!");
             return FALSE;
         }
-        if (context->obj->loc.where == INV_EQUIP && !equip_can_takeoff(context->obj))
-            return FALSE;
+        if (context->obj->loc.where == INV_EQUIP && !equip_can_takeoff(context->obj)) return FALSE;
     }
 
     /* multiplier (required for range calc) */
     if (!context->mult)
     {
         context->mult = 100;
-        if (p_ptr->mighty_throw)
-            context->mult += 100;
-        if (have_flag(context->flags, OF_THROWING))
-            context->mult += 100;
+        if (p_ptr->mighty_throw) context->mult += 100;
+        if (have_flag(context->flags, OF_THROWING)) context->mult += 100;
         context->mult = context->mult * (100 + adj_str_td[p_ptr->stat_ind[A_STR]] - 128) / 100;
     }
 
@@ -183,8 +193,7 @@ bool _init_context(py_throw_ptr context)
 
         mul = 10 + 2 * (context->mult - 100) / 100;
         div = context->obj->weight > 10 ? context->obj->weight : 10;
-        if (have_flag(context->flags, OF_THROWING) || (context->type & THROW_BOOMERANG))
-            div /= 2;
+        if (have_flag(context->flags, OF_THROWING) || (context->type & THROW_BOOMERANG)) div /= 2;
 
         rng = (adj_str_blow[p_ptr->stat_ind[A_STR]] + 20) * mul / div;
         if (rng > mul) rng = mul;
@@ -218,15 +227,12 @@ bool _init_context(py_throw_ptr context)
             if (context->back_chance > 30 && !one_in_(oops))
             {
                 context->come_back = TRUE;
-                if (p_ptr->blind || p_ptr->image || p_ptr->confused || one_in_(oops))
-                    context->fail_catch = TRUE;
+                if (p_ptr->blind || p_ptr->image || p_ptr->confused || one_in_(oops)) context->fail_catch = TRUE;
                 else
                 {
                     oops = 37;
-                    if (p_ptr->stun)
-                        oops += 10;
-                    if (context->back_chance <= oops)
-                        context->fail_catch = TRUE;
+                    if (p_ptr->stun) oops += 10;
+                    if (context->back_chance <= oops) context->fail_catch = TRUE;
                 }
             }
         }
@@ -243,8 +249,7 @@ bool _init_context(py_throw_ptr context)
             context->to_d += ((p_ptr->lev+30)*(p_ptr->lev+30)-900)/55; /* +100 at CL50 */
         }
     }
-    if (p_ptr->stun)
-        context->skill -= context->skill * MIN(100, p_ptr->stun) / 150;
+    if (p_ptr->stun) context->skill -= context->skill * MIN(100, p_ptr->stun) / 150;
 
     return TRUE;
 }
@@ -378,8 +383,7 @@ bool _hit_mon(py_throw_ptr context, int m_idx)
 
 bool _hit_wall(py_throw_ptr context)
 {
-    if (!(context->type & THROW_BOOMERANG))
-        context->break_chance = breakage_chance(context->obj);
+    if (!(context->type & THROW_BOOMERANG)) context->break_chance = breakage_chance(context->obj);
     return TRUE;
 }
 
@@ -415,8 +419,7 @@ void _throw(py_throw_ptr context)
          * so we can drop the object if needed */
         if (context->path_pos == context->path_ct - 1) break;
     }
-    if ((player_is_ninja) && (context->obj->tval == TV_SPIKE))
-        stats_on_use(context->obj, 1);
+    if ((player_is_ninja) && (context->obj->tval == TV_SPIKE)) stats_on_use(context->obj, 1);
 }
 
 void _return(py_throw_ptr context)
@@ -424,8 +427,7 @@ void _return(py_throw_ptr context)
     /* animation for the return */
     if (context->come_back)
     {
-        for (; context->path_pos >= 0; context->path_pos--)
-            _animate(context);
+        for (; context->path_pos >= 0; context->path_pos--) _animate(context);
         msg_format("Your %s comes back to you.", context->obj_name);
         if (object_is_(context->obj, TV_POLEARM, SV_DEATH_SCYTHE) && (one_in_(2) || context->fail_catch))
             death_scythe_miss(context->obj, HAND_NONE, 0);

@@ -3492,8 +3492,7 @@ static void _ego_create_boots(object_type *o_ptr, int level)
         case EGO_BOOTS_SPEED:
         {
             int amt = 3;
-            if (level >= 30)
-                amt += (MIN(90,level) - 30)/10;
+            if (level >= 30) amt += (MIN(90,level) - 30)/10;
             o_ptr->pval = 1 + m_bonus(amt, level);
             break;
         }
@@ -3508,19 +3507,15 @@ static void _ego_create_boots(object_type *o_ptr, int level)
             }
             o_ptr->weight = (2 * k_info[o_ptr->k_idx].weight / 3);
             o_ptr->ac = k_info[o_ptr->k_idx].ac + 4;
-            if (one_in_(4))
-                add_flag(o_ptr->flags, OF_SUST_CON);
+            if (one_in_(4)) add_flag(o_ptr->flags, OF_SUST_CON);
             break;
         case EGO_BOOTS_ELVENKIND:
-            if (one_in_(2))
-                one_high_resistance(o_ptr);
-            if (one_in_(2))
-                add_flag(o_ptr->flags, OF_LEVITATION);
+            if (one_in_(2)) one_high_resistance(o_ptr);
+            if (one_in_(2)) add_flag(o_ptr->flags, OF_LEVITATION);
             break;
         case EGO_BOOTS_LEVITATION:
         case EGO_BOOTS_SPRITE:
-            if (one_in_(2))
-                one_high_resistance(o_ptr);
+            if (one_in_(2)) one_high_resistance(o_ptr);
             break;
         }
     }
@@ -3530,7 +3525,7 @@ void obj_create_armor(object_type *o_ptr, int level, int power, int mode)
 {
     int toac1 = randint1(5) + m_bonus(5, level);
     int toac2 = m_bonus(10, level);
-    bool crafting = (mode & AM_CRAFTING) ? TRUE : FALSE;
+    bool crafting = !! (mode & AM_CRAFTING);
 
     if (!crafting)
     {
@@ -3549,9 +3544,6 @@ void obj_create_armor(object_type *o_ptr, int level, int power, int mode)
     }
 
     if (-1 <= power && power <= 1) return;
-
-    if (mode & AM_FORCE_EGO)
-        crafting = TRUE; /* Hack to prevent artifacts */
 
     switch (o_ptr->tval)
     {
@@ -3621,8 +3613,7 @@ void obj_create_armor(object_type *o_ptr, int level, int power, int mode)
  *************************************************************************/
 void obj_create_quiver(object_type *o_ptr, int level, int power, int mode)
 {
-    /* capacity */
-    o_ptr->xtra4 = 60;
+    o_ptr->xtra4 = 60; // Capacity
     while (one_in_(2)) o_ptr->xtra4 += 10;
 
     /* egos */
@@ -3641,8 +3632,9 @@ void obj_create_quiver(object_type *o_ptr, int level, int power, int mode)
         }
         o_ptr->xtra4 += 50;
     }
-    else if (power == 1)
-        o_ptr->xtra4 += 20;
+    else if (power == 1) o_ptr->xtra4 += 20;
+
+    ego_finalize(o_ptr, level, power, mode);
 }
 
 /*************************************************************************
@@ -3679,24 +3671,66 @@ void obj_create_bag(object_type *o_ptr, int level, int power, int mode)
   }
 
   /* egos */
-  if (power > 1)
-  {
-    o_ptr->name2 = ego_choose_type(EGO_TYPE_BAG, level);
-    
-    if(o_ptr->name2 == EGO_BAG_TEMPERANCE && !(o_ptr->sval == SV_BAG_POTION_BELT || o_ptr->sval == SV_BAG_SCROLL_CASE)) {
+  if (power > 1) {
+    bool done = FALSE;
+    while(!done) {
+      o_ptr->name2 = ego_choose_type(EGO_TYPE_BAG, level);
+      
+      if(o_ptr->name2 == EGO_BAG_TEMPERANCE && !(o_ptr->sval == SV_BAG_POTION_BELT || o_ptr->sval == SV_BAG_SCROLL_CASE)) {
         o_ptr->name2 = EGO_BAG_ORGANIZED; // of Temperance is not valid for regular bags, so replace with Organized
+      }
+      
+      switch (o_ptr->name2)
+      {
+        case EGO_BAG_BOTTOMLESS:
+        case EGO_BAG_HOLDING:
+          o_ptr->xtra4 *= 1.5;
+          o_ptr->xtra5 *= 1.5;
+          done = TRUE;
+          break;
+        case EGO_BAG_ETHEREAL:
+          o_ptr->weight = 0;
+          done = TRUE;
+          break;
+        case EGO_BAG_TEMPERANCE:
+        case EGO_BAG_ORGANIZED:
+        case EGO_BAG_PROTECTION:
+        case EGO_BAG_CLASPED:
+          done = TRUE;
+          break;
+      }
     }
-    
-    switch (o_ptr->name2)
-    {
-      case EGO_BAG_BOTTOMLESS:
-      case EGO_BAG_HOLDING:
-        o_ptr->xtra4 *= 1.5;
-        o_ptr->xtra5 *= 1.5;
-        break;
-      case EGO_BAG_ETHEREAL:
-        o_ptr->weight = 0;
-        break;
+    o_ptr->xtra4 *= 1.25;
+    o_ptr->xtra5 *= 1.25;
+  }
+  else if (power < -1) {
+    bool done = FALSE;
+    while(!done) {
+      o_ptr->name2 = ego_choose_type(EGO_TYPE_BAG, level);
+
+      switch (o_ptr->name2)
+      {
+        case EGO_BAG_BULKY:
+          o_ptr->curse_flags |= OFC_BULKY;
+          done = TRUE;
+          break;
+        case EGO_BAG_GAUDY:
+          o_ptr->curse_flags |= OFC_GAUDY;
+          done = TRUE;
+          break;
+        case EGO_BAG_TANGLING:
+          o_ptr->curse_flags |= OFC_TANGLING;
+          done = TRUE;
+          break;
+        case EGO_BAG_LEAKY:
+          o_ptr->curse_flags |= OFC_LEAKY;
+          done = TRUE;
+          break;
+        case EGO_BAG_DEVOURING:
+          o_ptr->curse_flags |= OFC_DEVOURING;
+          done = TRUE;
+          break;
+      }
     }
     o_ptr->xtra4 *= 1.25;
     o_ptr->xtra5 *= 1.25;
@@ -3706,9 +3740,11 @@ void obj_create_bag(object_type *o_ptr, int level, int power, int mode)
     o_ptr->xtra5 *= 1.25;
   }
   
-  o_ptr->xtra4 = (o_ptr->xtra4 + 5) / 10;
-  o_ptr->xtra5 = (o_ptr->xtra5 + 5) / 10;
+  o_ptr->xtra4 = MIN(999, MAX(4, (o_ptr->xtra4 + 5) / 10));
+  o_ptr->xtra5 = MIN(999, MAX(4, (o_ptr->xtra5 + 5) / 10));
   o_ptr->xtra5 *= 10; // convert pounds to decipounds
+  
+  ego_finalize(o_ptr, level, power, mode);
 }
 
 /*************************************************************************
@@ -3724,12 +3760,10 @@ void obj_create_lite(object_type *o_ptr, int level, int power, int mode)
         if (o_ptr->pval > 0) o_ptr->xtra4 = randint1(o_ptr->pval);
         o_ptr->pval = 0;
 
-        if (power == 1 && one_in_(3))
-            power++;
+        if (power == 1 && one_in_(3)) power++;
     }
 
-    if (-1 <= power && power <= 1)
-        return;
+    if (-1 <= power && power <= 1) return;
 
     if (o_ptr->sval == SV_LITE_FEANOR && (one_in_(7) || power > 2))
     {
@@ -3744,16 +3778,13 @@ void obj_create_lite(object_type *o_ptr, int level, int power, int mode)
         switch (o_ptr->name2)
         {
         case EGO_LITE_DURATION:
-            if (!object_needs_fuel(o_ptr))
-                done = FALSE;
+            if (!object_needs_fuel(o_ptr)) done = FALSE;
             break;
         case EGO_LITE_VALINOR:
-            if (o_ptr->sval != SV_LITE_FEANOR)
-                done = FALSE;
+            if (o_ptr->sval != SV_LITE_FEANOR) done = FALSE;
             else
             {
-                if (one_in_(7))
-                    add_flag(o_ptr->flags, OF_STEALTH);
+                if (one_in_(7)) add_flag(o_ptr->flags, OF_STEALTH);
                 if (one_in_(ACTIVATION_CHANCE))
                 {
                     int choices[] = {
@@ -3764,12 +3795,11 @@ void obj_create_lite(object_type *o_ptr, int level, int power, int mode)
             }
             break;
         case EGO_LITE_SCRYING:
-            if (object_needs_fuel(o_ptr))
-                done = FALSE;
+            if (object_needs_fuel(o_ptr)) done = FALSE;
             else
             {
                 if (one_in_(2)) add_esp_strong(o_ptr);
-                else add_esp_weak(o_ptr, FALSE);
+                else            add_esp_weak(o_ptr, FALSE);
             }
             break;
         case EGO_LITE_DARKNESS:
@@ -3800,7 +3830,7 @@ void ego_finalize(object_type *o_ptr, int level, int power, int mode)
 
         /* Bonuses */
         if (e_ptr->gen_flags & (OFG_ONE_SUSTAIN)) one_sustain(o_ptr);
-        if (e_ptr->gen_flags & (OFG_XTRA_POWER)) one_ability(o_ptr);
+        if (e_ptr->gen_flags & (OFG_XTRA_POWER))  one_ability(o_ptr);
         if (e_ptr->gen_flags & (OFG_XTRA_H_RES))
         {
             one_high_resistance(o_ptr);
@@ -3814,24 +3844,18 @@ void ego_finalize(object_type *o_ptr, int level, int power, int mode)
         /* Plusses */
         if (e_ptr->max_to_h)
         {
-            if (e_ptr->max_to_h < 0)
-                o_ptr->to_h -= randint1(-e_ptr->max_to_h);
-            else
-                o_ptr->to_h += randint1(e_ptr->max_to_h);
+            if (e_ptr->max_to_h < 0) o_ptr->to_h -= randint1(-e_ptr->max_to_h);
+            else                     o_ptr->to_h += randint1( e_ptr->max_to_h);
         }
         if (e_ptr->max_to_d)
         {
-            if (e_ptr->max_to_d < 0)
-                o_ptr->to_d -= randint1(-e_ptr->max_to_d);
-            else
-                o_ptr->to_d += randint1(e_ptr->max_to_d);
+            if (e_ptr->max_to_d < 0) o_ptr->to_d -= randint1(-e_ptr->max_to_d);
+            else                     o_ptr->to_d += randint1( e_ptr->max_to_d);
         }
         if (e_ptr->max_to_a)
         {
-            if (e_ptr->max_to_a < 0)
-                o_ptr->to_a -= randint1(-e_ptr->max_to_a);
-            else
-                o_ptr->to_a += randint1(e_ptr->max_to_a);
+            if (e_ptr->max_to_a < 0) o_ptr->to_a -= randint1(-e_ptr->max_to_a);
+            else                     o_ptr->to_a += randint1( e_ptr->max_to_a);
         }
 
         /* Pval */

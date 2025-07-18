@@ -671,10 +671,8 @@ static void wiz_create_item(void)
 
     if (k_info[k_idx].gen_flags & OFG_INSTA_ART)
     {
-        int i;
-
         /* Artifactify */
-        for (i = 1; i < max_a_idx; i++)
+        for (int i = 1; i < max_a_idx; i++)
         {
             /* Ignore incorrect tval */
             if (a_info[i].tval != k_info[k_idx].tval) continue;

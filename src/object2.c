@@ -1228,7 +1228,6 @@ s16b lookup_kind(int tval, int sval)
  */
 void object_wipe(object_type *o_ptr)
 {
-    /* Wipe the structure */
     (void)WIPE(o_ptr, object_type);
 }
 
@@ -1238,7 +1237,6 @@ void object_wipe(object_type *o_ptr)
  */
 void object_copy(object_type *o_ptr, object_type *j_ptr)
 {
-    /* Copy the structure */
     COPY(o_ptr, j_ptr, object_type);
 }
 
@@ -1340,7 +1338,6 @@ s16b m_bonus(int max, int level)
 {
     int bonus, stand, extra, value;
 
-
     /* Paranoia -- enforce maximal "level" */
     if (level > MAX_DEPTH - 1) level = MAX_DEPTH - 1;
 
@@ -1385,40 +1382,13 @@ s16b m_bonus(int max, int level)
 void object_mention(object_type *o_ptr)
 {
     char o_name[MAX_NLEN];
-
-    /* Describe */
     object_desc(o_name, o_ptr, (OD_NAME_ONLY | OD_STORE));
 
-    /* Artifact */
-    if (object_is_fixed_artifact(o_ptr))
-    {
-        /* Silly message */
-        msg_format("Artifact (%s)", o_name);
-
-    }
-
-    /* Random Artifact */
-    else if (o_ptr->art_name)
-    {
-        msg_print("Random artifact");
-
-    }
-
-    /* Ego-item */
-    else if (object_is_ego(o_ptr))
-    {
-        /* Silly message */
-        msg_format("Ego-item (%s)", o_name);
-
-    }
-
-    /* Normal item */
-    else
-    {
-        /* Silly message */
-        msg_format("Object (%s)", o_name);
-
-    }
+    if (object_is_fixed_artifact(o_ptr)) msg_format("Artifact (%s)", o_name);
+    else if (o_ptr->art_name) msg_print("Random artifact");
+    else if (object_is_ego(o_ptr)) msg_format("Ego-item (%s)", o_name);
+    else msg_format("Object (%s)", o_name);
+    
 }
 
 static void dragon_resist(object_type * o_ptr)
@@ -1522,7 +1492,6 @@ static bool make_artifact_special(object_type *o_ptr)
  */
 static bool make_artifact(object_type *o_ptr)
 {
-    int i;
     int ref_level = ((opening_chest) ? object_level : dun_level);
     if (mut_present(MUT_BAD_LUCK)) ref_level -= (ref_level / (4 * randint1(4)));
 
@@ -1535,7 +1504,7 @@ static bool make_artifact(object_type *o_ptr)
     if (o_ptr->number != 1) return (FALSE);
 
     /* Check the artifact list (skip the "specials") */
-    for (i = 0; i < max_a_idx; i++)
+    for (int i = 0; i < max_a_idx; i++)
     {
         artifact_type *a_ptr = &a_info[i];
 
@@ -1580,33 +1549,29 @@ static bool make_artifact(object_type *o_ptr)
 
 bool add_esp_strong(object_type *o_ptr)
 {
-    bool nonliv = FALSE;
-
     switch (randint1(4))
     {
-    case 1: add_flag(o_ptr->flags, OF_ESP_EVIL); break;
-    case 2: add_flag(o_ptr->flags, OF_TELEPATHY); break;
-	case 3: add_flag(o_ptr->flags, OF_ESP_LIVING); break;
-    case 4: add_flag(o_ptr->flags, OF_ESP_NONLIVING); nonliv = TRUE; break;
+        case 1: add_flag(o_ptr->flags, OF_ESP_EVIL); break;
+        case 2: add_flag(o_ptr->flags, OF_TELEPATHY); break;
+        case 3: add_flag(o_ptr->flags, OF_ESP_LIVING); break;
+        case 4: add_flag(o_ptr->flags, OF_ESP_NONLIVING); return TRUE;
     }
-
-    return nonliv;
+    return FALSE;
 }
 
 
 #define MAX_ESP_WEAK 9
 void add_esp_weak(object_type *o_ptr, bool extra)
 {
-    int i = 0;
     int idx[MAX_ESP_WEAK];
     int flg[MAX_ESP_WEAK];
     int n = (extra) ? (3 + randint1(randint1(6))) : randint1(3);
     int left = MAX_ESP_WEAK;
 
-    for (i = 0; i < MAX_ESP_WEAK; i++) flg[i] = i + 1;
+    for (int i = 0; i < MAX_ESP_WEAK; i++) flg[i] = i + 1;
 
     /* Shuffle esp flags */
-    for (i = 0; i < n; i++)
+    for (int i = 0; i < n; i++)
     {
         int k = randint0(left--);
 
@@ -1621,15 +1586,15 @@ void add_esp_weak(object_type *o_ptr, bool extra)
 
     while (n--) switch (idx[n])
     {
-    case 1: add_flag(o_ptr->flags, OF_ESP_ANIMAL); break;
-    case 2: add_flag(o_ptr->flags, OF_ESP_UNDEAD); break;
-    case 3: add_flag(o_ptr->flags, OF_ESP_DEMON); break;
-    case 4: add_flag(o_ptr->flags, OF_ESP_ORC); break;
-    case 5: add_flag(o_ptr->flags, OF_ESP_TROLL); break;
-    case 6: add_flag(o_ptr->flags, OF_ESP_GIANT); break;
-    case 7: add_flag(o_ptr->flags, OF_ESP_DRAGON); break;
-    case 8: add_flag(o_ptr->flags, OF_ESP_HUMAN); break;
-    case 9: add_flag(o_ptr->flags, OF_ESP_GOOD); break;
+        case 1: add_flag(o_ptr->flags, OF_ESP_ANIMAL); break;
+        case 2: add_flag(o_ptr->flags, OF_ESP_UNDEAD); break;
+        case 3: add_flag(o_ptr->flags, OF_ESP_DEMON); break;
+        case 4: add_flag(o_ptr->flags, OF_ESP_ORC); break;
+        case 5: add_flag(o_ptr->flags, OF_ESP_TROLL); break;
+        case 6: add_flag(o_ptr->flags, OF_ESP_GIANT); break;
+        case 7: add_flag(o_ptr->flags, OF_ESP_DRAGON); break;
+        case 8: add_flag(o_ptr->flags, OF_ESP_HUMAN); break;
+        case 9: add_flag(o_ptr->flags, OF_ESP_GOOD); break;
     }
 }
 
@@ -1784,13 +1749,7 @@ static void a_m_aux_4(object_type *o_ptr, int level, int power, int mode)
             }
 
             o_ptr->pval = i;
-
-            if (cheat_peek)
-            {
-                msg_format("Corpse of %s, depth +%d",
-
-                              r_name + r_ptr->name, check - 1);
-            }
+            if (cheat_peek) msg_format("Corpse of %s, depth +%d", r_name + r_ptr->name, check - 1);
 
             obj_identify(o_ptr);
             break;
@@ -1816,12 +1775,8 @@ static void a_m_aux_4(object_type *o_ptr, int level, int power, int mode)
             }
 
             o_ptr->pval = i;
-
-            if (cheat_peek)
-            {
-                msg_format("Statue of %s", r_name + r_ptr->name);
-
-            }
+            if (cheat_peek) msg_format("Statue of %s", r_name + r_ptr->name);
+            
             obj_identify(o_ptr);
             break;
         }
@@ -1885,7 +1840,7 @@ static void a_m_aux_4(object_type *o_ptr, int level, int power, int mode)
  */
 bool apply_magic(object_type *o_ptr, int lev, u32b mode)
 {
-    int i, rolls, f1, f2, power;
+    int i, rolls, f1, f2;
     int maxf1 = d_info[dungeon_type].obj_good;
     int maxf2 = d_info[dungeon_type].obj_great;
 
@@ -1940,7 +1895,7 @@ bool apply_magic(object_type *o_ptr, int lev, u32b mode)
     f2 += virtue_current(VIRTUE_CHANCE) / 100;
 
     /* Assume normal */
-    power = 0;
+    int power = 0;
 
     /* Roll for "good" */
     if ((mode & AM_GOOD) || magik(f1))
@@ -1976,7 +1931,7 @@ bool apply_magic(object_type *o_ptr, int lev, u32b mode)
             power = -2;
         }
 
-        /* "Cursed" items become tedious in the late game ... */
+        // "Cursed" items become tedious in the late game ...
         if ( power == -1
           && o_ptr->tval != TV_RING
           && o_ptr->tval != TV_AMULET
@@ -1987,39 +1942,21 @@ bool apply_magic(object_type *o_ptr, int lev, u32b mode)
         }
     }
 
-    if (obj_drop_theme && !power && (o_ptr->tval == TV_RING || o_ptr->tval == TV_AMULET))
-    {
-        power = 1;
-    }
-
-    if (mode & AM_AVERAGE)
-        power = 0;
+    if (obj_drop_theme && !power && (o_ptr->tval == TV_RING || o_ptr->tval == TV_AMULET)) power = 1;
+    if (mode & AM_AVERAGE) power = 0;
 
     /* Apply curse */
     if (mode & AM_CURSED)
     {
-        /* Assume 'cursed' */
-        if (power > 0)
-        {
-            power = -power;
-        }
-        /* Everything else gets more badly cursed */
-        else
-        {
-            power--;
-        }
+        if (power > 0) power = -power;
+        else           power--;
     }
 
-    /* Assume no rolls */
-    rolls = 0;
-
-    /* Get one roll if excellent */
-    if (power >= 2) rolls = 1;
-
-    /* Hack -- Get four rolls if forced great or special */
-    if (mode & (AM_GREAT | AM_SPECIAL)) rolls = 4;
-
-    /* Hack -- Get no rolls if not allowed */
+    rolls = 0; // Baseline has artifact rolls
+    if (power >= 2) rolls = 1; // Excellent items get one artifact roll
+    if (mode & (AM_GREAT | AM_SPECIAL)) rolls = 4; // Extra artifact rolls for great or special items
+  
+    // Forbid artifact rolls
     if ((mode & AM_NO_FIXED_ART) || o_ptr->name1 || o_ptr->name3) rolls = 0;
     if (mode & AM_AVERAGE) rolls = 0;
     if (mode & AM_FORCE_EGO)
@@ -2032,25 +1969,19 @@ bool apply_magic(object_type *o_ptr, int lev, u32b mode)
         else
             power = 2;
     }
-    else
-        apply_magic_ego = 0;
+    else apply_magic_ego = 0;
 
     /* Roll for artifacts if allowed */
-    for (i = 0; i < rolls; i++)
+    for (int i = 0; i < rolls; i++)
     {
-        /* Roll for an artifact */
         if (make_artifact(o_ptr)) break;
-        if (p_ptr->good_luck && one_in_(77))
-        {
-            if (make_artifact(o_ptr)) break;
-        }
+        if (p_ptr->good_luck && one_in_(77)) if (make_artifact(o_ptr)) break;
     }
 
     /* Hack -- Creating an artifact will re-prep the object, zeroing out level field.
        Not everybody calls into artifact.c with a prep'd object, so I guess we need to
        handle this here. */
-    if (!o_ptr->level)
-        o_ptr->level = lev;
+    if (!o_ptr->level) o_ptr->level = lev;
 
     /* Hack -- analyze replacement artifacts */
     if (o_ptr->name3)
@@ -2076,13 +2007,11 @@ bool apply_magic(object_type *o_ptr, int lev, u32b mode)
         a_ptr->generated = TRUE;
 
         /* Hack -- Memorize location of artifact in saved floors */
-        if (character_dungeon)
-            a_ptr->floor_id = p_ptr->floor_id;
+        if (character_dungeon) a_ptr->floor_id = p_ptr->floor_id;
 
         /* Extract the other fields */
         o_ptr->pval = a_ptr->pval;
-        if ((obj_is_harp(o_ptr)) && (p_ptr->pclass != CLASS_BARD))
-            o_ptr->pval -= (o_ptr->pval / 2);
+        if (obj_is_harp(o_ptr) && p_ptr->pclass != CLASS_BARD) o_ptr->pval -= o_ptr->pval / 2;
         o_ptr->ac = a_ptr->ac;
         o_ptr->dd = a_ptr->dd;
         o_ptr->ds = a_ptr->ds;
@@ -2092,7 +2021,7 @@ bool apply_magic(object_type *o_ptr, int lev, u32b mode)
         o_ptr->weight = a_ptr->weight;
 
         /* Hack -- extract the "broken" flag */
-        if (!a_ptr->cost) o_ptr->ident |= (IDENT_BROKEN);
+        if (!a_ptr->cost) o_ptr->ident |= IDENT_BROKEN;
 
         /* Hack -- extract the "cursed" flag */
         if (a_ptr->gen_flags & OFG_CURSED       ) o_ptr->curse_flags |= OFC_CURSED;
@@ -2102,19 +2031,13 @@ bool apply_magic(object_type *o_ptr, int lev, u32b mode)
         if (a_ptr->gen_flags & OFG_RANDOM_CURSE1) o_ptr->curse_flags |= get_curse(1, o_ptr);
         if (a_ptr->gen_flags & OFG_RANDOM_CURSE2) o_ptr->curse_flags |= get_curse(2, o_ptr);
 
-
         /* Cheat -- peek at the item */
         if (cheat_peek) object_mention(o_ptr);
 
-        /* Done */
         return TRUE;
     }
 
-    if (o_ptr->art_name)
-    {
-        return TRUE;
-    }
-
+    if (o_ptr->art_name) return TRUE;
 
     /* Apply magic */
     switch (o_ptr->tval)
@@ -2124,8 +2047,8 @@ bool apply_magic(object_type *o_ptr, int lev, u32b mode)
             break;
 
         case TV_BAG:
-          obj_create_bag(o_ptr, lev, power, mode);
-          break;
+            obj_create_bag(o_ptr, lev, power, mode);
+            break;
 
         case TV_DIGGING:
         case TV_HAFTED:
@@ -3544,15 +3467,10 @@ static bool _make_object_aux(object_type *j_ptr, u32b mode)
     /* Generate a special object, or a normal object */
     if (!one_in_(prob) || !make_artifact_special(j_ptr))
     {
-        int k_idx;
+        if (!get_obj_num_hook) get_obj_num_hook = _choose_obj_kind(mode);
+        if (get_obj_num_hook) get_obj_num_prep();
 
-        if (!get_obj_num_hook)
-            get_obj_num_hook = _choose_obj_kind(mode);
-
-        if (get_obj_num_hook)
-            get_obj_num_prep();
-
-        k_idx = get_obj_num(base);
+        int k_idx = get_obj_num(base);
 
         if (get_obj_num_hook)
         {
@@ -3568,12 +3486,10 @@ static bool _make_object_aux(object_type *j_ptr, u32b mode)
     }
 
     /* Apply magic (allow artifacts) */
-    if (!apply_magic(j_ptr, object_level, mode))
-        return FALSE;
+    if (!apply_magic(j_ptr, object_level, mode)) return FALSE;
 
     /* Hack - check for unsuitable ego, e.g. gloves of protection on a mage */
-    if ((_drop_tailored) && (object_is_icky(j_ptr, TRUE)))
-        return FALSE;
+    if (_drop_tailored && object_is_icky(j_ptr, TRUE)) return FALSE;
 
     /* Note: It is important to do this *after* apply_magic rather than in, say,
        object_prep() since artifacts should never spawn multiple copies. Ego ammo

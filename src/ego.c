@@ -1568,8 +1568,7 @@ void device_pick_ego(object_type *o_ptr, int level, int preference)
 
         if ((o_ptr->name2 < EGO_DEVICE_START) || (o_ptr->name2 > EGO_DEVICE_END)) done = FALSE;
 
-        if ( o_ptr->name2 == EGO_DEVICE_RESISTANCE
-          && (have_flag(flgs, OF_IGNORE_ACID) || o_ptr->tval == TV_ROD) )
+        if ( o_ptr->name2 == EGO_DEVICE_RESISTANCE && (have_flag(flgs, OF_IGNORE_ACID) || o_ptr->tval == TV_ROD) )
         {
             done = FALSE;
         }
@@ -1603,8 +1602,7 @@ bool obj_create_device(object_type *o_ptr, int level, int power, int mode)
         /* But failing is bad, so let's try again...
          * Boost the level a mite to make up for the nongoodness */
         level += 2;
-        if (!device_init(o_ptr, level, 0))
-        return FALSE;
+        if (!device_init(o_ptr, level, 0)) return FALSE;
     }
 
     if (abs(power) > 1) device_pick_ego(o_ptr, level, 0);
@@ -3669,6 +3667,9 @@ void obj_create_bag(object_type *o_ptr, int level, int power, int mode)
     while (one_in_(2)) o_ptr->xtra4 += o_ptr->pval * 1; //  5 ->  6 ->  7 ->  8 ->  9
     while (one_in_(2)) o_ptr->xtra5 += o_ptr->pval * 2; // 10 -> 12 -> 14 -> 16 -> 18
   }
+  // pval is used to determine magnitude of "pval stats" like +Str or +Stealth
+  // We must zero out the pval field otherwise we'll generate bags of +100 Strength
+  o_ptr->pval = 0;
 
   /* egos */
   if (power > 1) {
@@ -3829,9 +3830,9 @@ void ego_finalize(object_type *o_ptr, int level, int power, int mode)
         if (e_ptr->gen_flags & OFG_RANDOM_CURSE2) o_ptr->curse_flags |= get_curse(2, o_ptr);
 
         /* Bonuses */
-        if (e_ptr->gen_flags & (OFG_ONE_SUSTAIN)) one_sustain(o_ptr);
-        if (e_ptr->gen_flags & (OFG_XTRA_POWER))  one_ability(o_ptr);
-        if (e_ptr->gen_flags & (OFG_XTRA_H_RES))
+        if (e_ptr->gen_flags & OFG_ONE_SUSTAIN) one_sustain(o_ptr);
+        if (e_ptr->gen_flags & OFG_XTRA_POWER)  one_ability(o_ptr);
+        if (e_ptr->gen_flags & OFG_XTRA_H_RES)
         {
             one_high_resistance(o_ptr);
             if (randint1(level) > 60) one_high_resistance(o_ptr);
@@ -3909,11 +3910,11 @@ void ego_finalize(object_type *o_ptr, int level, int power, int mode)
             else
             {
                 o_ptr->pval += randint1(e_ptr->max_pval);
-                if ((o_ptr->name2 == EGO_CLOAK_HERO) && (o_ptr->pval > 3)) o_ptr->pval = 3; /* prevent OP elven cloaks */
-                else if ((o_ptr->name2 == EGO_BODY_AUGMENTATION) && (o_ptr->pval > 4)) o_ptr->pval = 4 + randint0(2);
-                else if ((object_is_weapon(o_ptr)) && (o_ptr->pval > e_ptr->max_pval) && (o_ptr->tval != TV_DIGGING)) o_ptr->pval = randint1(e_ptr->max_pval);
+                if (o_ptr->name2 == EGO_CLOAK_HERO && o_ptr->pval > 3) o_ptr->pval = 3; /* prevent OP elven cloaks */
+                else if (o_ptr->name2 == EGO_BODY_AUGMENTATION && o_ptr->pval > 4) o_ptr->pval = 4 + randint0(2);
+                else if (object_is_weapon(o_ptr) && o_ptr->pval > e_ptr->max_pval && o_ptr->tval != TV_DIGGING) o_ptr->pval = randint1(e_ptr->max_pval);
             }
-        }
+        } // ego->max_pval
 
         /* pval boosting to aid end game quality */
         if (o_ptr->name2 == EGO_BOOTS_ELVENKIND && level > 70)
@@ -3956,11 +3957,9 @@ void ego_finalize(object_type *o_ptr, int level, int power, int mode)
         }
         /* Cursed Egos: Make sure to do this last to avoid nonsensical combinations of
            good and bad flags (e.g. resist fire and vulnerable to fire) */
-        if (power < -1)
-        {
-            curse_object(o_ptr);
-            if (!o_ptr->pval && have_pval_flag(o_ptr->flags)) o_ptr->pval = randint1(3);
-        }
+        if (power < -1) curse_object(o_ptr);
+
+        if (!o_ptr->pval && have_pval_flag(o_ptr->flags)) o_ptr->pval = randint1(3);
     }
     if (cheat_peek) object_mention(o_ptr);
 }

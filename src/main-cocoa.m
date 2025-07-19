@@ -2240,6 +2240,8 @@ static BOOL send_event(NSEvent *event)
           int mx = !!(modifiers & NSCommandKeyMask);
           //int kp = !!(modifiers & NSNumericPadKeyMask);
           
+          if (mx) break;
+          
           unichar c = ([[event characters] length] > 0) ? [[event characters] characterAtIndex:0] : 0;
           char ch = 0;
           

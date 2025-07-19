@@ -854,7 +854,7 @@ static void term_getsize(term_data *td)
     /* rc.bottom += 1; */
 
     /* Adjust */
-    AdjustWindowRectEx(&rc, td->dwStyle, TRUE, td->dwExStyle);
+    AdjustWindowRectEx(&rc, td->dwStyle, td->w == hwndMain, td->dwExStyle);
 
     /* Total size */
     td->size_wid = rc.right - rc.left;
@@ -898,7 +898,7 @@ static void save_prefs_for_term(int i)
     }
 
     /* Font */
-    strcpy(buf, td->lf.lfFaceName[0]!='\0' ? td->lf.lfFaceName : "Courier");
+    strcpy(buf, td->lf.lfFaceName[0] ? td->lf.lfFaceName : "Consolas");
 
     WritePrivateProfileString(sec_name, "Font", buf, ini_file);
 
@@ -920,13 +920,6 @@ static void save_prefs_for_term(int i)
     /* Tile size (y) */
     wsprintf(buf, "%d", td->tile_hgt);
     WritePrivateProfileString(sec_name, "TileHgt", buf, ini_file);
-
-    /* Get window placement and dimensions */
-    lpwndpl.length = sizeof(WINDOWPLACEMENT);
-    GetWindowPlacement(td->w, &lpwndpl);
-
-    /* Acquire position in *normal* mode (not minimized) */
-    rc = lpwndpl.rcNormalPosition;
 
     /* Window size (x) */
     if (i == 0) wsprintf(buf, "%d", normsize.x);
@@ -967,7 +960,6 @@ static void save_prefs_for_term(int i)
 
 /*
  * Write the "prefs"
- *
  * We assume that the windows have all been initialized
  */
 static void save_prefs(void)
@@ -1014,13 +1006,13 @@ static void load_prefs_for_term(int i)
     sprintf(sec_name, "Term-%d", i);
 
     /* Visible */
-    if (i > 0) td->visible = (GetPrivateProfileInt(sec_name, "Visible", td->visible, ini_file) != 0);
+    if (i > 0) td->visible = !! GetPrivateProfileInt(sec_name, "Visible", td->visible, ini_file);
 
     /* Desired font, with default */
-    GetPrivateProfileString(sec_name, "Font", "Courier", tmp, 127, ini_file);
+    GetPrivateProfileString(sec_name, "Font", "Consolas", tmp, 127, ini_file);
 
     /* Bizarre */
-    td->bizarre = (GetPrivateProfileInt(sec_name, "Bizarre", td->bizarre, ini_file) != 0);
+    td->bizarre = !! GetPrivateProfileInt(sec_name, "Bizarre", td->bizarre, ini_file);
 
     /* Analyze font, save desired font name */
     td->font_want = z_string_make(tmp);
@@ -1038,14 +1030,14 @@ static void load_prefs_for_term(int i)
     normsize.x = td->cols; normsize.y = td->rows;
 
     /* Window size */
-    if (i == 0) win_maximized = GetPrivateProfileInt(sec_name, "Maximized", win_maximized, ini_file);
+    if (i == 0) win_maximized = !! GetPrivateProfileInt(sec_name, "Maximized", win_maximized, ini_file);
 
     /* Window position */
     td->pos_x = GetPrivateProfileInt(sec_name, "PositionX", td->pos_x, ini_file);
     td->pos_y = GetPrivateProfileInt(sec_name, "PositionY", td->pos_y, ini_file);
 
     /* Lock window size? */
-    if (i > 0) td->lock_size = GetPrivateProfileInt(sec_name, "LockSize", td->lock_size, ini_file);
+    if (i > 0) td->lock_size = !! GetPrivateProfileInt(sec_name, "LockSize", td->lock_size, ini_file);
 }
 
 
@@ -1058,7 +1050,7 @@ static void load_prefs(void)
     arg_graphics = GetPrivateProfileInt("Angband", "Graphics", GRAPHICS_NONE, ini_file);
 
     /* Extract the "arg_bigtile" flag */
-    arg_bigtile = GetPrivateProfileInt("Angband", "Bigtile", FALSE, ini_file);
+    arg_bigtile = !! GetPrivateProfileInt("Angband", "Bigtile", FALSE, ini_file);
     use_bigtile = arg_bigtile;
 
     /* Extract the "arg_sound" flag */
@@ -1409,21 +1401,16 @@ static void term_window_resize(term_data *td)
  *
  * Note that the "font name" must be capitalized!!!
  */
-static errr term_force_font(term_data *td, cptr path)
+static errr term_force_font(term_data *td)
 {
-    int wid, hgt;
-
     /* Forget the old font (if needed) */
     if (td->font_id) DeleteObject(td->font_id);
 
-    /* Unused */
-    (void)path;
-
     /* Create the font (using the 'base' of the font file name!) */
     td->font_id = CreateFontIndirect(&(td->lf));
-    wid = td->lf.lfWidth;
-    hgt = td->lf.lfHeight;
-    if (!td->font_id) return (1);
+    int wid = td->lf.lfWidth;
+    int hgt = td->lf.lfHeight;
+    if (!td->font_id) return 1;
 
     /* Hack -- Unknown size */
     if (!wid || !hgt)
@@ -1448,7 +1435,6 @@ static errr term_force_font(term_data *td, cptr path)
     td->font_wid = wid;
     td->font_hgt = hgt;
 
-    /* Success */
     return 0;
 }
 
@@ -1459,28 +1445,21 @@ static errr term_force_font(term_data *td, cptr path)
  */
 static void term_change_font(term_data *td)
 {
-    CHOOSEFONT cf;
-
-    memset(&cf, 0, sizeof(cf));
+    CHOOSEFONT cf = {0};
     cf.lStructSize = sizeof(cf);
+    cf.hwndOwner = hwndMain;
     cf.Flags = CF_SCREENFONTS | CF_FIXEDPITCHONLY | CF_NOVERTFONTS | CF_INITTOLOGFONTSTRUCT;
     cf.lpLogFont = &(td->lf);
 
     if (ChooseFont(&cf))
     {
-        /* Force the font */
-        term_force_font(td, NULL);
+        term_force_font(td);
+        td->bizarre = FALSE;
 
-        /* Assume not bizarre */
-        td->bizarre = TRUE;
-
-        /* Reset the tile info */
         td->tile_wid = td->font_wid;
         td->tile_hgt = td->font_hgt;
 
-        /* Analyze the font */
-        term_getsize(td);
-
+        term_getsize(td); // Analyze the font
         term_window_resize(td);
     }
 }
@@ -2418,7 +2397,7 @@ static void init_windows(void)
     td->pos_x = 7 * 30;
     td->pos_y = 7 * 20;
     td->lock_size = FALSE;
-    td->bizarre = TRUE;
+    td->bizarre = FALSE;
 
     /* Sub windows */
     for (int i = 1; i < MAX_TERM_DATA; i++)
@@ -2437,7 +2416,7 @@ static void init_windows(void)
         td->pos_x = (7 - i) * 30;
         td->pos_y = (7 - i) * 20;
         td->lock_size = FALSE;
-        td->bizarre = TRUE;
+        td->bizarre = FALSE;
     }
 
     /* Load prefs */
@@ -2466,7 +2445,7 @@ static void init_windows(void)
         td->lf.lfCharSet = DEFAULT_CHARSET;
         td->lf.lfPitchAndFamily = FIXED_PITCH | FF_DONTCARE;
         /* Activate the chosen font */
-        term_force_font(td, NULL);
+        term_force_font(td);
         td->tile_wid = td->font_wid;
         td->tile_hgt = td->font_hgt;
 
@@ -2572,21 +2551,21 @@ static void setup_menus(void)
         }
      }
 
-    CheckMenuItem(hm, IDM_WINDOW_FULLSCREEN, g_isFullscreen ? MF_CHECKED : MF_UNCHECKED);
-    EnableMenuItem(hm, IDM_WINDOW_AUTOSIZE, g_isFullscreen ? MF_DISABLED | MF_GRAYED :  MF_ENABLED);
+    CheckMenuItem(hm,  IDM_WINDOW_FULLSCREEN, g_isFullscreen ? MF_CHECKED : MF_UNCHECKED);
+    EnableMenuItem(hm, IDM_WINDOW_AUTOSIZE,   g_isFullscreen ? MF_DISABLED | MF_GRAYED :  MF_ENABLED);
 
     /* Menu "Window::Visibility" */
     for (int i = 1; i < MAX_TERM_DATA; i++)
     {
-        CheckMenuItem(hm,  IDM_WINDOW_VIS_0 + i, (data[i].visible ? MF_CHECKED : MF_UNCHECKED));
+        CheckMenuItem(hm,  IDM_WINDOW_VIS_0 + i, data[i].visible ? MF_CHECKED : MF_UNCHECKED);
         EnableMenuItem(hm, IDM_WINDOW_VIS_0 + i, MF_ENABLED);
     }
 
     /* Menu "Window::Lock Size" */
     for (int i = 0; i < MAX_TERM_DATA; i++)
     {
-        CheckMenuItem(hm, IDM_WINDOW_TOP_0 + i, (data[i].lock_size ? MF_CHECKED : MF_UNCHECKED));
-        EnableMenuItem(hm, IDM_WINDOW_TOP_0 + i, data[i].visible ? MF_ENABLED : MF_DISABLED | MF_GRAYED);
+        CheckMenuItem(hm,  IDM_WINDOW_TOP_0 + i, data[i].lock_size ? MF_CHECKED : MF_UNCHECKED);
+        EnableMenuItem(hm, IDM_WINDOW_TOP_0 + i, data[i].visible   ? MF_ENABLED : MF_DISABLED | MF_GRAYED);
     }
 
     /* Menu "Window::Font" */
@@ -2598,7 +2577,7 @@ static void setup_menus(void)
     /* Menu "Window::Bizarre Display" */
     for (int i = 0; i < MAX_TERM_DATA; i++)
     {
-        CheckMenuItem(hm, IDM_WINDOW_BIZ_0 + i, (data[i].bizarre ? MF_CHECKED : MF_UNCHECKED));
+        CheckMenuItem(hm,  IDM_WINDOW_BIZ_0 + i, data[i].bizarre ? MF_CHECKED : MF_UNCHECKED);
         EnableMenuItem(hm, IDM_WINDOW_BIZ_0 + i, data[i].visible ? MF_ENABLED : MF_DISABLED | MF_GRAYED);
     }
 
@@ -2757,6 +2736,9 @@ void toggle_fullscreen(void)
     
     g_isFullscreen = FALSE;
   }
+  
+  //Term_xtra_win_clear();
+  Term_redraw();
   
   skip_resize = FALSE;
 }
@@ -2960,13 +2942,12 @@ case IDM_WINDOW_AUTOSIZE:
             if (!td->visible)
             {
                 td->visible = TRUE;
-                ShowWindow(td->w, SW_SHOW);
+                ShowWindow(td->w, SW_SHOWNOACTIVATE);
                 term_data_redraw(td);
             }
             else
             {
                 td->visible = FALSE;
-                td->lock_size   = FALSE;
                 ShowWindow(td->w, SW_HIDE);
             }
 
@@ -2984,13 +2965,10 @@ case IDM_WINDOW_AUTOSIZE:
         case IDM_WINDOW_FONT_7:
         {
             int i = wCmd - IDM_WINDOW_FONT_0;
-
-            if ((i < 0) || (i >= MAX_TERM_DATA)) break;
+            if (i < 0 || i >= MAX_TERM_DATA) break;
 
             term_data *td = &data[i];
-
             term_change_font(td);
-
             break;
         }
 
@@ -4119,7 +4097,7 @@ static void hook_quit(cptr str)
     /* Destroy all windows */
     for (int i = MAX_TERM_DATA - 1; i >= 0; --i)
     {
-        term_force_font(&data[i], NULL);
+        term_force_font(&data[i]);
         if (data[i].font_want) z_string_free(data[i].font_want);
         if (data[i].w) DestroyWindow(data[i].w);
         if (data[i].hDC) DeleteDC(data[i].hDC);

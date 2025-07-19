@@ -266,9 +266,9 @@ static void AngbandUpdateWindowVisibility(void)
  */
 static void UpdateTermSizes(void)
 {
-  for( int i = 0; i < ANGBAND_TERM_MAX; i++ ) {
+  for(int i = 0; i < ANGBAND_TERM_MAX; i++) {
     AngbandContext *angbandContext = angband_term[i]->data;
-    if( angbandContext == nil ) continue;
+    if(angbandContext == nil) continue;
     
     NSRect contentRect = [angbandContext->primaryWindow contentRectForFrameRect: [angbandContext->primaryWindow frame]];
     [angbandContext resizeTerminalWithContentRect: contentRect saveToDefaults: NO];
@@ -443,8 +443,7 @@ static int compare_advances(const void *ap, const void *bp)
 
     // Generate a string containing each MacRoman character
     unsigned char latinString[GLYPH_COUNT];
-    size_t i;
-    for (i=0; i < GLYPH_COUNT; i++) latinString[i] = (unsigned char)i;
+    for (int i=0; i < GLYPH_COUNT; i++) latinString[i] = (unsigned char)i;
     
     // Turn that into unichar. Angband uses ISO Latin 1.
     unichar unicharString[GLYPH_COUNT] = {0};
@@ -459,19 +458,14 @@ static int compare_advances(const void *ap, const void *bp)
     // Get advances. Record the max advance.
     CGSize advances[GLYPH_COUNT] = {};
     CTFontGetAdvancesForGlyphs((CTFontRef)screenFont, kCTFontHorizontalOrientation, glyphArray, advances, GLYPH_COUNT);
-    for (i=0; i < GLYPH_COUNT; i++) {
-        glyphWidths[i] = advances[i].width;
-    }
+    for (int i=0; i < GLYPH_COUNT; i++) glyphWidths[i] = advances[i].width;
     
     // For good non-mono-font support, use the median advance. Start by sorting all advances.
     qsort(advances, GLYPH_COUNT, sizeof *advances, compare_advances);
     
     // Skip over any initially empty run
     size_t startIdx;
-    for (startIdx = 0; startIdx < GLYPH_COUNT; startIdx++)
-    {
-        if (advances[startIdx].width > 0) break;
-    }
+    for (startIdx = 0; startIdx < GLYPH_COUNT; startIdx++) if (advances[startIdx].width > 0) break;
     
     // Pick the center to find the median
     CGFloat medianAdvance = 0;
@@ -883,8 +877,7 @@ static int compare_advances(const void *ap, const void *bp)
 /* We have this notion of an "active" AngbandView, which is the largest - the idea being that in the screen saver, when the user hits Test in System Preferences, we don't want to keep driving the AngbandView in the background.  Our active AngbandView is the widest - that's a hack all right. Mercifully when we're just playing the game there's only one view. */
 - (AngbandView *)activeView
 {
-    if ([angbandViews count] == 1)
-        return [angbandViews objectAtIndex:0];
+    if ([angbandViews count] == 1) return [angbandViews objectAtIndex:0];
     
     AngbandView *result = nil;
     float maxWidth = 0;
@@ -946,7 +939,7 @@ static NSMenuItem *superitem(NSMenuItem *self)
 
 - (NSWindow *)makePrimaryWindow
 {
-    if (! primaryWindow)
+    if (!primaryWindow)
     {
         // this has to be done after the font is set, which it already is in term_init_cocoa()
         CGFloat width  = self->cols * tileSize.width  + borderSize.width  * 2.0;
@@ -1071,15 +1064,14 @@ static NSMenuItem *superitem(NSMenuItem *self)
   self->rows = newRows;
   [self resizeOverdrawCache];
   
-  if( saveToDefaults )
+  if(saveToDefaults)
   {
     int termIndex = 0;
-    for( termIndex = 0; termIndex < ANGBAND_TERM_MAX; termIndex++ )
-      if( angband_term[termIndex] == self->terminal ) break;
+    for(termIndex = 0; termIndex < ANGBAND_TERM_MAX; termIndex++) if(angband_term[termIndex] == self->terminal) break;
     
     NSArray *terminals = [[NSUserDefaults standardUserDefaults] valueForKey: AngbandTerminalsDefaultsKey];
     
-    if( termIndex < (int)[terminals count] )
+    if(termIndex < (int)[terminals count])
     {
       NSMutableDictionary *mutableTerm = [[NSMutableDictionary alloc] initWithDictionary: [terminals objectAtIndex: termIndex]];
       [mutableTerm setValue: @(self->cols) forKey: AngbandTerminalColumnsDefaultsKey];
@@ -2247,8 +2239,31 @@ static BOOL send_event(NSEvent *event)
           
           int vk = [event keyCode]; // Cocoa virtual key code
           
-          if(vk == kVK_F11) {
-            [[NSApp mainWindow] toggleFullScreen:nil];
+          NSInteger index = 0;
+          switch (vk) {
+            case kVK_F11: [[NSApp mainWindow] toggleFullScreen:nil]; break;
+            case kVK_F1: index = 1; break;
+            case kVK_F2: index = 2; break;
+            case kVK_F3: index = 3; break;
+            case kVK_F4: index = 4; break;
+            case kVK_F5: index = 5; break;
+            case kVK_F6: index = 6; break;
+            case kVK_F7: index = 7; break;
+          }
+          if(index) {
+            NSString *characters = [NSString stringWithFormat:@"%ld", (long)index];
+            NSEvent *fEvent = [NSEvent keyEventWithType:NSEventTypeKeyDown
+                                                  location:NSZeroPoint
+                                             modifierFlags:NSEventModifierFlagCommand
+                                                 timestamp:0
+                                              windowNumber:[[event window] windowNumber]
+                                                   context:nil
+                                                characters:characters
+                               charactersIgnoringModifiers:characters
+                                                 isARepeat:NO
+                                                   keyCode:0];
+            
+            [[NSApp mainMenu] performKeyEquivalent:fEvent];
             break;
           }
           
@@ -2661,11 +2676,17 @@ static void hook_quit(const char * str)
     [[NSUserDefaults angbandDefaults] setInteger:frames_per_second forKey:@"FramesPerSecond"];
 }
 
-- (IBAction)selectWindow: (id)sender
+- (IBAction)selectWindow:(id)sender
 {
-    NSInteger subwindowNumber = [(NSMenuItem *)sender tag] - AngbandWindowMenuItemTagBase;
-    AngbandContext *context = angband_term[subwindowNumber]->data;
-    [context->primaryWindow makeKeyAndOrderFront: self];
+  NSInteger subwindowNumber = [(NSMenuItem *)sender tag] - AngbandWindowMenuItemTagBase;
+  if (subwindowNumber < 1 || subwindowNumber >= ANGBAND_TERM_MAX) return;
+  
+  AngbandContext *context = angband_term[subwindowNumber]->data;
+  NSWindow *window = context->primaryWindow;
+  
+  if ([window isVisible]) [window orderOut:self];
+  else                    [window orderFront:self];
+  
 }
 
 - (IBAction)cycleWindows:(id)sender
@@ -2710,7 +2731,7 @@ static void hook_quit(const char * str)
     [windowsMenu addItem:angbandItem];
     [angbandItem release];
     
-    for( NSInteger i = 1; i < ANGBAND_TERM_MAX; i++ )
+    for(NSInteger i = 1; i < ANGBAND_TERM_MAX; i++)
     {
         NSString *title = [NSString stringWithFormat:@"Term %ld", (long)i];
         NSString *key   = [NSString stringWithFormat:@"%ld", (long)i];

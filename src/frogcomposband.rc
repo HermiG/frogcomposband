@@ -49,17 +49,6 @@ ANGBAND MENU
             MENUITEM "Term-7 window\tF7", 217
         }
 
-        POPUP "&Lock Size"
-        {
-            MENUITEM "Term-1 window", 221
-            MENUITEM "Term-2 window", 222
-            MENUITEM "Term-3 window", 223
-            MENUITEM "Term-4 window", 224
-            MENUITEM "Term-5 window", 225
-            MENUITEM "Term-6 window", 226
-            MENUITEM "Term-7 window", 227
-        }
-
         POPUP "Font"
         {
             MENUITEM "Term-0 window", 230

@@ -126,15 +126,6 @@
 #define IDM_WINDOW_VIS_6          216
 #define IDM_WINDOW_VIS_7          217
 
-#define IDM_WINDOW_TOP_0          220
-#define IDM_WINDOW_TOP_1          221
-#define IDM_WINDOW_TOP_2          222
-#define IDM_WINDOW_TOP_3          223
-#define IDM_WINDOW_TOP_4          224
-#define IDM_WINDOW_TOP_5          225
-#define IDM_WINDOW_TOP_6          226
-#define IDM_WINDOW_TOP_7          227
-
 #define IDM_WINDOW_FONT_0         230
 #define IDM_WINDOW_FONT_1         231
 #define IDM_WINDOW_FONT_2         232
@@ -405,8 +396,6 @@ struct _term_data
 
     bool map_active;
     LOGFONT lf;
-
-    bool lock_size;
 };
 
 
@@ -942,19 +931,12 @@ static void save_prefs_for_term(int i)
     GetWindowRect(td->w, &rc);
 
     /* Window position (x) */
-    wsprintf(buf, "%d", rc.left + (!!i)*(td->lock_size ? -5 : 5));
+    wsprintf(buf, "%d", rc.left + (i ? 5 : 0));
     WritePrivateProfileString(sec_name, "PositionX", buf, ini_file);
 
     /* Window position (y) */
     wsprintf(buf, "%d", rc.top);
     WritePrivateProfileString(sec_name, "PositionY", buf, ini_file);
-
-    /* Lock window size? */
-    if (i > 0)
-    {
-        strcpy(buf, td->lock_size ? "1" : "0");
-        WritePrivateProfileString(sec_name, "LockSize", buf, ini_file);
-    }
 }
 
 
@@ -1035,9 +1017,6 @@ static void load_prefs_for_term(int i)
     /* Window position */
     td->pos_x = GetPrivateProfileInt(sec_name, "PositionX", td->pos_x, ini_file);
     td->pos_y = GetPrivateProfileInt(sec_name, "PositionY", td->pos_y, ini_file);
-
-    /* Lock window size? */
-    if (i > 0) td->lock_size = !! GetPrivateProfileInt(sec_name, "LockSize", td->lock_size, ini_file);
 }
 
 
@@ -1462,32 +1441,6 @@ static void term_change_font(term_data *td)
         term_getsize(td); // Analyze the font
         term_window_resize(td);
     }
-}
-
-/*
- * Allow the user to lock this window.
- */
-static void term_window_pos(term_data *td, HWND hWnd)
-{
-    RECT rect;
-    GetWindowRect(td->w, &rect);
-    int x = rect.left + (td->lock_size ? 5 : -5);
-    int y = rect.top;
-    
-    LONG_PTR style = GetWindowLongPtr(td->w, GWL_STYLE);
-    if(td->lock_size) {
-      style &= ~WS_THICKFRAME;
-    } else {
-      style |=  WS_THICKFRAME;
-    }
-    
-    GetClientRect(td->w, &rect);
-    AdjustWindowRectEx(&rect, style, FALSE, GetWindowLong(td->w, GWL_EXSTYLE));
-    int w = rect.right - rect.left;
-    int h = rect.bottom - rect.top + (td->lock_size ? 5 : -5);
-
-    SetWindowLongPtr(td->w, GWL_STYLE, style);
-    SetWindowPos(td->w, NULL, x, y, w, h, SWP_NOACTIVATE | SWP_FRAMECHANGED | SWP_NOZORDER | SWP_NOOWNERZORDER);
 }
 
 static void windows_map(void);
@@ -2396,7 +2349,6 @@ static void init_windows(void)
     td->size_oh2 = 2;
     td->pos_x = 7 * 30;
     td->pos_y = 7 * 20;
-    td->lock_size = FALSE;
     td->bizarre = FALSE;
 
     /* Sub windows */
@@ -2415,7 +2367,6 @@ static void init_windows(void)
         td->size_oh2 = 1;
         td->pos_x = (7 - i) * 30;
         td->pos_y = (7 - i) * 20;
-        td->lock_size = FALSE;
         td->bizarre = FALSE;
     }
 
@@ -2559,13 +2510,6 @@ static void setup_menus(void)
     {
         CheckMenuItem(hm,  IDM_WINDOW_VIS_0 + i, data[i].visible ? MF_CHECKED : MF_UNCHECKED);
         EnableMenuItem(hm, IDM_WINDOW_VIS_0 + i, MF_ENABLED);
-    }
-
-    /* Menu "Window::Lock Size" */
-    for (int i = 0; i < MAX_TERM_DATA; i++)
-    {
-        CheckMenuItem(hm,  IDM_WINDOW_TOP_0 + i, data[i].lock_size ? MF_CHECKED : MF_UNCHECKED);
-        EnableMenuItem(hm, IDM_WINDOW_TOP_0 + i, data[i].visible   ? MF_ENABLED : MF_DISABLED | MF_GRAYED);
     }
 
     /* Menu "Window::Font" */
@@ -2969,24 +2913,6 @@ case IDM_WINDOW_AUTOSIZE:
 
             term_data *td = &data[i];
             term_change_font(td);
-            break;
-        }
-
-        /* Lock Term Size */
-        case IDM_WINDOW_TOP_1:
-        case IDM_WINDOW_TOP_2:
-        case IDM_WINDOW_TOP_3:
-        case IDM_WINDOW_TOP_4:
-        case IDM_WINDOW_TOP_5:
-        case IDM_WINDOW_TOP_6:
-        case IDM_WINDOW_TOP_7:
-        {
-            int i = wCmd - IDM_WINDOW_TOP_0;
-            if (i < 1 || i >= MAX_TERM_DATA) break;
-
-            term_data *td = &data[i];
-            td->lock_size = !td->lock_size;
-            term_window_pos(td, hwndMain);
             break;
         }
 

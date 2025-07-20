@@ -2590,9 +2590,8 @@ void toggle_fullscreen(void)
     g_isFullscreen = FALSE;
   }
   
-  //Term_xtra_win_clear();
-  Term_redraw();
-  
+  InvalidateRect(hwndMain, NULL, TRUE);
+
   skip_resize = FALSE;
 }
 

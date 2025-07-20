@@ -396,6 +396,8 @@ struct _term_data
 
     bool map_active;
     LOGFONT lf;
+    
+    int term_num;
 };
 
 
@@ -798,7 +800,7 @@ static void term_setsize(term_data *td)
     rc.right  = td->cols * td->tile_wid + td->size_ow1 + td->size_ow2;
     rc.bottom = td->rows * td->tile_hgt + td->size_oh1 + td->size_oh2;
 
-    AdjustWindowRectEx(&rc, td->dwStyle, td->w == hwndMain, td->dwExStyle);
+    AdjustWindowRectEx(&rc, td->dwStyle, td->term_num == 0 && !g_isFullscreen, td->dwExStyle);
 
     td->size_wid = rc.right - rc.left;
     td->size_hgt = rc.bottom - rc.top;
@@ -2309,6 +2311,7 @@ static void init_windows(void)
     {
         td = &data[i];
 
+        td->term_num = i;
         strncpy(td->lf.lfFaceName, td->font_want, LF_FACESIZE);
         td->lf.lfCharSet = DEFAULT_CHARSET;
         td->lf.lfPitchAndFamily = FIXED_PITCH | FF_DONTCARE;
@@ -3203,8 +3206,7 @@ LRESULT FAR PASCAL AngbandWndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lP
             rc.right  = 80 * td->tile_wid + td->size_ow1 + td->size_ow2;
             rc.bottom = 27 * td->tile_hgt + td->size_oh1 + td->size_oh2;
 
-            /* Adjust */
-            AdjustWindowRectEx(&rc, td->dwStyle, TRUE, td->dwExStyle);
+            AdjustWindowRectEx(&rc, td->dwStyle, !g_isFullscreen, td->dwExStyle);
 
             MINMAXINFO *lpmmi = (MINMAXINFO *)lParam;
             lpmmi->ptMinTrackSize.x = rc.right - rc.left;
@@ -3559,7 +3561,7 @@ LRESULT FAR PASCAL AngbandListProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM l
             rc.right  = 20 * td->tile_wid + td->size_ow1 + td->size_ow2;
             rc.bottom =  3 * td->tile_hgt + td->size_oh1 + td->size_oh2;
 
-            AdjustWindowRectEx(&rc, td->dwStyle, TRUE, td->dwExStyle);
+            AdjustWindowRectEx(&rc, td->dwStyle, FALSE, td->dwExStyle);
 
             MINMAXINFO *lpmmi = (MINMAXINFO *)lParam;
             lpmmi->ptMinTrackSize.x = rc.right - rc.left;

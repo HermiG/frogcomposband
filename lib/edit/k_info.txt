@@ -1577,7 +1577,7 @@ D:iron, allowing the wearer to deal a swift kick.
 #  Helmets (TV_HELM)
 ########################################################################
 N:212:& Hard Leather Cap~
-G:]:u
+G:^:u
 I:32:2:0
 W:3:0:0:15:12
 A:3/1
@@ -1586,7 +1586,7 @@ P:2:0d0:0:0:0
 D:A padded skullcap of boiled leather.
 
 N:*:& Metal Cap~
-G:]:s
+G:^:s
 I:32:3:0
 W:10:0:0:20:30
 A:10/1
@@ -1595,7 +1595,7 @@ P:3:1d1:0:0:0
 D:A pot-helm of steel that protects the skull.
 
 N:*:& Jingasa~
-G:]:s
+G:^:s
 I:32:4:0
 W:16:0:0:30:60
 A:16/2
@@ -1603,7 +1603,7 @@ F:TOWN
 P:4:1d2:0:0:0
 
 N:*:& Iron Helm~
-G:]:s
+G:^:s
 I:32:5:0
 W:20:0:0:75:75
 A:20/1
@@ -1612,7 +1612,7 @@ F:TOWN
 D:A mighty helmet of heavy iron, completely enclosing the head.
 
 N:*:& Steel Helm~
-G:]:W
+G:^:W
 I:32:6:0
 W:40:0:0:60:200
 A:40/1
@@ -1622,7 +1622,7 @@ D:This great helm covers the head and shoulders with plates of steel and a
 D:curtain of mail.
 
 N:*:& Mithril Helm~
-G:]:B
+G:^:B
 I:32:7:0
 W:50:0:0:50:1000
 A:50/2
@@ -1631,7 +1631,7 @@ F:IGNORE_ACID | IGNORE_FIRE | IGNORE_ELEC | IGNORE_COLD
 D:A mighty helmet of pure mithril, completely enclosing the head.
 
 N:*:& Dragon Helm~
-G:]:G
+G:^:G
 I:32:8:0
 W:60:0:0:50:10000
 A:60/5
@@ -1641,7 +1641,7 @@ D:A dragon-winged great helm, glowing in all the colors of the rainbow.
 D:It grants resistance to the elements.
 
 N:*:& Kabuto~
-G:]:D
+G:^:D
 I:32:9:0
 W:50:0:0:80:300
 A:50/3
@@ -1651,7 +1651,7 @@ P:7:1d2:0:0:0
 #  Crowns (TV_CROWN)
 ########################################################################
 N:220:& Iron Crown~
-G:]:s
+G:M:s
 I:33:10:0
 W:30:0:0:20:500
 A:30/1
@@ -1660,7 +1660,7 @@ D:A plain band of iron, crowned with iron spikes.  It is a tyrant's
 D:symbol.
 
 N:*:& Golden Crown~
-G:]:y
+G:M:y
 I:33:11:0
 W:40:0:0:30:1000
 A:40/1
@@ -1670,7 +1670,7 @@ D:An elegant golden circlet, with slender spines thrusting upward.
 D:It looks like it should be resting over the brow of a king.
 
 N:*:& Jewel Encrusted Crown~
-G:]:v
+G:M:v
 I:33:12:0
 W:40:0:0:40:2000
 A:40/1
@@ -1680,14 +1680,14 @@ D:An elaborately decorated crown of massive gold, studded with a rainbow
 D:of gems and jewels; worthy of an emperor.
 
 N:*:& Massive Iron Crown~
-G:]:D
+G:M:D
 I:33:50:0
 W:44:0:0:20:1000
 P:0:1d1:0:0:0
 F:INSTA_ART
 
 N:*:& Knit Cap~
-G:]:b
+G:^:b
 I:32:1:0
 W:3:0:0:8:10
 A:3/3
@@ -1696,7 +1696,7 @@ P:1:0d0:0:0:0
 D:A soft woolly hat.
 
 N:*:& Pointy Hat~
-G:]:C
+G:^:C
 I:32:10:0
 W:3:0:0:20:20
 A:10/5:40/3

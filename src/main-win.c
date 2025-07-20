@@ -3215,6 +3215,46 @@ LRESULT FAR PASCAL AngbandWndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lP
             return 0;
         }
 
+
+        case WM_SIZE:
+        {
+            if (!td)           return 1; // This message was sent before WM_NCCREATE
+            if (!td->w)        return 1; // This message was sent from inside CreateWindowEx
+            if (td->size_hack) return 1; // This message was sent from WM_SIZE
+            if (skip_resize)   return 1; // Skip resizing when showing the fullscren menu bar
+
+            switch (wParam)
+            {
+                case SIZE_MAXIMIZED:
+                case SIZE_RESTORED:
+                {
+                    uint cols = (LOWORD(lParam) - td->size_ow1 - td->size_ow2) / td->tile_wid;
+                    uint rows = (HIWORD(lParam) - td->size_oh1 - td->size_oh2) / td->tile_hgt;
+
+                    if (td->cols != cols || td->rows != rows)
+                    {
+                        td->cols = cols;
+                        td->rows = rows;
+
+                        if (!g_isFullscreen && !IsZoomed(td->w) && !IsIconic(td->w))
+                        {
+                            normsize.x = td->cols;
+                            normsize.y = td->rows;
+                        }
+
+                        Term_activate(&td->t);
+                        Term_resize(td->cols, td->rows);
+                        term_setsize(td);
+                        
+                        InvalidateRect(td->w, NULL, TRUE);
+                    }
+
+                    return 0;
+                }
+            }
+            break;
+        }
+
         case WM_PAINT:
         {
             PAINTSTRUCT ps;
@@ -3446,66 +3486,6 @@ LRESULT FAR PASCAL AngbandWndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lP
         {
             process_menus(LOWORD(wParam));
             return 0;
-        }
-
-        case WM_SIZE:
-        {
-            if (!td) return 1; // This message was sent before WM_NCCREATE
-            if (!td->w) return 1; // This message was sent from inside CreateWindowEx
-            if (td->size_hack) return 1; //This message was sent from WM_SIZE
-            if (skip_resize) return 1;
-
-            switch (wParam)
-            {
-                case SIZE_MINIMIZED:
-                {
-                    /* Hide sub-windows */
-                    for (int i = 1; i < MAX_TERM_DATA; i++)
-                        if (data[i].visible) ShowWindow(data[i].w, SW_HIDE);
-                    return 0;
-                }
-                case SIZE_MAXIMIZED:
-                case SIZE_RESTORED:
-                {
-                    uint cols = (LOWORD(lParam) - td->size_ow1) / td->tile_wid;
-                    uint rows = (HIWORD(lParam) - td->size_oh1) / td->tile_hgt;
-
-                    /* New size */
-                    if ((td->cols != cols) || (td->rows != rows))
-                    {
-                        /* Save the new size */
-                        td->cols = cols;
-                        td->rows = rows;
-
-                        if (!IsZoomed(td->w) && !IsIconic(td->w))
-                        {
-                            normsize.x = td->cols;
-                            normsize.y = td->rows;
-                        }
-
-                        Term_activate(&td->t);
-
-                        Term_resize(td->cols, td->rows);
-
-                        /* Was td size data just always wrong before?? */
-                        term_getsize(td);
-                        
-                        /* Redraw later */
-                        InvalidateRect(td->w, NULL, TRUE);
-                    }
-
-                    td->size_hack = TRUE;
-
-                    /* Show sub-windows */
-                    for (int i = 1; i < MAX_TERM_DATA; i++)
-                        if (data[i].visible) ShowWindow(data[i].w, SW_SHOW);
-
-                    td->size_hack = FALSE;
-
-                    return 0;
-                }
-            }
-            break;
         }
 
         case WM_PALETTECHANGED:

@@ -3215,6 +3215,48 @@ LRESULT FAR PASCAL AngbandWndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lP
             return 0;
         }
 
+        case WM_SIZING:
+        {
+            if (!td) break;
+
+            RECT *rc = (RECT *)lParam;
+            
+            const int c = 16;
+            const int r = 59;
+
+            int client_wid = rc->right - rc->left  - td->size_ow1 - td->size_ow2 - c;
+            int cols = (client_wid + td->tile_wid / 2) / td->tile_wid;
+            int new_full_wid = cols * td->tile_wid + td->size_ow1 + td->size_ow2 + c;
+            
+            int client_hgt = rc->bottom - rc->top  - td->size_oh1 - td->size_oh2 - r;
+            int rows = (client_hgt + td->tile_hgt / 2) / td->tile_hgt;
+            int new_full_hgt = rows * td->tile_hgt + td->size_oh1 + td->size_oh2 + r;
+
+            switch (wParam) {
+                case WMSZ_LEFT:   rc->left = rc->right - new_full_wid; break;
+                case WMSZ_RIGHT:  rc->right = rc->left + new_full_wid; break;
+                case WMSZ_TOP:    rc->top = rc->bottom - new_full_hgt; break;
+                case WMSZ_BOTTOM: rc->bottom = rc->top + new_full_hgt; break;
+                case WMSZ_TOPLEFT:
+                    rc->left = rc->right - new_full_wid;
+                    rc->top = rc->bottom - new_full_hgt;
+                    break;
+                case WMSZ_TOPRIGHT:
+                    rc->right = rc->left + new_full_wid;
+                    rc->top = rc->bottom - new_full_hgt;
+                    break;
+                case WMSZ_BOTTOMLEFT:
+                    rc->left = rc->right - new_full_wid;
+                    rc->bottom = rc->top + new_full_hgt;
+                    break;
+                case WMSZ_BOTTOMRIGHT:
+                    rc->right = rc->left + new_full_wid;
+                    rc->bottom = rc->top + new_full_hgt;
+                    break;
+            }
+            
+            return 1;
+        }
 
         case WM_SIZE:
         {
@@ -3548,6 +3590,49 @@ LRESULT FAR PASCAL AngbandListProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM l
             lpmmi->ptMinTrackSize.y = rc.bottom - rc.top;
 
             return 0;
+        }
+        
+        case WM_SIZING:
+        {
+            if (!td) break;
+
+            RECT *rc = (RECT *)lParam;
+
+            int c = 16;
+            int r = 39;
+
+            int client_wid = rc->right - rc->left  - td->size_ow1 - td->size_ow2 - c;
+            int cols = (client_wid + td->tile_wid / 2) / td->tile_wid;
+            int new_full_wid = cols * td->tile_wid + td->size_ow1 + td->size_ow2 + c;
+            
+            int client_hgt = rc->bottom - rc->top  - td->size_oh1 - td->size_oh2 - r;
+            int rows = (client_hgt + td->tile_hgt / 2) / td->tile_hgt;
+            int new_full_hgt = rows * td->tile_hgt + td->size_oh1 + td->size_oh2 + r;
+
+            switch (wParam) {
+                case WMSZ_LEFT:   rc->left = rc->right - new_full_wid; break;
+                case WMSZ_RIGHT:  rc->right = rc->left + new_full_wid; break;
+                case WMSZ_TOP:    rc->top = rc->bottom - new_full_hgt; break;
+                case WMSZ_BOTTOM: rc->bottom = rc->top + new_full_hgt; break;
+                case WMSZ_TOPLEFT:
+                    rc->left = rc->right - new_full_wid;
+                    rc->top = rc->bottom - new_full_hgt;
+                    break;
+                case WMSZ_TOPRIGHT:
+                    rc->right = rc->left + new_full_wid;
+                    rc->top = rc->bottom - new_full_hgt;
+                    break;
+                case WMSZ_BOTTOMLEFT:
+                    rc->left = rc->right - new_full_wid;
+                    rc->bottom = rc->top + new_full_hgt;
+                    break;
+                case WMSZ_BOTTOMRIGHT:
+                    rc->right = rc->left + new_full_wid;
+                    rc->bottom = rc->top + new_full_hgt;
+                    break;
+            }
+            
+            return 1;
         }
 
         case WM_SIZE:

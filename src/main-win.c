@@ -366,10 +366,10 @@ struct _term_data
     uint pos_y;
     uint size_wid;
     uint size_hgt;
-    uint size_ow1;
-    uint size_oh1;
-    uint size_ow2;
-    uint size_oh2;
+    uint insetL;
+    uint insetT;
+    uint insetR;
+    uint insetB;
 
     bool size_hack;
 
@@ -797,8 +797,8 @@ static void term_setsize(term_data *td)
     if (td->rows < 1) td->rows = 1;
     
     RECT rc   = {0};
-    rc.right  = td->cols * td->tile_wid + td->size_ow1 + td->size_ow2;
-    rc.bottom = td->rows * td->tile_hgt + td->size_oh1 + td->size_oh2;
+    rc.right  = td->cols * td->tile_wid + td->insetL + td->insetR;
+    rc.bottom = td->rows * td->tile_hgt + td->insetT + td->insetB;
 
     AdjustWindowRectEx(&rc, td->dwStyle, td->term_num == 0 && !g_isFullscreen, td->dwExStyle);
 
@@ -1407,8 +1407,8 @@ static void term_data_redraw(term_data *td)
 void Term_inversed_area(HWND hWnd, int x, int y, int w, int h)
 {
     term_data *td = (term_data*)GetWindowLongPtrW(hWnd, GWLP_USERDATA);
-    int tx = td->size_ow1 + x * td->tile_wid;
-    int ty = td->size_oh1 + y * td->tile_hgt;
+    int tx = td->insetL + x * td->tile_wid;
+    int ty = td->insetT + y * td->tile_hgt;
     int tw = w * td->tile_wid - 1;
     int th = h * td->tile_hgt - 1;
 
@@ -1634,9 +1634,9 @@ static errr Term_xtra_win_clear(void)
     RECT rc;
 
     /* Rectangle to erase */
-    rc.left = td->size_ow1;
+    rc.left = td->insetL;
     rc.right = rc.left + td->cols * td->tile_wid;
-    rc.top = td->size_oh1;
+    rc.top = td->insetT;
     rc.bottom = rc.top + td->rows * td->tile_hgt;
 
     /* Erase it */
@@ -1812,9 +1812,9 @@ static errr Term_curs_win(int x, int y)
 
     /* Frame the grid */
     RECT rc;
-    rc.left = x * tile_wid + td->size_ow1;
+    rc.left = x * tile_wid + td->insetL;
     rc.right = rc.left + tile_wid;
-    rc.top = y * tile_hgt + td->size_oh1;
+    rc.top = y * tile_hgt + td->insetT;
     rc.bottom = rc.top + tile_hgt;
 
     /* Cursor is done as a yellow "box" */
@@ -1851,9 +1851,9 @@ static errr Term_bigcurs_win(int x, int y)
 
     /* Frame the grid */
     RECT rc;
-    rc.left = x * tile_wid + td->size_ow1;
+    rc.left = x * tile_wid + td->insetL;
     rc.right = rc.left + 2 * tile_wid;
-    rc.top = y * tile_hgt + td->size_oh1;
+    rc.top = y * tile_hgt + td->insetT;
     rc.bottom = rc.top + tile_hgt;
 
     /* Cursor is done as a yellow "box" */
@@ -1878,9 +1878,9 @@ static errr Term_wipe_win(int x, int y, int n)
     RECT rc;
 
     /* Rectangle to erase in client coords */
-    rc.left = x * td->tile_wid + td->size_ow1;
+    rc.left = x * td->tile_wid + td->insetL;
     rc.right = rc.left + n * td->tile_wid;
-    rc.top = y * td->tile_hgt + td->size_oh1;
+    rc.top = y * td->tile_hgt + td->insetT;
     rc.bottom = rc.top + td->tile_hgt;
 
     HDC hdc = td->hDC;
@@ -1921,9 +1921,9 @@ static errr Term_text_win(int x, int y, int n, byte a, const char *s)
     }
 
     /* Total rectangle */
-    rc.left = x * td->tile_wid + td->size_ow1;
+    rc.left = x * td->tile_wid + td->insetL;
     rc.right = rc.left + n * td->tile_wid;
-    rc.top = y * td->tile_hgt + td->size_oh1;
+    rc.top = y * td->tile_hgt + td->insetT;
     rc.bottom = rc.top + td->tile_hgt;
 
     _update_rect_enlarge(td, &rc);
@@ -2046,8 +2046,8 @@ static errr Term_pict_win(int x, int y, int n, const byte *ap, const char *cp, c
     }
 
     /* Location of window cell */
-    x2 = x * w2 + td->size_ow1;
-    y2 = y * h2 + td->size_oh1;
+    x2 = x * w2 + td->insetL;
+    y2 = y * h2 + td->insetT;
 
     /* Info */
     hdc = td->hDC;
@@ -2262,10 +2262,10 @@ static void init_windows(void)
     td->rows = 27;
     td->cols = 80;
     td->visible = TRUE;
-    td->size_ow1 = 2;
-    td->size_ow2 = 2;
-    td->size_oh1 = 2;
-    td->size_oh2 = 2;
+    td->insetL = 2;
+    td->insetR = 2;
+    td->insetT = 2;
+    td->insetB = 2;
     td->pos_x = 7 * 30;
     td->pos_y = 7 * 20;
     td->bizarre = FALSE;
@@ -2280,10 +2280,10 @@ static void init_windows(void)
         td->rows = 3;
         td->cols = 20;
         td->visible = FALSE;
-        td->size_ow1 = 1;
-        td->size_ow2 = 1;
-        td->size_oh1 = 1;
-        td->size_oh2 = 1;
+        td->insetL = 1;
+        td->insetR = 1;
+        td->insetT = 1;
+        td->insetB = 1;
         td->pos_x = (7 - i) * 30;
         td->pos_y = (7 - i) * 20;
         td->bizarre = FALSE;
@@ -3203,8 +3203,8 @@ LRESULT FAR PASCAL AngbandWndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lP
             if (!td) return 1; // this message was sent before WM_NCCREATE
 
             RECT rc = {0};
-            rc.right  = 80 * td->tile_wid + td->size_ow1 + td->size_ow2;
-            rc.bottom = 27 * td->tile_hgt + td->size_oh1 + td->size_oh2;
+            rc.right  = 80 * td->tile_wid + td->insetL + td->insetR;
+            rc.bottom = 27 * td->tile_hgt + td->insetT + td->insetB;
 
             AdjustWindowRectEx(&rc, td->dwStyle, !g_isFullscreen, td->dwExStyle);
 
@@ -3224,13 +3224,13 @@ LRESULT FAR PASCAL AngbandWndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lP
             const int c = 16;
             const int r = 59;
 
-            int client_wid = rc->right - rc->left  - td->size_ow1 - td->size_ow2 - c;
+            int client_wid = rc->right - rc->left  - td->insetL - td->insetR - c;
             int cols = (client_wid + td->tile_wid / 2) / td->tile_wid;
-            int new_full_wid = cols * td->tile_wid + td->size_ow1 + td->size_ow2 + c;
+            int new_full_wid = cols * td->tile_wid + td->insetL + td->insetR + c;
             
-            int client_hgt = rc->bottom - rc->top  - td->size_oh1 - td->size_oh2 - r;
+            int client_hgt = rc->bottom - rc->top  - td->insetT - td->insetB - r;
             int rows = (client_hgt + td->tile_hgt / 2) / td->tile_hgt;
-            int new_full_hgt = rows * td->tile_hgt + td->size_oh1 + td->size_oh2 + r;
+            int new_full_hgt = rows * td->tile_hgt + td->insetT + td->insetB + r;
 
             switch (wParam) {
                 case WMSZ_LEFT:   rc->left = rc->right - new_full_wid; break;
@@ -3270,8 +3270,8 @@ LRESULT FAR PASCAL AngbandWndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lP
                 case SIZE_MAXIMIZED:
                 case SIZE_RESTORED:
                 {
-                    uint cols = (LOWORD(lParam) - td->size_ow1 - td->size_ow2) / td->tile_wid;
-                    uint rows = (HIWORD(lParam) - td->size_oh1 - td->size_oh2) / td->tile_hgt;
+                    uint cols = (LOWORD(lParam) - td->insetL - td->insetR) / td->tile_wid;
+                    uint rows = (HIWORD(lParam) - td->insetT - td->insetB) / td->tile_hgt;
 
                     if (td->cols != cols || td->rows != rows)
                     {
@@ -3331,8 +3331,8 @@ LRESULT FAR PASCAL AngbandWndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lP
         case WM_RBUTTONUP:
         {
             if (td && !(mouse_cursor_targeting_state & MOUSE_CLICK_IGNORE)) {
-                int x = (LOWORD(lParam) - td->size_ow1) / td->tile_wid;
-                int y = (HIWORD(lParam) - td->size_oh1) / td->tile_hgt;
+                int x = (LOWORD(lParam) - td->insetL) / td->tile_wid;
+                int y = (HIWORD(lParam) - td->insetT) / td->tile_hgt;
 
                 if(y > 0 && x >= 0 && y < td->rows-1 && x < td->cols-13) {
                     point_t pt = ui_xy_to_cave_pt(x, y);
@@ -3379,8 +3379,8 @@ LRESULT FAR PASCAL AngbandWndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lP
         case WM_LBUTTONDOWN:
         {
 			      if(!td) return 1;
-            mousex = MIN((LOWORD(lParam) - td->size_ow1) / td->tile_wid, td->cols - 1);
-            mousey = MIN((HIWORD(lParam) - td->size_oh1) / td->tile_hgt, td->rows - 1);
+            mousex = MIN((LOWORD(lParam) - td->insetL) / td->tile_wid, td->cols - 1);
+            mousey = MIN((HIWORD(lParam) - td->insetT) / td->tile_hgt, td->rows - 1);
             mouse_down = TRUE;
             oldx = mousex;
             oldy = mousey;
@@ -3436,8 +3436,8 @@ LRESULT FAR PASCAL AngbandWndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lP
             if (mouse_down)
             {
                 int dx, dy;
-                int cx = MIN((LOWORD(lParam) - td->size_ow1) / td->tile_wid, td->cols - 1);
-                int cy = MIN((HIWORD(lParam) - td->size_oh1) / td->tile_hgt, td->rows - 1);
+                int cx = MIN((LOWORD(lParam) - td->insetL) / td->tile_wid, td->cols - 1);
+                int cy = MIN((HIWORD(lParam) - td->insetT) / td->tile_hgt, td->rows - 1);
                 int ox, oy;
 
                 if (paint_rect)
@@ -3580,8 +3580,8 @@ LRESULT FAR PASCAL AngbandListProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM l
             if (!td) return 1; // this message was sent before WM_NCCREATE
 
             RECT rc = {0};
-            rc.right  = 20 * td->tile_wid + td->size_ow1 + td->size_ow2;
-            rc.bottom =  3 * td->tile_hgt + td->size_oh1 + td->size_oh2;
+            rc.right  = 20 * td->tile_wid + td->insetL + td->insetR;
+            rc.bottom =  3 * td->tile_hgt + td->insetT + td->insetB;
 
             AdjustWindowRectEx(&rc, td->dwStyle, FALSE, td->dwExStyle);
 
@@ -3601,13 +3601,13 @@ LRESULT FAR PASCAL AngbandListProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM l
             int c = 16;
             int r = 39;
 
-            int client_wid = rc->right - rc->left  - td->size_ow1 - td->size_ow2 - c;
+            int client_wid = rc->right - rc->left  - td->insetL - td->insetR - c;
             int cols = (client_wid + td->tile_wid / 2) / td->tile_wid;
-            int new_full_wid = cols * td->tile_wid + td->size_ow1 + td->size_ow2 + c;
+            int new_full_wid = cols * td->tile_wid + td->insetL + td->insetR + c;
             
-            int client_hgt = rc->bottom - rc->top  - td->size_oh1 - td->size_oh2 - r;
+            int client_hgt = rc->bottom - rc->top  - td->insetT - td->insetB - r;
             int rows = (client_hgt + td->tile_hgt / 2) / td->tile_hgt;
-            int new_full_hgt = rows * td->tile_hgt + td->size_oh1 + td->size_oh2 + r;
+            int new_full_hgt = rows * td->tile_hgt + td->insetT + td->insetB + r;
 
             switch (wParam) {
                 case WMSZ_LEFT:   rc->left = rc->right - new_full_wid; break;
@@ -3643,8 +3643,8 @@ LRESULT FAR PASCAL AngbandListProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM l
 
             td->size_hack = TRUE;
 
-            uint cols = (LOWORD(lParam) - td->size_ow1 - td->size_ow2) / td->tile_wid;
-            uint rows = (HIWORD(lParam) - td->size_oh1 - td->size_oh2) / td->tile_hgt;
+            uint cols = (LOWORD(lParam) - td->insetL - td->insetR) / td->tile_wid;
+            uint rows = (HIWORD(lParam) - td->insetT - td->insetB) / td->tile_hgt;
 
             if (td->cols != cols || td->rows != rows)
             {

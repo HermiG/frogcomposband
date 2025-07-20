@@ -480,7 +480,7 @@ void do_cmd_query_symbol(void)
     u16b    *who;
 
     /* Get a character, or abort */
-    if (!get_com("Enter character to be identified (^A:All,^U:Uniqs,^N:Non uniqs,^R:Ridable,^M:Name): ", &sym, FALSE)) return;
+    if (!get_com("Enter character to be identified (^A:All,^U:Uniqs,^C:Common,^R:Ridable,^N:Name): ", &sym, FALSE)) return;
 
     /* Find that character info, and describe it */
     for (i = 0; ident_info[i]; ++i) if (sym == ident_info[i][0]) break;
@@ -496,7 +496,7 @@ void do_cmd_query_symbol(void)
         all = uniq = TRUE;
         strcpy(buf, "Unique monster list.");
     }
-    else if (sym == KTRL('N'))
+    else if (sym == KTRL('C'))
     {
         all = norm = TRUE;
         strcpy(buf, "Non-unique monster list.");
@@ -506,16 +506,15 @@ void do_cmd_query_symbol(void)
         all = ride = TRUE;
         strcpy(buf, "Ridable monster list.");
     }
-    /* XTRA HACK WHATSEARCH */
-    else if (sym == KTRL('M'))
+    else if (sym == KTRL('N'))
     {
         all = TRUE;
-        if (!get_string("Enter name:",temp, 70))
+        if (!get_string("Enter name:", temp, 70))
         {
             temp[0] = 0;
             return;
         }
-        sprintf(buf, "Monsters with a name \"%s\"",temp);
+        sprintf(buf, "Monsters with a name \"%s\"", temp);
     }
     else if (ident_info[i])
     {
@@ -555,12 +554,10 @@ void do_cmd_query_symbol(void)
         {
           char temp2[80];
 
-          for (int xx = 0; temp[xx] && xx < 80; xx++)
-              if (isupper(temp[xx])) temp[xx] = tolower(temp[xx]);
+          for (int xx = 0; temp[xx] && xx < 80; xx++) if (isupper(temp[xx])) temp[xx] = tolower(temp[xx]);
 
           strcpy(temp2, r_name+r_ptr->name);
-          for (int xx = 0; temp2[xx] && xx < 80; xx++)
-              if (isupper(temp2[xx])) temp2[xx] = tolower(temp2[xx]);
+          for (int xx = 0; temp2[xx] && xx < 80; xx++) if (isupper(temp2[xx])) temp2[xx] = tolower(temp2[xx]);
 
           if (my_strstr(temp2, temp)) who[n++] = i;
         }

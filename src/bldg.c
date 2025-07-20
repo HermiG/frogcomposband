@@ -3583,7 +3583,7 @@ static bool research_mon(void)
     screen_save();
 
     /* Get a character, or abort */
-    if (!get_com("Enter character to be identified (^A:All,^U:Uniqs,^N:Non uniqs,^M:Name): ", &sym, FALSE))
+    if (!get_com("Enter character to be identified (^A:All,^U:Uniqs,^C:Common,^N:Name): ", &sym, FALSE))
     {
         screen_load();
         return FALSE;
@@ -3602,12 +3602,12 @@ static bool research_mon(void)
         all = uniq = TRUE;
         strcpy(buf, "Unique monster list.");
     }
-    else if (sym == KTRL('N'))
+    else if (sym == KTRL('C'))
     {
         all = norm = TRUE;
         strcpy(buf, "Non-unique monster list.");
     }
-    else if (sym == KTRL('M'))
+    else if (sym == KTRL('N'))
     {
         all = TRUE;
         if (!get_string("Enter name:", temp, 70))

@@ -3288,9 +3288,9 @@ LRESULT FAR PASCAL AngbandWndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lP
         case WM_LBUTTONUP:
         case WM_RBUTTONUP:
         {
-                int x = LOWORD(lParam) / td->tile_wid;
-                int y = HIWORD(lParam) / td->tile_hgt;
             if (td && !(mouse_cursor_targeting_state & MOUSE_CLICK_IGNORE)) {
+                int x = (LOWORD(lParam) - td->size_ow1) / td->tile_wid;
+                int y = (HIWORD(lParam) - td->size_oh1) / td->tile_hgt;
 
                 if(y > 0 && x >= 0 && y < td->rows-1 && x < td->cols-13) {
                     point_t pt = ui_xy_to_cave_pt(x, y);
@@ -3337,8 +3337,8 @@ LRESULT FAR PASCAL AngbandWndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lP
         case WM_LBUTTONDOWN:
         {
 			      if(!td) return 1;
-            mousex = MIN(LOWORD(lParam) / td->tile_wid, td->cols - 1);
-            mousey = MIN(HIWORD(lParam) / td->tile_hgt, td->rows - 1);
+            mousex = MIN((LOWORD(lParam) - td->size_ow1) / td->tile_wid, td->cols - 1);
+            mousey = MIN((HIWORD(lParam) - td->size_oh1) / td->tile_hgt, td->rows - 1);
             mouse_down = TRUE;
             oldx = mousex;
             oldy = mousey;
@@ -3394,8 +3394,8 @@ LRESULT FAR PASCAL AngbandWndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lP
             if (mouse_down)
             {
                 int dx, dy;
-                int cx = MIN(LOWORD(lParam) / td->tile_wid, td->cols - 1);
-                int cy = MIN(HIWORD(lParam) / td->tile_hgt, td->rows - 1);
+                int cx = MIN((LOWORD(lParam) - td->size_ow1) / td->tile_wid, td->cols - 1);
+                int cy = MIN((HIWORD(lParam) - td->size_oh1) / td->tile_hgt, td->rows - 1);
                 int ox, oy;
 
                 if (paint_rect)
@@ -3558,8 +3558,8 @@ LRESULT FAR PASCAL AngbandListProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM l
 
             td->size_hack = TRUE;
 
-            cols = (LOWORD(lParam) - td->size_ow1) / td->tile_wid;
-            rows = (HIWORD(lParam) - td->size_oh1) / td->tile_hgt;
+            uint cols = (LOWORD(lParam) - td->size_ow1 - td->size_ow2) / td->tile_wid;
+            uint rows = (HIWORD(lParam) - td->size_oh1 - td->size_oh2) / td->tile_hgt;
 
             if (td->cols != cols || td->rows != rows)
             {
@@ -3576,8 +3576,7 @@ LRESULT FAR PASCAL AngbandListProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM l
 
                 InvalidateRect(td->w, NULL, TRUE);
 
-                /* HACK - Redraw all windows */
-                p_ptr->window = 0xFFFFFFFF;
+                p_ptr->window = 0xFFFFFFFF; // Redraw all windows
                 window_stuff();
             }
 

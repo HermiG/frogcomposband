@@ -3512,12 +3512,7 @@ rect_t ui_screen_rect(void)
 
 rect_t ui_char_info_rect(void)
 {
-    return rect(
-        Term->wid - 12,
-        1,
-        12,
-        Term->hgt - 1
-    );
+    return rect(Term->wid - 12, 1, 12, Term->hgt - 1);
 }
 
 /*

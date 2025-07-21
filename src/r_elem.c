@@ -182,11 +182,9 @@ static void _elemental_pack_destroy(object_p p, cptr destroy_fmt, int chance)
         p_ptr->redraw |= PR_EQUIPPY;
         p_ptr->window |= PW_EQUIP;
     }
-    if (inven_ct)
-        p_ptr->window |= PW_INVEN;
+    if (inven_ct) p_ptr->window |= PW_INVEN;
 
-    if (equip_ct + inven_ct)
-        disturb(1, 0);
+    if (equip_ct + inven_ct) disturb(1, 0);
 }
 
 /**********************************************************************
@@ -1042,8 +1040,7 @@ static void _water_damage(obj_ptr obj)
         p_ptr->update |= PU_BONUS;
         p_ptr->window |= PW_EQUIP;
     }
-    else if (obj->loc.where == INV_PACK)
-        p_ptr->window |= PW_INVEN;
+    else if (obj->loc.where == INV_PACK) p_ptr->window |= PW_INVEN;
     disturb(1, 0);
 }
 

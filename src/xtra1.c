@@ -63,9 +63,7 @@
 static int _npow(int x, int y)
 {
     int r = 1;
-    int i;
-    for (i = 0; i < y; i++)
-        r *= x;
+    for (int i = 0; i < y; i++) r *= x;
     return r;
 }
 
@@ -265,13 +263,11 @@ void cnv_stat(int val, char *out_val)
  */
 s16b modify_stat_value(int value, int amount)
 {
-    int    i;
-
     /* Reward */
     if (amount > 0)
     {
         /* Apply each point */
-        for (i = 0; i < amount; i++)
+        for (int i = 0; i < amount; i++)
         {
             /* One point at a time */
             if (value < 18) value++;
@@ -285,7 +281,7 @@ s16b modify_stat_value(int value, int amount)
     else if (amount < 0)
     {
         /* Apply each point */
-        for (i = 0; i < (0 - amount); i++)
+        for (int i = 0; i < (0 - amount); i++)
         {
             /* Ten points at a time */
             if (value >= 18+10) value -= 10;
@@ -299,7 +295,7 @@ s16b modify_stat_value(int value, int amount)
     }
 
     /* Return new value */
-    return (value);
+    return value;
 }
 
 /*
@@ -308,10 +304,7 @@ s16b modify_stat_value(int value, int amount)
 bool is_daytime(void)
 {
     s32b len = TURNS_PER_TICK * TOWN_DAWN;
-    if ((game_turn % len) < (len / 2))
-        return TRUE;
-    else
-        return FALSE;
+    return ((game_turn % len) < (len / 2));
 }
 
 /*

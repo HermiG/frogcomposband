@@ -225,7 +225,7 @@ void gear_notice_id(obj_ptr obj)
         break;
     case INV_BAG:
         p_ptr->notice |= PN_OPTIMIZE_BAG;
-        p_ptr->window |= PW_EQUIP; /* a Bag {2.0 of 4.0} */
+        p_ptr->window |= PW_EQUIP; /* a Bag [2 of 16] */
         break;
     }
 }
@@ -249,7 +249,7 @@ void gear_notice_enchant(obj_ptr obj)
         break;
     case INV_BAG:
         p_ptr->notice |= PN_OPTIMIZE_BAG;
-        p_ptr->window |= PW_EQUIP; /* a Bag {2.0 of 4.0} */
+        p_ptr->window |= PW_EQUIP; /* a Bag [2 of 16] */
         break;
     }
 }
@@ -306,7 +306,7 @@ bool obj_can_shoot(obj_ptr obj)
 {
     if (!obj_is_ammo(obj)) return FALSE;
     if (!equip_find_obj(TV_BOW, SV_ANY)) return FALSE;
-    return (object_is_suitable_ammo(obj));
+    return object_is_suitable_ammo(obj);
 }
 
 bool obj_is_blessed(obj_ptr obj)

@@ -320,9 +320,7 @@ bool object_is_bow(object_type *o_ptr)
  */
 bool object_is_ammo(object_type *o_ptr)
 {
-    if (TV_MISSILE_BEGIN <= o_ptr->tval && o_ptr->tval <= TV_MISSILE_END) return TRUE;
-
-    return FALSE;
+    return (TV_MISSILE_BEGIN <= o_ptr->tval && o_ptr->tval <= TV_MISSILE_END);
 }
 
 
@@ -331,15 +329,12 @@ bool object_is_ammo(object_type *o_ptr)
  */
 bool object_is_armour(object_type *o_ptr)
 {
-    if (TV_ARMOR_BEGIN <= o_ptr->tval && o_ptr->tval <= TV_ARMOR_END) return TRUE;
-
-    return FALSE;
+    return (TV_ARMOR_BEGIN <= o_ptr->tval && o_ptr->tval <= TV_ARMOR_END);
 }
 
 bool object_is_shield(object_type *o_ptr)
 {
-    if (o_ptr->tval == TV_SHIELD || o_ptr->tval == TV_CARD) return TRUE;
-    return FALSE;
+    return (o_ptr->tval == TV_SHIELD || o_ptr->tval == TV_CARD);
 }
 
 bool object_is_body_armour(object_type *o_ptr)
@@ -546,7 +541,7 @@ bool object_allow_two_hands_wielding(object_type *o_ptr)
 bool object_is_suitable_ammo(object_type *o_ptr)
 {
     if (o_ptr->tval == p_ptr->shooter_info.tval_ammo) return TRUE;
-    if (p_ptr->shooter_info.tval_ammo == TV_ANY_AMMO) return (object_is_ammo(o_ptr));
+    if (p_ptr->shooter_info.tval_ammo == TV_ANY_AMMO) return object_is_ammo(o_ptr);
     return FALSE;
 }
 

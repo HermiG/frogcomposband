@@ -262,8 +262,7 @@ void msg_line_clear(void)
     {
         /* Note: We need not redraw the entire map if this proves too slow */
         p_ptr->redraw |= PR_MAP;
-        if (_msg_line_rect.x <= 12)
-            p_ptr->redraw |= PR_BASIC | PR_EQUIPPY;
+        if (_msg_line_rect.x <= 12) p_ptr->redraw |= PR_BASIC | PR_EQUIPPY;
     }
 }
 
@@ -502,8 +501,7 @@ void cmsg_print(byte color, cptr msg)
 
     msg_line_display(color, msg);
 
-    if (auto_more_state == AUTO_MORE_SKIP_ONE)
-        auto_more_state = AUTO_MORE_PROMPT;
+    if (auto_more_state == AUTO_MORE_SKIP_ONE) auto_more_state = AUTO_MORE_PROMPT;
 
     p_ptr->window |= PW_MESSAGE;
 
@@ -518,8 +516,7 @@ void cmsg_print(byte color, cptr msg)
      * and update flags and have things just work! Grrr ...
      *
     window_stuff(); */
-    if (fresh_message) /* ?? */
-        Term_fresh();
+    if (fresh_message) Term_fresh(); // ??
 
     _msg_append = TRUE;
 }

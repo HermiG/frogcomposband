@@ -327,8 +327,7 @@ bool _hit_mon(py_throw_ptr context, int m_idx)
         }
         tdam += context->obj->to_d;
         tdam = tdam * context->mult / 100;
-        if (ambush)
-            tdam *= 2;
+        if (ambush) tdam *= 2;
         tdam += context->to_d;
 
         if (context->mod_damage_f)
@@ -356,13 +355,11 @@ bool _hit_mon(py_throw_ptr context, int m_idx)
                 obj_learn_slay(context->obj, OF_BRAND_VAMP, "is <color:D>Vampiric</color>");
             }
             message_pain(m_idx, tdam);
-            if (tdam > 0)
-                anger_monster(m_ptr);
+            if (tdam > 0) anger_monster(m_ptr);
 
             if (tdam > 0 && m_ptr->cdis > 1 && allow_ticked_off(r_ptr))
             {
-                if (!mut_present(MUT_PEERLESS_SNIPER))
-                    mon_anger_shoot(m_ptr, tdam);
+                if (!mut_present(MUT_PEERLESS_SNIPER)) mon_anger_shoot(m_ptr, tdam);
             }
 
             if (fear && m_ptr->ml)
@@ -397,10 +394,7 @@ void _throw(py_throw_ptr context)
 
         _animate(context);
 
-        if (cave[y][x].m_idx)
-        {
-            if (_hit_mon(context, cave[y][x].m_idx)) break;
-        }
+        if (cave[y][x].m_idx && _hit_mon(context, cave[y][x].m_idx)) break;
 
         if (!cave_have_flag_bold(y, x, FF_PROJECT))
         {
@@ -439,11 +433,9 @@ void _return(py_throw_ptr context)
         /* only message/warn if the user expects a return */
         if (context->type & THROW_BOOMERANG)
         {
-            if (!context->come_back)
-                msg_format("Your %s fails to return!", context->obj_name);
+            if (!context->come_back) msg_format("Your %s fails to return!", context->obj_name);
 
-            if (context->fail_catch)
-                cmsg_print(TERM_VIOLET, "But you can't catch!");
+            if (context->fail_catch) cmsg_print(TERM_VIOLET, "But you can't catch!");
 
             if (context->obj->loc.where == INV_EQUIP)
             {
@@ -501,6 +493,7 @@ void _return(py_throw_ptr context)
         }
         else
             obj_drop_at(context->obj, 1, px, py, context->break_chance);
+        
         context->obj = NULL;
     }
     else

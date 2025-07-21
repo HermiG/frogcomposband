@@ -34,29 +34,29 @@
 #define ROW_EQUIPPY             3
 #define COL_EQUIPPY             0
 
-#define ROW_STAT                4       /* Str = 5 ... Chr = 10 */
+#define ROW_STAT                5       /* Str = 5 ... Chr = 10 */
 #define COL_STAT                0
 
-#define ROW_AC                  10
+#define ROW_AC                  11
 #define COL_AC                  0       /* "Cur AC xxxxx" */
 
-#define ROW_CURHP               11
+#define ROW_CURHP               12
 #define COL_CURHP               0       /* "Cur HP xxxxx" */
 
-#define ROW_CURSP               12
+#define ROW_CURSP               13
 #define COL_CURSP               0       /* "Cur SP xxxxx" */
 
-#define ROW_POOL               (p_ptr->pclass == CLASS_POLITICIAN ? 13 : 12)
+#define ROW_POOL               (p_ptr->pclass == CLASS_POLITICIAN ? 14 : 13)
 #define COL_POOL                0
 
-#define ROW_STATE              (p_ptr->pclass == CLASS_POLITICIAN ? 14 : 13)
+#define ROW_STATE              (p_ptr->pclass == CLASS_POLITICIAN ? 15 : 14)
 #define COL_STATE               7
 
-#define ROW_HEALTH_BARS        (p_ptr->pclass == CLASS_POLITICIAN ? 15 : 14)
+#define ROW_HEALTH_BARS        (p_ptr->pclass == CLASS_POLITICIAN ? 16 : 15)
 #define COL_HEALTH_BARS         0
 #define COUNT_HEALTH_BARS       6 /* HP, SP, Food, Riding, Monster Track, Target */
 
-#define ROW_EFFECTS            (p_ptr->pclass == CLASS_POLITICIAN ? 21 : 20)
+#define ROW_EFFECTS            (p_ptr->pclass == CLASS_POLITICIAN ? 22 : 21)
 #define COL_EFFECTS             0
 #define COUNT_EFFECTS          11       /* Could be off screen ... */
 
@@ -354,36 +354,59 @@ void prt_time(void)
 /*
  * Equippy chars
  */
-static void display_player_equippy(int y, int x, u16b mode)
-{
-    int i;
-
-    byte a;
-    char c;
-
-    object_type *o_ptr;
-
-    Term_erase(x, y, 12);
-
-    /* Dump equippy chars */
-    for (i = 1; i <= equip_max(); i++)
-    {
-        o_ptr = equip_obj(i);
-
-        if (mode == EQUIPPY_MAIN && i > 12) break; /* Hack: This will overwrite the map display otherwise ... */
-
-        if (o_ptr && equippy_chars)
-        {
-            a = object_attr(o_ptr);
-            c = object_char(o_ptr);
-        }
-        else
-        {
-            c = ' ';
-            a = TERM_DARK;
-        }
-        Term_putch(x + i - 1, y, a, c);
+static void display_equippy_row(int y, int x0, int max_width, bool (*filter)(int slot_type)) {
+  byte a;
+  char c;
+  int x = 0;
+  
+  Term_erase(x0, y, max_width);
+  
+  for (int i = 1; i <= equip_max(); i++) {
+    if (x >= max_width) break;
+    
+    int slot_type = equip_slot_type(i);
+    if (filter && !filter(slot_type)) continue;
+    
+    object_type *o_ptr = equip_obj(i);
+    
+    if (o_ptr && equippy_chars) {
+      a = object_attr(o_ptr);
+      c = object_char(o_ptr);
+    } else {
+      a = TERM_DARK;
+      c = ' ';
     }
+    
+    Term_putch(x0 + x++, y, a, c);
+    
+    // If displaying quiver, add the ammo count
+    if (filter && slot_type == EQUIP_SLOT_QUIVER && o_ptr && equippy_chars) {
+      char buf[8];
+      int len = snprintf(buf, sizeof(buf), "{%d", quiver_count(obj_can_shoot));
+      if (len > 0) {
+        Term_putstr(x0 + x, y, len, a, buf);
+        x += len;
+      }
+    }
+  }
+}
+
+static bool _is_main_equippy_slot(int slot_type) {
+  return slot_type != EQUIP_SLOT_BOW && slot_type != EQUIP_SLOT_QUIVER;
+}
+
+static bool _is_ranged_equippy_slot(int slot_type) {
+  return slot_type == EQUIP_SLOT_BOW || slot_type == EQUIP_SLOT_QUIVER;
+}
+
+static void display_player_equippy(int y, int x, u16b mode) {
+  if (mode == EQUIPPY_MAIN) {
+    rect_t r = ui_char_info_rect();
+    display_equippy_row(y,   x, r.cx, _is_main_equippy_slot);
+    display_equippy_row(y+1, x, r.cx, _is_ranged_equippy_slot);
+  } else {
+    display_equippy_row(y, x, equip_max(), NULL);
+  }
 }
 
 static void print_equippy(void)

@@ -76,6 +76,7 @@ void quiver_carry(obj_ptr obj)
     obj->number += xtra;
     p_ptr->update |= PU_BONUS; /* must check speed */
     p_ptr->window |= PW_EQUIP; /* a Quiver [32 of 110] */
+    p_ptr->redraw |= PR_EQUIPPY;
     p_ptr->notice |= PN_CARRY;
 }
 

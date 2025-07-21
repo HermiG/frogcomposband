@@ -157,6 +157,7 @@ void obj_release(obj_ptr obj, int options)
             p_ptr->notice |= PN_CARRY;
         }
         p_ptr->window |= PW_EQUIP; /* a Quiver [32 of 110] */
+        p_ptr->redraw |= PR_EQUIPPY;
         break;
     case INV_BAG:
         if (!quiet && !delayed) msg_format("You have %s in your bag.", name);
@@ -1107,7 +1108,11 @@ void obj_drop(obj_ptr obj, int amt)
         obj->marked |= OM_DELAYED_MSG;
         p_ptr->notice |= PN_CARRY;
         if      (obj->loc.where == INV_PACK)   p_ptr->notice |= PN_OPTIMIZE_PACK;
-        else if (obj->loc.where == INV_QUIVER) p_ptr->notice |= PN_OPTIMIZE_QUIVER;
+        else if (obj->loc.where == INV_QUIVER)
+        {
+            p_ptr->notice |= PN_OPTIMIZE_QUIVER;
+            p_ptr->redraw |= PR_EQUIPPY;
+        }
         else if (obj->loc.where == INV_BAG)    p_ptr->notice |= PN_OPTIMIZE_BAG;
 
         copy.marked &= ~OM_WORN;
@@ -1153,6 +1158,7 @@ void obj_drop_at(obj_ptr obj, int amt, int x, int y, int break_chance)
         }
         obj_dec_number(obj, amt, FALSE);
         _drop_at(&copy, x, y, break_chance);
+        if(obj->loc.where == INV_QUIVER) p_ptr->redraw |= PR_EQUIPPY;
     }
     else
     {

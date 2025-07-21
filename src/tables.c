@@ -2229,7 +2229,7 @@ option_type option_info[] =
     { &depth_in_feet,               FALSE, OPT_PAGE_TEXT, 0, 7,
     "depth_in_feet",                "Show dungeon level in feet" },
 
-    { &effective_speed,             FALSE, OPT_PAGE_TEXT, 0, 29,
+    { &effective_speed,             TRUE,  OPT_PAGE_TEXT, 0, 29,
     "effective_speed",              "Show speeds as energy multipliers" },
 
     { &equippy_chars,               TRUE,  OPT_PAGE_TEXT, 1, 12,
@@ -2244,7 +2244,7 @@ option_type option_info[] =
     { &display_food_bar,            FALSE, OPT_PAGE_TEXT, 1, 13,
     "display_food_bar",             "Display detailed food status" },
 
-    { &decimal_stats,               FALSE,  OPT_PAGE_TEXT, 2, 25,
+    { &decimal_stats,               TRUE,  OPT_PAGE_TEXT, 2, 25,
     "decimal_stats",                "Display stats as decimals" },
 
     { &percentage_life,             FALSE,  OPT_PAGE_TEXT, 4, 2,

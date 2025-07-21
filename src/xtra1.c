@@ -31,10 +31,8 @@
 #define ROW_GOLD                2
 #define COL_GOLD                0       /* "AU xxxxxxxxx" */
 
-/*
 #define ROW_EQUIPPY             3
 #define COL_EQUIPPY             0
-*/
 
 #define ROW_STAT                4       /* Str = 5 ... Chr = 10 */
 #define COL_STAT                0
@@ -395,9 +393,6 @@ static void display_player_equippy(int y, int x, u16b mode)
     }
 }
 
-#define ROW_EQUIPPY             3
-#define COL_EQUIPPY             0       /* equippy chars */
-
 static void print_equippy(void)
 {
     rect_t r = ui_char_info_rect();
@@ -437,7 +432,6 @@ static void prt_stat(int stat)
     if (p_ptr->stat_max[stat] == p_ptr->stat_max_max[stat])
     {
         put_str("!", r.y + ROW_STAT + stat, r.x + 3);
-
     }
 }
 

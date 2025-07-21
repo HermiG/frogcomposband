@@ -2235,13 +2235,13 @@ option_type option_info[] =
     { &equippy_chars,               TRUE,  OPT_PAGE_TEXT, 1, 12,
     "equippy_chars",                "Display 'equippy' chars" },
 
-    { &display_hp_bar,              FALSE,  OPT_PAGE_TEXT, 1, 1,
+    { &display_hp_bar,              FALSE, OPT_PAGE_TEXT, 1, 1,
     "display_hp_bar",               "Display player hp bar" },
 
-    { &display_sp_bar,              FALSE,  OPT_PAGE_TEXT, 1, 2,
+    { &display_sp_bar,              FALSE, OPT_PAGE_TEXT, 1, 2,
     "display_sp_bar",               "Display player sp bar" },
 
-    { &display_food_bar,            FALSE,  OPT_PAGE_TEXT, 1, 13,
+    { &display_food_bar,            FALSE, OPT_PAGE_TEXT, 1, 13,
     "display_food_bar",             "Display detailed food status" },
 
     { &decimal_stats,               FALSE,  OPT_PAGE_TEXT, 2, 25,
@@ -2250,14 +2250,11 @@ option_type option_info[] =
     { &percentage_life,             FALSE,  OPT_PAGE_TEXT, 4, 2,
     "percentage_life",              "Display life rating on a scale of 87% to 117%" },
 
-    { &show_rogue_keys,		    FALSE, OPT_PAGE_TEXT, 6, 3,
-    "show_rogue_keys",		    "Display roguelike movement keys as reminder" },
+    { &show_rogue_keys,             FALSE, OPT_PAGE_TEXT, 6, 3,
+    "show_rogue_keys",              "Display roguelike movement keys as reminder" },
 
     { &show_energy_cost,            FALSE, OPT_PAGE_TEXT, 2, 9,
     "show_energy_cost",             "Display energy cost of most recent action" },
-
-//    { &display_percentages,         FALSE,  OPT_PAGE_TEXT, 1, 10,
-//    "display_percentages",          "Display percentages rather than status bars" },
 
     { &compress_savefile,           FALSE, OPT_PAGE_TEXT, 1, 26,
     "compress_savefile",            "Compress messages in savefiles" },
@@ -2277,31 +2274,31 @@ option_type option_info[] =
     { &ignore_unview,               FALSE, OPT_PAGE_TEXT, 2, 13,
     "ignore_unview",                "Ignore actions of out of sight monsters" },
 
-    { &display_race,		        TRUE, OPT_PAGE_TEXT, 2, 29,
+    { &display_race,                TRUE, OPT_PAGE_TEXT, 2, 29,
     "display_race",                 "Player character depends on race" },
 
-    { &show_origins,		        TRUE, OPT_PAGE_TEXT, 2, 28,
+    { &show_origins,                TRUE, OPT_PAGE_TEXT, 2, 28,
     "show_origins",                 "Show object origins on examination" },
 
-    { &show_discovery,		        FALSE, OPT_PAGE_TEXT, 2, 26,
-    "show_discovery",                 "Show time of discovery on examination" },
+    { &show_discovery,		          FALSE, OPT_PAGE_TEXT, 2, 26,
+    "show_discovery",               "Show time of discovery on examination" },
 
-    { &final_dump_origins,		TRUE, OPT_PAGE_TEXT, 2, 18,
-    "final_dump_origins",             "Show origins in final character dumps" },
+    { &final_dump_origins,          TRUE, OPT_PAGE_TEXT, 2, 18,
+    "final_dump_origins",           "Show origins in final character dumps" },
 
-    { &always_dump_origins,		FALSE, OPT_PAGE_TEXT, 2, 19,
-    "always_dump_origins",             "Show origins in all character dumps" },
+    { &always_dump_origins,         FALSE, OPT_PAGE_TEXT, 2, 19,
+    "always_dump_origins",          "Show origins in all character dumps" },
 
-    { &easy_mimics,		        FALSE, OPT_PAGE_TEXT, 2, 27,
+    { &easy_mimics,                 FALSE, OPT_PAGE_TEXT, 2, 27,
     "easy_mimics",                  "Use 'x' for monsters that look like things" },
 
-    { &display_skill_num,            FALSE,  OPT_PAGE_TEXT, 2, 22,
+    { &display_skill_num,           FALSE,  OPT_PAGE_TEXT, 2, 22,
     "display_skill_num",            "Display skills as numbers on character sheet" },
 
-    { &reforge_details,              TRUE,  OPT_PAGE_TEXT, 2, 16,
+    { &reforge_details,             TRUE,  OPT_PAGE_TEXT, 2, 16,
     "reforge_details",              "Show statistics before proceeding with a reforge" },
 
-    { &show_damage_range,            FALSE, OPT_PAGE_TEXT, 4, 22,
+    { &show_damage_range,           FALSE, OPT_PAGE_TEXT, 4, 22,
     "show_damage_range",            "Show non-melee damages as ranges in monster info" },
 
 
@@ -2406,26 +2403,26 @@ option_type option_info[] =
 //	{ &coffee_break,		FALSE, OPT_PAGE_BIRTH, 6, 3,
 //	"coffee_break",			"Coffee-break mode (accelerated game) (*)" },
 
-	{ &easy_id,			FALSE, OPT_PAGE_BIRTH, 6, 31,
-	"easy_id",			"Easy Identify (*)" },
+    { &easy_id,                     FALSE, OPT_PAGE_BIRTH, 6, 31,
+    "easy_id",                      "Easy Identify (*)" },
 	
-	{ &easy_lore,			FALSE, OPT_PAGE_BIRTH, 6, 30,
-	"easy_lore",			"Easy Lore" },
+    { &easy_lore,                   FALSE, OPT_PAGE_BIRTH, 6, 30,
+    "easy_lore",                    "Easy Lore" },
 
-	{ &easy_damage,			FALSE, OPT_PAGE_BIRTH, 6, 16,
-	"easy_damage",			"Easy monster health and damage information (*)" },
+    { &easy_damage,                 FALSE, OPT_PAGE_BIRTH, 6, 16,
+    "easy_damage",                  "Easy monster health and damage information (*)" },
 
-	{ &allow_spoilers,		FALSE, OPT_PAGE_BIRTH, 6, 29,
-	"allow_spoilers",		"Allow spoilers" },
+    { &allow_spoilers,              FALSE, OPT_PAGE_BIRTH, 6, 29,
+    "allow_spoilers",               "Allow spoilers" },
 	
-	{ &power_tele,			FALSE, OPT_PAGE_BIRTH, 6, 6,
-	"power_tele",			"Use enhanced telepathy (*)" },
+    { &power_tele,                  FALSE, OPT_PAGE_BIRTH, 6, 6,
+    "power_tele",                   "Use enhanced telepathy (*)" },
 
-	{ &never_forget,		FALSE, OPT_PAGE_BIRTH, 6, 27,
-	"never_forget",			"Easy Labyrinth and no amnesia" },
+    { &never_forget,                FALSE, OPT_PAGE_BIRTH, 6, 27,
+    "never_forget",                 "Easy Labyrinth and no amnesia" },
 
-	{ &empty_lore,			FALSE, OPT_PAGE_BIRTH, 1, 16,
-	"empty_lore",			"Always forget item lore between games" },
+    { &empty_lore,                  FALSE, OPT_PAGE_BIRTH, 1, 16,
+    "empty_lore",                   "Always forget item lore between games" },
 
     { &smart_learn,                 TRUE,  OPT_PAGE_BIRTH, 1, 14,
     "smart_learn",                  "Monsters learn from their mistakes (*)" },
@@ -2507,20 +2504,20 @@ option_type option_info[] =
 
     { &increase_density,            FALSE, OPT_PAGE_BIRTH, 4, 15,
     "increase_density",             "Increase monster density on small levels" },
-                          { &no_big_dungeons,             FALSE, OPT_PAGE_BIRTH, 4, 17,
+    { &no_big_dungeons,             FALSE, OPT_PAGE_BIRTH, 4, 17,
     "no_big_dungeons",              "Allow small levels in all dungeons except Arena" },
 
     { &even_proportions,            FALSE, OPT_PAGE_BIRTH, 4, 16,
     "even_proportions",             "Sometimes reshape very flat \"pipe\" levels" },
 
-    { &no_chris,			FALSE, OPT_PAGE_BIRTH, 6, 12,
-    "no_chris",				"Nexus attacks never teleport to another dungeon" },
+    { &no_chris,                    FALSE, OPT_PAGE_BIRTH, 6, 12,
+    "no_chris",                     "Nexus attacks never teleport to another dungeon" },
 
-    { &no_scrambling,			FALSE, OPT_PAGE_BIRTH, 6, 15,
-    "no_scrambling",			"Disallow stat scrambling from monster attacks" },
+    { &no_scrambling,               FALSE, OPT_PAGE_BIRTH, 6, 15,
+    "no_scrambling",                "Disallow stat scrambling from monster attacks" },
 
-    { &comp_mode,			FALSE, OPT_PAGE_BIRTH, 5, 18,
-    "comp_mode",			"Disallow permanent changes to player race" },
+    { &comp_mode,                   FALSE, OPT_PAGE_BIRTH, 5, 18,
+    "comp_mode",                    "Disallow permanent changes to player race" },
 
     /*** Easy Object Auto-Destroyer ***/
 

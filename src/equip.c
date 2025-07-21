@@ -199,22 +199,17 @@ cptr equip_describe_slot(slot_t slot)
     if (_template->slots[slot].type == EQUIP_SLOT_WEAPON_SHIELD || _template->slots[slot].type == EQUIP_SLOT_WEAPON)
     {
         int hand = _template->slots[slot].hand;
-        if (p_ptr->weapon_info[hand].heavy_wield)
-            return "Just Lifting";
+        if (p_ptr->weapon_info[hand].heavy_wield) return "Just Lifting";
         if (p_ptr->weapon_info[hand].wield_how == WIELD_TWO_HANDS && !prace_is_(RACE_MON_SWORD))
         {
-            if (p_ptr->current_r_idx == MON_BLOODTHIRSTER)
-                return "Both Paws";
-            else
-                return "Both Arms";
+            if (p_ptr->current_r_idx == MON_BLOODTHIRSTER) return "Both Paws";
+            else return "Both Arms";
         }
-        if (p_ptr->weapon_info[hand].riding)
-            return "Reins";
+        if (p_ptr->weapon_info[hand].riding) return "Reins";
     }
     if (_template->slots[slot].type == EQUIP_SLOT_BOW)
     {
-        if (p_ptr->shooter_info.heavy_shoot)
-            return "Just Holding";
+        if (p_ptr->shooter_info.heavy_shoot) return "Just Holding";
     }
     return b_tag + _template->slots[slot].tag;
 }
@@ -257,11 +252,9 @@ slot_t equip_first_empty_slot(obj_ptr obj)
 
 slot_t equip_find_empty_hand(void)
 {
-    slot_t slot;
-    for (slot = 1; slot <= _template->max; slot++)
+    for (slot_t slot = 1; slot <= _template->max; slot++)
     {
-        if ( (_template->slots[slot].type == EQUIP_SLOT_WEAPON_SHIELD || _template->slots[slot].type == EQUIP_SLOT_WEAPON)
-          && !equip_obj(slot) )
+        if ((_template->slots[slot].type == EQUIP_SLOT_WEAPON_SHIELD || _template->slots[slot].type == EQUIP_SLOT_WEAPON) && !equip_obj(slot))
         {
             return slot;
         }
@@ -275,8 +268,7 @@ bool equip_can_wield_kind(int tval, int sval)
     int         k_idx = lookup_kind(tval, sval);
 
     object_prep(&forge, k_idx);
-    if (equip_first_slot(&forge))
-        return TRUE;
+    if (equip_first_slot(&forge)) return TRUE;
 
     return FALSE;
 }
@@ -323,8 +315,7 @@ bool equip_verify_slot(slot_t slot, obj_ptr obj)
     if (equip_is_valid_slot(slot))
     {
         obj_p p = _accept[_template->slots[slot].type];
-        if (p(obj))
-            return TRUE;
+        if (p(obj)) return TRUE;
     }
     return FALSE;
 }
@@ -367,8 +358,7 @@ slot_t equip_is_worn(obj_ptr obj)
 
 int equip_which_hand(obj_ptr obj)
 {
-    slot_t slot;
-    for (slot = 1; slot <= _template->max; slot++)
+    for (slot_t slot = 1; slot <= _template->max; slot++)
     {
         object_type *o = equip_obj(slot);
         if (o == obj) return _template->slots[slot].hand;
@@ -398,9 +388,7 @@ int equip_max(void)
 
 int equip_slot_type(slot_t slot)
 {
-    if (equip_is_valid_slot(slot))
-        return _template->slots[slot].type;
-    return EQUIP_SLOT_NONE;
+  return equip_is_valid_slot(slot)? _template->slots[slot].type : EQUIP_SLOT_NONE;
 }
 
 bool equip_is_empty_two_handed_slot(int slot)

@@ -740,183 +740,155 @@ static cptr report_magic_durations[] =
 void report_magics(void)
 {
     int     i = 0, j, k;
-    char    Dummy[80];
+    char    temp[80];
     cptr    info[128];
     int     info2[128];
-
 
     if (p_ptr->blind)
     {
         info2[i]  = report_magics_aux(p_ptr->blind);
         info[i++] = "You cannot see";
-
     }
     if (p_ptr->confused)
     {
         info2[i]  = report_magics_aux(p_ptr->confused);
         info[i++] = "You are confused";
-
     }
     if (p_ptr->afraid)
     {
         info2[i]  = report_magics_aux(p_ptr->afraid);
         info[i++] = "You are terrified";
-
     }
     if (p_ptr->poisoned)
     {
         info2[i]  = report_magics_aux(p_ptr->poisoned);
         info[i++] = "You are poisoned";
-
     }
     if (p_ptr->image)
     {
         info2[i]  = report_magics_aux(p_ptr->image);
         info[i++] = "You are hallucinating";
-
     }
     if (p_ptr->blessed)
     {
         info2[i]  = report_magics_aux(p_ptr->blessed);
         info[i++] = "You feel rightous";
-
     }
     if (p_ptr->hero)
     {
         info2[i]  = report_magics_aux(p_ptr->hero);
         info[i++] = "You feel heroic";
-
     }
     if (p_ptr->shero)
     {
         info2[i]  = report_magics_aux(p_ptr->shero);
         info[i++] = "You are in a battle rage";
-
     }
     if (p_ptr->protevil)
     {
         info2[i]  = report_magics_aux(p_ptr->protevil);
         info[i++] = "You are protected from evil";
-
     }
     if (p_ptr->shield)
     {
         info2[i]  = report_magics_aux(p_ptr->shield);
         info[i++] = "You are protected by a mystic shield";
-
     }
     if (p_ptr->invuln)
     {
         info2[i]  = report_magics_aux(p_ptr->invuln);
         info[i++] = "You are invulnerable";
-
     }
     if (p_ptr->wraith_form)
     {
         info2[i]  = report_magics_aux(p_ptr->wraith_form);
         info[i++] = "You are incorporeal";
-
     }
     if (p_ptr->special_attack & ATTACK_CONFUSE)
     {
         info2[i]  = 7;
         info[i++] = "Your hands are glowing dull red.";
-
     }
     if (p_ptr->word_recall)
     {
         info2[i]  = report_magics_aux(p_ptr->word_recall);
         info[i++] = "You are waiting to be recalled";
-
     }
     if (p_ptr->alter_reality)
     {
         info2[i]  = report_magics_aux(p_ptr->alter_reality);
         info[i++] = "You waiting to be altered";
-
     }
     if (p_ptr->oppose_acid)
     {
         info2[i]  = report_magics_aux(p_ptr->oppose_acid);
         info[i++] = "You are resistant to acid";
-
     }
     if (p_ptr->oppose_elec)
     {
         info2[i]  = report_magics_aux(p_ptr->oppose_elec);
         info[i++] = "You are resistant to lightning";
-
     }
     if (p_ptr->oppose_fire)
     {
         info2[i]  = report_magics_aux(p_ptr->oppose_fire);
         info[i++] = "You are resistant to fire";
-
     }
     if (p_ptr->oppose_cold)
     {
         info2[i]  = report_magics_aux(p_ptr->oppose_cold);
         info[i++] = "You are resistant to cold";
-
     }
     if (p_ptr->oppose_pois)
     {
         info2[i]  = report_magics_aux(p_ptr->oppose_pois);
         info[i++] = "You are resistant to poison";
-
     }
 
-    /* Save the screen */
     screen_save();
 
     /* Erase the screen */
     for (k = 1; k < 24; k++) prt("", k, 13);
 
     /* Label the information */
-    prt("     Your Current Magic:", 1, 15);
-
+    prt("     Your Current Magical Effects:", 1, 15);
 
     /* We will print on top of the map (column 13) */
     for (k = 2, j = 0; j < i; j++)
     {
-        /* Show the info */
-        sprintf(Dummy, "%s %s.", info[j],
+        sprintf(temp, "%s %s.", info[j],
 
-            report_magic_durations[info2[j]]);
-        prt(Dummy, k++, 15);
+        report_magic_durations[info2[j]]);
+        prt(temp, k++, 15);
 
         /* Every 20 entries (lines 2 to 21), start over */
         if ((k == 22) && (j + 1 < i))
         {
             prt("-- more --", k, 15);
-
             inkey();
+
             for (; k > 2; k--) prt("", k, 15);
         }
     }
 
-    /* Pause */
     prt("[Press any key to continue]", k, 13);
-
     inkey();
 
-    /* Restore the screen */
     screen_load();
 }
 
 
 static bool detect_feat_flag(int range, int flag, bool known)
 {
-    int       x, y;
     bool      detect = FALSE;
     cave_type *c_ptr;
 
     if (d_info[dungeon_type].flags1 & DF1_DARKNESS) range /= 3;
 
     /* Scan the current panel */
-    for (y = 1; y < cur_hgt - 1; y++)
+    for (int y = 1; y < cur_hgt - 1; y++)
     {
-        for (x = 1; x <= cur_wid - 1; x++)
+        for (int x = 1; x <= cur_wid - 1; x++)
         {
             int dist = distance(py, px, y, x);
             if (dist > range) continue;
@@ -958,10 +930,8 @@ static bool detect_feat_flag(int range, int flag, bool known)
         }
     }
 
-    if (flag == FF_TRAP && !view_unsafe_grids)
-        p_ptr->redraw |= PR_STATUS;
+    if (flag == FF_TRAP && !view_unsafe_grids) p_ptr->redraw |= PR_STATUS;
 
-    /* Result */
     return detect;
 }
 
@@ -978,13 +948,8 @@ bool detect_traps(int range, bool known)
     /* Avoid spoiling, but mark grids as safe if the effect is obvious */ 
     if (detect && !known) detect_feat_flag(range, FF_TRAP, TRUE);
 
-    /* Describe */
-    if (detect)
-    {
-        msg_print("You sense the presence of traps!");
-    }
+    if (detect) msg_print("You sense the presence of traps!");
 
-    /* Result */
     return detect;
 }
 
@@ -998,13 +963,8 @@ bool detect_doors(int range)
 
     if (music_singing(MUSIC_DETECT) && p_ptr->magic_num1[2] > 0) detect = FALSE;
 
-    /* Describe */
-    if (detect)
-    {
-        msg_print("You sense the presence of doors!");
-    }
-
-    /* Result */
+    if (detect) msg_print("You sense the presence of doors!");
+ 
     return detect;
 }
 
@@ -1018,13 +978,8 @@ bool detect_stairs(int range)
 
     if (music_singing(MUSIC_DETECT) && p_ptr->magic_num1[2] > 0) detect = FALSE;
 
-    /* Describe */
-    if (detect)
-    {
-        msg_print("You sense the presence of stairs!");
-    }
-
-    /* Result */
+    if (detect) msg_print("You sense the presence of stairs!");
+    
     return detect;
 }
 
@@ -1038,13 +993,8 @@ bool detect_treasure(int range)
 
     if (music_singing(MUSIC_DETECT) && p_ptr->magic_num1[2] > 6) detect = FALSE;
 
-    /* Describe */
-    if (detect)
-    {
-        msg_print("You sense the presence of buried treasure!");
-    }
+    if (detect) msg_print("You sense the presence of buried treasure!");
 
-    /* Result */
     return detect;
 }
 
@@ -1054,7 +1004,6 @@ bool detect_treasure(int range)
  */
 bool detect_objects_gold(int range)
 {
-    int i, y, x;
     int range2 = range;
 
     bool detect = FALSE;
@@ -1062,7 +1011,7 @@ bool detect_objects_gold(int range)
     if (d_info[dungeon_type].flags1 & DF1_DARKNESS) range2 /= 3;
 
     /* Scan objects */
-    for (i = 1; i < o_max; i++)
+    for (int i = 1; i < o_max; i++)
     {
         object_type *o_ptr = &o_list[i];
 
@@ -1073,8 +1022,8 @@ bool detect_objects_gold(int range)
         if (o_ptr->held_m_idx) continue;
 
         /* Location */
-        y = o_ptr->loc.y;
-        x = o_ptr->loc.x;
+        int y = o_ptr->loc.y;
+        int x = o_ptr->loc.x;
 
         /* Only detect nearby objects */
         if (distance(py, px, y, x) > range2) continue;
@@ -1095,20 +1044,11 @@ bool detect_objects_gold(int range)
 
     if (music_singing(MUSIC_DETECT) && p_ptr->magic_num1[2] > 6) detect = FALSE;
 
-    /* Describe */
-    if (detect)
-    {
-        msg_print("You sense the presence of treasure!");
+    if (detect) msg_print("You sense the presence of treasure!");
 
-    }
+    if (detect_monsters_string(range, "$")) detect = TRUE;
 
-    if (detect_monsters_string(range, "$"))
-    {
-        detect = TRUE;
-    }
-
-    /* Result */
-    return (detect);
+    return detect;
 }
 
 
@@ -1117,7 +1057,6 @@ bool detect_objects_gold(int range)
  */
 bool detect_objects_normal(int range)
 {
-    int i, y, x;
     int range2 = range;
 
     bool detect = FALSE;
@@ -1125,7 +1064,7 @@ bool detect_objects_normal(int range)
     if (d_info[dungeon_type].flags1 & DF1_DARKNESS) range2 /= 3;
 
     /* Scan objects */
-    for (i = 1; i < o_max; i++)
+    for (int i = 1; i < o_max; i++)
     {
         object_type *o_ptr = &o_list[i];
 
@@ -1136,8 +1075,8 @@ bool detect_objects_normal(int range)
         if (o_ptr->held_m_idx) continue;
 
         /* Location */
-        y = o_ptr->loc.y;
-        x = o_ptr->loc.x;
+        int y = o_ptr->loc.y;
+        int x = o_ptr->loc.x;
 
         /* Only detect nearby objects */
         if (distance(py, px, y, x) > range2) continue;
@@ -1157,22 +1096,13 @@ bool detect_objects_normal(int range)
         }
     }
 
+    if (detect_monsters_string(range, "!=?|/`")) detect = TRUE;
+
     if (music_singing(MUSIC_DETECT) && p_ptr->magic_num1[2] > 6) detect = FALSE;
 
-    /* Describe */
-    if (detect)
-    {
-        msg_print("You sense the presence of objects!");
+    if (detect) msg_print("You sense the presence of objects!");
 
-    }
-
-    if (detect_monsters_string(range, "!=?|/`"))
-    {
-        detect = TRUE;
-    }
-
-    /* Result */
-    return (detect);
+    return detect;
 }
 
 
@@ -1187,14 +1117,12 @@ bool detect_objects_normal(int range)
  */
 bool detect_objects_magic(int range)
 {
-    int i, y, x, tv;
-
     bool detect = FALSE;
 
     if (d_info[dungeon_type].flags1 & DF1_DARKNESS) range /= 3;
 
     /* Scan all objects */
-    for (i = 1; i < o_max; i++)
+    for (int i = 1; i < o_max; i++)
     {
         object_type *o_ptr = &o_list[i];
 
@@ -1205,14 +1133,14 @@ bool detect_objects_magic(int range)
         if (o_ptr->held_m_idx) continue;
 
         /* Location */
-        y = o_ptr->loc.y;
-        x = o_ptr->loc.x;
+        int y = o_ptr->loc.y;
+        int x = o_ptr->loc.x;
 
         /* Only detect nearby objects */
         if (distance(py, px, y, x) > range) continue;
 
         /* Examine the tval */
-        tv = o_ptr->tval;
+        int tv = o_ptr->tval;
 
         /* Artifacts, misc magic items, or enchanted wearables */
         if (object_is_artifact(o_ptr) ||
@@ -1254,15 +1182,9 @@ bool detect_objects_magic(int range)
         }
     }
 
-    /* Describe */
-    if (detect)
-    {
-        msg_print("You sense the presence of magic objects!");
+    if (detect) msg_print("You sense the presence of magic objects!");
 
-    }
-
-    /* Return result */
-    return (detect);
+    return detect;
 }
 
 
@@ -1271,14 +1193,12 @@ bool detect_objects_magic(int range)
  */
 bool detect_monsters_normal(int range)
 {
-    int i, y, x;
-
     bool flag = FALSE;
 
     if (d_info[dungeon_type].flags1 & DF1_DARKNESS) range /= 3;
 
     /* Scan monsters */
-    for (i = 1; i < m_max; i++)
+    for (int i = 1; i < m_max; i++)
     {
         monster_type *m_ptr = &m_list[i];
         monster_race *r_ptr = &r_info[m_ptr->r_idx];
@@ -1287,8 +1207,8 @@ bool detect_monsters_normal(int range)
         if (!m_ptr->r_idx) continue;
 
         /* Location */
-        y = m_ptr->fy;
-        x = m_ptr->fx;
+        int y = m_ptr->fy;
+        int x = m_ptr->fx;
 
         /* Only detect nearby monsters */
         if (distance(py, px, y, x) > range) continue;
@@ -1313,16 +1233,9 @@ bool detect_monsters_normal(int range)
 
     if (music_singing(MUSIC_DETECT) && p_ptr->magic_num1[2] > 3) flag = FALSE;
 
-    /* Describe */
-    if (flag)
-    {
-        /* Describe result */
-        msg_print("You sense the presence of monsters!");
+    if (flag) msg_print("You sense the presence of monsters!");
 
-    }
-
-    /* Result */
-    return (flag);
+    return flag;
 }
 
 
@@ -1331,13 +1244,12 @@ bool detect_monsters_normal(int range)
  */
 bool detect_monsters_invis(int range)
 {
-    int i, y, x;
     bool flag = FALSE;
 
     if (d_info[dungeon_type].flags1 & DF1_DARKNESS) range /= 3;
 
     /* Scan monsters */
-    for (i = 1; i < m_max; i++)
+    for (int i = 1; i < m_max; i++)
     {
         monster_type *m_ptr = &m_list[i];
         monster_race *r_ptr = &r_info[m_ptr->r_idx];
@@ -1346,8 +1258,8 @@ bool detect_monsters_invis(int range)
         if (!m_ptr->r_idx) continue;
 
         /* Location */
-        y = m_ptr->fy;
-        x = m_ptr->fx;
+        int y = m_ptr->fy;
+        int x = m_ptr->fx;
 
         /* Only detect nearby monsters */
         if (distance(py, px, y, x) > range) continue;
@@ -1378,16 +1290,9 @@ bool detect_monsters_invis(int range)
 
     if (music_singing(MUSIC_DETECT) && p_ptr->magic_num1[2] > 3) flag = FALSE;
 
-    /* Describe */
-    if (flag)
-    {
-        /* Describe result */
-        msg_print("You sense the presence of invisible creatures!");
+    if (flag) msg_print("You sense the presence of invisible creatures!");
 
-    }
-
-    /* Result */
-    return (flag);
+    return flag;
 }
 
 
@@ -1397,13 +1302,12 @@ bool detect_monsters_invis(int range)
  */
 bool detect_monsters_evil(int range)
 {
-    int i, y, x;
     bool flag = FALSE;
 
     if (d_info[dungeon_type].flags1 & DF1_DARKNESS) range /= 3;
 
     /* Scan monsters */
-    for (i = 1; i < m_max; i++)
+    for (int i = 1; i < m_max; i++)
     {
         monster_type *m_ptr = &m_list[i];
         monster_race *r_ptr = &r_info[m_ptr->r_idx];
@@ -1412,8 +1316,8 @@ bool detect_monsters_evil(int range)
         if (!m_ptr->r_idx) continue;
 
         /* Location */
-        y = m_ptr->fy;
-        x = m_ptr->fx;
+        int y = m_ptr->fy;
+        int x = m_ptr->fx;
 
         /* Only detect nearby monsters */
         if (distance(py, px, y, x) > range) continue;
@@ -1438,16 +1342,9 @@ bool detect_monsters_evil(int range)
         }
     }
 
-    /* Describe */
-    if (flag)
-    {
-        /* Describe result */
-        msg_print("You sense the presence of evil creatures!");
+    if (flag) msg_print("You sense the presence of evil creatures!");
 
-    }
-
-    /* Result */
-    return (flag);
+    return flag;
 }
 
 
@@ -1458,13 +1355,12 @@ bool detect_monsters_evil(int range)
  */
 bool detect_monsters_nonliving(int range)
 {
-    int     i, y, x;
     bool    flag = FALSE;
 
     if (d_info[dungeon_type].flags1 & DF1_DARKNESS) range /= 3;
 
     /* Scan monsters */
-    for (i = 1; i < m_max; i++)
+    for (int i = 1; i < m_max; i++)
     {
         monster_type *m_ptr = &m_list[i];
         monster_race *r_ptr = &r_info[m_ptr->r_idx];
@@ -1473,8 +1369,8 @@ bool detect_monsters_nonliving(int range)
         if (!m_ptr->r_idx) continue;
 
         /* Location */
-        y = m_ptr->fy;
-        x = m_ptr->fx;
+        int y = m_ptr->fy;
+        int x = m_ptr->fx;
 
         /* Only detect nearby monsters */
         if (distance(py, px, y, x) > range) continue;
@@ -1503,16 +1399,9 @@ bool detect_monsters_nonliving(int range)
         }
     }
 
-    /* Describe */
-    if (flag)
-    {
-        /* Describe result */
-        msg_print("You sense the presence of unnatural beings!");
+    if (flag) msg_print("You sense the presence of unnatural beings!");
 
-    }
-
-    /* Result */
-    return (flag);
+    return flag;
 }
 
 /*
@@ -1520,20 +1409,19 @@ bool detect_monsters_nonliving(int range)
  */
 bool detect_monsters_living(int range, cptr msg)
 {
-    int     i, y, x;
     bool    flag = FALSE;
 
     if (d_info[dungeon_type].flags1 & DF1_DARKNESS) range /= 3;
 
-    for (i = 1; i < m_max; i++)
+    for (int i = 1; i < m_max; i++)
     {
         monster_type *m_ptr = &m_list[i];
         monster_race *r_ptr = &r_info[m_ptr->r_idx];
 
         if (!m_ptr->r_idx) continue;
 
-        y = m_ptr->fy;
-        x = m_ptr->fx;
+        int y = m_ptr->fy;
+        int x = m_ptr->fx;
 
         if (distance(py, px, y, x) > range) continue;
 
@@ -1550,21 +1438,19 @@ bool detect_monsters_living(int range, cptr msg)
         }
     }
 
-    if (flag && msg)
-        msg_print(msg);
+    if (flag && msg) msg_print(msg);
 
     return flag;
 }
 
 bool detect_monsters_magical(int range)
 {
-    int     i, y, x;
     bool    flag = FALSE;
 
     if (d_info[dungeon_type].flags1 & DF1_DARKNESS) range /= 3;
 
     /* Scan monsters */
-    for (i = 1; i < m_max; i++)
+    for (int i = 1; i < m_max; i++)
     {
         monster_type *m_ptr = &m_list[i];
         monster_race *r_ptr = &r_info[m_ptr->r_idx];
@@ -1573,8 +1459,8 @@ bool detect_monsters_magical(int range)
         if (!m_ptr->r_idx) continue;
 
         /* Location */
-        y = m_ptr->fy;
-        x = m_ptr->fx;
+        int y = m_ptr->fy;
+        int x = m_ptr->fx;
 
         /* Only detect nearby monsters */
         if (distance(py, px, y, x) > range) continue;
@@ -1603,14 +1489,9 @@ bool detect_monsters_magical(int range)
         }
     }
 
-    /* Describe */
-    if (flag)
-    {
-        msg_print("You sense the presence of magical foes!");
-    }
+    if (flag) msg_print("You sense the presence of magical foes!");
 
-    /* Result */
-    return (flag);
+    return flag;
 }
 
 /*
@@ -1618,13 +1499,12 @@ bool detect_monsters_magical(int range)
  */
 bool detect_monsters_mind(int range)
 {
-    int     i, y, x;
     bool    flag = FALSE;
 
     if (d_info[dungeon_type].flags1 & DF1_DARKNESS) range /= 3;
 
     /* Scan monsters */
-    for (i = 1; i < m_max; i++)
+    for (int i = 1; i < m_max; i++)
     {
         monster_type *m_ptr = &m_list[i];
         monster_race *r_ptr = &r_info[m_ptr->r_idx];
@@ -1633,8 +1513,8 @@ bool detect_monsters_mind(int range)
         if (!m_ptr->r_idx) continue;
 
         /* Location */
-        y = m_ptr->fy;
-        x = m_ptr->fx;
+        int y = m_ptr->fy;
+        int x = m_ptr->fx;
 
         /* Only detect nearby monsters */
         if (distance(py, px, y, x) > range) continue;
@@ -1663,16 +1543,9 @@ bool detect_monsters_mind(int range)
         }
     }
 
-    /* Describe */
-    if (flag)
-    {
-        /* Describe result */
-        msg_print("You sense the presence of someone's mind!");
-
-    }
-
-    /* Result */
-    return (flag);
+    if (flag) msg_print("You sense the presence of someone's mind!");
+ 
+    return flag;
 }
 
 
@@ -1681,13 +1554,12 @@ bool detect_monsters_mind(int range)
  */
 bool detect_monsters_string(int range, cptr Match)
 {
-    int i, y, x;
     bool flag = FALSE;
 
     if (d_info[dungeon_type].flags1 & DF1_DARKNESS) range /= 3;
 
     /* Scan monsters */
-    for (i = 1; i < m_max; i++)
+    for (int i = 1; i < m_max; i++)
     {
         monster_type *m_ptr = &m_list[i];
         monster_race *r_ptr = &r_info[m_ptr->r_idx];
@@ -1696,8 +1568,8 @@ bool detect_monsters_string(int range, cptr Match)
         if (!m_ptr->r_idx) continue;
 
         /* Location */
-        y = m_ptr->fy;
-        x = m_ptr->fx;
+        int y = m_ptr->fy;
+        int x = m_ptr->fx;
 
         /* Only detect nearby monsters */
         if (distance(py, px, y, x) > range) continue;
@@ -1728,16 +1600,9 @@ bool detect_monsters_string(int range, cptr Match)
 
     if (music_singing(MUSIC_DETECT) && p_ptr->magic_num1[2] > 3) flag = FALSE;
 
-    /* Describe */
-    if (flag)
-    {
-        /* Describe result */
-        msg_print("You sense the presence of monsters!");
+    if (flag) msg_print("You sense the presence of monsters!");
 
-    }
-
-    /* Result */
-    return (flag);
+    return flag;
 }
 
 
@@ -1746,14 +1611,13 @@ bool detect_monsters_string(int range, cptr Match)
  */
 bool detect_monsters_xxx(int range, u32b match_flag)
 {
-    int  i, y, x;
     bool flag = FALSE;
     cptr desc_monsters = "weird monsters";
 
     if (d_info[dungeon_type].flags1 & DF1_DARKNESS) range /= 3;
 
     /* Scan monsters */
-    for (i = 1; i < m_max; i++)
+    for (int i = 1; i < m_max; i++)
     {
         monster_type *m_ptr = &m_list[i];
         monster_race *r_ptr = &r_info[m_ptr->r_idx];
@@ -1761,9 +1625,8 @@ bool detect_monsters_xxx(int range, u32b match_flag)
         /* Skip dead monsters */
         if (!m_ptr->r_idx) continue;
 
-        /* Location */
-        y = m_ptr->fy;
-        x = m_ptr->fx;
+        int y = m_ptr->fy;
+        int x = m_ptr->fx;
 
         /* Only detect nearby monsters */
         if (distance(py, px, y, x) > range) continue;
@@ -1771,8 +1634,7 @@ bool detect_monsters_xxx(int range, u32b match_flag)
         /* Detect evil monsters */
         if (r_ptr->flags3 & (match_flag))
         {
-            if (is_original_ap(m_ptr))
-                mon_lore_aux_3(r_ptr, match_flag);
+            if (is_original_ap(m_ptr)) mon_lore_aux_3(r_ptr, match_flag);
 
             /* Repair visibility later */
             repair_monsters = TRUE;
@@ -1795,22 +1657,18 @@ bool detect_monsters_xxx(int range, u32b match_flag)
         {
             case RF3_DEMON:
                 desc_monsters = "demons";
-
                 break;
             case RF3_UNDEAD:
                 desc_monsters = "the undead";
-
                 break;
         }
 
-        /* Describe result */
         msg_format("You sense the presence of %s!", desc_monsters);
 
         msg_print(NULL);
     }
 
-    /* Result */
-    return (flag);
+    return flag;
 }
 
 
@@ -1823,19 +1681,19 @@ bool detect_all(int range)
 
     /* Detect everything */
     if (detect_traps(range, TRUE)) detect = TRUE;
-    if (detect_doors(range)) detect = TRUE;
-    if (detect_stairs(range)) detect = TRUE;
+    if (detect_doors(range))       detect = TRUE;
+    if (detect_stairs(range))      detect = TRUE;
 
-    /* There are too many hidden treasure. So... */
+    /* There are too many hidden treasures. So... */
     /* if (detect_treasure(range)) detect = TRUE; */
 
-    if (detect_objects_gold(range)) detect = TRUE;
-    if (detect_objects_normal(range)) detect = TRUE;
-    if (detect_monsters_invis(range)) detect = TRUE;
+    if (detect_objects_gold(range))    detect = TRUE;
+    if (detect_objects_normal(range))  detect = TRUE;
+    if (detect_monsters_invis(range))  detect = TRUE;
     if (detect_monsters_normal(range)) detect = TRUE;
 
     /* Result */
-    return (detect);
+    return detect;
 }
 
 
@@ -1849,13 +1707,12 @@ bool detect_all(int range)
  */
 bool project_hack(int typ, int dam)
 {
-    int     i, x, y;
+    int     x, y;
     int     flg = PROJECT_JUMP | PROJECT_KILL | PROJECT_HIDE;
     bool    obvious = FALSE;
 
-
     /* Mark all (nearby) monsters */
-    for (i = 1; i < m_max; i++)
+    for (int i = 1; i < m_max; i++)
     {
         monster_type *m_ptr = &m_list[i];
 
@@ -1874,7 +1731,7 @@ bool project_hack(int typ, int dam)
     }
 
     /* Affect all marked monsters */
-    for (i = 1; i < m_max; i++)
+    for (int i = 1; i < m_max; i++)
     {
         monster_type *m_ptr = &m_list[i];
 
@@ -1893,7 +1750,7 @@ bool project_hack(int typ, int dam)
     }
 
     /* Result */
-    return (obvious);
+    return obvious;
 }
 
 
@@ -1902,7 +1759,7 @@ bool project_hack(int typ, int dam)
  */
 bool speed_monsters(void)
 {
-    return (project_hack(GF_OLD_SPEED, p_ptr->lev));
+    return project_hack(GF_OLD_SPEED, p_ptr->lev);
 }
 
 /*
@@ -1910,7 +1767,7 @@ bool speed_monsters(void)
  */
 bool slow_monsters(int power)
 {
-    return (project_hack(GF_OLD_SLOW, power));
+    return project_hack(GF_OLD_SLOW, power);
 }
 
 /*
@@ -1918,7 +1775,7 @@ bool slow_monsters(int power)
  */
 bool sleep_monsters(int power)
 {
-    return (project_hack(GF_OLD_SLEEP, power));
+    return project_hack(GF_OLD_SLEEP, power);
 }
 
 
@@ -1936,10 +1793,9 @@ bool banish_evil(int dist)
  */
 bool turn_undead(void)
 {
-    bool tester = (project_hack(GF_TURN_UNDEAD, p_ptr->lev));
-    if (tester)
-        virtue_add(VIRTUE_UNLIFE, -1);
-    return tester;
+    bool cast = project_hack(GF_TURN_UNDEAD, p_ptr->lev);
+    if (cast) virtue_add(VIRTUE_UNLIFE, -1);
+    return cast;
 }
 
 
@@ -1948,10 +1804,9 @@ bool turn_undead(void)
  */
 bool dispel_undead(int dam)
 {
-    bool tester = (project_hack(GF_DISP_UNDEAD, dam));
-    if (tester)
-        virtue_add(VIRTUE_UNLIFE, -2);
-    return tester;
+    bool cast = project_hack(GF_DISP_UNDEAD, dam);
+    if (cast) virtue_add(VIRTUE_UNLIFE, -2);
+    return cast;
 }
 
 /*
@@ -1959,7 +1814,7 @@ bool dispel_undead(int dam)
  */
 bool dispel_evil(int dam)
 {
-    return (project_hack(GF_DISP_EVIL, dam));
+    return project_hack(GF_DISP_EVIL, dam);
 }
 
 /*
@@ -1967,7 +1822,7 @@ bool dispel_evil(int dam)
  */
 bool dispel_good(int dam)
 {
-    return (project_hack(GF_DISP_GOOD, dam));
+    return project_hack(GF_DISP_GOOD, dam);
 }
 
 /*
@@ -1975,7 +1830,7 @@ bool dispel_good(int dam)
  */
 bool dispel_monsters(int dam)
 {
-    return (project_hack(GF_DISP_ALL, dam));
+    return project_hack(GF_DISP_ALL, dam);
 }
 
 /*
@@ -1983,7 +1838,7 @@ bool dispel_monsters(int dam)
  */
 bool dispel_living(int dam)
 {
-    return (project_hack(GF_DISP_LIVING, dam));
+    return project_hack(GF_DISP_LIVING, dam);
 }
 
 /*
@@ -1991,7 +1846,7 @@ bool dispel_living(int dam)
  */
 bool dispel_demons(int dam)
 {
-    return (project_hack(GF_DISP_DEMON, dam));
+    return project_hack(GF_DISP_DEMON, dam);
 }
 
 
@@ -2000,13 +1855,11 @@ bool dispel_demons(int dam)
  */
 void aggravate_monsters(int who)
 {
-    int     i;
     bool    sleep = FALSE;
     bool    speed = FALSE;
 
-
     /* Aggravate everyone nearby */
-    for (i = 1; i < m_max; i++)
+    for (int i = 1; i < m_max; i++)
     {
         monster_type    *m_ptr = &m_list[i];
 /*        monster_race    *r_ptr = &r_info[m_ptr->r_idx]; */
@@ -4003,128 +3856,127 @@ bool fire_bolt_or_beam(int prob, int typ, int dir, int dam)
 bool lite_line(int dir)
 {
     int flg = PROJECT_BEAM | PROJECT_GRID | PROJECT_KILL;
-    return (project_hook(GF_LITE_WEAK, dir, damroll(6, 8), flg));
+    return project_hook(GF_LITE_WEAK, dir, damroll(6, 8), flg);
 }
 
 
 bool drain_life(int dir, int dam)
 {
-    int flg = PROJECT_STOP | PROJECT_KILL | PROJECT_REFLECTABLE;
     if (melee_challenge) return FALSE;
-    return (project_hook(GF_OLD_DRAIN, dir, dam, flg));
+    int flg = PROJECT_STOP | PROJECT_KILL | PROJECT_REFLECTABLE;    
+    return project_hook(GF_OLD_DRAIN, dir, dam, flg);
 }
 
 
 bool wall_to_mud(int dir)
 {
     int flg = PROJECT_BEAM | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL;
-    return (project_hook(GF_KILL_WALL, dir, 20 + randint1(30), flg));
+    return project_hook(GF_KILL_WALL, dir, 20 + randint1(30), flg);
 }
 
 
 bool wizard_lock(int dir)
 {
     int flg = PROJECT_BEAM | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL;
-    return (project_hook(GF_JAM_DOOR, dir, 20 + randint1(30), flg));
+    return project_hook(GF_JAM_DOOR, dir, 20 + randint1(30), flg);
 }
 
 
 bool destroy_door(int dir)
 {
     int flg = PROJECT_BEAM | PROJECT_GRID | PROJECT_ITEM;
-    return (project_hook(GF_KILL_DOOR, dir, 0, flg));
+    return project_hook(GF_KILL_DOOR, dir, 0, flg);
 }
 
 
 bool disarm_trap(int dir)
 {
     int flg = PROJECT_BEAM | PROJECT_GRID | PROJECT_ITEM;
-    return (project_hook(GF_KILL_TRAP, dir, 0, flg));
+    return project_hook(GF_KILL_TRAP, dir, 0, flg);
 }
 
 
 bool heal_monster(int dir, int dam)
 {
     int flg = PROJECT_STOP | PROJECT_KILL;
-    return (project_hook(GF_OLD_HEAL, dir, dam, flg));
+    return project_hook(GF_OLD_HEAL, dir, dam, flg);
 }
 
 
 bool speed_monster(int dir)
 {
     int flg = PROJECT_STOP | PROJECT_KILL;
-    return (project_hook(GF_OLD_SPEED, dir, p_ptr->lev, flg));
+    return project_hook(GF_OLD_SPEED, dir, p_ptr->lev, flg);
 }
 
 
 bool slow_monster(int dir, int power)
 {
     int flg = PROJECT_STOP | PROJECT_KILL | PROJECT_REFLECTABLE;
-    return (project_hook(GF_OLD_SLOW, dir, power, flg));
+    return project_hook(GF_OLD_SLOW, dir, power, flg);
 }
 
 
 bool sleep_monster(int dir, int power)
 {
     int flg = PROJECT_STOP | PROJECT_KILL | PROJECT_REFLECTABLE;
-    return (project_hook(GF_OLD_SLEEP, dir, power, flg));
+    return project_hook(GF_OLD_SLEEP, dir, power, flg);
 }
 
 
 bool stasis_monster(int dir)
 {
-    return (fire_ball_hide(GF_STASIS, dir, p_ptr->lev*2, 0));
+    return fire_ball_hide(GF_STASIS, dir, p_ptr->lev*2, 0);
 }
 
 
 bool stasis_evil(int dir)
 {
-    return (fire_ball_hide(GF_STASIS_EVIL, dir, p_ptr->lev*2, 0));
+    return fire_ball_hide(GF_STASIS_EVIL, dir, p_ptr->lev*2, 0);
 }
 
 
 bool confuse_monster(int dir, int plev)
 {
     int flg = PROJECT_STOP | PROJECT_KILL | PROJECT_REFLECTABLE;
-    return (project_hook(GF_OLD_CONF, dir, plev, flg));
+    return project_hook(GF_OLD_CONF, dir, plev, flg);
 }
 
 
 bool stun_monster(int dir, int plev)
 {
     int flg = PROJECT_STOP | PROJECT_KILL | PROJECT_REFLECTABLE;
-    return (project_hook(GF_STUN, dir, 5 + plev/5, flg));
+    return project_hook(GF_STUN, dir, 5 + plev/5, flg);
 }
 
 
 bool poly_monster(int dir)
 {
     int flg = PROJECT_STOP | PROJECT_KILL | PROJECT_REFLECTABLE;
-    bool tester = (project_hook(GF_OLD_POLY, dir, p_ptr->lev, flg));
-    if (tester)
-        virtue_add(VIRTUE_CHANCE, 1);
-    return(tester);
+    bool cast = (project_hook(GF_OLD_POLY, dir, p_ptr->lev, flg));
+    if (cast) virtue_add(VIRTUE_CHANCE, 1);
+    return cast;
 }
 
 
 bool clone_monster(int dir)
 {
     int flg = PROJECT_STOP | PROJECT_KILL | PROJECT_REFLECTABLE;
-    return (project_hook(GF_OLD_CLONE, dir, 0, flg));
+    return project_hook(GF_OLD_CLONE, dir, 0, flg);
 }
 
 
 bool fear_monster(int dir, int plev)
 {
     int flg = PROJECT_STOP | PROJECT_KILL | PROJECT_REFLECTABLE;
-    return (project_hook(GF_TURN_ALL, dir, plev, flg));
+    return project_hook(GF_TURN_ALL, dir, plev, flg);
 }
 
 
 bool teleport_monster(int dir)
 {
     int flg = PROJECT_BEAM | PROJECT_KILL;
-    return (project_hook(GF_AWAY_ALL, dir, MAX_SIGHT * 5, flg));
+    return project_hook(GF_AWAY_ALL, dir, MAX_SIGHT * 5, flg);
 }
 
 /*
@@ -4133,65 +3985,61 @@ bool teleport_monster(int dir)
 bool door_creation(void)
 {
     int flg = PROJECT_GRID | PROJECT_ITEM | PROJECT_HIDE;
-    return (project(0, 1, py, px, 0, GF_MAKE_DOOR, flg));
+    return project(0, 1, py, px, 0, GF_MAKE_DOOR, flg);
 }
 
 
 bool trap_creation(int y, int x)
 {
     int flg = PROJECT_GRID | PROJECT_ITEM | PROJECT_HIDE;
-    return (project(0, 1, y, x, 0, GF_MAKE_TRAP, flg));
+    return project(0, 1, y, x, 0, GF_MAKE_TRAP, flg);
 }
 
 
 bool tree_creation(void)
 {
     int flg = PROJECT_GRID | PROJECT_ITEM | PROJECT_HIDE;
-    return (project(0, 1, py, px, 0, GF_MAKE_TREE, flg));
+    return project(0, 1, py, px, 0, GF_MAKE_TREE, flg);
 }
 
 
 bool glyph_creation(void)
 {
     int flg = PROJECT_GRID | PROJECT_ITEM;
-    return (project(0, 1, py, px, 0, GF_MAKE_GLYPH, flg));
+    return project(0, 1, py, px, 0, GF_MAKE_GLYPH, flg);
 }
 
 
 bool wall_stone(void)
 {
     int flg = PROJECT_GRID | PROJECT_ITEM | PROJECT_HIDE;
+    bool temp = project(0, 1, py, px, 0, GF_MAKE_WALL, flg);
 
-    bool dummy = (project(0, 1, py, px, 0, GF_MAKE_WALL, flg));
+    p_ptr->update |= PU_FLOW;
+    p_ptr->redraw |= PR_MAP;
 
-    /* Update stuff */
-    p_ptr->update |= (PU_FLOW);
-
-    /* Redraw map */
-    p_ptr->redraw |= (PR_MAP);
-
-    return dummy;
+    return temp;
 }
 
 
 bool destroy_doors_touch(void)
 {
     int flg = PROJECT_GRID | PROJECT_ITEM | PROJECT_HIDE;
-    return (project(0, 1, py, px, 0, GF_KILL_DOOR, flg));
+    return project(0, 1, py, px, 0, GF_KILL_DOOR, flg);
 }
 
 
 bool sleep_monsters_touch(void)
 {
     int flg = PROJECT_KILL | PROJECT_HIDE;
-    return (project(0, 1, py, px, p_ptr->lev, GF_OLD_SLEEP, flg));
+    return project(0, 1, py, px, p_ptr->lev, GF_OLD_SLEEP, flg);
 }
 
 
 bool animate_dead(int who, int y, int x)
 {
     int flg = PROJECT_ITEM | PROJECT_HIDE;
-    return (project(who, 5, y, x, 0, GF_ANIM_DEAD, flg));
+    return project(who, 5, y, x, 0, GF_ANIM_DEAD, flg);
 }
 
 
@@ -4489,7 +4337,6 @@ int summon_cyber(int who, int y, int x)
 
 void wall_breaker(void)
 {
-    int i;
     int y = 0, x = 0;
     int attempts = 1000;
 
@@ -4498,14 +4345,11 @@ void wall_breaker(void)
         while (attempts--)
         {
             scatter(&y, &x, py, px, 4, 0);
-
             if (!cave_have_flag_bold(y, x, FF_PROJECT)) continue;
-
             if (!player_bold(y, x)) break;
         }
 
-        project(0, 0, y, x, 20 + randint1(30), GF_KILL_WALL,
-                  (PROJECT_BEAM | PROJECT_THRU | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL));
+        project(0, 0, y, x, 20 + randint1(30), GF_KILL_WALL, PROJECT_BEAM | PROJECT_THRU | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL);
     }
     else if (randint1(100) > 30)
     {
@@ -4515,17 +4359,15 @@ void wall_breaker(void)
     {
         int num = damroll(5, 3);
 
-        for (i = 0; i < num; i++)
+        for (int i = 0; i < num; i++)
         {
             while (1)
             {
                 scatter(&y, &x, py, px, 10, 0);
-
                 if (!player_bold(y, x)) break;
             }
 
-            project(0, 0, y, x, 20 + randint1(30), GF_KILL_WALL,
-                      (PROJECT_BEAM | PROJECT_THRU | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL));
+            project(0, 0, y, x, 20 + randint1(30), GF_KILL_WALL, PROJECT_BEAM | PROJECT_THRU | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL);
         }
     }
 }
@@ -4536,7 +4378,7 @@ void wall_breaker(void)
  */
 bool confuse_monsters(int dam)
 {
-    return (project_hack(GF_OLD_CONF, dam));
+    return project_hack(GF_OLD_CONF, dam);
 }
 
 

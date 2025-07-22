@@ -137,11 +137,9 @@ static int get_spell(int *sn, cptr prompt, int sval, bool learned, int use_realm
     window_stuff();
 
     /* Build a prompt (accept all spells) */
-    (void)strnfmt(out_val, 78, "(%^ss %c-%c, *=List, ESC=exit) %^s which %s? ",
-        p, I2A(0), I2A(num - 1), prompt, p);
+    (void)strnfmt(out_val, 78, "(%^ss %c-%c, *=List, ESC=exit) %^s which %s? ", p, I2A(0), I2A(num - 1), prompt, p);
 
     /* Get a spell from the user */
-
     choice = ESCAPE;
     while (!flag)
     {
@@ -605,28 +603,19 @@ static void wild_magic(int spell)
 {
     switch (randint1(spell) + randint0(8))
     {
-    case 1:
-    case 2:
-    case 3:
+    case 1: case 2: case 3:
         teleport_player(10, TELEPORT_PASSIVE);
         break;
-    case 4:
-    case 5:
-    case 6:
+    case 4: case 5: case 6:
         teleport_player(100, TELEPORT_PASSIVE);
         break;
-    case 7:
-    case 8:
+    case 7:  case 8:
         teleport_player(200, TELEPORT_PASSIVE);
         break;
-    case 9:
-    case 10:
-    case 11:
+    case 9: case 10:  case 11:
         unlite_area(10, 3);
         break;
-    case 12:
-    case 13:
-    case 14:
+    case 12: case 13: case 14:
         lite_area(damroll(2, 3), 2);
         break;
     case 15:
@@ -637,28 +626,22 @@ static void wild_magic(int spell)
     case 18:
         sleep_monsters_touch();
         break;
-    case 19:
-    case 20:
+    case 19: case 20:
         trap_creation(py, px);
         break;
-    case 21:
-    case 22:
+    case 21: case 22:
         door_creation();
         break;
-    case 23:
-    case 24:
-    case 25:
+    case 23: case 24: case 25:
         aggravate_monsters(0);
         break;
     case 26:
         earthquake(py, px, 5);
         break;
-    case 27:
-    case 28:
+    case 27: case 28:
         mut_gain_random(NULL);
         break;
-    case 29:
-    case 30:
+    case 29: case 30:
         apply_disenchant(1);
         break;
     case 31:
@@ -667,21 +650,18 @@ static void wild_magic(int spell)
     case 32:
         fire_ball(GF_CHAOS, 0, spell + 5, 1 + (spell / 10));
         break;
-    case 33:
-    case 34:
+    case 33: case 34:
         wall_stone();
         break;
-    case 35:
-    case 36: {
+    case 35: case 36:
+    {
         int counter = 0;
         int type = rand_range(SUMMON_BIZARRE1, SUMMON_BIZARRE6);
         int dl = dun_level*3/2;
-        while (counter++ < 8)
-            summon_specific(0, py, px, dl, type, PM_ALLOW_GROUP | PM_NO_PET);
-        break; }
-    case 37:
-    case 38:
-    case 39: /* current max */
+        while (counter++ < 8) summon_specific(0, py, px, dl, type, PM_ALLOW_GROUP | PM_NO_PET);
+        break;
+    }
+    case 37: case 38: case 39: /* current max */
     default: /* paranoia */
         activate_hi_summon(py, px, FALSE);
         break;

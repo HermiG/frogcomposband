@@ -2429,9 +2429,9 @@ errr effect_parse(char *line, effect_t *effect) /* LITE_AREA:<Lvl>:<Timeout>:<Ex
 
     switch (num)
     {
-    case 4: effect->extra = atoi(tokens[3]);
-    case 3: effect->cost = atoi(tokens[2]);
-    case 2: effect->power = atoi(tokens[1]);
+    case 4: effect->extra      = atoi(tokens[3]);
+    case 3: effect->cost       = atoi(tokens[2]);
+    case 2: effect->power      = atoi(tokens[1]);
             effect->difficulty = effect->power;
     case 1:
         for (i = 0; ; i++)
@@ -2450,10 +2450,9 @@ errr effect_parse(char *line, effect_t *effect) /* LITE_AREA:<Lvl>:<Timeout>:<Ex
 
 static int _choose_random_p(effect_p p)
 {
-    int i, n;
     int tot = 0;
 
-    for (i = 0; ; i++)
+    for (int i = 0; ; i++)
     {
         if (!_effect_info[i].type) break;
         if (!_effect_info[i].rarity) continue;
@@ -2463,9 +2462,9 @@ static int _choose_random_p(effect_p p)
     }
 
     if (!tot) return -1;
-    n = randint1(tot);
+    int n = randint1(tot);
 
-    for (i = 0; ; i++)
+    for (int i = 0; ; i++)
     {
         if (!_effect_info[i].type) break;
         if (!_effect_info[i].rarity) continue;
@@ -2479,12 +2478,11 @@ static int _choose_random_p(effect_p p)
 
 static int _choose_random(int bias)
 {
-    int i, n;
     int tot = 0;
 
 /*  if (one_in_(3)) bias = 0; */
 
-    for (i = 0; ; i++)
+    for (int i = 0; ; i++)
     {
         if (!_effect_info[i].type) break;
         if (_effect_info[i].level < object_level / 3) continue;
@@ -2495,9 +2493,9 @@ static int _choose_random(int bias)
     }
 
     if (!tot) return -1;
-    n = randint1(tot);
+    int n = randint1(tot);
 
-    for (i = 0; ; i++)
+    for (int i = 0; ; i++)
     {
         if (!_effect_info[i].type) break;
         if (_effect_info[i].level < object_level / 3) continue;

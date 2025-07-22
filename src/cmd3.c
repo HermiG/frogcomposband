@@ -473,7 +473,6 @@ void do_cmd_query_symbol(void)
     bool    ride = FALSE;
     char    temp[80] = "";
 
-    bool    recall = FALSE;
     doc_ptr doc = NULL;
 
     u16b    why = 0;
@@ -1558,6 +1557,7 @@ static void _list_monsters_aux(_mon_list_ptr list, rect_t display_rect, int mode
         /* Exit */
         case ']':
             switch_to_list_objects = TRUE;
+            // Fall-through
         case ESCAPE:
         case 'Q':
         case '\n':
@@ -2096,6 +2096,7 @@ void do_cmd_list_objects(void)
                 break;
             case '[':
                 switch_to_list_monsters = TRUE;
+                // Fall-through
             case ESCAPE:
             case 'Q':
             case '\n':

@@ -82,176 +82,190 @@ G:&:w
 # Mushrooms (TV_FOOD)
 ########################################################################
 
-N:1:Poison:Red
-G:,:r
+N:1:Poisonous:Red-gilled
+G:,:R
 I:80:0:500
 W:5:0:30:1:0
 A:5/1
 P:0:4d4:0:0:0
 M:70:1d4
-D:It poisons you when you eat it.
+F:PREFIX_NAME
+D:When consumed, it delivers a bitter toxin that courses through your veins.
 
-N:*:Blindness:Blue
-G:,:b
+N:*:Veil Fungus~:Spongy Blue
+G:,:n
 I:80:1:500
 W:5:0:30:1:0
 A:5/1
 M:70:1d4
-D:It blinds you when you eat it.
+F:FULL_NAME
+D:When consumed, it clouds your vision in utter darkness.
 
-N:*:Paranoia:Black
+N:*:Dreadcap~:Oozing Black
 G:,:D
 I:80:2:500
 W:5:0:30:1:0
 A:5/1
 M:70:1d4
-D:It scares you when you eat it.
+F:FULL_NAME
+D:When consumed, it floods your mind with irrational fear.
 
-N:*:Confusion:Black Spotted
-G:,:D
+N:*:Befuddling Spores:Purple-speckled
+G:,:v
 I:80:3:500
 W:5:0:30:1:0
 A:5/1
 M:70:1d4
-D:It confuses you when you eat it.
+F:FULL_NAME | PLURAL
+D:When inhaled, they scatter your sense of direction and purpose.
 
-N:*:Hallucination:Brown
-G:,:u
+N:*:Hallucinogenic:Hairy Yellow
+G:,:M
 I:80:4:500
 W:10:0:30:1:0
 A:10/1
 M:70:1d4
-D:It makes you hallucinate when you eat it.
+F:PREFIX_NAME
+D:When consumed, it warps your senses and conjures vivid illusions.
 
-N:*:Paralysis:Tan
-G:,:U
+N:*:Rootspore~:Ash-dusted
+G:,:W
 I:80:5:500
 W:20:0:40:1:0
 A:20/1
 M:70:1d4
-D:It paralyzes you when you eat it.
+F:FULL_NAME
+D:When consumed, it numbs your limbs and leaves you utterly motionless.
 
-N:*:Weakness:Furry
-G:,:W
+N:*:Withercap~:Furry
+G:,:u
 I:80:6:500
 W:10:0:30:1:0
 A:10/1
 M:70:1d4
 P:0:5d5:0:0:0
-D:You take 6d6 damage and it decreases your strength when you eat it.
+F:FULL_NAME
+D:When consumed, it inflames your nerves and saps your physical strength.
 
-N:*:Sickness:Slimy
-G:,:s
+N:*:Rotgut:Slimy Green
+G:,:G
 I:80:7:500
 W:10:0:30:1:0
 A:10/1
 P:0:4d4:0:0:0
 M:70:1d4
-D:You take 6d6 damage and it decreases your constitution when you eat it.
+F:PREFIX_NAME
+D:When consumed, it ravages your insides and weakens your vitality.
 
-N:*:Stupidity:Light Green
-G:,:G
+N:*:Magebane:Ochre-ribbed
+G:,:o
 I:80:8:500
 W:15:0:30:1:0
 A:15/1
 M:70:1d4
-D:You take 8d8 damage and it decreases your intelligence when you eat it.
+F:PREFIX_NAME
+D:When consumed, it dulls your intellect and obscures arcane insight.
 
-N:*:Naivety:Violet
-G:,:v
+N:*:Fool's Cap:Dusky Violet
+G:,:c
 I:80:9:500
 W:15:0:30:1:0
 A:15/1
 M:70:1d4
-D:You take 8d8 damage and it decreases your wisdom when you eat it.
+F:PREFIX_NAME
+D:When consumed, it clouds wisdom and compromises judgment.
 
-N:*:Unhealth:Green
+N:*:Bloodrot Fungus~:Sticky Green
 G:,:g
 I:80:10:500
 W:15:0:40:1:50
 A:15/1
 P:0:10d10:0:0:0
 M:70:1d4
-D:You take 10d10 damage and it decreases your constitution when you eat it.
+F:FULL_NAME
+D:When consumed, it eats away at your health and fortitude from within.
 
-N:*:Disease:White Spotted
+N:*:Wasting Mycelia:White Spotted
 G:,:w
 I:80:11:500
 W:20:0:40:1:50
 A:20/1
 P:0:10d10:0:0:0
 M:70:1d4
-D:You take 10d10 damage and it decreases your strength when you eat it.
+F:FULL_NAME | PLURAL
+D:When consumed, they sap your strength and leave you frail.
 
-N:*:Cure Poison:Dark Blue
-G:,:b
+N:*:Purgewort:Filamentous Pink
+G:,:p
 I:80:12:500
 W:10:0:0:1:120
-F:TOWN
+F:PREFIX_NAME | TOWN
 A:10/1
 M:70:1d4
-D:It cures poison when you eat it.
+D:When consumed, it purges poison from your body.
 
-N:*:Cure Blindness:Dark Green
-G:,:g
+N:*:Vision Spores:Fibrous
+G:,:h
 I:80:13:500
 W:10:0:30:1:30
-F:TOWN
 A:10/1
 M:70:1d4
-D:It cures blindness when you eat it.
+F:FULL_NAME | PLURAL | TOWN
+D:When inhaled, they cleanse your eyes and restore your sight.
 
-N:*:Cure Paranoia:Dark Red
+N:*:Valorcap:Crimson-veined
 G:,:r
 I:80:14:500
 W:10:0:0:1:25
-F:TOWN
 A:10/1
 M:70:1d4
-D:It removes fear when you eat it.
+F:PREFIX_NAME | TOWN
+D:When consumed, it steels your nerves and dispels all fear.
 
-N:*:Cure Confusion:Yellow
+N:*:Clarity:Pungent Yellow
 G:,:y
 I:80:15:500
 W:10:0:40:1:30
 F:TOWN
 A:10/1
 M:70:1d4
-D:It cures confusion when you eat it.
+D:When consumed, it brings calm and mental focus, dispelling confusion.
 
-N:*:Restore Constitution:Grey
-G:,:s
+N:*:Vigorbloom:Gold-flecked
+G:,:O
 I:80:18:500
 W:20:0:0:1:350
 A:20/1
 M:70:1d4
-D:It restores your constitution when you eat it.
+F:PREFIX_NAME
+D:When consumed, your constitution is restored, as vitality surges through your body.
 
-N:*:Restoring:Light Blue
-G:,:B
-I:80:19:500
-W:20:0:0:1:1000
-A:20/8:30/4:40/1
-M:10:1d4
-F:NO_SHUFFLE
-D:It restores all your stats when you eat it.
-
-N:*:Restore Strength:White
-G:,:w
+N:*:Brawncap:Mottled Lilac
+G:,:V
 I:80:17:500
 W:20:0:0:1:350
 A:20/1
 M:70:1d4
-D:It restores your strength when you eat it.
+F:PREFIX_NAME
+D:When consumed, your body is revitalized with renewed strength.
 
-N:*:Fast Recovery:Wrinkled
-G:,:u
+N:*:Panacelium:Diaphanous Blue
+G:,:S
+I:80:19:500
+W:20:0:0:1:1000
+A:20/8:30/4:40/1
+M:10:1d4
+F:PREFIX_NAME
+D:When consumed, it renews body and mind alike, restoring all lost faculties.
+
+N:*:Mendshroom~:Wrinkled
+G:,:U
 I:80:16:500
 W:15:0:0:2:30
-F:TOWN
 A:15/1
 M:70:1d4
-D:It speeds your recovery when you eat it.
+F:FULL_NAME | TOWN
+D:When consumed, it quickens your natural healing, hastening your recovery.
 
 # SV_FOOD_MAX_MUSHROOM = 31
 

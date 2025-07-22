@@ -1301,16 +1301,27 @@ void object_desc(char *buf, object_type *o_ptr, u32b mode)
 
         case TV_FOOD:
         {
-            /* Ordinary food is "boring" */
-            if (!k_ptr->flavor_name) break;
-
-            /* Color the object */
-            modstr = k_name + flavor_k_ptr->flavor_name;
-
+          /* Ordinary food is "boring" */
+          if (!k_ptr->flavor_name) break;
+          
+          /* Color the object */
+          modstr = k_name + flavor_k_ptr->flavor_name;
+          
+          if(have_flag(flgs, OF_FULL_NAME)) {
+            if (!flavor)    basenm = "& %";
+            else if (aware) basenm = "& # %";
+            else            basenm = "& # Mushroom~";
+          }
+          else if(have_flag(flgs, OF_PREFIX_NAME)) {
+            if (!flavor)    basenm = "& % Mushroom~";
+            else if (aware) basenm = "& # % Mushroom~";
+            else            basenm = "& # Mushroom~";
+          } else {
             if (!flavor)    basenm = "& Mushroom~ of %";
             else if (aware) basenm = "& # Mushroom~ of %";
             else            basenm = "& # Mushroom~";
-            break;
+          }
+          break;
         }
 
         case TV_PARCHMENT:
@@ -1483,7 +1494,7 @@ void object_desc(char *buf, object_type *o_ptr, u32b mode)
     {
         if      (known && o_ptr->name1) basenm = a_name + a_info[o_ptr->name1].name;
         else if (known && o_ptr->name2) basenm = e_name + e_info[o_ptr->name2].name;
-        else                            basenm = kindname;
+        else if (!k_ptr->flavor_name)   basenm = kindname;
     }
 
 
@@ -1566,13 +1577,13 @@ void object_desc(char *buf, object_type *o_ptr, u32b mode)
         }
 
         /* A single one */
-        else
+        else if (!have_flag(o_ptr->flags, OF_PLURAL))
         {
             bool vowel;
 
             switch (*s)
             {
-            case '#': vowel = is_a_vowel(modstr[0]); break;
+            case '#': vowel = is_a_vowel(*modstr); break;
             case '%': vowel = is_a_vowel(*kindname); break;
             default:  vowel = is_a_vowel(*s); break;
             }
@@ -1591,17 +1602,12 @@ void object_desc(char *buf, object_type *o_ptr, u32b mode)
         {
             t = object_desc_num(t, number);
             t = object_desc_chr(t, ' ');
-        }
-
-        // The only one of its kind
-        else if (known && object_is_artifact(o_ptr))
-        {
-            if (o_ptr->name1 != ART_MOM) t = object_desc_str(t, "The ");
-        }
+        } // The only one of its kind
+        else if (known && object_is_artifact(o_ptr) && o_ptr->name1 != ART_MOM) t = object_desc_str(t, "The ");
         // Single items get no prefix
     }
 
-    if (mod_prefix_str[0]) t = object_desc_str(t, mod_prefix_str);
+    if (*mod_prefix_str) t = object_desc_str(t, mod_prefix_str);
 
     /* Copy the string */
     for (s0 = NULL; *s || s0; )
@@ -1637,13 +1643,20 @@ void object_desc(char *buf, object_type *o_ptr, u32b mode)
         else if (*s == '~')
         {
             /* Add a plural if needed */
-            if (!(mode & OD_NO_PLURAL) && ((number != 1) || (have_flag(o_ptr->flags, OF_PLURAL))))
+            if (!(mode & OD_NO_PLURAL) && (number != 1 || have_flag(o_ptr->flags, OF_PLURAL)))
             {
                 char k = t[-1];
 
                 /* Hack -- "Cutlass-es" and "Torch-es", but "Photograph-s" */
                 if (k == 's' || (k == 'h' && o_ptr->tval != TV_STATUE)) *t++ = 'e';
                 *t++ = 's';
+              
+                int pos = strpos("Funguses", tmp_val);
+                if (pos)
+                {
+                  tmp_val[pos + 3] = 'i';
+                  tmp_val[pos + 4] = '\0';
+                }
             }
             s++;
         }

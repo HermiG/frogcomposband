@@ -884,7 +884,7 @@ static void save_prefs_for_term(int i)
     GetWindowRect(td->w, &rc);
 
     /* Window position (x) */
-    wsprintf(buf, "%d", rc.left + (i ? 5 : 0));
+    wsprintf(buf, "%d", rc.left);
     WritePrivateProfileString(sec_name, "PositionX", buf, ini_file);
 
     /* Window position (y) */
@@ -2240,6 +2240,21 @@ static void term_data_link(term_data *td)
 }
 
 
+void validateWindowPosition(int *x, int *y, int width, int height)
+{
+  RECT proposed = { *x, *y, *x + width, *y + height };
+  HMONITOR hmon = MonitorFromRect(&proposed, MONITOR_DEFAULTTONEAREST);
+  MONITORINFO mi = { .cbSize = sizeof(mi) };
+  GetMonitorInfo(hmon, &mi);
+  RECT work = mi.rcWork;  // Excludes taskbar, etc.
+  const int min_visible_titlebar = 32; // Require at least 32px of the title bar to be visible
+  
+  if (proposed.right  < work.left   + min_visible_titlebar) *x = work.left   + min_visible_titlebar - width;
+  if (proposed.left   > work.right  - min_visible_titlebar) *x = work.right  - min_visible_titlebar;
+  if (proposed.bottom < work.top    + min_visible_titlebar) *y = work.top    + min_visible_titlebar - height;
+  if (proposed.top    > work.bottom - min_visible_titlebar) *y = work.bottom - min_visible_titlebar;
+}
+
 /*
  * Create the windows
  *
@@ -2322,6 +2337,8 @@ static void init_windows(void)
         
         term_setsize(td);
         term_window_resize(td);
+        
+        validateWindowPosition(&td->pos_x, &td->pos_y, td->size_wid, td->size_hgt);
     }
 
     /* Main window */

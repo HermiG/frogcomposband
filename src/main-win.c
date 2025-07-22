@@ -362,10 +362,10 @@ struct _term_data
     uint rows;
     uint cols;
 
-    uint pos_x;
-    uint pos_y;
-    uint size_wid;
-    uint size_hgt;
+    int pos_x;
+    int pos_y;
+    int size_wid;
+    int size_hgt;
     uint insetL;
     uint insetT;
     uint insetR;

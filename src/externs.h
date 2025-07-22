@@ -1068,6 +1068,7 @@ extern bool cast_summon_greater_demon(void);
 extern bool cast_wrath_of_the_god(int dam, int rad);
 bool trump_summoning(int num, bool pet, int y, int x, int lev, int type, u32b mode);
 extern void do_sneeze(void);
+extern void wild_magic(int spell);
 
 /* dungeon.c */
 extern void extract_option_vars(void);

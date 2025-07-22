@@ -72,7 +72,7 @@ static int get_spell(int *sn, cptr prompt, int sval, bool learned, int use_realm
     char        out_val[160];
     cptr        p;
     rect_t      display = ui_menu_rect();
-    int menu_line = (use_menu ? 1 : 0);
+    int menu_line = !! use_menu;
 
 #ifdef ALLOW_REPEAT /* TNB */
 
@@ -599,79 +599,6 @@ void do_cmd_study(void)
 }
 
 
-static void wild_magic(int spell)
-{
-    switch (randint1(spell) + randint0(8))
-    {
-    case 1: case 2: case 3:
-        teleport_player(10, TELEPORT_PASSIVE);
-        break;
-    case 4: case 5: case 6:
-        teleport_player(100, TELEPORT_PASSIVE);
-        break;
-    case 7:  case 8:
-        teleport_player(200, TELEPORT_PASSIVE);
-        break;
-    case 9: case 10:  case 11:
-        unlite_area(10, 3);
-        break;
-    case 12: case 13: case 14:
-        lite_area(damroll(2, 3), 2);
-        break;
-    case 15:
-        destroy_doors_touch();
-        break;
-    case 16: case 17:
-        wall_breaker();
-        break;
-    case 18:
-        sleep_monsters_touch();
-        break;
-    case 19: case 20:
-        trap_creation(py, px);
-        break;
-    case 21: case 22:
-        door_creation();
-        break;
-    case 23: case 24: case 25:
-        aggravate_monsters(0);
-        break;
-    case 26:
-        earthquake(py, px, 5);
-        break;
-    case 27: case 28:
-        mut_gain_random(NULL);
-        break;
-    case 29: case 30:
-        apply_disenchant(1);
-        break;
-    case 31:
-        lose_all_info();
-        break;
-    case 32:
-        fire_ball(GF_CHAOS, 0, spell + 5, 1 + (spell / 10));
-        break;
-    case 33: case 34:
-        wall_stone();
-        break;
-    case 35: case 36:
-    {
-        int counter = 0;
-        int type = rand_range(SUMMON_BIZARRE1, SUMMON_BIZARRE6);
-        int dl = dun_level*3/2;
-        while (counter++ < 8) summon_specific(0, py, px, dl, type, PM_ALLOW_GROUP | PM_NO_PET);
-        break;
-    }
-    case 37: case 38: case 39: /* current max */
-    default: /* paranoia */
-        activate_hi_summon(py, px, FALSE);
-        break;
-    }
-
-    return;
-}
-
-
 /*
  * Cast a spell
  */
@@ -862,8 +789,7 @@ void do_cmd_cast(void)
     /* Ask for a spell */
     if (!get_spell(&spell, spl_verb, book->sval, TRUE, use_realm, FALSE))
     {
-        if (spell == -2)
-            msg_format("You don't know any %ss in that book.", prayer);
+        if (spell == -2) msg_format("You don't know any %ss in that book.", prayer);
         return;
     }
 
@@ -946,8 +872,7 @@ void do_cmd_cast(void)
     if (p_ptr->pclass == CLASS_YELLOW_MAGE)
     {
         int delta = p_ptr->lev - vaikeustaso;
-        if (delta > 0) /* paranoia */
-            energy_use -= delta;
+        if (delta > 0) energy_use -= delta;
     }
     energy_use = energy_use * 100 / p_ptr->spells_per_round;
 

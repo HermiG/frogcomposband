@@ -505,15 +505,9 @@ void do_sneeze(void)
     }
 }
 
-static void wild_magic(int spell)
+void wild_magic(int spell)
 {
-    int counter = 0;
-    int type = SUMMON_BIZARRE1 + randint0(6);
-
-    if (type < SUMMON_BIZARRE1) type = SUMMON_BIZARRE1;
-    else if (type > SUMMON_BIZARRE6) type = SUMMON_BIZARRE6;
-
-    switch (randint1(spell) + randint1(8) + 1)
+    switch (randint0(spell+1) + randint1(9))
     {
     case 1: case 2: case 3:
         teleport_player(10, TELEPORT_PASSIVE);
@@ -566,22 +560,26 @@ static void wild_magic(int spell)
     case 33:
         wall_stone();
         break;
-    case 34:  case 35:
-        while (counter++ < 8) (void)summon_specific(0, py, px, (dun_level * 3) / 2, type, (PM_ALLOW_GROUP | PM_NO_PET));
+    case 34: case 35:
+    {
+        int type = rand_range(SUMMON_BIZARRE1, SUMMON_BIZARRE6);
+        for(int i = 0; i < 8; i++) summon_specific(0, py, px, (dun_level * 3) / 2, type, PM_ALLOW_GROUP | PM_NO_PET);
         break;
+    }
     case 36: case 37:
         activate_hi_summon(py, px, FALSE);
         break;
     case 38:
-        (void)summon_cyber(-1, py, px);
+        summon_cyber(-1, py, px);
         break;
+    case 39:
     default:
-        {
-            int count = 0;
-            (void)activate_ty_curse(FALSE, &count);
-            break;
-        }
+    {
+        int count = 0;
+        activate_ty_curse(FALSE, &count);
+        break;
     }
+    } // switch
 }
 
 

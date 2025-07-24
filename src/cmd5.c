@@ -604,22 +604,19 @@ void do_cmd_study(void)
  */
 static int _force_handler(obj_prompt_context_ptr context, int cmd)
 {
-    if (cmd == 'F')
-        return OP_CMD_DISMISS;
+    if (cmd == 'F') return OP_CMD_DISMISS;
     return OP_CMD_SKIPPED;
 }
 
 static int _ninjutsu_handler(obj_prompt_context_ptr context, int cmd)
 {
-    if ((cmd == 'N') || (cmd == 'n'))
-        return OP_CMD_DISMISS;
+    if ((cmd == 'N') || (cmd == 'n')) return OP_CMD_DISMISS;
     return OP_CMD_SKIPPED;
 }
 
 static int _politics_handler(obj_prompt_context_ptr context, int cmd)
 {
-    if ((cmd == 'P') || (cmd == 'p'))
-        return OP_CMD_DISMISS;
+    if ((cmd == 'P') || (cmd == 'p')) return OP_CMD_DISMISS;
     return OP_CMD_SKIPPED;
 }
 

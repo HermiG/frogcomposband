@@ -1840,7 +1840,7 @@ static void a_m_aux_4(object_type *o_ptr, int level, int power, int mode)
  */
 bool apply_magic(object_type *o_ptr, int lev, u32b mode)
 {
-    int i, rolls, f1, f2;
+    int rolls, f1, f2;
     int maxf1 = d_info[dungeon_type].obj_good;
     int maxf2 = d_info[dungeon_type].obj_great;
 
@@ -4125,8 +4125,7 @@ s16b drop_near(object_type *j_ptr, int chance, int y, int x)
     if (!done && !o_idx)
     {
         /* Message */
-        msg_format("The %s disappear%s.",
-               o_name, (plural ? "" : "s"));
+        msg_format("The %s disappear%s.", o_name, (plural ? "" : "s"));
 
 
         /* Debug */

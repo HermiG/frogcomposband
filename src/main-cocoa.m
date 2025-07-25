@@ -1052,7 +1052,7 @@ static NSMenuItem *superitem(NSMenuItem *self)
     int termIndex = 0;
     for(termIndex = 0; termIndex < ANGBAND_TERM_MAX; termIndex++) if(angband_term[termIndex] == self->terminal) break;
     
-    NSArray *terminals = [[NSUserDefaults standardUserDefaults] valueForKey: AngbandTerminalsDefaultsKey];
+    NSArray *terminals = [[NSUserDefaults standardUserDefaults] objectForKey:AngbandTerminalsDefaultsKey];
     
     if(termIndex < (int)[terminals count])
     {
@@ -1281,15 +1281,15 @@ static void Term_init_cocoa(term *t)
     if (! fontSize) fontSize = [default_font pointSize];
     [context setSelectionFont:[NSFont fontWithName:fontName size:fontSize] adjustTerminal:NO];
 
-    NSArray *terminalDefaults = [[NSUserDefaults standardUserDefaults] valueForKey:AngbandTerminalsDefaultsKey];
+    NSArray *terminalDefaults = [[NSUserDefaults standardUserDefaults] objectForKey:AngbandTerminalsDefaultsKey];
     NSInteger rows = 24;
     NSInteger columns = 80;
 
     if(termIdx < (int)[terminalDefaults count])
     {
         NSDictionary *term = [terminalDefaults objectAtIndex:termIdx];
-        rows = [[term valueForKey:AngbandTerminalRowsDefaultsKey] integerValue];
-        columns = [[term valueForKey:AngbandTerminalColumnsDefaultsKey] integerValue];
+        rows = [[term objectForKey:AngbandTerminalRowsDefaultsKey] integerValue];
+        columns = [[term objectForKey:AngbandTerminalColumnsDefaultsKey] integerValue];
     }
     
     context->cols = columns;
@@ -1827,15 +1827,15 @@ static void wakeup_event_loop(void)
  */
 static term * term_data_link(int i)
 {
-    NSArray *terminalDefaults = [[NSUserDefaults standardUserDefaults] valueForKey: AngbandTerminalsDefaultsKey];
+    NSArray *terminalDefaults = [[NSUserDefaults standardUserDefaults] objectForKey:AngbandTerminalsDefaultsKey];
     NSInteger rows = 24;
     NSInteger columns = 80;
 
     if( i < (int)[terminalDefaults count] )
     {
         NSDictionary *term = [terminalDefaults objectAtIndex: i];
-        rows = [[term valueForKey: AngbandTerminalRowsDefaultsKey] integerValue];
-        columns = [[term valueForKey: AngbandTerminalColumnsDefaultsKey] integerValue];
+        rows = [[term objectForKey:AngbandTerminalRowsDefaultsKey] integerValue];
+        columns = [[term objectForKey:AngbandTerminalColumnsDefaultsKey] integerValue];
     }
 
     term *newterm = ZNEW(term);
@@ -1898,7 +1898,7 @@ static void load_prefs()
     
     frames_per_second = [[NSUserDefaults angbandDefaults] integerForKey:@"FramesPerSecond"];
     
-    default_font = [[NSFont fontWithName:[defs valueForKey:@"FontName-0"] size:[defs floatForKey:@"FontSize-0"]] retain];
+    default_font = [[NSFont fontWithName:[defs objectForKey:@"FontName-0"] size:[defs floatForKey:@"FontSize-0"]] retain];
     if (! default_font) default_font = [[NSFont fontWithName:@"Menlo" size:14.f] retain];
 }
 
@@ -2749,12 +2749,12 @@ static void hook_quit(const char * str)
   for( NSDictionary *item in commandMenuItems )
   {
     NSUInteger modifiers = NSCommandKeyMask;
-    modifiers |= [[item valueForKey:@"ShiftModifier"]  boolValue] ? NSShiftKeyMask     : 0;
-    modifiers |= [[item valueForKey:@"OptionModifier"] boolValue] ? NSAlternateKeyMask : 0;
+    modifiers |= [[item objectForKey:@"ShiftModifier"]  boolValue] ? NSShiftKeyMask     : 0;
+    modifiers |= [[item objectForKey:@"OptionModifier"] boolValue] ? NSAlternateKeyMask : 0;
     
-    NSMenuItem *menuItem = [[NSMenuItem alloc] initWithTitle:[item valueForKey:@"Title"]
+    NSMenuItem *menuItem = [[NSMenuItem alloc] initWithTitle:[item objectForKey:@"Title"]
                                                       action:@selector(sendAngbandCommand:)
-                                               keyEquivalent:[item valueForKey:@"KeyEquivalent"]];
+                                               keyEquivalent:[item objectForKey:@"KeyEquivalent"]];
     
     [menuItem setTarget:self];
     [menuItem setKeyEquivalentModifierMask:modifiers];
@@ -2763,7 +2763,7 @@ static void hook_quit(const char * str)
     [menuItem release];
     
     // Replace every instance of '«' with ESCAPE (ASCII 27) to send Escape keypresses
-    NSString *escapedCommand = [[item valueForKey:@"AngbandCommand"]
+    NSString *escapedCommand = [[item objectForKey:@"AngbandCommand"]
                                 stringByReplacingOccurrencesOfString:@"«"
                                                           withString:[NSString stringWithFormat:@"%c", ESCAPE]];
     

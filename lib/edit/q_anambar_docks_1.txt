@@ -1,0 +1,67 @@
+?:[EQU $QUEST101 Untaken]
+D:Quest Anambar Docks 1 untaken dialog.
+?:1
+
+?:[EQU $QUEST101 Taken]
+D:Quest Anambar Docks 1 taken dialog.
+?:1
+
+?:[EQU $QUEST101 InProgress]
+D:Quest Anambar Docks 1 in progress dialog.
+?:1
+
+?:[EQU $QUEST101 Completed]
+D:Quest Anambar Docks 1 completed dialog.
+?:1
+
+?:[EQU $QUEST101 Failed]
+D:Quest Anambar Docks 1 failed dialog.
+?:1
+
+?:[EQU $QUEST101 Finished]
+D:Quest Anambar Docks 1 finished dialog.
+?:1
+
+?:[EQU $QUEST101 FailedDone]
+D:Quest Anambar Docks 1 failed done dialog.
+?:1
+
+
+T:QUEST:NORMAL
+L:#:MOUNTAIN_WALL
+L:%:PERMANENT
+L:<:UP_STAIR
+L:i:DIRT
+L:.:DIRT
+L:m:DIRT
+?:[EQU $QUEST101 Taken Completed Failed]
+L:m:MON(gremlin)
+?:1
+L:M:OBJ(PARCHMENT, TYPE=0)
+L:N:OBJ(PARCHMENT, TYPE=0)
+L:h:OBJ(PARCHMENT, TYPE=0)
+L:H:OBJ(PARCHMENT, TYPE=0)
+L:i:OBJ(PARCHMENT, TYPE=0)
+L:o:OBJ(PARCHMENT, TYPE=0)
+L:O:OBJ(PARCHMENT, TYPE=0)
+L:q:OBJ(PARCHMENT, TYPE=0)
+L:p:OBJ(PARCHMENT, TYPE=0)
+!:SCRAMBLE(h,o,H,O)
+!:SCRAMBLE(i,q)
+
+M:%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+M:%#############################%
+M:%####M.######.################%
+M:%###OH..####...######ii#######%
+M:%##.......##......##..Mq######%
+M:%##oM.h......<m.........iq####%
+M:%###hO...............m...q####%
+M:%####..m..........N.....M#####%
+M:%##################M...i######%
+M:%#############################%
+M:%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+R:OBJ(STAFF_ENLIGHTENMENT)
+
+?:[EQU $CLASS Berserker]
+R:OBJ(potion of enlightenment, NUMBER=1)

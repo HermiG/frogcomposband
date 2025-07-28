@@ -1185,13 +1185,13 @@ void recharged_notice(object_type *o_ptr, unsigned char neula)
 
 /* Choose one of items that have cursed flag */
 static u64b _curse_flag = 0;
-static bool _object_is_cursed(object_type *o_ptr) {
-    return (o_ptr->curse_flags & _curse_flag);
+static bool _object_has_curse_flag(object_type *o_ptr) {
+    return !! (o_ptr->curse_flags & _curse_flag);
 }
-static object_type *choose_cursed_obj_name(u64b flag)
+static object_type *random_equip_with_curse_flag(u64b flag)
 {
     _curse_flag = flag;
-    int slot = equip_random_slot(_object_is_cursed);
+    slot_t slot = equip_random_slot(_object_has_curse_flag);
 
     return slot ? equip_obj(slot) : NULL;
 }
@@ -1201,7 +1201,7 @@ void do_alter_reality(void)
     disturb(0, 0);
 
     /* Determine the level */
-    if ((only_downward()) || (p_ptr->inside_arena) || ((!dungeon_type) && (quests_get_current())))
+    if (only_downward() || p_ptr->inside_arena || (!dungeon_type && quests_get_current()))
     {
         msg_print("The world seems to change for a moment!");
         p_ptr->alter_reality = 0;
@@ -1301,7 +1301,6 @@ static void process_world_aux_hp_and_sp(void)
        we will simply take damage so long as there is light vulnerability. */
     if (prace_is_(RACE_VAMPIRE) || prace_is_(RACE_MON_VAMPIRE) || p_ptr->mimic_form == MIMIC_VAMPIRE)
     {
-        int slot;
         if (!dun_level && res_pct(RES_LITE) < 0 && !IS_INVULN() && is_daytime())
         {
             if ((cave[py][px].info & (CAVE_GLOW | CAVE_MNDK)) == CAVE_GLOW)
@@ -1312,7 +1311,7 @@ static void process_world_aux_hp_and_sp(void)
             }
         }
 
-        slot = equip_find_obj(TV_LITE, SV_ANY);
+        slot_t slot = equip_find_obj(TV_LITE, SV_ANY);
         if (slot)
         {
             object_type *lite = equip_obj(slot);
@@ -1338,14 +1337,8 @@ static void process_world_aux_hp_and_sp(void)
     {
         int damage = 0;
 
-        if (have_flag(f_ptr->flags, FF_DEEP))
-        {
-            damage = 6000 + randint0(4000);
-        }
-        else if (!p_ptr->levitation)
-        {
-            damage = 3000 + randint0(2000);
-        }
+        if (have_flag(f_ptr->flags, FF_DEEP)) damage = 6000 + randint0(4000);
+        else if (!p_ptr->levitation)          damage = 3000 + randint0(2000);
 
         damage = res_calc_dam(RES_FIRE, damage);
         if (p_ptr->levitation) damage = damage / 5;
@@ -1370,60 +1363,53 @@ static void process_world_aux_hp_and_sp(void)
         }
     }
 
-	if (have_flag(f_ptr->flags, FF_ACID) && !IS_INVULN() && !one_in_(3))
-	{
-		int a_damage = 0, p_damage = 0;
-		bool is_deep = have_flag(f_ptr->flags, FF_DEEP);
+    if (have_flag(f_ptr->flags, FF_ACID) && !IS_INVULN() && !one_in_(3))
+    {
+        int a_damage = 0, p_damage = 0;
+        bool is_deep = have_flag(f_ptr->flags, FF_DEEP);
 
-		if (is_deep)
-		{
-			a_damage = 1400 + randint0(800);
-		}
-		else if (!p_ptr->levitation)
-		{
-			a_damage = 700 + randint0(400);
-		}
+        if      (is_deep)            a_damage = 1400 + randint0(800);
+        else if (!p_ptr->levitation) a_damage =  700 + randint0(400);
 
-		if (p_ptr->levitation) a_damage = a_damage / (is_deep ? 15 : 10);
-		p_damage = a_damage * 6 / 5;
-		a_damage = res_calc_dam(RES_ACID, a_damage);
-		p_damage = res_calc_dam(RES_POIS, p_damage);
+        if (p_ptr->levitation) a_damage = a_damage / (is_deep ? 15 : 10);
+        p_damage = a_damage * 6 / 5;
+        a_damage = res_calc_dam(RES_ACID, a_damage);
+        p_damage = res_calc_dam(RES_POIS, p_damage);
 
-		if (a_damage > 0 || p_damage > 0)
-		{
-			a_damage = a_damage / 100 + (randint0(100) < (a_damage % 100));
-			p_damage = p_damage / 100 + (randint0(100) < (p_damage % 100));
-			if ((a_damage > 0) && (one_in_(16)) && (minus_ac())) a_damage = (a_damage + 1) / 2;
+        if (a_damage > 0 || p_damage > 0)
+        {
+            a_damage = a_damage / 100 + (randint0(100) < (a_damage % 100));
+            p_damage = p_damage / 100 + (randint0(100) < (p_damage % 100));
+            if ((a_damage > 0) && (one_in_(16)) && (minus_ac())) a_damage = (a_damage + 1) / 2;
 
-			if ((p_ptr->levitation) && ((a_damage > 0) || (p_damage > 0)))
-			{
-				if (a_damage) msg_print("You are burned by toxic fumes!");
-				else msg_print("You are poisoned by toxic fumes!");
-				take_hit(DAMAGE_NOESCAPE, a_damage, format("flying over %s", f_name + f_info[get_feat_mimic(&cave[py][px])].name));
-				if ((p_damage > 0) && (a_damage == 0) && (!p_ptr->poisoned)) /* big fat hack - avoid message duplication */
-				{
-					p_ptr->poisoned += 1;
-					p_damage -= 1;
-				}				
-	 			set_poisoned(p_ptr->poisoned + p_damage, FALSE);
-			}
-			else if ((a_damage > 0) || (p_damage > 0))
-			{
-				cptr name = f_name + f_info[get_feat_mimic(&cave[py][px])].name;
-				msg_format("The %s burns you!", name);
-				take_hit(DAMAGE_NOESCAPE, a_damage, name);
-				set_poisoned(p_ptr->poisoned + p_damage, FALSE);
-			}
+            if ((p_ptr->levitation) && ((a_damage > 0) || (p_damage > 0)))
+            {
+                if (a_damage) msg_print("You are burned by toxic fumes!");
+                else          msg_print("You are poisoned by toxic fumes!");
+                take_hit(DAMAGE_NOESCAPE, a_damage, format("flying over %s", f_name + f_info[get_feat_mimic(&cave[py][px])].name));
 
-			cave_no_regen = TRUE;
+                if (p_damage > 0 && a_damage == 0 && !p_ptr->poisoned) /* big fat hack - avoid message duplication */
+                {
+                    p_ptr->poisoned += 1;
+                    p_damage -= 1;
+                }
+                set_poisoned(p_ptr->poisoned + p_damage, FALSE);
+            }
+            else if (a_damage > 0 || p_damage > 0)
+            {
+                cptr name = f_name + f_info[get_feat_mimic(&cave[py][px])].name;
+                msg_format("The %s burns you!", name);
+                take_hit(DAMAGE_NOESCAPE, a_damage, name);
+                set_poisoned(p_ptr->poisoned + p_damage, FALSE);
+            }
 
-                if ((one_in_(32)) && (!res_save_default(RES_POIS)))
-                do_dec_stat(A_CON);
-		}
-	}
+            cave_no_regen = TRUE;
 
-    if (have_flag(f_ptr->flags, FF_WATER) && have_flag(f_ptr->flags, FF_DEEP) &&
-        !p_ptr->levitation && !p_ptr->can_swim && !elemental_is_(ELEMENTAL_WATER))
+            if (one_in_(32) && !res_save_default(RES_POIS)) do_dec_stat(A_CON);
+        }
+    }
+
+    if (have_flag(f_ptr->flags, FF_WATER) && have_flag(f_ptr->flags, FF_DEEP) && !p_ptr->levitation && !p_ptr->can_swim && !elemental_is_(ELEMENTAL_WATER))
     {
         if (py_total_weight() > weight_limit())
         {
@@ -1435,8 +1421,7 @@ static void process_world_aux_hp_and_sp(void)
         }
     }
 
-    if (((have_flag(f_ptr->flags, FF_SNOW)) || (have_flag(f_ptr->flags, FF_SLIPPERY))) &&
-        (p_ptr->resist[RES_COLD] <= 0))
+    if ((have_flag(f_ptr->flags, FF_SNOW) || have_flag(f_ptr->flags, FF_SLIPPERY)) && p_ptr->resist[RES_COLD] <= 0)
     {
         msg_print("You are freezing!");
         if (one_in_(10)) take_hit(DAMAGE_NOESCAPE, 1, "freezing");
@@ -2188,7 +2173,7 @@ static void process_world_aux_curse(void)
             int i_keep = 0, count = 0;
 
             /* Scan the equipment with random teleport ability */
-            for (int i = 1; i <= equip_max(); i++)
+            for (slot_t i = 1; i <= equip_max(); i++)
             {
                 u32b flgs[OF_ARRAY_SIZE];
                 o_ptr = equip_obj(i);
@@ -2297,7 +2282,7 @@ static void process_world_aux_curse(void)
         /* Add light curse (Later) */
         if ((p_ptr->cursed & OFC_ADD_L_CURSE) && one_in_(2000))
         {
-            object_type *o_ptr = choose_cursed_obj_name(OFC_ADD_L_CURSE);
+            object_type *o_ptr = random_equip_with_curse_flag(OFC_ADD_L_CURSE);
 
             u64b new_curse = get_curse(0, o_ptr);
             if (!(o_ptr->curse_flags & new_curse))
@@ -2319,7 +2304,7 @@ static void process_world_aux_curse(void)
         /* Add heavy curse (Later) */
         if ((p_ptr->cursed & OFC_ADD_H_CURSE) && one_in_(2000))
         {
-            object_type *o_ptr = choose_cursed_obj_name(OFC_ADD_H_CURSE);
+            object_type *o_ptr = random_equip_with_curse_flag(OFC_ADD_H_CURSE);
 
             u64b new_curse = get_curse(1, o_ptr);
             if (!(o_ptr->curse_flags & new_curse))
@@ -2345,7 +2330,7 @@ static void process_world_aux_curse(void)
                 (PM_ALLOW_GROUP | PM_ALLOW_UNIQUE | PM_NO_PET)))
             {
                 char o_name[MAX_NLEN];
-                object_type *o_ptr = choose_cursed_obj_name(OFC_CALL_ANIMAL);
+                object_type *o_ptr = random_equip_with_curse_flag(OFC_CALL_ANIMAL);
 
                 object_desc(o_name, o_ptr, (OD_OMIT_PREFIX | OD_NAME_ONLY));
                 msg_format("Your %s %s attracted an animal!", o_name, object_plural(o_ptr) ? "have" : "has");
@@ -2360,7 +2345,7 @@ static void process_world_aux_curse(void)
             if (summon_specific(0, py, px, dun_level, SUMMON_DEMON, (PM_ALLOW_GROUP | PM_ALLOW_UNIQUE | PM_NO_PET)))
             {
                 char o_name[MAX_NLEN];
-                object_type *o_ptr = choose_cursed_obj_name(OFC_CALL_DEMON);
+                object_type *o_ptr = random_equip_with_curse_flag(OFC_CALL_DEMON);
 
                 object_desc(o_name, o_ptr, (OD_OMIT_PREFIX | OD_NAME_ONLY));
                 msg_format("Your %s %s attracted a demon!", o_name, object_plural(o_ptr) ? "have" : "has");
@@ -2376,7 +2361,7 @@ static void process_world_aux_curse(void)
                 (PM_ALLOW_GROUP | PM_ALLOW_UNIQUE | PM_NO_PET)))
             {
                 char o_name[MAX_NLEN];
-                object_type *o_ptr = choose_cursed_obj_name(OFC_CALL_DRAGON);
+                object_type *o_ptr = random_equip_with_curse_flag(OFC_CALL_DRAGON);
 
                 object_desc(o_name, o_ptr, (OD_OMIT_PREFIX | OD_NAME_ONLY));
                 msg_format("Your %s %s attracted a dragon!", o_name, object_plural(o_ptr) ? "have" : "has");
@@ -2408,7 +2393,7 @@ static void process_world_aux_curse(void)
         if ((p_ptr->cursed & OFC_DRAIN_HP) && one_in_(666))
         {
             char o_name[MAX_NLEN];
-            object_type *o_ptr = choose_cursed_obj_name(OFC_DRAIN_HP);
+            object_type *o_ptr = random_equip_with_curse_flag(OFC_DRAIN_HP);
 
             object_desc(o_name, o_ptr, (OD_OMIT_PREFIX | OD_NAME_ONLY));
             msg_format("Your %s %s HP from you!", o_name, object_plural(o_ptr) ? "drain" : "drains");
@@ -2420,7 +2405,7 @@ static void process_world_aux_curse(void)
         if ((p_ptr->cursed & OFC_DRAIN_MANA) && p_ptr->csp && one_in_(666))
         {
             char o_name[MAX_NLEN];
-            object_type *o_ptr = choose_cursed_obj_name(OFC_DRAIN_MANA);
+            object_type *o_ptr = random_equip_with_curse_flag(OFC_DRAIN_MANA);
 
             object_desc(o_name, o_ptr, (OD_OMIT_PREFIX | OD_NAME_ONLY));
             msg_format("Your %s %s mana from you!", o_name, object_plural(o_ptr) ? "drain" : "drains");
@@ -2442,7 +2427,7 @@ static void process_world_aux_curse(void)
             if (drain_random_object(0, 100, &drained))
             {
                 char o_name[MAX_NLEN];
-                object_type *o_ptr = choose_cursed_obj_name(OFC_DRAIN_PACK);
+                object_type *o_ptr = random_equip_with_curse_flag(OFC_DRAIN_PACK);
 
                 object_desc(o_name, o_ptr, (OD_OMIT_PREFIX | OD_NAME_ONLY));
                 msg_format("Your %s %s a strange sizzling sound...", o_name, object_plural(o_ptr) ? "make" : "makes");
@@ -2994,7 +2979,7 @@ static void process_world(void)
             p_ptr->energy_need = 0;
             battle_monsters();
         }
-        else if ((number_mon-1) == 0)
+        else if (number_mon == 1)
         {
             char m_name[80];
             monster_type *wm_ptr;
@@ -3007,7 +2992,7 @@ static void process_world(void)
             auto_more_state = AUTO_MORE_PROMPT;
             msg_print(NULL);
 
-            if (win_m_idx == (sel_monster+1))
+            if (win_m_idx == sel_monster+1)
             {
                 msg_print("Congratulations.");
                 msg_format("You received %d gold.", battle_odds);
@@ -3085,14 +3070,11 @@ static void process_world(void)
     /*** Attempt timed autosave ***/
     if (autosave_t && autosave_freq && !p_ptr->inside_battle)
     {
-        if (!(game_turn % ((s32b)autosave_freq * TURNS_PER_TICK)))
-            do_cmd_save_game(TRUE);
+        if (!(game_turn % ((s32b)autosave_freq * TURNS_PER_TICK))) do_cmd_save_game(TRUE);
     }
 
-    if (mon_fight && !ignore_unview)
-    {
-        msg_print("You hear noise.");
-    }
+    if (mon_fight && !ignore_unview) msg_print("You hear noise.");
+    
 
     /*** Handle the wilderness/town (sunshine) ***/
 
@@ -3352,8 +3334,6 @@ static void process_world(void)
         }
     }
 
-
-
     /* Process timed damage and regeneration */
     process_world_aux_hp_and_sp();
 
@@ -3381,8 +3361,7 @@ static void process_world(void)
 
     {
         race_t *race_ptr = get_race();
-        if (race_ptr->process_world)
-            race_ptr->process_world();
+        if (race_ptr->process_world) race_ptr->process_world();
     }
 }
 

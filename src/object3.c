@@ -1002,7 +1002,7 @@ s32b bag_cost(object_type *o_ptr, int options)
   
   int pval = o_ptr->pval;
   
-  j = MIN(o_ptr->xtra4 * 10, 10 * o_ptr->xtra5 / 10); // value: the smaller of 10g per capacity or 10g per pound carry weight
+  j = MIN(o_ptr->xtra4 * 10, o_ptr->xtra5); // value: the smaller of 10g per capacity or 10g per pound carry weight
   if (cost_calc_hook)
   {
     sprintf(dbg_msg, "  * Base Cost: j = %d", j);

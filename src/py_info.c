@@ -850,7 +850,7 @@ static void _build_stats(doc_ptr doc, _flagzilla_ptr flagzilla)
             if (o_ptr)
             {
                 int adj = 0;
-                bool slipping = (o_ptr->marked & OM_SLIPPING) ? TRUE : FALSE;
+                bool slipping = !! (o_ptr->marked & OM_SLIPPING);
 
                 if (o_ptr->rune)
                 {
@@ -870,16 +870,13 @@ static void _build_stats(doc_ptr doc, _flagzilla_ptr flagzilla)
                 {
                     byte a = TERM_WHITE;
                     char c = '*';
-                    if (abs(adj) < 10)
-                        c = '0' + abs(adj);
+                    if (abs(adj) < 10) c = '0' + abs(adj);
 
-                    if (adj < 0)
-                        a = TERM_RED;
+                    if (adj < 0) a = TERM_RED;
                     else
                     {
                         a = TERM_L_GREEN;
-                        if (have_flag(flagzilla->obj_flgs[j], sust_flg))
-                            a = TERM_GREEN;
+                        if (have_flag(flagzilla->obj_flgs[j], sust_flg)) a = TERM_GREEN;
                     }
                     if (slipping)
                     {

@@ -539,10 +539,7 @@ static void do_cmd_quaff_potion_aux(obj_ptr obj)
     }
 
     if (music_singing_any()) bard_stop_singing();
-    if (hex_spelling_any())
-    {
-        if (!hex_spelling(HEX_INHAIL)) stop_hex_spell_all();
-    }
+    if (hex_spelling_any() && !hex_spelling(HEX_INHAIL)) stop_hex_spell_all();
     warlock_stop_singing();
 
     if (devicemaster_is_(DEVICEMASTER_POTIONS) && !devicemaster_desperation)
@@ -556,10 +553,10 @@ static void do_cmd_quaff_potion_aux(obj_ptr obj)
     }
     if (devicemaster_desperation)
     {
-        int i, amt = 50;
+        int amt = 50;
         number = obj->number;
         if (number > 4) number = 4;
-        for (i = 1; i < number && amt; i++)
+        for (int i = 1; i < number && amt; i++)
         {
             device_extra_power += amt;
             amt /= 2;
@@ -567,8 +564,7 @@ static void do_cmd_quaff_potion_aux(obj_ptr obj)
     }
 
     sound(SOUND_QUAFF);
-    if (obj->tval == TV_POTION) /* Skip Flasks of Oil */
-        device_use(obj, 0);
+    if (obj->tval == TV_POTION) device_use(obj, 0); // Skip Flasks of Oil
 
     if (prace_is_(RACE_SKELETON) || (p_ptr->current_r_idx && r_info[p_ptr->current_r_idx].d_char == 's'))
     {

@@ -1107,13 +1107,13 @@ void obj_drop(obj_ptr obj, int amt)
 
         obj->marked |= OM_DELAYED_MSG;
         p_ptr->notice |= PN_CARRY;
-        if      (obj->loc.where == INV_PACK)   p_ptr->notice |= PN_OPTIMIZE_PACK;
+        if      (obj->loc.where == INV_PACK) p_ptr->notice |= PN_OPTIMIZE_PACK;
         else if (obj->loc.where == INV_QUIVER)
         {
             p_ptr->notice |= PN_OPTIMIZE_QUIVER;
             p_ptr->redraw |= PR_EQUIPPY;
         }
-        else if (obj->loc.where == INV_BAG)    p_ptr->notice |= PN_OPTIMIZE_BAG;
+        else if (obj->loc.where == INV_BAG) p_ptr->notice |= PN_OPTIMIZE_BAG;
 
         copy.marked &= ~OM_WORN;
         _drop(&copy);

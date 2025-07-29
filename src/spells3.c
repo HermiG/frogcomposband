@@ -3940,7 +3940,15 @@ void inven_damage(int who, inven_func typ, int p1, int which)
     if (slot)
     {
         obj_ptr quiver = equip_obj(slot);
-        if (quiver->name2 != EGO_QUIVER_PROTECTION && !have_flag(quiver->flags, OF_PROTECTION))
+        if (have_flag(quiver->flags, OF_PROTECTION))
+        {
+            if(obj_learn_flag(quiver, OF_PROTECTION)) {
+                char o_name[MAX_NLEN];
+                object_desc(o_name, quiver, OD_OMIT_PREFIX | OD_COLOR_CODED);
+                msg_format("Your %s's sturdy construction safeguards the ammunition within.", o_name);
+            }
+        }
+        else
         {
             for (slot = 1; slot <= quiver_max(); slot++)
             {
@@ -3959,7 +3967,15 @@ void inven_damage(int who, inven_func typ, int p1, int which)
     if (slot)
     {
         obj_ptr bag = equip_obj(slot);
-        if (bag->name2 != EGO_BAG_PROTECTION && !have_flag(bag->flags, OF_PROTECTION))
+        if (have_flag(bag->flags, OF_PROTECTION))
+        {
+            if(obj_learn_flag(bag, OF_PROTECTION)) {
+              char o_name[MAX_NLEN];
+              object_desc(o_name, bag, OD_OMIT_PREFIX | OD_COLOR_CODED);
+              msg_format("Your %s shields its contents from harm.", o_name);
+            }
+        }
+        else
         {
             for (slot = 1; slot <= bag_max(); slot++)
             {

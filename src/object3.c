@@ -890,14 +890,13 @@ s32b quiver_cost(object_type *o_ptr, int options)
     {
         switch (o_ptr->name2)
         {
-        case EGO_QUIVER_PROTECTION:
-            j += 1500;
-            break;
         case EGO_QUIVER_PHASE:
             j += 5000;
             break;
         }
     }
+
+    if (have_flag(flgs, OF_PROTECTION)) j += 1500;
 
     /* Resistances */
     q = _resistances_q(flgs);
@@ -1009,19 +1008,9 @@ s32b bag_cost(object_type *o_ptr, int options)
     cost_calc_hook(dbg_msg);
   }
   
-  /* These egos don't use flags for their effects ... sigh. */
-  if ((options & COST_REAL) || object_is_known(o_ptr))
-  {
-    switch (o_ptr->name2)
-    {
-      case EGO_BAG_PROTECTION:
-        j += 1500;
-        break;
-      case EGO_BAG_ETHEREAL:
-        j += 5000;
-        break;
-    }
-  }
+  if (have_flag(flgs, OF_PROTECTION)) j += 1500;
+  if (have_flag(flgs, OF_ETHEREAL))   j += 5000;
+  if (have_flag(flgs, OF_GAUDY))      j += 1000;
   
   /* Resistances */
   q = _resistances_q(flgs);

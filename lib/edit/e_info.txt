@@ -1112,10 +1112,12 @@ F:SPEED
 N:265:of Holding
 T:QUIVER
 W:1:*:1
+F:HOLDING
 
 N:266:of Protection
 T:QUIVER
 W:1:*:1
+F:PROTECTION
 
 N:267:& Endless Quiver~
 T:QUIVER

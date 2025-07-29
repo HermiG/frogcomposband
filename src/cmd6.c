@@ -518,7 +518,7 @@ void do_cmd_eat_food(void)
 
 
 /*
- * Quaff a potion (from the pack or the floor)
+ * Quaff a potion (from the pack, bag, or floor)
  */
 static void do_cmd_quaff_potion_aux(obj_ptr obj)
 {
@@ -528,6 +528,20 @@ static void do_cmd_quaff_potion_aux(obj_ptr obj)
     /* Take a turn */
     if (mut_present(MUT_POTION_CHUGGER)) energy_use = 50;
     else energy_use = 100;
+
+    obj_ptr obj_bag = NULL;
+    if (obj->loc.where == INV_BAG) {
+        slot_t bag_slot = equip_find_obj(TV_BAG, SV_ANY);
+        if (bag_slot && (obj_bag = equip_obj(bag_slot))) {
+            if(obj_bag->sval == SV_BAG_POTION_BELT) energy_use *= 0.5;
+            else                                    energy_use *= 2;
+            if(obj_bag->name2 == EGO_BAG_TANGLING  || (obj_bag->curse_flags & OFC_TANGLING))   energy_use *= 3;
+            if(obj_bag->name2 == EGO_BAG_ORGANIZED || have_flag(obj_bag->flags, OF_ORGANIZED)) energy_use *= 0.5;
+          
+            equip_learn_flag(OF_ORGANIZED);
+            equip_learn_curse(OFC_TANGLING);
+        }
+    }
 
     if (world_player)
     {
@@ -659,10 +673,12 @@ static void do_cmd_quaff_potion_aux(obj_ptr obj)
         break;
     }
 
-    /* Consume Item */
     if (devicemaster_is_(DEVICEMASTER_POTIONS) && !devicemaster_desperation && randint1(3*p_ptr->lev/2) > MAX(10, lev))
     {
         msg_print("You sip the potion sparingly.");
+    } else if (obj_bag && have_flag(obj_bag->flags, OF_TEMPERANCE) && one_in_(4)) {
+        msg_print("A shimmering condensate gathers in the vial as you return it to your potion belt — enough for another sip.");
+        equip_learn_flag(OF_TEMPERANCE);
     }
     else
     {

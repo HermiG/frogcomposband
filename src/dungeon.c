@@ -2163,6 +2163,47 @@ static void process_world_aux_curse(void)
     if ((p_ptr->cursed & TRC_P_FLAG_MASK) && !p_ptr->inside_battle && !p_ptr->wild_mode)
     {
         /*
+         * Leaky bag curse
+         */
+        if ((p_ptr->cursed & OFC_LEAKY) && one_in_(200))
+        {
+            obj_ptr bag = equip_obj(equip_find_obj(TV_BAG, SV_ANY));
+          
+            if(bag) // I guess there's no reason to enforce that the bag is actually the source of the curse
+            {
+                for (slot_t slot = 1; slot <= bag_max(); slot++)
+                {
+                    obj_ptr obj = bag_obj(slot);
+
+                    if(obj && one_in_(10)) {
+                        int amt = randint1(MIN(obj->number, 5));
+
+                        if (1) {
+                            if (bag->known_curse_flags & OFC_LEAKY) {
+                                char bag_name[MAX_NLEN];
+                                char o_name[MAX_NLEN];
+                                obj_t dropped = *obj;
+                                dropped.number = amt;
+                              
+                                object_desc(bag_name, bag, (OD_OMIT_PREFIX | OD_NAME_ONLY));
+                                object_desc(o_name, &dropped, OD_NAME_ONLY);
+                                msg_format("%^s tumble%s from your %s.", o_name, object_plural(&dropped) ? "" : "s", bag_name);
+                                //disturb(0, 0); // It works better if the player has to notice the fallen item and go back for it
+                            }
+                            if(!obj_learn_curse(bag, OFC_LEAKY)) equip_learn_curse(OFC_LEAKY); // Learn our bag or another item is cursed
+                        }
+
+                        silent_drop_hack = TRUE;
+                        obj_drop(obj, amt);
+                        silent_drop_hack = FALSE;
+
+                        break;
+                    }
+                }
+            }
+        }
+
+        /*
          * Hack: Uncursed teleporting items (e.g. Trump Weapons)
          * can actually be useful!
          */

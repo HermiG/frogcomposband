@@ -3186,12 +3186,14 @@ enum obj_flags_e {
  * horrible curse... but so far haven't done it because it's a classic truly
  * horrible curse */
 
+/* Curses which have random activation */
 #define TRC_P_FLAG_MASK \
     (OFC_TELEPORT_SELF | OFC_CHAINSWORD | \
      OFC_TY_CURSE | OFC_DRAIN_EXP | OFC_ADD_L_CURSE | OFC_ADD_H_CURSE | \
      OFC_CALL_ANIMAL | OFC_CALL_DEMON | OFC_CALL_DRAGON | OFC_COWARDICE | \
      OFC_TELEPORT | OFC_DRAIN_HP | OFC_DRAIN_MANA | OFC_BY_CURSE | \
-     OFC_DRAIN_PACK | OFC_CRAPPY_MUT | OFC_ALLERGY | OFC_NORMALITY)
+     OFC_DRAIN_PACK | OFC_CRAPPY_MUT | OFC_ALLERGY | OFC_NORMALITY | \
+     OFC_LEAKY)
 
 #define TRC_BAG_MASK \
     (OFC_BULKY | OFC_GAUDY | OFC_TANGLING | OFC_LEAKY | OFC_DEVOURING)

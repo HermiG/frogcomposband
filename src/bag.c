@@ -272,19 +272,18 @@ int bag_weight_total(obj_p p)
 {
     slot_t slot = equip_find_obj(TV_BAG, SV_ANY);
     if (!slot) return 0;
-    obj_ptr obj = equip_obj(slot);
+    obj_ptr bag = equip_obj(slot);
 
     float scale = 1.0f;
-    switch (obj->sval)
+    switch (bag->sval)
     {
       case SV_BAG_SCROLL_CASE:  scale = 0.5f; break;
       case SV_BAG_POTION_BELT:  scale = 0.5f; break;
       case SV_BAG_BOOK_BAG:     scale = 0.5f; break;
     }
 
-    if(obj->name2 == EGO_BAG_ETHEREAL || have_flag(obj->flags, OF_ETHEREAL)) scale *= 0.5f;
-    if(obj->name2 == EGO_BAG_BULKY || have_flag(obj->flags, OF_BULKY)) scale *= 2.0f;
-    if(obj->curse_flags) scale += 1.0f;
+    if(have_flag(bag->flags, OF_ETHEREAL)) scale *= 0.5f;
+    if(have_flag(bag->flags, OF_BULKY) || (bag->curse_flags & OFC_BULKY)) scale *= 2.0f;
 
     return (int)(inv_weight(_inv, p) * scale + 0.5f);
 }

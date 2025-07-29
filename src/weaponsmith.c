@@ -35,13 +35,13 @@ enum {
 
 enum {                  /* stored in object.xtra1 when object.xtra3 = _ESSENCE_SPECIAL */
     _SPECIAL_RES_BASE = 1,
-	_SPECIAL_CLARITY,
+    _SPECIAL_CLARITY,
     _SPECIAL_SUST_ALL,
     _SPECIAL_SLAYING,   /* object.xtra4 packs (+h,+d) in s16b */
     _SPECIAL_BRAND_ELEMENTS,
     _SPECIAL_MIGHT,
     _SPECIAL_PROTECTION,
-	_SPECIAL_VITALITY,
+    _SPECIAL_VITALITY,
     _SPECIAL_AURA_ELEMENTS,
     /* next flag should be 11 instead of 10, unless it's actually used for deaggravation, which is 10 */
 };
@@ -168,8 +168,8 @@ static _essence_group_t _essence_groups[ESSENCE_TYPE_MAX] = {
         { OF_SLAY_TROLL,  "Slay Troll",  15, _ALLOW_MELEE | _ALLOW_AMMO },
         { OF_SLAY_GIANT,  "Slay Giant",  20, _ALLOW_MELEE | _ALLOW_AMMO },
         { OF_KILL_EVIL,   "Kill Evil",  100, _ALLOW_MELEE | _ALLOW_AMMO },
-		{ OF_KILL_GOOD,   "Kill Good",   90, _ALLOW_MELEE | _ALLOW_AMMO },
-		{ OF_KILL_LIVING, "Kill Living", 80, _ALLOW_MELEE | _ALLOW_AMMO },
+        { OF_KILL_GOOD,   "Kill Good",   90, _ALLOW_MELEE | _ALLOW_AMMO },
+        { OF_KILL_LIVING, "Kill Living", 80, _ALLOW_MELEE | _ALLOW_AMMO },
         { OF_KILL_UNDEAD, "Kill Undead", 30, _ALLOW_MELEE | _ALLOW_AMMO },
         { OF_KILL_DEMON,  "Kill Demon",  30, _ALLOW_MELEE | _ALLOW_AMMO },
         { OF_KILL_DRAGON, "Kill Dragon", 30, _ALLOW_MELEE | _ALLOW_AMMO },
@@ -201,20 +201,20 @@ static _essence_group_t _essence_groups[ESSENCE_TYPE_MAX] = {
         { OF_RES_FIRE,      "Resist Fire",    15, _ALLOW_ALL },
         { OF_RES_COLD,      "Resist Cold",    15, _ALLOW_ALL },
         { _ESSENCE_SPECIAL, "Resist Base",    50, _ALLOW_ALL, 0, _SPECIAL_RES_BASE },
-		{ OF_RES_LITE,      "Resist Light",   30, _ALLOW_ALL },
-		{ OF_RES_SOUND,     "Resist Sound",   40, _ALLOW_ALL },
-		{ OF_RES_SHARDS,    "Resist Shards",  40, _ALLOW_ALL },
+        { OF_RES_LITE,      "Resist Light",   30, _ALLOW_ALL },
+        { OF_RES_SOUND,     "Resist Sound",   40, _ALLOW_ALL },
+        { OF_RES_SHARDS,    "Resist Shards",  40, _ALLOW_ALL },
         { OF_RES_POIS,      "Resist Poison",  30, _ALLOW_ALL },
-		{ OF_RES_NETHER,    "Resist Nether",  30, _ALLOW_ALL },
-		{ OF_RES_NEXUS,     "Resist Nexus",   30, _ALLOW_ALL },
+        { OF_RES_NETHER,    "Resist Nether",  30, _ALLOW_ALL },
+        { OF_RES_NEXUS,     "Resist Nexus",   30, _ALLOW_ALL },
         { OF_RES_DARK,      "Resist Dark",    30, _ALLOW_ALL },
         { OF_RES_CHAOS,     "Resist Chaos",   40, _ALLOW_ALL },
         { OF_RES_DISEN,     "Resist Disench", 30, _ALLOW_ALL },
-		{ OF_RES_CONF,      "Resist Conf",    20, _ALLOW_ALL },
+        { OF_RES_CONF,      "Resist Conf",    20, _ALLOW_ALL },
         { OF_RES_BLIND,     "Resist Blind",   20, _ALLOW_ALL },
         { OF_RES_FEAR,      "Resist Fear",    20, _ALLOW_ALL },
-		{ _ESSENCE_SPECIAL, "Clarity",        60, _ALLOW_ALL, 0, _SPECIAL_CLARITY },
-		{ OF_RES_TIME,      "Resist Time",    20, _ALLOW_ALL },
+        { _ESSENCE_SPECIAL, "Clarity",        60, _ALLOW_ALL, 0, _SPECIAL_CLARITY },
+        { OF_RES_TIME,      "Resist Time",    20, _ALLOW_ALL },
         { OF_IM_ACID,       "Immune Acid",    20, _ALLOW_ALL },
         { OF_IM_ELEC,       "Immune Elec",    20, _ALLOW_ALL },
         { OF_IM_FIRE,       "Immune Fire",    20, _ALLOW_ALL },
@@ -235,17 +235,17 @@ static _essence_group_t _essence_groups[ESSENCE_TYPE_MAX] = {
         { OF_FREE_ACT,      "Free Action",            20, _ALLOW_ALL },
         { OF_SEE_INVIS,     "See Invisible",          20, _ALLOW_ALL },
         { _ESSENCE_SPECIAL, "Protection",             50, _ALLOW_ALL, 0, _SPECIAL_PROTECTION },
-		{ OF_HOLD_LIFE,     "Hold Life",              20, _ALLOW_ALL },
+        { OF_HOLD_LIFE,     "Hold Life",              20, _ALLOW_ALL },
         { OF_SLOW_DIGEST,   "Slow Digestion",         15, _ALLOW_ALL },
         { OF_REGEN,         "Regeneration",           50, _ALLOW_ALL },
-		{ _ESSENCE_SPECIAL, "Vitality",               100, _ALLOW_ALL, 0, _SPECIAL_VITALITY },
+        { _ESSENCE_SPECIAL, "Vitality",               100, _ALLOW_ALL, 0, _SPECIAL_VITALITY },
         { OF_DUAL_WIELDING, "Dual Wielding",          50, _ALLOW_ARMOR },
         { OF_NO_MAGIC,      "Antimagic",              15, _ALLOW_ALL },
-		{ OF_NO_TELE,       "Resist Tele",            20, _ALLOW_ALL },
+        { OF_NO_TELE,       "Resist Tele",            20, _ALLOW_ALL },
         { OF_WARNING,       "Warning",                20, _ALLOW_ALL },
         { OF_REFLECT,       "Reflection",             20, _ALLOW_ALL },
-		{ OF_LITE,          "Extra Light",            15, _ALLOW_ALL },
-		{ OF_LEVITATION,    "Levitation",             20, _ALLOW_ALL },
+        { OF_LITE,          "Extra Light",            15, _ALLOW_ALL },
+        { OF_LEVITATION,    "Levitation",             20, _ALLOW_ALL },
         { OF_AURA_FIRE,       "Aura Fire",              20, _ALLOW_ARMOR },
         { OF_AURA_ELEC,       "Aura Elec",              20, _ALLOW_ARMOR },
         { OF_AURA_COLD,       "Aura Cold",              20, _ALLOW_ARMOR },
@@ -255,7 +255,7 @@ static _essence_group_t _essence_groups[ESSENCE_TYPE_MAX] = {
         { OF_IGNORE_ACID,   "Rustproof", _COST_RUSTPROOF, _ALLOW_ARMOR },
         { _ESSENCE_NONE } } },
 
-    { ESSENCE_TYPE_TELEPATHY, "Telepathy", {
+        { ESSENCE_TYPE_TELEPATHY, "Telepathy", {
         { OF_TELEPATHY,     "Telepathy",       40, _ALLOW_ALL },
         { OF_ESP_ANIMAL,    "Sense Animals",   30, _ALLOW_ALL },
         { OF_ESP_UNDEAD,    "Sense Undead",    40, _ALLOW_ALL },
@@ -268,18 +268,17 @@ static _essence_group_t _essence_groups[ESSENCE_TYPE_MAX] = {
         { OF_ESP_EVIL,      "Sense Evil",      40, _ALLOW_ALL },
         { OF_ESP_GOOD,      "Sense Good",      20, _ALLOW_ALL },
         { OF_ESP_NONLIVING, "Sense Nonliving", 40, _ALLOW_ALL },
-		{ OF_ESP_LIVING,    "Sense Living",    40, _ALLOW_ALL },
+        { OF_ESP_LIVING,    "Sense Living",    40, _ALLOW_ALL },
         { OF_ESP_UNIQUE,    "Sense Unique",    20, _ALLOW_ALL },
         { _ESSENCE_NONE } } },
 };
 
 static _essence_info_ptr _find_essence_info(int id)
 {
-    int i, j;
-    for (i = 0; i < ESSENCE_TYPE_MAX; i++)
+    for (int i = 0; i < ESSENCE_TYPE_MAX; i++)
     {
         _essence_group_ptr group_ptr = &_essence_groups[i];
-        for (j = 0; j < _MAX_INFO_PER_TYPE; j++)
+        for (int j = 0; j < _MAX_INFO_PER_TYPE; j++)
         {
             _essence_info_ptr info_ptr = &group_ptr->entries[j];
             if (info_ptr->id == _ESSENCE_NONE) break;
@@ -308,12 +307,10 @@ static int _get_essence(int which)
 
 static bool _set_essence(int which, int n)
 {
-    int old;
-
     assert(0 <= which && which < _MAX_ESSENCE);
-    old = _essences[which];
+    int old = _essences[which];
 
-    if (n < 0) n = 0;
+    if (n < 0)     n = 0;
     if (n > 30000) n = 30000;
 
     if (n != old)
@@ -332,18 +329,14 @@ static bool _add_essence(int which, int amount)
 
 static void _clear_essences(void)
 {
-    int i;
-
-    for (i = 0; i < _MAX_ESSENCE; i++)
-        _set_essence(i, 0);
+    for (int i = 0; i < _MAX_ESSENCE; i++) _set_essence(i, 0);
 }
 
 static int _count_essences_aux(int type)
 {
     _essence_group_ptr group_ptr = &_essence_groups[type];
-    int                i;
-    int                ct = 0;
-    for (i = 0; i < _MAX_INFO_PER_TYPE; i++)
+    int ct = 0;
+    for (int i = 0; i < _MAX_INFO_PER_TYPE; i++)
     {
         _essence_info_ptr info_ptr = &group_ptr->entries[i];
         if (info_ptr->id == _ESSENCE_NONE) break;
@@ -354,44 +347,34 @@ static int _count_essences_aux(int type)
 
 static int _count_essences(void)
 {
-    int i;
     int ct = 0;
-    for (i = 0; i < ESSENCE_TYPE_MAX; i++)
-        ct += _count_essences_aux(i);
+    for (int i = 0; i < ESSENCE_TYPE_MAX; i++) ct += _count_essences_aux(i);
     return ct;
 }
 
 /* Savefile persistence */
 static void _load(savefile_ptr file)
 {
-    int ct, i;
-
     _clear_essences();
 
-    ct = savefile_read_s16b(file);
-    for (i = 0; i < ct; i++)
+    int ct = savefile_read_s16b(file);
+    for (int i = 0; i < ct; i++)
     {
         int j = savefile_read_s16b(file);
         int n = savefile_read_s32b(file);
 
-        if (0 <= j && j < _MAX_ESSENCE)
-            _add_essence(j, n);
+        if (0 <= j && j < _MAX_ESSENCE) _add_essence(j, n);
     }
 }
 
 static void _save(savefile_ptr file)
 {
-    int ct = 0, i;
-
-    for (i = 0; i < _MAX_ESSENCE; i++)
-    {
-        if (_get_essence(i))
-            ct++;
-    }
-
+    int ct = 0;
+    for (int i = 0; i < _MAX_ESSENCE; i++) if (_get_essence(i)) ct++;
+    
     savefile_write_s16b(file, ct);
 
-    for (i = 0; i < _MAX_ESSENCE; i++)
+    for (int i = 0; i < _MAX_ESSENCE; i++)
     {
         int n = _get_essence(i);
         if (n)
@@ -405,8 +388,7 @@ static void _save(savefile_ptr file)
 /* Absorption */
 static void _absorb_one_aux(int which, cptr name, int amt)
 {
-    if (amt > 0 && _add_essence(which, amt))
-        msg_format("\nYou gain <color:B>%s</color>: %d", name, amt);
+    if (amt > 0 && _add_essence(which, amt)) msg_format("\nYou gain <color:B>%s</color>: %d", name, amt);
 }
 
 static void _absorb_one(_essence_info_ptr info, int amt)
@@ -419,7 +401,6 @@ typedef void (*_absorb_essence_f)(_essence_info_ptr info, int amt);
 
 static void _absorb_all(object_type *o_ptr, _absorb_essence_f absorb_f)
 {
-    int          i,j;
     int          div = 1;
     int          mult = o_ptr->number;
     u32b         old_flgs[OF_ARRAY_SIZE], new_flgs[OF_ARRAY_SIZE];
@@ -475,7 +456,7 @@ static void _absorb_all(object_type *o_ptr, _absorb_essence_f absorb_f)
         _essence_group_ptr group_ptr = &_essence_groups[i];
         assert(i == group_ptr->type);
 
-        for (j = 0; j < _MAX_INFO_PER_TYPE; j++)
+        for (int j = 0; j < _MAX_INFO_PER_TYPE; j++)
         {
             _essence_info_ptr info_ptr = &group_ptr->entries[j];
 
@@ -492,14 +473,11 @@ static void _absorb_all(object_type *o_ptr, _absorb_essence_f absorb_f)
                 {
                     int pval = old_obj.pval;
 
-                    if (have_flag(new_flgs, info_ptr->id))
-                        pval -= new_obj.pval;
+                    if (have_flag(new_flgs, info_ptr->id)) pval -= new_obj.pval;
 
-                    if (pval > 0)
-                        absorb_f(info_ptr, pval*10*mult/div);
+                    if (pval > 0) absorb_f(info_ptr, pval*10*mult/div);
                 }
-                else if (!have_flag(new_flgs, info_ptr->id))
-                    absorb_f(info_ptr, 10*mult/div);
+                else if (!have_flag(new_flgs, info_ptr->id)) absorb_f(info_ptr, 10*mult/div);
             }
         }
     }

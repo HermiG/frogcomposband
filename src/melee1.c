@@ -615,11 +615,15 @@ bool make_attack_normal(int m_idx)
 
                     if (r_ptr->flags2 & RF2_THIEF) mon_lore_2(m_ptr, RF2_THIEF);
                     
+                    equip_learn_flag(OF_SECURE);
+                    equip_learn_flag(OF_GAUDY);
+                    equip_learn_curse(OFC_GAUDY);
+                    
                     for(int use_bag = 0; use_bag < 2; use_bag++) {
                       slot_t slot = use_bag ? equip_find_obj(TV_BAG, SV_ANY) : 0;
                       if(use_bag && !slot) continue;
                       obj_ptr obj_bag = use_bag ? equip_obj(slot) : NULL;
-                      bool gaudy_bag = use_bag && (obj_bag->name2 == EGO_BAG_GAUDY || have_flag(obj_bag->flags, OF_GAUDY));
+                      bool gaudy_bag = use_bag && have_flag(obj_bag->flags, OF_GAUDY);
                       
                       if (p_ptr->tim_inven_prot2)
                       {
@@ -637,7 +641,7 @@ bool make_attack_normal(int m_idx)
                         continue;
                       }
                       
-                      if (use_bag && !gaudy_bag && (obj_bag->name2 == EGO_BAG_CLASPED || have_flag(obj_bag->flags, OF_SECURE)) &&
+                      if (use_bag && !gaudy_bag && have_flag(obj_bag->flags, OF_SECURE) &&
                          (randint0(100) < (adj_dex_safe[p_ptr->stat_ind[A_DEX]] + p_ptr->lev)))
                       {
                         msg_print("Your bag is tightly secured!");
@@ -707,7 +711,7 @@ bool make_attack_normal(int m_idx)
                       if(use_bag && !slot) continue;
                       
                       obj_ptr obj_bag = use_bag ? equip_obj(slot) : NULL;
-                      if(use_bag && (obj_bag->name2 == EGO_BAG_CLASPED || have_flag(obj_bag->flags, OF_SECURE))) continue;
+                      if(use_bag && have_flag(obj_bag->flags, OF_SECURE)) continue;
                       
                       for (int k = 0; k < 10; k++)
                       {

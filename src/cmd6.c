@@ -535,8 +535,8 @@ static void do_cmd_quaff_potion_aux(obj_ptr obj)
         if (bag_slot && (obj_bag = equip_obj(bag_slot))) {
             if(obj_bag->sval == SV_BAG_POTION_BELT) energy_use *= 0.5;
             else                                    energy_use *= 2;
-            if(obj_bag->name2 == EGO_BAG_TANGLING  || (obj_bag->curse_flags & OFC_TANGLING))   energy_use *= 3;
-            if(obj_bag->name2 == EGO_BAG_ORGANIZED || have_flag(obj_bag->flags, OF_ORGANIZED)) energy_use *= 0.5;
+            if((obj_bag->curse_flags & OFC_TANGLING))   energy_use *= 3;
+            if(have_flag(obj_bag->flags, OF_ORGANIZED)) energy_use *= 0.5;
           
             equip_learn_flag(OF_ORGANIZED);
             equip_learn_curse(OFC_TANGLING);
@@ -751,8 +751,8 @@ static void do_cmd_read_scroll_aux(obj_ptr o_ptr)
         if (bag_slot && (obj_bag = equip_obj(bag_slot))) {
             if(obj_bag->sval == SV_BAG_SCROLL_CASE) energy_use *= 0.5;
             else                                    energy_use *= 2;
-            if(obj_bag->name2 == EGO_BAG_TANGLING  || (obj_bag->curse_flags & OFC_TANGLING))   energy_use *= 3;
-            if(obj_bag->name2 == EGO_BAG_ORGANIZED || have_flag(obj_bag->flags, OF_ORGANIZED)) energy_use *= 0.5;
+            if((obj_bag->curse_flags & OFC_TANGLING))   energy_use *= 3;
+            if(have_flag(obj_bag->flags, OF_ORGANIZED)) energy_use *= 0.5;
             
             equip_learn_flag(OF_ORGANIZED);
             equip_learn_curse(OFC_TANGLING);

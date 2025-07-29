@@ -682,8 +682,7 @@ static bool _can_quaff(object_type *o_ptr)
 {
     if (o_ptr->tval == TV_POTION) return TRUE;
 
-    if (prace_is_(RACE_ANDROID) || elemental_is_(ELEMENTAL_FIRE))
-        if (o_ptr->tval == TV_FLASK && o_ptr->sval == SV_FLASK_OIL) return TRUE;
+    if (prace_is_(RACE_ANDROID) || elemental_is_(ELEMENTAL_FIRE)) if (o_ptr->tval == TV_FLASK && o_ptr->sval == SV_FLASK_OIL) return TRUE;
 
     return FALSE;
 }

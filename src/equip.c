@@ -347,22 +347,15 @@ int equip_count_used(void)
 
 slot_t equip_is_worn(obj_ptr obj)
 {
-    slot_t slot;
-    for (slot = 1; slot <= _template->max; slot++)
-    {
-        object_type *o = equip_obj(slot);
-        if (o == obj) return slot;
-    }
+    for (slot_t slot = 1; slot <= _template->max; slot++) if (equip_obj(slot) == obj) return slot;
+
     return 0;
 }
 
 int equip_which_hand(obj_ptr obj)
 {
-    for (slot_t slot = 1; slot <= _template->max; slot++)
-    {
-        object_type *o = equip_obj(slot);
-        if (o == obj) return _template->slots[slot].hand;
-    }
+    for (slot_t slot = 1; slot <= _template->max; slot++) if (equip_obj(slot) == obj) return _template->slots[slot].hand;
+
     return HAND_NONE;
 }
 
@@ -388,7 +381,7 @@ int equip_max(void)
 
 int equip_slot_type(slot_t slot)
 {
-  return equip_is_valid_slot(slot)? _template->slots[slot].type : EQUIP_SLOT_NONE;
+  return equip_is_valid_slot(slot) ? _template->slots[slot].type : EQUIP_SLOT_NONE;
 }
 
 bool equip_is_empty_two_handed_slot(int slot)
@@ -399,12 +392,11 @@ bool equip_is_empty_two_handed_slot(int slot)
     {
         int hand = _template->slots[slot].hand;
         int arm = hand / 2;
-        int rhand = arm*2;
-        int lhand = arm*2 + 1;
+        int rhand = arm * 2;
+        int lhand = arm * 2 + 1;
         int other_hand = (hand == rhand) ? lhand : rhand;
 
-        if (p_ptr->weapon_info[other_hand].wield_how == WIELD_TWO_HANDS)
-            return TRUE;
+        if (p_ptr->weapon_info[other_hand].wield_how == WIELD_TWO_HANDS) return TRUE;
     }
     return FALSE;
 }
@@ -441,7 +433,7 @@ void equip_wield_ui(void)
 
     if (!obj) return;
 
-    if ((p_ptr->prace == RACE_WEREWOLF) && ((object_is_(obj, TV_DRAG_ARMOR, SV_DRAGON_SILVER)) || (obj->name1 == ART_SILVER_HAMMER)))
+    if (p_ptr->prace == RACE_WEREWOLF && (object_is_(obj, TV_DRAG_ARMOR, SV_DRAGON_SILVER) || obj->name1 == ART_SILVER_HAMMER))
     {
         if (object_is_(obj, TV_DRAG_ARMOR, SV_DRAGON_SILVER))
         {
@@ -455,7 +447,7 @@ void equip_wield_ui(void)
         }
     }
 
-    if ((disciple_is_(DISCIPLE_TROIKA)) && (!troika_allow_equip_item(obj))) return;
+    if (disciple_is_(DISCIPLE_TROIKA) && !troika_allow_equip_item(obj)) return;
 
     if (obj_is_ammo(obj))
     {

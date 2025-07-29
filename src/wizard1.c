@@ -775,9 +775,8 @@ static int _compare_r_level_desc(monster_race *l, monster_race *r)
 static vec_ptr _mon_table(_mon_pred p)
 {
     vec_ptr monsters = vec_alloc(NULL);
-    int     i;
 
-    for (i = 1; i < max_r_idx; i++)
+    for (int i = 1; i < max_r_idx; i++)
     {
         monster_race *r_ptr = &r_info[i];
 
@@ -797,10 +796,9 @@ static vec_ptr _mon_table(_mon_pred p)
 static void _spoil_mon_table(doc_ptr doc, cptr heading, _mon_pred p)
 {
     vec_ptr monsters = _mon_table(p);
-    int     i;
 
     doc_printf(doc, "<topic:%s><color:G>%-38.38s Lvl Rar Spd     HP    AC Display</color>\n", heading, heading);
-    for (i = 0; i < vec_length(monsters); i++)
+    for (int i = 0; i < vec_length(monsters); i++)
     {
         monster_race *r_ptr = vec_get(monsters, i);
         if (r_ptr->flags1 & RF1_UNIQUE)

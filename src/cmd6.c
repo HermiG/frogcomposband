@@ -728,7 +728,7 @@ void do_cmd_quaff_potion(void)
 
 
 /*
- * Read a scroll (from the pack or floor).
+ * Read a scroll (from the pack, bag, or floor)
  *
  * Certain scrolls can be "aborted" without losing the scroll. These
  * include scrolls with no effects but recharge or identify, which are
@@ -736,13 +736,28 @@ void do_cmd_quaff_potion(void)
  */
 static void do_cmd_read_scroll_aux(obj_ptr o_ptr)
 {
-    int  used_up, lev = k_info[o_ptr->k_idx].level;
+    int  lev = k_info[o_ptr->k_idx].level;
     int  number = 1;
     bool known = object_is_aware(o_ptr);
+    bool consumed = TRUE;
 
     /* Take a turn */
     if (mut_present(MUT_SPEED_READER)) energy_use = 50;
     else energy_use = 100;
+
+    obj_ptr obj_bag = NULL;
+    if (o_ptr->loc.where == INV_BAG) {
+        slot_t bag_slot = equip_find_obj(TV_BAG, SV_ANY);
+        if (bag_slot && (obj_bag = equip_obj(bag_slot))) {
+            if(obj_bag->sval == SV_BAG_SCROLL_CASE) energy_use *= 0.5;
+            else                                    energy_use *= 2;
+            if(obj_bag->name2 == EGO_BAG_TANGLING  || (obj_bag->curse_flags & OFC_TANGLING))   energy_use *= 3;
+            if(obj_bag->name2 == EGO_BAG_ORGANIZED || have_flag(obj_bag->flags, OF_ORGANIZED)) energy_use *= 0.5;
+            
+            equip_learn_flag(OF_ORGANIZED);
+            equip_learn_curse(OFC_TANGLING);
+        }
+    }
 
     if (devicemaster_is_(DEVICEMASTER_SCROLLS) && !devicemaster_desperation)
     {
@@ -783,9 +798,6 @@ static void do_cmd_read_scroll_aux(obj_ptr o_ptr)
 
     warlock_stop_singing();
 
-    /* Assume the scroll will get used up */
-    used_up = TRUE;
-
     if (o_ptr->tval == TV_SCROLL)
     {
         if (object_is_(o_ptr, TV_SCROLL, SV_SCROLL_IDENTIFY))
@@ -811,10 +823,9 @@ static void do_cmd_read_scroll_aux(obj_ptr o_ptr)
                 amt /= 2;
             }
         }
-        used_up = device_use(o_ptr, 0);
-        if (object_is_(o_ptr, TV_SCROLL, SV_SCROLL_IDENTIFY))
-            number = device_used_charges;
-        if ((!used_up) && (o_ptr->tval == TV_SCROLL)) /* Abort without taking a turn */
+        consumed = device_use(o_ptr, 0);
+        if (object_is_(o_ptr, TV_SCROLL, SV_SCROLL_IDENTIFY)) number = device_used_charges;
+        if (!consumed && o_ptr->tval == TV_SCROLL) /* Abort without taking a turn */
         {
             switch (o_ptr->sval)
             {
@@ -853,9 +864,9 @@ static void do_cmd_read_scroll_aux(obj_ptr o_ptr)
         msg_print("One Ring to bring them all ");
         msg_print(NULL);
         msg_print("and in the darkness bind them.'");
-        used_up = FALSE;
+        consumed = FALSE;
     }
-    else if (o_ptr->tval==TV_PARCHMENT)
+    else if (o_ptr->tval == TV_PARCHMENT)
     {
         char o_name[MAX_NLEN];
         char buf[1024];
@@ -867,7 +878,7 @@ static void do_cmd_read_scroll_aux(obj_ptr o_ptr)
         (void)show_file(TRUE, buf, o_name, 0, 0);
         screen_load();
 
-        used_up = FALSE;
+        consumed = FALSE;
     }
 
     if (!known)
@@ -886,7 +897,7 @@ static void do_cmd_read_scroll_aux(obj_ptr o_ptr)
         gain_exp((lev + (p_ptr->lev >> 1)) / p_ptr->lev);
     }
 
-    if (!used_up) return;
+    if (!consumed) return;
 
     water_mana_action(FALSE, 5);
 
@@ -894,6 +905,10 @@ static void do_cmd_read_scroll_aux(obj_ptr o_ptr)
     if (devicemaster_is_(DEVICEMASTER_SCROLLS) && !devicemaster_desperation && randint1(2*p_ptr->lev) > MAX(10, lev))
     {
         msg_print("Your mental focus preserves the scroll!");
+    
+    } else if (obj_bag && have_flag(obj_bag->flags, OF_TEMPERANCE) && one_in_(3)) {
+        msg_print("Your scroll case hums with latent magic as it preserves the scroll.");
+        equip_learn_flag(OF_TEMPERANCE);
     }
     else
     {
@@ -1037,8 +1052,7 @@ static void do_cmd_device_aux(obj_ptr obj)
             object_desc(buf, obj, OD_LORE);
             msg_format("<color:B>You learn more about your %s.</color>", buf);
             obj->known_xtra |= OFL_DEVICE_FAIL;
-            if (obj->known_xtra & OFL_DEVICE_POWER)
-                add_flag(obj->known_flags, OF_ACTIVATE);
+            if (obj->known_xtra & OFL_DEVICE_POWER) add_flag(obj->known_flags, OF_ACTIVATE);
         }
         p_inc_fatigue(MUT_EASY_TIRING2, 50);
         return;
@@ -1059,23 +1073,21 @@ static void do_cmd_device_aux(obj_ptr obj)
 
     if (is_devicemaster && devicemaster_desperation)
     {
-        int i, amt = 50;
+        int amt = 50;
         charges = device_sp(obj) / obj->activation.cost;
-        for (i = 1; i < charges && amt; i++)
+        for (int i = 1; i < charges && amt; i++)
         {
             boost += amt;
             amt /= 2;
         }
     }
 
-    if (obj->activation.type == EFFECT_IDENTIFY)
-        device_available_charges = device_sp(obj) / obj->activation.cost;
+    if (obj->activation.type == EFFECT_IDENTIFY) device_available_charges = device_sp(obj) / obj->activation.cost;
 
     sound(SOUND_ZAP);
     used = device_use(obj, boost);
 
-    if (obj->activation.type == EFFECT_IDENTIFY)
-        charges = device_used_charges;
+    if (obj->activation.type == EFFECT_IDENTIFY) charges = device_used_charges;
 
     object_tried(obj);
     if (device_noticed && !object_is_known(obj))
@@ -1091,8 +1103,7 @@ static void do_cmd_device_aux(obj_ptr obj)
         object_desc(buf, obj, OD_LORE);
         msg_format("<color:B>You learn more about your %s.</color>", buf);
         obj->known_xtra |= OFL_DEVICE_POWER;
-        if (obj->known_xtra & OFL_DEVICE_FAIL)
-            add_flag(obj->known_flags, OF_ACTIVATE);
+        if (obj->known_xtra & OFL_DEVICE_FAIL) add_flag(obj->known_flags, OF_ACTIVATE);
     }
 
     if (used)
@@ -1128,8 +1139,7 @@ static void do_cmd_device_aux(obj_ptr obj)
         }
         p_inc_fatigue(MUT_EASY_TIRING2, 50);
     }
-    else
-        energy_use = 0;
+    else energy_use = 0;
 
     obj_release(obj, OBJ_RELEASE_QUIET);
 }

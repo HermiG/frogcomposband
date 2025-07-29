@@ -754,7 +754,7 @@ static void spoil_object_tables(void)
  ************************************************************************/
 typedef bool (*_mon_pred)(monster_race *r_ptr);
 
-static bool _mon_is_unique(monster_race *r_ptr) { return r_ptr->flags1 & RF1_UNIQUE; }
+static bool _mon_is_unique(monster_race *r_ptr) { return !!(r_ptr->flags1 & RF1_UNIQUE); }
 static bool _mon_is_nonunique(monster_race *r_ptr) { return !_mon_is_unique(r_ptr); }
 
 static int _compare_r_level(monster_race *l, monster_race *r)

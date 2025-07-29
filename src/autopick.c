@@ -1429,7 +1429,7 @@ static bool _string_match(cptr source, cptr pattern)
 static bool _is_polymorphed_demon(void)
 {
     if (!p_ptr->mimic_form) return FALSE;
-    else return (get_true_race()->flags & RACE_IS_DEMON);
+    else return !!(get_true_race()->flags & RACE_IS_DEMON);
 }
 
 static bool is_autopick_aux(object_type *o_ptr, autopick_type *entry, cptr o_name)

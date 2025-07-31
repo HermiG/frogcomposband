@@ -6725,6 +6725,9 @@ cptr do_effect(effect_t *effect, int mode, int boost)
         if (color) return format("%d", TERM_L_RED);
         if (cast)
         {
+            obj_ptr quiver = equip_obj(equip_find_obj(TV_QUIVER, SV_ANY));
+            if (!quiver) break;
+
             obj_t forge = {0};
             int   tval = p_ptr->shooter_info.tval_ammo;
 
@@ -6741,6 +6744,7 @@ cptr do_effect(effect_t *effect, int mode, int boost)
             {
                 msg_print("Your quiver refills.");
                 quiver_carry(&forge);
+                device_noticed = TRUE;
             }
         }
         break;

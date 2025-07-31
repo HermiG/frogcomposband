@@ -2027,6 +2027,18 @@ bool obj_has_effect(object_type *o_ptr)
     return !! obj_get_effect(o_ptr).type;
 }
 
+bool obj_has_active_effect(object_type *o_ptr)
+{
+  effect_t e = obj_get_effect(o_ptr);
+  return e.type && e.cost >= 0;
+}
+
+bool obj_has_passive_effect(object_type *o_ptr)
+{
+  effect_t e = obj_get_effect(o_ptr);
+  return e.type && e.cost < 0;
+}
+
 bool effect_try(effect_t *effect)
 {
     int fail = effect_calc_fail_rate(effect);

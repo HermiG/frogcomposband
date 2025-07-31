@@ -40,7 +40,7 @@ static double _check_flag_and_score(u32b flgs[OF_ARRAY_SIZE], u32b flg, u32b sco
 static s32b _activation_p(u32b flgs[OF_ARRAY_SIZE], object_type *o_ptr)
 {
     /* Make sure player has learned the activation before scoring it! */
-    if (obj_has_effect(o_ptr) && have_flag(flgs, OF_ACTIVATE))
+    if (obj_has_active_effect(o_ptr) && have_flag(flgs, OF_ACTIVATE))
     {
         s32b arvo;
         effect_t effect = obj_get_effect(o_ptr);

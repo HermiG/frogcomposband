@@ -2969,7 +2969,7 @@ enum obj_flags_e {
     OF_SLOW_REGEN,
     OF_LORE2,
 
-    OF_ACTIVATE, /* Present, but not required to Activate (obj_has_effect() suffices).
+    OF_ACTIVATE, /* Present, but not required to Activate (obj_has_active_effect() suffices).
                     This is a very useful crutch for object lore, though. */
 
     OF_IGNORE_ACID,

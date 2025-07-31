@@ -1566,7 +1566,7 @@ static void do_cmd_activate_aux(obj_ptr obj)
 
 static bool _activate_p(object_type *o_ptr)
 {
-    return obj_has_effect(o_ptr);
+    return obj_has_active_effect(o_ptr);
 }
 
 void do_cmd_activate(void)

@@ -1289,7 +1289,8 @@ static void _display_activation_aux(effect_t *effect, bool full_info, doc_ptr do
     cptr res = cb_hack ? "Release Pet" : do_effect(effect, SPELL_NAME, 0);
 
     doc_newline(doc);
-    doc_printf(doc, "<color:U>Activation:</color><tab:12><color:B>%s</color>\n", res);
+    if(effect->cost < 0) doc_printf(doc, "<color:U>Passive:</color><tab:12><color:B>%s</color>\n", res);
+    else                 doc_printf(doc, "<color:U>Activation:</color><tab:12><color:B>%s</color>\n", res);
 
     if (full_info)
     {
@@ -1299,7 +1300,7 @@ static void _display_activation_aux(effect_t *effect, bool full_info, doc_ptr do
         if (res && strlen(res)) doc_printf(doc, "<color:U>Info:</color><tab:12>%s\n", res);
         int fail = effect_calc_fail_rate(effect);
         doc_printf(doc, "<color:U>Fail:</color><tab:12>%d.%d%%\n", fail/10, fail%10);
-        if (effect->cost) doc_printf(doc, "<color:U>Timeout:</color><tab:12>%d\n", effect->cost);
+        if (effect->cost) doc_printf(doc, "<color:U>Timeout:</color><tab:12>%d\n", abs(effect->cost));
     }
 
 }

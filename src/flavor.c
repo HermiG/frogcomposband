@@ -2139,7 +2139,7 @@ void object_desc(char *buf, object_type *o_ptr, u32b mode)
     }
 
     if ( have_flag(known_flgs, OF_ACTIVATE)
-      && obj_has_effect(o_ptr)
+      && obj_has_active_effect(o_ptr)
       && !device
       && (abbrev_all || (abbrev_extra && o_ptr->activation.type) || !obj_is_identified(o_ptr)) )
     {

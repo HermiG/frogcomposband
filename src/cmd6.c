@@ -1140,8 +1140,6 @@ static void do_cmd_device_aux(obj_ptr obj)
 
 void do_cmd_use_staff(void)
 {
-    obj_prompt_t prompt = {0};
-
     if (p_ptr->special_defense & (KATA_MUSOU | KATA_KOUKIJIN)) set_action(ACTION_NONE);
 
     if (p_ptr->pclass == CLASS_MAGIC_EATER && !pack_find_obj(TV_STAFF, SV_ANY) && !floor_find_obj(py, px, TV_STAFF, SV_ANY))
@@ -1150,11 +1148,13 @@ void do_cmd_use_staff(void)
         return;
     }
 
+    obj_prompt_t prompt = {0};
     prompt.prompt = "Use which staff?";
     prompt.error = "You have no staff to use.";
     prompt.filter = obj_is_staff;
-    prompt.where[0] = INV_PACK;
-    prompt.where[1] = INV_BAG;
+    bool bag_first = !! equip_find_obj(TV_BAG, SV_BAG_DEVICE_CASE);
+    prompt.where[ bag_first] = INV_PACK;
+    prompt.where[!bag_first] = INV_BAG;
     prompt.where[2] = INV_FLOOR;
     prompt.flags = INV_SHOW_FAIL_RATES;
 
@@ -1167,8 +1167,6 @@ void do_cmd_use_staff(void)
 
 void do_cmd_aim_wand(void)
 {
-    obj_prompt_t prompt = {0};
-
     if (p_ptr->special_defense & (KATA_MUSOU | KATA_KOUKIJIN)) set_action(ACTION_NONE);
 
     if (p_ptr->pclass == CLASS_MAGIC_EATER && !pack_find_obj(TV_WAND, SV_ANY) && !floor_find_obj(py, px, TV_WAND, SV_ANY))
@@ -1177,11 +1175,13 @@ void do_cmd_aim_wand(void)
         return;
     }
 
+    obj_prompt_t prompt = {0};
     prompt.prompt = "Aim which wand?";
     prompt.error = "You have no wand to aim.";
     prompt.filter = obj_is_wand;
-    prompt.where[0] = INV_PACK;
-    prompt.where[1] = INV_BAG;
+    bool bag_first = !! equip_find_obj(TV_BAG, SV_BAG_DEVICE_CASE);
+    prompt.where[ bag_first] = INV_PACK;
+    prompt.where[!bag_first] = INV_BAG;
     prompt.where[2] = INV_FLOOR;
     prompt.flags = INV_SHOW_FAIL_RATES;
 
@@ -1193,8 +1193,6 @@ void do_cmd_aim_wand(void)
 
 void do_cmd_zap_rod(void)
 {
-    obj_prompt_t prompt = {0};
-
     if (p_ptr->special_defense & (KATA_MUSOU | KATA_KOUKIJIN)) set_action(ACTION_NONE);
 
     if (p_ptr->pclass == CLASS_MAGIC_EATER && !pack_find_obj(TV_ROD, SV_ANY) && !floor_find_obj(py, px, TV_ROD, SV_ANY))
@@ -1203,11 +1201,13 @@ void do_cmd_zap_rod(void)
         return;
     }
 
+    obj_prompt_t prompt = {0};
     prompt.prompt = "Zap which rod?";
     prompt.error = "You have no rod to zap.";
     prompt.filter = obj_is_rod;
-    prompt.where[0] = INV_PACK;
-    prompt.where[1] = INV_BAG;
+    bool bag_first = !! equip_find_obj(TV_BAG, SV_BAG_DEVICE_CASE);
+    prompt.where[ bag_first] = INV_PACK;
+    prompt.where[!bag_first] = INV_BAG;
     prompt.where[2] = INV_FLOOR;
     prompt.flags = INV_SHOW_FAIL_RATES;
 

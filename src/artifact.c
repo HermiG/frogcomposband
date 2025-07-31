@@ -2106,24 +2106,19 @@ s32b create_artifact(object_type *o_ptr, u32b mode)
     if (o_ptr->tval == TV_QUIVER) return 0;
     if (o_ptr->tval == TV_BAG) return 0; // Disable artifact bag creation for now
 
-    if (o_ptr->tval == TV_SWORD && o_ptr->sval == SV_HAYABUSA)
-        is_falcon_sword = TRUE;
+    if (o_ptr->tval == TV_SWORD && o_ptr->sval == SV_HAYABUSA) is_falcon_sword = TRUE;
 
     immunity_hack = FALSE;
     slaying_hack = 0;
     has_pval = FALSE;
 
-    if (obj_is_harp(o_ptr))
-        has_pval = TRUE;
+    if (obj_is_harp(o_ptr)) has_pval = TRUE;
 
     /* Hack for Demeter. Torches start with a pval of 4000! Not sure about lanterns ... */
-    if (o_ptr->tval == TV_LITE /*&& o_ptr->sval == SV_LITE_TORCH*/)
-        o_ptr->pval = 0;
+    if (o_ptr->tval == TV_LITE) o_ptr->pval = 0;
 
-    if (lev > 127)
-        lev = 127; /* no going to heaven or hell for uber nutso craziness */
-    if (lev < 1)
-        lev = 1;   /* town? */
+    if (lev > 127) lev = 127; /* no going to heaven or hell for uber nutso craziness */
+    if (lev < 1)   lev = 1;   /* town? */
 
     /* Reset artifact bias */
     artifact_bias = 0;
@@ -2133,8 +2128,7 @@ s32b create_artifact(object_type *o_ptr, u32b mode)
     o_ptr->name2 = 0;
     o_ptr->name3 = 0;
 
-    for (i = 0; i < OF_ARRAY_SIZE; i++)
-        o_ptr->flags[i] |= k_info[o_ptr->k_idx].flags[i];
+    for (int i = 0; i < OF_ARRAY_SIZE; i++) o_ptr->flags[i] |= k_info[o_ptr->k_idx].flags[i];
 
     if (o_ptr->pval) has_pval = TRUE;
 
@@ -2571,8 +2565,7 @@ s32b create_artifact(object_type *o_ptr, u32b mode)
                     add_flag(o_ptr->flags, OF_SPEED);
                     has_pval = TRUE;
                 }
-                else if ( (artifact_bias == BIAS_MAGE && one_in_(10))
-                       || one_in_(50) )
+                else if ( (artifact_bias == BIAS_MAGE && one_in_(10)) || one_in_(50) )
                 {
                     add_flag(o_ptr->flags, OF_DEC_MANA);
                 }

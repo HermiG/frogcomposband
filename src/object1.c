@@ -35,15 +35,13 @@
  */
 void reset_visuals(void)
 {
-    int i, j;
-
     /* Extract some info about terrain features */
-    for (i = 0; i < max_f_idx; i++)
+    for (int i = 0; i < max_f_idx; i++)
     {
         feature_type *f_ptr = &f_info[i];
 
         /* Assume we will use the underlying values */
-        for (j = 0; j < F_LIT_MAX; j++)
+        for (int j = 0; j < F_LIT_MAX; j++)
         {
             f_ptr->x_attr[j] = f_ptr->d_attr[j];
             f_ptr->x_char[j] = f_ptr->d_char[j];
@@ -51,7 +49,7 @@ void reset_visuals(void)
     }
 
     /* Extract default attr/char code for objects */
-    for (i = 0; i < max_k_idx; i++)
+    for (int i = 0; i < max_k_idx; i++)
     {
         object_kind *k_ptr = &k_info[i];
 
@@ -61,7 +59,7 @@ void reset_visuals(void)
     }
 
     /* Extract default attr/char code for monsters */
-    for (i = 0; i < max_r_idx; i++)
+    for (int i = 0; i < max_r_idx; i++)
     {
         monster_race *r_ptr = &r_info[i];
 
@@ -123,50 +121,41 @@ void weapon_flags_known(int hand, u32b flgs[OF_ARRAY_SIZE])
     object_type *o_ptr = equip_obj(p_ptr->weapon_info[hand].slot);
     if (o_ptr)
     {
-        int i;
         obj_flags_known(o_ptr, flgs);
-        for (i = 0; i < OF_ARRAY_SIZE; i++)
-            flgs[i] |= p_ptr->weapon_info[hand].known_flags[i];
+        for (int i = 0; i < OF_ARRAY_SIZE; i++) flgs[i] |= p_ptr->weapon_info[hand].known_flags[i];
         if (disciple_is_(DISCIPLE_TROIKA)) troika_bonus_flags(o_ptr, flgs);
     }
 }
 
 void missile_flags(object_type *arrow, u32b flgs[OF_ARRAY_SIZE])
 {
-    int i;
-    int slot = equip_find_first(object_is_bow);
-
     obj_flags(arrow, flgs);
-    for (i = 0; i < OF_ARRAY_SIZE; i++)
-        flgs[i] |= p_ptr->shooter_info.flags[i];
 
+    for (int i = 0; i < OF_ARRAY_SIZE; i++) flgs[i] |= p_ptr->shooter_info.flags[i];
+
+    slot_t slot = equip_find_first(object_is_bow);
     if (slot)
     {
         object_type *bow = equip_obj(slot);
-        u32b         bow_flgs[OF_ARRAY_SIZE];
-
+        u32b bow_flgs[OF_ARRAY_SIZE];
         obj_flags(bow, bow_flgs);
-        for (i = 0; i < OF_ARRAY_SIZE; i++) flgs[i] |= bow_flgs[i]; /* Mask? */
+        for (int i = 0; i < OF_ARRAY_SIZE; i++) flgs[i] |= bow_flgs[i]; // Mask?
     }
 }
 
 void missile_flags_known(object_type *arrow, u32b flgs[OF_ARRAY_SIZE])
 {
-    int i;
-    int slot = equip_find_first(object_is_bow);
-
     obj_flags_known(arrow, flgs);
-    for (i = 0; i < OF_ARRAY_SIZE; i++)
-        flgs[i] |= p_ptr->shooter_info.flags[i];
 
+    for (int i = 0; i < OF_ARRAY_SIZE; i++) flgs[i] |= p_ptr->shooter_info.flags[i];
+
+    slot_t slot = equip_find_first(object_is_bow);
     if (slot)
     {
         object_type *bow = equip_obj(slot);
-        u32b         bow_flgs[OF_ARRAY_SIZE];
-
+        u32b bow_flgs[OF_ARRAY_SIZE];
         obj_flags_known(bow, bow_flgs);
-        for (i = 0; i < OF_ARRAY_SIZE; i++)
-            flgs[i] |= bow_flgs[i]; /* Mask? */
+        for (int i = 0; i < OF_ARRAY_SIZE; i++) flgs[i] |= bow_flgs[i]; // Mask?
     }
 }
 
@@ -174,7 +163,7 @@ void obj_flags(object_type *o_ptr, u32b flgs[OF_ARRAY_SIZE])
 {
     object_kind *k_ptr = &k_info[o_ptr->k_idx];
 
-    /* Base object */
+    /* Base object kind */
     for (int i = 0; i < OF_ARRAY_SIZE; i++) flgs[i] = k_ptr->flags[i];
 
     /* Artifact */
@@ -221,7 +210,6 @@ void obj_flags(object_type *o_ptr, u32b flgs[OF_ARRAY_SIZE])
 void obj_flags_known(object_type *o_ptr, u32b flgs[OF_ARRAY_SIZE])
 {
     object_kind *k_ptr = &k_info[o_ptr->k_idx];
-    int i;
 
     if (o_ptr->ident & IDENT_STORE)
     {
@@ -229,7 +217,7 @@ void obj_flags_known(object_type *o_ptr, u32b flgs[OF_ARRAY_SIZE])
         return;
     }
 
-    for (i = 0; i < OF_ARRAY_SIZE; i++) flgs[i] = 0;
+    for (int i = 0; i < OF_ARRAY_SIZE; i++) flgs[i] = 0;
 
     /* Base object: Note you still know an unidentified blade of chaos
        grants resist chaos, provided your aware of the object kind.*/
@@ -246,7 +234,7 @@ void obj_flags_known(object_type *o_ptr, u32b flgs[OF_ARRAY_SIZE])
     {
         u32b actual[OF_ARRAY_SIZE];
         obj_flags(o_ptr, actual);
-        for (i = 0; i < OF_ARRAY_SIZE; i++) flgs[i] = actual[i] & o_ptr->known_flags[i];
+        for (i = 0; i < OF_ARRAY_SIZE; i++) flgs[i] = (actual[i] & o_ptr->known_flags[i]);
         return;
     }
 
@@ -300,7 +288,7 @@ void obj_flags_known(object_type *o_ptr, u32b flgs[OF_ARRAY_SIZE])
     if (object_is_deaggravated(o_ptr)) remove_flag(flgs, OF_AGGRAVATE);
 }
 
-static bool _object_gives_esdm(object_type *o_ptr, u32b flgs[OF_ARRAY_SIZE],  bool easy_spell)
+static bool _object_gives_esdm(object_type *o_ptr, u32b flgs[OF_ARRAY_SIZE], bool easy_spell)
 {
     if (o_ptr->name1)
     {
@@ -330,12 +318,12 @@ static bool _object_gives_esdm(object_type *o_ptr, u32b flgs[OF_ARRAY_SIZE],  bo
             if (warlock_is_(WARLOCK_DEMONS)) return (o_ptr->name1 == ART_STONE_OF_DAEMON);
             return FALSE;
         }
-        if (p_ptr->pclass == CLASS_ROGUE) return ((!easy_spell) & (p_ptr->realm1 == REALM_BURGLARY) && (o_ptr->name1 == ART_DOGRAM));
+        if (p_ptr->pclass == CLASS_ROGUE) return (!easy_spell && p_ptr->realm1 == REALM_BURGLARY && o_ptr->name1 == ART_DOGRAM);
     }
     else if (o_ptr->name2)
     {
-        if ((p_ptr->pclass == CLASS_ROGUE) && (!easy_spell) && (p_ptr->realm1 == REALM_BURGLARY) && (o_ptr->name2 == EGO_GLOVES_THIEF)) return TRUE;
-        if ((p_ptr->pclass == CLASS_WILD_TALENT) && (!easy_spell) && (o_ptr->name2 == EGO_WEAPON_WILD)) return TRUE;
+        if (p_ptr->pclass == CLASS_ROGUE && !easy_spell && p_ptr->realm1 == REALM_BURGLARY && o_ptr->name2 == EGO_GLOVES_THIEF) return TRUE;
+        if (p_ptr->pclass == CLASS_WILD_TALENT && !easy_spell && o_ptr->name2 == EGO_WEAPON_WILD) return TRUE;
     }
     if (!have_flag(flgs, easy_spell ? OF_EASY_SPELL : OF_DEC_MANA)) return FALSE;
     else
@@ -354,7 +342,7 @@ static void _obj_esdm_flags(object_type *o_ptr, u32b flgs[OF_ARRAY_SIZE], bool d
     }
     else if (_object_gives_esdm(o_ptr, flgs, FALSE))
     {
-        if ((!display) || (obj_is_identified(o_ptr)) || (have_flag(o_ptr->known_flags, OF_DEC_MANA))) add_flag(flgs, OF_DEC_MANA);
+        if (!display || obj_is_identified(o_ptr) || have_flag(o_ptr->known_flags, OF_DEC_MANA)) add_flag(flgs, OF_DEC_MANA);
         else if (o_ptr->loc.where == INV_EQUIP) /* learn flag on equipped item */
         {
             add_flag(flgs, OF_DEC_MANA);
@@ -368,7 +356,7 @@ static void _obj_esdm_flags(object_type *o_ptr, u32b flgs[OF_ARRAY_SIZE], bool d
     }
     else if (_object_gives_esdm(o_ptr, flgs, TRUE))
     {
-        if ((!display) || (obj_is_identified(o_ptr)) || (have_flag(o_ptr->known_flags, OF_EASY_SPELL))) add_flag(flgs, OF_EASY_SPELL);
+        if (!display || obj_is_identified(o_ptr) || have_flag(o_ptr->known_flags, OF_EASY_SPELL)) add_flag(flgs, OF_EASY_SPELL);
         else if (o_ptr->loc.where == INV_EQUIP) /* learn flag on equipped item */
         {
             add_flag(flgs, OF_EASY_SPELL);
@@ -380,12 +368,11 @@ static void _obj_esdm_flags(object_type *o_ptr, u32b flgs[OF_ARRAY_SIZE], bool d
 /* We don't do this in regular obj_flags() and obj_flags_known() partly
  * because it's slower, but mostly so that object value can be calculated
  * without any player specialities factoring into it */
-
 void obj_flags_effective(object_type *o_ptr, u32b flgs[OF_ARRAY_SIZE])
 {
     obj_flags(o_ptr, flgs);
     _obj_esdm_flags(o_ptr, flgs, FALSE);
-    if ((disciple_is_(DISCIPLE_TROIKA)) && (object_is_melee_weapon(o_ptr))) troika_bonus_flags(o_ptr, flgs);
+    if (disciple_is_(DISCIPLE_TROIKA) && object_is_melee_weapon(o_ptr)) troika_bonus_flags(o_ptr, flgs);
 }
 
 void obj_flags_display(object_type *o_ptr, u32b flgs[OF_ARRAY_SIZE])
@@ -405,30 +392,23 @@ static void _obj_flags_purify(u32b flgs[OF_ARRAY_SIZE])
 
 static bool _obj_flags_any(u32b flgs[OF_ARRAY_SIZE])
 {
-    int i;
-    for (i = 0; i < OF_ARRAY_SIZE; i++)
-    {
-        if (flgs[i])
-            return TRUE;
-    }
+    for (int i = 0; i < OF_ARRAY_SIZE; i++) if (flgs[i]) return TRUE;
+    
     return FALSE;
 }
 
 void obj_flags_unknown(object_type *o_ptr, u32b flgs[OF_ARRAY_SIZE])
 {
-    u32b actual[OF_ARRAY_SIZE];
-    u32b known[OF_ARRAY_SIZE];
-    int  i;
-
     assert(o_ptr);
 
+    u32b actual[OF_ARRAY_SIZE];
     obj_flags(o_ptr, actual);
     _obj_flags_purify(actual);
 
+    u32b known[OF_ARRAY_SIZE];
     obj_flags_known(o_ptr, known);
 
-    for (i = 0; i < OF_ARRAY_SIZE; i++)
-        flgs[i] = actual[i] & (~known[i]);
+    for (int i = 0; i < OF_ARRAY_SIZE; i++) flgs[i] = actual[i] & (~known[i]);
 }
 
 static void _obj_identify_aux(object_type *o_ptr)
@@ -488,12 +468,10 @@ static void _obj_identify_aux(object_type *o_ptr)
 
         /* Patch up activation overrides. OF_ACTIVATE will exist in e_ptr->xtra_flags,
            and the user may have learned the activation prior to Identify */
-        if (o_ptr->activation.type && activate)
-            add_flag(o_ptr->known_flags, OF_ACTIVATE);
+        if (o_ptr->activation.type && activate) add_flag(o_ptr->known_flags, OF_ACTIVATE);
 
         /* Automatically know previously learned random activations */
-        if (o_ptr->activation.type && !object_is_device(o_ptr) && effect_is_known(o_ptr->activation.type))
-            add_flag(o_ptr->known_flags, OF_ACTIVATE);
+        if (o_ptr->activation.type && !object_is_device(o_ptr) && effect_is_known(o_ptr->activation.type)) add_flag(o_ptr->known_flags, OF_ACTIVATE);
     }
 }
 
@@ -654,14 +632,14 @@ bool obj_learn_flag(object_type *o_ptr, int which)
 
     return FALSE;
 }
+
 void obj_learn_activation(object_type *o_ptr)
 {
     assert(o_ptr);
     /* Lore on unidentified objects is tricky, but flavorful */
     if (!obj_is_identified(o_ptr))
     {
-        if (obj_has_effect(o_ptr) && !have_flag(o_ptr->known_flags, OF_ACTIVATE))
-            add_flag(o_ptr->known_flags, OF_ACTIVATE);
+        if (obj_has_effect(o_ptr) && !have_flag(o_ptr->known_flags, OF_ACTIVATE)) add_flag(o_ptr->known_flags, OF_ACTIVATE);
         return;
     }
 
@@ -772,12 +750,9 @@ bool art_has_lore(artifact_type *a_ptr)
 
 bool obj_has_lore(object_type *o_ptr)
 {
-    if (_obj_flags_any(o_ptr->known_flags))
-        return TRUE;
-    if (o_ptr->name1)
-        return art_has_lore(&a_info[o_ptr->name1]);
-    if (o_ptr->name2)
-        return ego_has_lore(&e_info[o_ptr->name2]);
+    if (_obj_flags_any(o_ptr->known_flags)) return TRUE;
+    if (o_ptr->name1) return art_has_lore(&a_info[o_ptr->name1]);
+    if (o_ptr->name2) return ego_has_lore(&e_info[o_ptr->name2]);
     return FALSE;
 }
 

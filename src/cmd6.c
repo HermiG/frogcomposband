@@ -1520,7 +1520,6 @@ static void do_cmd_activate_aux(obj_ptr obj)
     effect_t effect;
     int      boost = device_power(100) - 100;
     u32b     flgs[OF_ARRAY_SIZE];
-
     obj_flags_known(obj, flgs);
 
     /* Take a turn */
@@ -1554,8 +1553,7 @@ static void do_cmd_activate_aux(obj_ptr obj)
     sound(SOUND_ZAP);
 
     msg = obj_get_effect_msg(obj);
-    if (msg)
-        msg_print(msg);
+    if (msg) msg_print(msg);
 
     if (obj->tval == TV_CAPTURE)
     {
@@ -1565,8 +1563,7 @@ static void do_cmd_activate_aux(obj_ptr obj)
     device_known = have_flag(flgs, OF_ACTIVATE);
     if (effect_use(&effect, boost))
     {
-        if (device_noticed)
-            obj_learn_activation(obj);
+        if (device_noticed) obj_learn_activation(obj);
 
         obj->timeout = effect.cost;
         p_ptr->window |= (PW_INVEN | PW_EQUIP);
@@ -1575,7 +1572,7 @@ static void do_cmd_activate_aux(obj_ptr obj)
 
 static bool _activate_p(object_type *o_ptr)
 {
-    return /*obj_is_identified(o_ptr) &&*/ obj_has_effect(o_ptr);
+    return obj_has_effect(o_ptr);
 }
 
 void do_cmd_activate(void)

@@ -698,17 +698,12 @@ int resist_opposite_flag(int i)
             flgs++;
         }
     }
-    if (!loytyi)
-    {
-        return OF_INVALID;
-    }
+    if (!loytyi) return OF_INVALID;
+    
     flgs = (loytyi == 2) ? flag_insc_resistance : flag_insc_vulnerability;
     while (flgs->english)
     {
-        if (streq(flgs->english, my_english))
-        {
-            return flgs->flag;
-        }
+        if (streq(flgs->english, my_english)) return flgs->flag;
         flgs++;
     }
     return OF_INVALID;
@@ -721,13 +716,11 @@ static bool have_flag_of(flag_insc_table *fi_ptr, u32b flgs[OF_ARRAY_SIZE])
 {
     while (fi_ptr->english)
     {
-        if (have_flag(flgs, fi_ptr->flag) &&
-           (fi_ptr->except_flag == -1 || !have_flag(flgs, fi_ptr->except_flag)))
-            return (TRUE);
+        if (have_flag(flgs, fi_ptr->flag) && (fi_ptr->except_flag == -1 || !have_flag(flgs, fi_ptr->except_flag))) return TRUE;
         fi_ptr++;
     }
 
-    return (FALSE);
+    return FALSE;
 }
 
 static char *get_ability_abbreviation(char *ptr, object_type *o_ptr, bool all)
@@ -735,8 +728,7 @@ static char *get_ability_abbreviation(char *ptr, object_type *o_ptr, bool all)
     char *prev_ptr = ptr;
     u32b flgs[OF_ARRAY_SIZE];
 
-    if (object_is_device(o_ptr))
-        return ptr;
+    if (object_is_device(o_ptr)) return ptr;
 
     /* Extract the flags */
     obj_flags_display(o_ptr, flgs);
@@ -745,26 +737,22 @@ static char *get_ability_abbreviation(char *ptr, object_type *o_ptr, bool all)
     if (!all)
     {
         object_kind *k_ptr = &k_info[o_ptr->k_idx];
-        int j;
                 
         /* Base object */
-        for (j = 0; j < OF_ARRAY_SIZE; j++)
-            flgs[j] &= ~k_ptr->flags[j];
+        for (int j = 0; j < OF_ARRAY_SIZE; j++)  flgs[j] &= ~k_ptr->flags[j];
 
         if (object_is_fixed_artifact(o_ptr))
         {
             artifact_type *a_ptr = &a_info[o_ptr->name1];
                     
-            for (j = 0; j < OF_ARRAY_SIZE; j++)
-                flgs[j] &= ~a_ptr->flags[j];
+            for (int j = 0; j < OF_ARRAY_SIZE; j++) flgs[j] &= ~a_ptr->flags[j];
         }
 
         if (object_is_ego(o_ptr))
         {
             ego_type *e_ptr = &e_info[o_ptr->name2];
                     
-            for (j = 0; j < OF_ARRAY_SIZE; j++)
-                flgs[j] &= ~e_ptr->flags[j];
+            for (int j = 0; j < OF_ARRAY_SIZE; j++) flgs[j] &= ~e_ptr->flags[j];
         }
     }
 
@@ -833,50 +821,36 @@ static char *get_ability_abbreviation(char *ptr, object_type *o_ptr, bool all)
     ptr = inscribe_flags_aux(flag_insc_misc, flgs, ptr);
 
     /* Aura */
-    if (have_flag_of(flag_insc_aura, flgs))
-    {
-        ADD_INSC("[");
-    }
+    if (have_flag_of(flag_insc_aura, flgs)) ADD_INSC("[");
     ptr = inscribe_flags_aux(flag_insc_aura, flgs, ptr);
 
     /* Brand Weapon */
-    if (have_flag_of(flag_insc_brand, flgs))
-        ADD_INSC("|");
+    if (have_flag_of(flag_insc_brand, flgs)) ADD_INSC("|");
     ptr = inscribe_flags_aux(flag_insc_brand, flgs, ptr);
 
     /* Kill Weapon */
-    if (have_flag_of(flag_insc_kill, flgs))
-        ADD_INSC("/X");
+    if (have_flag_of(flag_insc_kill, flgs)) ADD_INSC("/X");
     ptr = inscribe_flags_aux(flag_insc_kill, flgs, ptr);
 
     /* Slay Weapon */
-    if (have_flag_of(flag_insc_slay, flgs))
-        ADD_INSC("/");
+    if (have_flag_of(flag_insc_slay, flgs)) ADD_INSC("/");
     ptr = inscribe_flags_aux(flag_insc_slay, flgs, ptr);
 
     /* Esp */
-    if (have_flag_of(flag_insc_esp1, flgs))
-        ADD_INSC("~");
+    if (have_flag_of(flag_insc_esp1, flgs)) ADD_INSC("~");
     ptr = inscribe_flags_aux(flag_insc_esp1, flgs, ptr);
-    if (have_flag_of(flag_insc_esp2, flgs))
-        ADD_INSC("~");
+    if (have_flag_of(flag_insc_esp2, flgs)) ADD_INSC("~");
     ptr = inscribe_flags_aux(flag_insc_esp2, flgs, ptr);
 
     /* sustain */
-    if (have_flag_of(flag_insc_sust, flgs))
-    {
-        ADD_INSC("(");
-    }
+    if (have_flag_of(flag_insc_sust, flgs)) ADD_INSC("(");
     ptr = inscribe_flags_aux(flag_insc_sust, flgs, ptr);
 
     /* Is there more to learn about this object? Perhaps, but don't leak quality info! */
-    if ( obj_is_identified(o_ptr)
+    if ( obj_is_identified(o_ptr) && !obj_is_identified_fully(o_ptr) && !(o_ptr->ident & IDENT_STORE)
       && (object_is_wearable(o_ptr) || object_is_ammo(o_ptr))
-      && ((object_is_artifact(o_ptr)) || (object_is_ego(o_ptr)) ||
-          ((mark_dragon) && ((object_is_dragon_armor(o_ptr)) ||
-           (object_is_(o_ptr, TV_SWORD, SV_DRAGON_FANG)))))
-      && !obj_is_identified_fully(o_ptr)
-      && !(o_ptr->ident & IDENT_STORE) )
+      && (object_is_artifact(o_ptr) || object_is_ego(o_ptr) ||
+         (mark_dragon && (object_is_dragon_armor(o_ptr) || object_is_(o_ptr, TV_SWORD, SV_DRAGON_FANG)))) )
     {
         ADD_INSC("?");
     }
@@ -2136,7 +2110,7 @@ void object_desc(char *buf, object_type *o_ptr, u32b mode)
     if (known)
     {
         /* Hack -- Process Lanterns/Torches */
-        if ((object_needs_fuel(o_ptr)) && (!(o_ptr->name1 || o_ptr->art_name)))
+        if (object_needs_fuel(o_ptr) && (!(o_ptr->name1 || o_ptr->art_name)))
         {
             /* Hack -- Turns of light for normal lites */
             t = object_desc_str(t, " (with ");
@@ -2147,7 +2121,7 @@ void object_desc(char *buf, object_type *o_ptr, u32b mode)
         }
 
         /* Indicate charging objects, but not rods. */
-        if (o_ptr->timeout && (o_ptr->tval != TV_ROD))
+        if (o_ptr->timeout && o_ptr->tval != TV_ROD)
         {
             t = object_desc_str(t, " (charging)");
         }

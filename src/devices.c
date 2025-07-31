@@ -1964,10 +1964,9 @@ cptr do_device(object_type *o_ptr, int mode, int boost)
     if (o_ptr->activation.type)
     {
         u32b flgs[OF_ARRAY_SIZE];
-
         obj_flags(o_ptr, flgs);
-        if (have_flag(flgs, OF_DEVICE_POWER))
-            boost += device_power_aux(100, o_ptr->pval) - 100;
+
+        if (have_flag(flgs, OF_DEVICE_POWER)) boost += device_power_aux(100, o_ptr->pval) - 100;
 
         result = do_effect(&o_ptr->activation, mode, boost);
     }
@@ -2000,55 +1999,38 @@ cptr do_device(object_type *o_ptr, int mode, int boost)
    Update: The Device Rewrite is merging Wands/Rods/Staves into the effect system!*/
 effect_t obj_get_effect(object_type *o_ptr)
 {
-    if (o_ptr->activation.type)
-        return o_ptr->activation;
-    if (o_ptr->name1 && a_info[o_ptr->name1].activation.type)
-        return a_info[o_ptr->name1].activation;
-    if (o_ptr->name2 && e_info[o_ptr->name2].activation.type)
-        return e_info[o_ptr->name2].activation;
-    return k_info[o_ptr->k_idx].activation;
+    if (o_ptr->activation.type)                               return o_ptr->activation;
+    if (o_ptr->name1 && a_info[o_ptr->name1].activation.type) return a_info[o_ptr->name1].activation;
+    if (o_ptr->name2 && e_info[o_ptr->name2].activation.type) return e_info[o_ptr->name2].activation;
+                                                              return k_info[o_ptr->k_idx].activation;
 }
 
 cptr obj_get_effect_msg(object_type *o_ptr)
 {
-    u32b offset;
-
-    if (o_ptr->activation.type)
-        return 0;
+    if (o_ptr->activation.type) return NULL;
 
     if (o_ptr->name1 && a_info[o_ptr->name1].activation.type)
     {
-        offset = a_info[o_ptr->name1].activation_msg;
-        if (offset)
-            return a_text + offset;
-        else
-            return 0;
+        u32b offset = a_info[o_ptr->name1].activation_msg;
+        return offset ? a_text + offset : NULL ;
     }
-    if (o_ptr->name2 && e_info[o_ptr->name2].activation.type)
-    {
-        return 0;
-    }
+    if (o_ptr->name2 && e_info[o_ptr->name2].activation.type) return NULL;
 
-    offset = k_info[o_ptr->k_idx].activation_msg;
-    if (offset)
-        return k_text + offset;
+    u32b offset = k_info[o_ptr->k_idx].activation_msg;
+    if (offset) return k_text + offset;
 
-    return 0;
+    return NULL;
 }
 
 bool obj_has_effect(object_type *o_ptr)
 {
-    effect_t e = obj_get_effect(o_ptr);
-    if (e.type)
-        return TRUE;
-    return FALSE;
+    return !! obj_get_effect(o_ptr).type;
 }
 
 bool effect_try(effect_t *effect)
 {
     int fail = effect_calc_fail_rate(effect);
-    if (randint0(1000) < fail)
-        return FALSE;
+    if (randint0(1000) < fail) return FALSE;
     return TRUE;
 }
 
@@ -2057,32 +2039,25 @@ bool effect_use(effect_t *effect, int boost)
     device_noticed = FALSE;
     device_used_charges = 0;
     device_available_charges = 1;
-    if (do_effect(effect, SPELL_CAST, boost)) return TRUE;
-    return FALSE;
+    return do_effect(effect, SPELL_CAST, boost);
 }
 
 int effect_value(effect_t *effect)
 {
-    int  result = 0;
-    cptr hack = do_effect(effect, SPELL_VALUE, 0);
-    if (hack) result = atoi(hack);
-    return result;
+    cptr v = do_effect(effect, SPELL_VALUE, 0);
+    return v ? atoi(v) : 0;
 }
 
 int effect_cost_extra(effect_t *effect)
 {
-    int  result = 0;
-    cptr hack = do_effect(effect, SPELL_COST_EXTRA, 0);
-    if (hack) result = atoi(hack);
-    return result;
+    cptr v = do_effect(effect, SPELL_COST_EXTRA, 0);
+    return v ? atoi(v) : 0;
 }
 
 byte effect_color(effect_t *effect)
 {
-    byte result = TERM_WHITE;
-    cptr hack = do_effect(effect, SPELL_COLOR, 0);
-    if (hack && strlen(hack)) result = atoi(hack);
-    return result;
+    cptr v = do_effect(effect, SPELL_COLOR, 0);
+    return (v && strlen(v)) ? atoi(v) : TERM_WHITE;
 }
 
 typedef struct
@@ -2376,8 +2351,7 @@ static _effect_info_t _effect_info[] =
 
 _effect_info_ptr _get_effect_info(int type)
 {
-    int i;
-    for (i = 0; ; i++)
+    for (int i = 0; ; i++)
     {
         _effect_info_ptr e = &_effect_info[i];
         if (!e->type) break;
@@ -2389,9 +2363,7 @@ _effect_info_ptr _get_effect_info(int type)
 bool effect_is_known(int type)
 {
     _effect_info_ptr e = _get_effect_info(type);
-    if (e)
-        return e->known;
-    return FALSE;
+    return e ? e->known : FALSE;
 }
 
 bool effect_learn(int type)
@@ -2407,8 +2379,7 @@ bool effect_learn(int type)
 
 int effect_parse_type(cptr type)
 {
-    int i;
-    for (i = 0; ; i++)
+    for (int i = 0; ; i++)
     {
         if (!_effect_info[i].text) break;
         if (streq(type, _effect_info[i].text))
@@ -2421,7 +2392,6 @@ errr effect_parse(char *line, effect_t *effect) /* LITE_AREA:<Lvl>:<Timeout>:<Ex
 {
     char *tokens[5];
     int   num = tokenize(line, 5, tokens, 0);
-    int   i;
 
     if (num < 1) return PARSE_ERROR_TOO_FEW_ARGUMENTS;
 
@@ -2434,7 +2404,7 @@ errr effect_parse(char *line, effect_t *effect) /* LITE_AREA:<Lvl>:<Timeout>:<Ex
     case 2: effect->power      = atoi(tokens[1]);
             effect->difficulty = effect->power;
     case 1:
-        for (i = 0; ; i++)
+        for (int i = 0; ; i++)
         {
             if (!_effect_info[i].text) break;
             if (streq(tokens[0], _effect_info[i].text))
@@ -2546,8 +2516,7 @@ bool effect_add_random(object_type *o_ptr, int bias)
 
 bool effect_add(object_type *o_ptr, int type)
 {
-    int i;
-    for (i = 0; ; i++)
+    for (int i = 0; ; i++)
     {
         if (!_effect_info[i].type) break;
         if (_effect_info[i].type == type)
@@ -2603,7 +2572,7 @@ device_effect_info_t wand_effect_table[] =
     {EFFECT_BALL_NEXUS,            47,  14,     1,   0,    50, 10, _DROP_GOOD},
     {EFFECT_BREATHE_COLD,          50,  15,     1,   0,    60, 10, _DROP_GOOD | _NO_DESTROY},
     {EFFECT_BREATHE_FIRE,          50,  16,     1,   0,    60, 10, _DROP_GOOD | _NO_DESTROY},
-	{EFFECT_BREATHE_WATER,         50,  16,     2,   0,    60, 10, _DROP_GOOD | _NO_DESTROY},
+    {EFFECT_BREATHE_WATER,         50,  16,     2,   0,    60, 10, _DROP_GOOD | _NO_DESTROY},
     {EFFECT_BEAM_GRAVITY,          55,  32,     2,   0,    33,  0, _DROP_GOOD | _NO_DESTROY},
     {EFFECT_METEOR,                55,  32,     2,   0,    50, 10, _DROP_GOOD | _NO_DESTROY},
     {EFFECT_BREATHE_ONE_MULTIHUED, 60,  17,     2,   0,    60, 10, _DROP_GOOD | _NO_DESTROY},
@@ -2713,10 +2682,8 @@ device_effect_info_t staff_effect_table[] =
 static int _bounds_check(int value, int min, int max)
 {
     int result = value;
-    if (result < min)
-        result = min;
-    if (result > max)
-        result = max;
+    if (result < min) result = min;
+    if (result > max) result = max;
     return result;
 }
 
@@ -2736,8 +2703,7 @@ static int _rand_normal(int mean, int pct)
     assert(pct >= 0);
 
     result = r/10;
-    if (randint0(10) < (r%10))
-        result++;
+    if (randint0(10) < (r%10)) result++;
 
     return result;
 }
@@ -6792,7 +6758,7 @@ cptr do_effect(effect_t *effect, int mode, int boost)
             device_known = TRUE;
         }
         break;
-    case EFFECT_ENDLESS_QUIVER: /* should only be on a quiver */
+    case EFFECT_ENDLESS_QUIVER: // Should only be on a quiver
         if (name) return "Endless Quiver";
         if (desc) return "Your quiver will refill with average ammo.";
         if (value) return format("%d", 1500);
@@ -6802,16 +6768,15 @@ cptr do_effect(effect_t *effect, int mode, int boost)
             obj_t forge = {0};
             int   tval = p_ptr->shooter_info.tval_ammo;
 
-            if ((!tval) || (tval == TV_NO_AMMO)) tval = TV_ARROW;
+            if (!tval || tval == TV_NO_AMMO) tval = TV_ARROW;
             if (tval == TV_ANY_AMMO) tval = TV_BOLT;
 
-            object_prep(&forge, lookup_kind(tval, SV_ARROW)); /* Hack: SV_ARROW == SV_BOLT == SV_PEBBLE */
+            object_prep(&forge, lookup_kind(tval, SV_ARROW)); // Hack: SV_ARROW == SV_BOLT == SV_PEBBLE
             forge.number = MAX(0, MIN(50, quiver_capacity() - quiver_count(NULL)));
             obj_identify_fully(&forge);
             object_origins(&forge, ORIGIN_ENDLESS);
 
-            if (!forge.number)
-                msg_print("Your quiver is full.");
+            if (!forge.number) msg_print("Your quiver is full.");
             else
             {
                 msg_print("Your quiver refills.");
@@ -7014,8 +6979,7 @@ cptr do_effect(effect_t *effect, int mode, int boost)
                 return NULL;
             }
             target_pet = old_target_pet;
-            if (speed_monster(dir))
-                device_noticed = TRUE;
+            if (speed_monster(dir)) device_noticed = TRUE;
         }
         break;
     case EFFECT_HASTE_MONSTERS:
@@ -7047,11 +7011,9 @@ cptr do_effect(effect_t *effect, int mode, int boost)
         {
             if (!res_save_default(RES_BLIND) && !res_save_default(RES_DARK))
             {
-                if (set_blind(p_ptr->blind + 3 + randint1(5), FALSE))
-                    device_noticed = TRUE;
+                if (set_blind(p_ptr->blind + 3 + randint1(5), FALSE)) device_noticed = TRUE;
             }
-            if (unlite_area(10, 3))
-                device_noticed = TRUE;
+            if (unlite_area(10, 3)) device_noticed = TRUE;
         }
         break;
     case EFFECT_SUMMON_ANGRY_MONSTERS:
@@ -7060,12 +7022,9 @@ cptr do_effect(effect_t *effect, int mode, int boost)
         if (color) return format("%d", TERM_RED);
         if (cast)
         {
-            int i;
-            int num = randint1(4);
-            for (i = 0; i < num; i++)
+            for (int num = randint1(4); num > 0; num--)
             {
-                if (summon_specific(SUMMON_WHO_PLAYER, py, px, dun_level, 0, (PM_ALLOW_GROUP | PM_ALLOW_UNIQUE | PM_NO_PET)))
-                    device_noticed = TRUE;
+                if (summon_specific(SUMMON_WHO_PLAYER, py, px, dun_level, 0, (PM_ALLOW_GROUP | PM_ALLOW_UNIQUE | PM_NO_PET))) device_noticed = TRUE;
             }
         }
         break;
@@ -7075,8 +7034,7 @@ cptr do_effect(effect_t *effect, int mode, int boost)
         if (color) return format("%d", TERM_UMBER);
         if (cast)
         {
-            if (set_slow(p_ptr->slow + randint1(30) + 15, FALSE))
-                device_noticed = TRUE;
+            if (set_slow(p_ptr->slow + randint1(30) + 15, FALSE)) device_noticed = TRUE;
         }
         break;
 

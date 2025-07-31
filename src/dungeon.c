@@ -2072,8 +2072,7 @@ static void process_world_aux_timeout(void)
     if (p_ptr->pclass == CLASS_PSION)
         psion_decrement_counters();
 
-    if (disciple_is_(DISCIPLE_TROIKA))
-        troika_reduce_timeouts();
+    if (disciple_is_(DISCIPLE_TROIKA)) troika_reduce_timeouts();
 
     if (p_ptr->fasting && one_in_(7))
     {
@@ -2583,7 +2582,6 @@ static void _recharge_aux(object_type *o_ptr)
 }
 static void process_world_aux_recharge(void)
 {
-    int i;
     _recharge_changed = FALSE;
     equip_for_each(_recharge_aux);
     if (_recharge_changed)
@@ -2596,7 +2594,7 @@ static void process_world_aux_recharge(void)
      * Recharge Devices
      */
     _recharge_changed = FALSE;
-    for (i = 1; i <= pack_max(); i++)
+    for (int i = 1; i <= pack_max(); i++)
     {
         object_type *o_ptr = pack_obj(i);
 
@@ -2614,7 +2612,7 @@ static void process_world_aux_recharge(void)
             break;
         }
 
-        /* artifact mushrooms for the snotling ... they never stack */
+        /* Artifact mushrooms for the snotling ... they never stack */
         if (object_is_mushroom(o_ptr) && o_ptr->timeout)
         {
             o_ptr->timeout--;

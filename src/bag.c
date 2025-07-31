@@ -282,8 +282,8 @@ int bag_weight_total(obj_p p)
       case SV_BAG_BOOK_BAG:     scale = 0.5f; break;
     }
 
-    if(have_flag(bag->flags, OF_ETHEREAL)) scale *= 0.5f;
-    if(have_flag(bag->flags, OF_BULKY) || (bag->curse_flags & OFC_BULKY)) scale *= 2.0f;
+    if(obj_has_flag(bag, OF_ETHEREAL)) scale *= 0.5f;
+    if(obj_has_flag(bag, OF_BULKY) || (bag->curse_flags & OFC_BULKY)) scale *= 2.0f;
 
     return (int)(inv_weight(_inv, p) * scale + 0.5f);
 }

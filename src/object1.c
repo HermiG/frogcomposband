@@ -159,6 +159,13 @@ void missile_flags_known(object_type *arrow, u32b flgs[OF_ARRAY_SIZE])
     }
 }
 
+bool obj_has_flag(object_type *obj, int flag)
+{
+  u32b flgs[OF_ARRAY_SIZE];
+  obj_flags(obj, flgs);
+  return have_flag(flgs, flag);
+}
+
 void obj_flags(object_type *o_ptr, u32b flgs[OF_ARRAY_SIZE])
 {
     object_kind *k_ptr = &k_info[o_ptr->k_idx];
@@ -207,6 +214,13 @@ void obj_flags(object_type *o_ptr, u32b flgs[OF_ARRAY_SIZE])
  *   Object Lore
  *************************************************************/
 
+bool obj_known_flag(object_type *obj, int flag)
+{
+  u32b flgs[OF_ARRAY_SIZE];
+  obj_flags_known(obj, flgs);
+  return have_flag(flgs, flag);
+}
+
 void obj_flags_known(object_type *o_ptr, u32b flgs[OF_ARRAY_SIZE])
 {
     object_kind *k_ptr = &k_info[o_ptr->k_idx];
@@ -221,10 +235,8 @@ void obj_flags_known(object_type *o_ptr, u32b flgs[OF_ARRAY_SIZE])
 
     /* Base object: Note you still know an unidentified blade of chaos
        grants resist chaos, provided your aware of the object kind.*/
-    if (k_ptr->aware)
-    {
-        for (i = 0; i < OF_ARRAY_SIZE; i++) flgs[i] = k_ptr->flags[i];
-    }
+    if (k_ptr->aware) for (int i = 0; i < OF_ARRAY_SIZE; i++) flgs[i] = k_ptr->flags[i];
+    
 
     /* Unidentified objects require special work. Anything you learn about
        an object before idenitification is marked in o_ptr->know_flags. We
@@ -234,7 +246,7 @@ void obj_flags_known(object_type *o_ptr, u32b flgs[OF_ARRAY_SIZE])
     {
         u32b actual[OF_ARRAY_SIZE];
         obj_flags(o_ptr, actual);
-        for (i = 0; i < OF_ARRAY_SIZE; i++) flgs[i] = (actual[i] & o_ptr->known_flags[i]);
+        for (int i = 0; i < OF_ARRAY_SIZE; i++) flgs[i] = (actual[i] & o_ptr->known_flags[i]);
         return;
     }
 
@@ -243,7 +255,7 @@ void obj_flags_known(object_type *o_ptr, u32b flgs[OF_ARRAY_SIZE])
     {
         artifact_type *a_ptr = &a_info[o_ptr->name1];
 
-        for (i = 0; i < OF_ARRAY_SIZE; i++) flgs[i] |= (a_ptr->flags[i] & a_ptr->known_flags[i]);
+        for (int i = 0; i < OF_ARRAY_SIZE; i++) flgs[i] |= (a_ptr->flags[i] & a_ptr->known_flags[i]);
     }
     else if (object_is_ego(o_ptr))
     {
@@ -262,7 +274,7 @@ void obj_flags_known(object_type *o_ptr, u32b flgs[OF_ARRAY_SIZE])
 
         if (!skip)
         {
-            for (i = 0; i < OF_ARRAY_SIZE; i++)
+            for (int i = 0; i < OF_ARRAY_SIZE; i++)
             {
                 flgs[i] |= (e_ptr->flags[i] & e_ptr->known_flags[i]);
                 flgs[i] |= (o_ptr->flags[i] & e_ptr->known_flags[i]);

@@ -1436,8 +1436,7 @@ bool brand_weapon_aux(object_type *o_ptr)
 }
 bool brand_armour_aux(object_type *o_ptr)
 {
-    if (have_flag(o_ptr->flags, OF_NO_REMOVE))
-        return FALSE;
+    if (have_flag(o_ptr->flags, OF_NO_REMOVE)) return FALSE;
     apply_magic(o_ptr, p_ptr->lev, AM_GOOD | AM_GREAT | AM_NO_FIXED_ART | AM_CRAFTING);
     return TRUE;
 }
@@ -3940,7 +3939,7 @@ void inven_damage(int who, inven_func typ, int p1, int which)
     if (slot)
     {
         obj_ptr quiver = equip_obj(slot);
-        if (have_flag(quiver->flags, OF_PROTECTION))
+        if (obj_has_flag(quiver, OF_PROTECTION))
         {
             if(obj_learn_flag(quiver, OF_PROTECTION)) {
                 char o_name[MAX_NLEN];
@@ -3967,7 +3966,7 @@ void inven_damage(int who, inven_func typ, int p1, int which)
     if (slot)
     {
         obj_ptr bag = equip_obj(slot);
-        if (have_flag(bag->flags, OF_PROTECTION))
+        if (obj_has_flag(bag, OF_PROTECTION))
         {
             if(obj_learn_flag(bag, OF_PROTECTION)) {
               char o_name[MAX_NLEN];

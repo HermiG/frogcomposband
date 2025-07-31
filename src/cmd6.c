@@ -529,15 +529,16 @@ static void do_cmd_quaff_potion_aux(obj_ptr obj)
     if (mut_present(MUT_POTION_CHUGGER)) energy_use = 50;
     else energy_use = 100;
 
-    obj_ptr obj_bag = NULL;
+    obj_ptr bag = NULL;
     if (obj->loc.where == INV_BAG) {
-        slot_t bag_slot = equip_find_obj(TV_BAG, SV_ANY);
-        if (bag_slot && (obj_bag = equip_obj(bag_slot))) {
-            if(obj_bag->sval == SV_BAG_POTION_BELT) energy_use *= 0.5;
-            else                                    energy_use *= 2;
-            if((obj_bag->curse_flags & OFC_TANGLING))   energy_use *= 3;
-            if(have_flag(obj_bag->flags, OF_ORGANIZED)) energy_use *= 0.5;
-          
+        bag = equip_obj(equip_find_obj(TV_BAG, SV_ANY));
+        if (bag) {
+            if(bag->sval == SV_BAG_POTION_BELT) energy_use *= 0.5;
+            else                                energy_use *= 2;
+
+            if(bag->curse_flags & OFC_TANGLING) energy_use *= 3;
+            if(obj_has_flag(bag, OF_ORGANIZED)) energy_use *= 0.5;
+
             equip_learn_flag(OF_ORGANIZED);
             equip_learn_curse(OFC_TANGLING);
         }
@@ -676,7 +677,7 @@ static void do_cmd_quaff_potion_aux(obj_ptr obj)
     if (devicemaster_is_(DEVICEMASTER_POTIONS) && !devicemaster_desperation && randint1(3*p_ptr->lev/2) > MAX(10, lev))
     {
         msg_print("You sip the potion sparingly.");
-    } else if (obj_bag && have_flag(obj_bag->flags, OF_TEMPERANCE) && one_in_(4)) {
+    } else if (bag && obj_has_flag(bag, OF_TEMPERANCE) && one_in_(4)) {
         msg_print("A shimmering condensate gathers in the vial as you return it to your potion belt — enough for another sip.");
         equip_learn_flag(OF_TEMPERANCE);
     }
@@ -745,15 +746,16 @@ static void do_cmd_read_scroll_aux(obj_ptr o_ptr)
     if (mut_present(MUT_SPEED_READER)) energy_use = 50;
     else energy_use = 100;
 
-    obj_ptr obj_bag = NULL;
+    obj_ptr bag = NULL;
     if (o_ptr->loc.where == INV_BAG) {
-        slot_t bag_slot = equip_find_obj(TV_BAG, SV_ANY);
-        if (bag_slot && (obj_bag = equip_obj(bag_slot))) {
-            if(obj_bag->sval == SV_BAG_SCROLL_CASE) energy_use *= 0.5;
-            else                                    energy_use *= 2;
-            if((obj_bag->curse_flags & OFC_TANGLING))   energy_use *= 3;
-            if(have_flag(obj_bag->flags, OF_ORGANIZED)) energy_use *= 0.5;
-            
+        bag = equip_obj(equip_find_obj(TV_BAG, SV_ANY));
+        if (bag) {
+            if(bag->sval == SV_BAG_SCROLL_CASE) energy_use *= 0.5;
+            else                                energy_use *= 2;
+
+            if(bag->curse_flags & OFC_TANGLING) energy_use *= 3;
+            if(obj_has_flag(bag, OF_ORGANIZED)) energy_use *= 0.5;
+
             equip_learn_flag(OF_ORGANIZED);
             equip_learn_curse(OFC_TANGLING);
         }
@@ -906,7 +908,7 @@ static void do_cmd_read_scroll_aux(obj_ptr o_ptr)
     {
         msg_print("Your mental focus preserves the scroll!");
     
-    } else if (obj_bag && have_flag(obj_bag->flags, OF_TEMPERANCE) && one_in_(3)) {
+    } else if (bag && obj_has_flag(bag, OF_TEMPERANCE) && one_in_(3)) {
         msg_print("Your scroll case hums with latent magic as it preserves the scroll.");
         equip_learn_flag(OF_TEMPERANCE);
     }

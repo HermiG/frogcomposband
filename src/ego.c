@@ -3901,7 +3901,7 @@ void ego_finalize(object_type *o_ptr, int level, int power, int mode)
                 o_ptr->pval = randint1(2);
                 if (one_in_(15)) o_ptr->pval++;
             }
-            else if ((o_ptr->name2 == EGO_HELMET_TOMTE) && have_flag(o_ptr->flags, OF_SPEED))
+            else if (o_ptr->name2 == EGO_HELMET_TOMTE && have_flag(o_ptr->flags, OF_SPEED))
             {
                 o_ptr->pval = randint0(3);
                 do { o_ptr->pval++; }

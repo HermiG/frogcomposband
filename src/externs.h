@@ -1382,6 +1382,7 @@ extern char *version_modifier(void);
 extern s16b m_bonus(int max, int level);
 
 extern void reset_visuals(void);
+extern bool obj_has_flag(object_type *obj, int flag);
 extern void obj_flags(object_type *o_ptr, u32b flgs[OF_ARRAY_SIZE]);
 extern void obj_flags_effective(object_type *o_ptr, u32b flgs[OF_ARRAY_SIZE]);
 extern void weapon_flags(int hand, u32b flgs[OF_ARRAY_SIZE]);
@@ -1393,6 +1394,7 @@ extern void toggle_inven_equip(void);
 extern void toggle_mon_obj_lists(void);
 
 /* Object Lore */
+extern bool obj_known_flag(object_type *obj, int flag);
 extern void obj_flags_known(object_type *o_ptr, u32b flgs[OF_ARRAY_SIZE]);
 extern void obj_flags_unknown(object_type *o_ptr, u32b flgs[OF_ARRAY_SIZE]);
 extern void obj_flags_display(object_type *o_ptr, u32b flgs[OF_ARRAY_SIZE]);

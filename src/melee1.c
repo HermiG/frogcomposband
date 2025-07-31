@@ -622,8 +622,8 @@ bool make_attack_normal(int m_idx)
                     for(int use_bag = 0; use_bag < 2; use_bag++) {
                       slot_t slot = use_bag ? equip_find_obj(TV_BAG, SV_ANY) : 0;
                       if(use_bag && !slot) continue;
-                      obj_ptr obj_bag = use_bag ? equip_obj(slot) : NULL;
-                      bool gaudy_bag = use_bag && have_flag(obj_bag->flags, OF_GAUDY);
+                      obj_ptr bag = use_bag ? equip_obj(slot) : NULL;
+                      bool gaudy_bag = use_bag && obj_has_flag(bag, OF_GAUDY);
                       
                       if (p_ptr->tim_inven_prot2)
                       {
@@ -641,7 +641,7 @@ bool make_attack_normal(int m_idx)
                         continue;
                       }
                       
-                      if (use_bag && !gaudy_bag && have_flag(obj_bag->flags, OF_SECURE) &&
+                      if (use_bag && !gaudy_bag && obj_has_flag(bag, OF_SECURE) &&
                          (randint0(100) < (adj_dex_safe[p_ptr->stat_ind[A_DEX]] + p_ptr->lev)))
                       {
                         msg_print("Your bag is tightly secured!");
@@ -671,7 +671,7 @@ bool make_attack_normal(int m_idx)
                         object_desc(o_name, obj, OD_OMIT_PREFIX);
                         
                         msg_format("%sour %s %s stolen!", (obj->number > 1) ? "One of y" : "Y",
-                                   o_name, have_flag(obj->flags, OF_PLURAL) ? "were" : "was");
+                                   o_name, (obj->number == 1 && have_flag(obj->flags, OF_PLURAL)) ? "were" : "was");
                         
                         virtue_add(VIRTUE_SACRIFICE, 1);
                         
@@ -710,8 +710,8 @@ bool make_attack_normal(int m_idx)
                       slot_t slot = use_bag ? equip_find_obj(TV_BAG, SV_ANY) : 0;
                       if(use_bag && !slot) continue;
                       
-                      obj_ptr obj_bag = use_bag ? equip_obj(slot) : NULL;
-                      if(use_bag && have_flag(obj_bag->flags, OF_SECURE)) continue;
+                      obj_ptr bag = use_bag ? equip_obj(slot) : NULL;
+                      if(use_bag && obj_has_flag(bag, OF_SECURE)) continue;
                       
                       for (int k = 0; k < 10; k++)
                       {
@@ -726,7 +726,7 @@ bool make_attack_normal(int m_idx)
 
                         object_desc(o_name, obj, OD_OMIT_PREFIX | OD_NAME_ONLY | OD_COLOR_CODED);
                         msg_format("%sour %s %s eaten!", ((obj->number > 1) ? "One of y" : "Y"),
-                                   o_name, (((obj->number == 1) && (have_flag(obj->flags, OF_PLURAL))) ? "were" : "was"));
+                                   o_name, (obj->number == 1 && have_flag(obj->flags, OF_PLURAL)) ? "were" : "was");
                         
                         obj->number--;
                         obj_release(obj, OBJ_RELEASE_QUIET);

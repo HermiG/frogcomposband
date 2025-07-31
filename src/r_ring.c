@@ -287,10 +287,7 @@ static bool _absorb(object_type *o_ptr)
     if (obj_has_effect(o_ptr))
     {
         effect_t e = obj_get_effect(o_ptr);
-        if ((!_effects[e.type]) && (_is_ring_effect(e.type)))
-        {
-            msg_format("You have gained the power of '%s'.", do_effect(&e, SPELL_NAME, 0));
-        }
+        if (!_effects[e.type] && _is_ring_effect(e.type)) msg_format("You have gained the power of '%s'.", do_effect(&e, SPELL_NAME, 0));
         _effects[e.type]++;
         result = TRUE;
     }
@@ -1062,8 +1059,7 @@ static effect_t _effect(_spell_ptr spell)
 static int _groups_count(void)
 {
     int result = 0;
-    int i;
-    for (i = 0; ; i++)
+    for (int i = 0; ; i++)
     {
         if (!_groups[i].name) break;
         result++;
@@ -1073,8 +1069,7 @@ static int _groups_count(void)
 static int _spells_count(_spell_ptr spells)
 {
     int result = 0;
-    int i;
-    for (i = 0; ; i++)
+    for (int i = 0; ; i++)
     {
         if (spells[i].effect == EFFECT_NONE) break;
         result++;
@@ -1084,12 +1079,10 @@ static int _spells_count(_spell_ptr spells)
 static int _spells_count_allowed(_spell_ptr spells)
 {
     int result = 0;
-    int i;
-    for (i = 0; ; i++)
+    for (int i = 0; ; i++)
     {
         if (spells[i].effect == EFFECT_NONE) break;
-        if (_effects[spells[i].effect])
-            result++;
+        if (_effects[spells[i].effect]) result++;
     }
     return result;
 }
@@ -1099,12 +1092,11 @@ static int _spells_count_allowed(_spell_ptr spells)
  * add new allowable activations to jewelry. */
 static _spell_ptr _find_spell(int effect)
 {
-    int i, j;
-    for (i = 0; ; i++)
+    for (int i = 0; ; i++)
     {
         _group_ptr g = &_groups[i];
         if (!g->name) break;
-        for (j = 0; ; j++)
+        for (int j = 0; ; j++)
         {
             _spell_ptr s = &g->spells[j];
             if (s->effect == EFFECT_NONE) break;
@@ -1116,21 +1108,16 @@ static _spell_ptr _find_spell(int effect)
 static vec_ptr _missing_effects(void)
 {
     vec_ptr v = vec_alloc(NULL);
-    int     i;
 
-    for (i = 0; i < EFFECT_MAX; i++)
-    {
-        if (_effects[i] > 0 && !_find_spell(i))
-            vec_add_int(v, i);
-    }
+    for (int i = 0; i < EFFECT_MAX; i++) if (_effects[i] > 0 && !_find_spell(i)) vec_add_int(v, i);
+
     return v;
 }
 
 static bool _is_ring_effect(int effect)
 {
     _spell_ptr l = _find_spell(effect);
-    if ((!l) || (l->effect == EFFECT_NONE)) return FALSE;
-    return TRUE;
+    return (l && l->effect != EFFECT_NONE);
 }
 
 /* Menu Code 1: Choose which group of magic to use */

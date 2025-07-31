@@ -2148,14 +2148,9 @@ void object_desc(char *buf, object_type *o_ptr, u32b mode)
 
         if (strlen(tmp_val2) > 0) strcat(tmp_val2, " ");
 
-        if ((o_ptr->tval == TV_CAPTURE) && (o_ptr->pval > 0))
-        { /* Special case */
-            sprintf(buf, (mode & OD_COLOR_CODED) ? "<color:T>A:Release Pet</color>" : "A:Release Pet");
-        }
-        else
-        {
-            sprintf(buf, (mode & OD_COLOR_CODED) ? "<color:T>A:%s</color>" : "A:%s", do_effect(&e, SPELL_NAME, 0));
-        }
+        if (o_ptr->tval == TV_CAPTURE && o_ptr->pval > 0) sprintf(buf, (mode & OD_COLOR_CODED) ? "<color:T>A:Release Pet</color>" : "A:Release Pet");
+        else                                              sprintf(buf, (mode & OD_COLOR_CODED) ? "<color:T>A:%s</color>" : "A:%s", do_effect(&e, SPELL_NAME, 0));
+
         strcat(tmp_val2, buf);
     }
 

@@ -771,27 +771,17 @@ bool obj_has_lore(object_type *o_ptr)
 }
 
 /* Hack: Check if a spellbook is one of the realms we can use. -- TY */
-
 bool check_book_realm(const byte book_tval, const byte book_sval)
 {
     if (book_tval < TV_LIFE_BOOK) return FALSE;
-    if (p_ptr->pclass == CLASS_SORCERER)
-    {
-        return is_magic(tval2realm(book_tval));
-    }
+    if (p_ptr->pclass == CLASS_SORCERER) return is_magic(tval2realm(book_tval));
     else if (p_ptr->pclass == CLASS_RED_MAGE)
     {
-        if (is_magic(tval2realm(book_tval)))
-            return ((book_tval == TV_ARCANE_BOOK) || (book_sval < 2));
+        if (is_magic(tval2realm(book_tval))) return ((book_tval == TV_ARCANE_BOOK) || (book_sval < 2));
     }
-    else if (p_ptr->pclass == CLASS_GRAY_MAGE)
-    {
-        return gray_mage_is_allowed_book(book_tval, book_sval);
-    }
-    else if (p_ptr->pclass == CLASS_SKILLMASTER)
-    {
-        return skillmaster_is_allowed_book(book_tval, book_sval);
-    }
+    else if (p_ptr->pclass == CLASS_GRAY_MAGE) return gray_mage_is_allowed_book(book_tval, book_sval);
+    else if (p_ptr->pclass == CLASS_SKILLMASTER) return skillmaster_is_allowed_book(book_tval, book_sval);
+
     return (REALM1_BOOK == book_tval || REALM2_BOOK == book_tval);
 }
 
@@ -800,57 +790,46 @@ bool check_book_realm(const byte book_tval, const byte book_sval)
  */
 void toggle_inven_equip(void)
 {
-    int j;
-
     /* Scan windows */
-    for (j = 0; j < 8; j++)
+    for (int j = 0; j < 8; j++)
     {
-        /* Unused */
         if (!angband_term[j]) continue;
 
-        /* Flip inven to equip */
-        if (window_flag[j] & (PW_INVEN))
+        if (window_flag[j] & PW_INVEN)
         {
-            /* Flip flags */
-            window_flag[j] &= ~(PW_INVEN);
-            window_flag[j] |= (PW_EQUIP);
-
-            /* Window stuff */
-            p_ptr->window |= (PW_EQUIP);
+            window_flag[j] &= ~PW_INVEN;
+            window_flag[j] |=  PW_EQUIP;
+            p_ptr->window  |=  PW_EQUIP;
         }
-
-        /* Flip inven to equip */
-        else if (window_flag[j] & (PW_EQUIP))
+        else if (window_flag[j] & PW_EQUIP)
         {
-            /* Flip flags */
-            window_flag[j] &= ~(PW_EQUIP);
-            window_flag[j] |= (PW_INVEN);
-
-            /* Window stuff */
-            p_ptr->window |= (PW_INVEN);
+            window_flag[j] &= ~PW_EQUIP;
+            window_flag[j] |=  PW_INVEN;
+            p_ptr->window  |=  PW_INVEN;
         }
     }
 }
 
+/*
+ * Flip object and monster lists in any sub-windows
+ */
 void toggle_mon_obj_lists(void)
 {
-    int i;
-
-    for (i = 0; i < 8; i++)
+    for (int i = 0; i < 8; i++)
     {
         if (!angband_term[i]) continue;
+
         if (window_flag[i] & PW_MONSTER_LIST)
         {
             window_flag[i] &= ~PW_MONSTER_LIST;
-            window_flag[i] |= PW_OBJECT_LIST;
-            p_ptr->window |= PW_OBJECT_LIST;
+            window_flag[i] |=  PW_OBJECT_LIST;
+            p_ptr->window  |=  PW_OBJECT_LIST;
         }
         else if (window_flag[i] & PW_OBJECT_LIST)
         {
             window_flag[i] &= ~PW_OBJECT_LIST;
-            window_flag[i] |= PW_MONSTER_LIST;
-            p_ptr->window |= PW_MONSTER_LIST;
+            window_flag[i] |=  PW_MONSTER_LIST;
+            p_ptr->window  |=  PW_MONSTER_LIST;
         }
     }
 }
-

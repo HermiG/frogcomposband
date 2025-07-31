@@ -2962,17 +2962,12 @@ s32b create_artifact(object_type *o_ptr, u32b mode)
     add_flag(o_ptr->flags, OF_IGNORE_FIRE);
     add_flag(o_ptr->flags, OF_IGNORE_COLD);
 
-    if (have_flag(o_ptr->flags, OF_BRAND_FIRE))
-        add_flag(o_ptr->flags, OF_LITE);
+    if (have_flag(o_ptr->flags, OF_BRAND_FIRE)) add_flag(o_ptr->flags, OF_LITE);
 
-    if ( !obj_has_effect(o_ptr)
-      && !object_is_ammo(o_ptr) )
+    if ( !obj_has_effect(o_ptr) && !object_is_ammo(o_ptr) )
     {
         int odds = object_is_armour(o_ptr) ? ACTIVATION_CHANCE * 2 : ACTIVATION_CHANCE;
-        if (one_in_(odds))
-        {
-            effect_add_random(o_ptr, artifact_bias);
-        }
+        if (one_in_(odds)) effect_add_random(o_ptr, artifact_bias);
     }
 
     if (object_is_armour(o_ptr) || o_ptr->tval == TV_RING || o_ptr->tval == TV_AMULET)
@@ -2999,8 +2994,7 @@ s32b create_artifact(object_type *o_ptr, u32b mode)
         }
     }
 
-    if ((artifact_bias == BIAS_MAGE || artifact_bias == BIAS_INT)
-      && (o_ptr->tval == TV_GLOVES))
+    if ((artifact_bias == BIAS_MAGE || artifact_bias == BIAS_INT) && o_ptr->tval == TV_GLOVES)
     {
         add_flag(o_ptr->flags, OF_FREE_ACT);
     }

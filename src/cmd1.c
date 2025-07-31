@@ -1109,9 +1109,8 @@ static void hit_trap(bool break_trap, bool do_jump)
                 take_hit(DAMAGE_NOESCAPE, dam, "slipping on a banana peel");
                 p_ptr->energy_need += ENERGY_NEED() * 3 / 4;
                 for(int where = one_in_(4); where < 3; where++) {
-                    if(where == 2 && !equip_find_obj(TV_BAG, SV_ANY)) continue;
-                    if(where == 2 && equip_find_obj(TV_BAG, SV_BAG_POTION_BELT) && !one_in_(3)) continue;
-                    if(where == 2 && equip_find_obj(TV_BAG, SV_BAG_SCROLL_CASE) && !one_in_(3)) continue;
+                    if(where == 2 && !equip_find_obj(TV_BAG, SV_ANY)) continue; // No bag
+                    if(where == 2 && !equip_find_obj(TV_BAG, SV_BAG_POUCH) && !one_in_(3)) continue; // Specialty bag
 
                     if (magik(75))
                     {

@@ -3978,10 +3978,8 @@ void inven_damage(int who, inven_func typ, int p1, int which)
         {
             for (slot = 1; slot <= bag_max(); slot++)
             {
-                // Potion Belts and Scroll Cases are better at protecting their contents
-                if(bag->sval == SV_BAG_POTION_BELT || bag->sval == SV_BAG_SCROLL_CASE) {
-                    if(!one_in_(4)) continue; // 75% chance to avoid damage
-                }
+                // Specialty bags are better at protecting their contents
+                if(bag->sval != SV_BAG_POUCH && !one_in_(4)) continue; // 75% chance to avoid damage
 
                 obj_ptr obj = bag_obj(slot);
 

@@ -38,8 +38,8 @@ const char* bag_type_name(int sval)
   
   switch (sval)
   {
-    case SV_BAG_SCROLL_CASE:  return "scroll case";
     case SV_BAG_POTION_BELT:  return "potion belt";
+    case SV_BAG_SCROLL_CASE:  return "scroll case";
     case SV_BAG_DEVICE_CASE:  return "device case";
     case SV_BAG_BOOK_BAG:     return "book bag";
     default:                  return "bag";
@@ -59,8 +59,11 @@ bool bag_likes(obj_ptr obj)
   if (inv_can_combine(_inv, obj)) return TRUE;
   if (!obj_is_identified(obj)) return FALSE;
   
-  if (equip_find_obj(TV_BAG, SV_BAG_POTION_BELT) && obj_is_potion(obj)) return TRUE;
-  if (equip_find_obj(TV_BAG, SV_BAG_SCROLL_CASE) && obj_is_scroll(obj)) return TRUE;
+  if (equip_find_obj(TV_BAG, SV_BAG_BOOK_BAG))    return (obj_is_book(obj)   || obj_is_parchment(obj));
+  if (equip_find_obj(TV_BAG, SV_BAG_POTION_BELT)) return (obj_is_potion(obj) || obj_is_food(obj));
+  if (equip_find_obj(TV_BAG, SV_BAG_SCROLL_CASE)) return (obj_is_scroll(obj) || obj_is_parchment(obj));
+  if (equip_find_obj(TV_BAG, SV_BAG_DEVICE_CASE)) return  obj_is_device(obj);
+
   return FALSE;
 }
 
@@ -72,9 +75,10 @@ bool bag_tolerates(obj_ptr obj)
 
     if(obj->weight > (bag_weight_capacity() - bag_weight(NULL))) return FALSE; // No room for this item
 
-    if(equip_find_obj(TV_BAG, SV_BAG_BOOK_BAG))    return (obj_is_book(obj) || obj_is_parchment(obj));
-    if(equip_find_obj(TV_BAG, SV_BAG_SCROLL_CASE)) return (obj_is_scroll(obj) || obj_is_parchment(obj));
-    if(equip_find_obj(TV_BAG, SV_BAG_POTION_BELT)) return (obj_is_potion(obj) || obj_is_food(obj));
+    if (equip_find_obj(TV_BAG, SV_BAG_BOOK_BAG))    return (obj_is_book(obj)   || obj_is_parchment(obj));
+    if (equip_find_obj(TV_BAG, SV_BAG_POTION_BELT)) return (obj_is_potion(obj) || obj_is_food(obj));
+    if (equip_find_obj(TV_BAG, SV_BAG_SCROLL_CASE)) return (obj_is_scroll(obj) || obj_is_parchment(obj));
+    if (equip_find_obj(TV_BAG, SV_BAG_DEVICE_CASE)) return  obj_is_device(obj);
 
     return TRUE;
 }
@@ -278,8 +282,9 @@ int bag_weight_total(obj_p p)
     float scale = 1.0f;
     switch (bag->sval)
     {
-      case SV_BAG_SCROLL_CASE:  scale = 0.5f; break;
       case SV_BAG_POTION_BELT:  scale = 0.5f; break;
+      case SV_BAG_SCROLL_CASE:  scale = 0.5f; break;
+      case SV_BAG_DEVICE_CASE:  scale = 0.5f; break;
       case SV_BAG_BOOK_BAG:     scale = 0.5f; break;
     }
 

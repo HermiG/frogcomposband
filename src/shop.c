@@ -495,8 +495,7 @@ static bool _general_will_buy(obj_ptr obj)
     switch (obj->tval)
     {
     case TV_BAG:
-        if (obj->sval == SV_BAG_POTION_BELT) return FALSE;
-        if (obj->sval == SV_BAG_SCROLL_CASE) return FALSE;
+        if (obj->sval != SV_BAG_POUCH) return FALSE;
         break;
     case TV_POTION:
         if (obj->sval != SV_POTION_WATER) return FALSE;
@@ -844,8 +843,7 @@ static bool _alchemist_will_buy(obj_ptr obj)
     switch (obj->tval)
     {
     case TV_BAG:
-        if (obj->sval != SV_BAG_POTION_BELT &&
-            obj->sval != SV_BAG_SCROLL_CASE) return FALSE;
+        if (obj->sval != SV_BAG_POTION_BELT && obj->sval != SV_BAG_SCROLL_CASE) return FALSE;
     case TV_POTION:
     case TV_SCROLL:
         break;
@@ -892,6 +890,8 @@ static bool _magic_will_buy(obj_ptr obj)
 {
     switch (obj->tval)
     {
+    case TV_BAG:
+      if (obj->sval != SV_BAG_DEVICE_CASE) return FALSE;
     case TV_SORCERY_BOOK:
     case TV_NATURE_BOOK:
     case TV_CHAOS_BOOK:
@@ -928,6 +928,8 @@ static bool _magic_stock_p(int k_idx)
     if (!_stock_p(k_idx)) return FALSE;
     switch (k_info[k_idx].tval)
     {
+    case TV_BAG:
+       return (k_info[k_idx].sval == SV_BAG_DEVICE_CASE);
     case TV_WAND:
     case TV_STAFF:
     case TV_FIGURINE:

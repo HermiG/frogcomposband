@@ -1882,12 +1882,12 @@ void object_desc(char *buf, object_type *o_ptr, u32b mode)
           if (o_ptr->loc.where == INV_EQUIP)
             t = object_desc_str(t, format(" [%.1f of %d lbs]", bag_weight(NULL) * 0.1f, o_ptr->xtra5/10));
           else
-            t = object_desc_str(t, format(" [%d] [%d lbs]", o_ptr->xtra4, o_ptr->xtra5/10));
-        } else if (o_ptr->sval == SV_BAG_POTION_BELT || o_ptr->sval == SV_BAG_SCROLL_CASE) {
+            t = object_desc_str(t, format(" [%d lbs]", o_ptr->xtra5/10));
+        } else if (o_ptr->sval == SV_BAG_POTION_BELT || o_ptr->sval == SV_BAG_SCROLL_CASE || o_ptr->sval == SV_BAG_DEVICE_CASE) {
           if (o_ptr->loc.where == INV_EQUIP)
             t = object_desc_str(t, format(" [%d of %d]", bag_count(NULL), o_ptr->xtra4));
           else
-            t = object_desc_str(t, format(" [%d] [%d lbs]", o_ptr->xtra4, o_ptr->xtra5/10));
+            t = object_desc_str(t, format(" [%d]", o_ptr->xtra4));
         }
         break;
     }

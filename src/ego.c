@@ -3640,19 +3640,7 @@ void obj_create_quiver(object_type *o_ptr, int level, int power, int mode)
  *************************************************************************/
 void obj_create_bag(object_type *o_ptr, int level, int power, int mode)
 {
-  // Baseline bags should be conservative (these are free inventory slots, after all)
-  if(o_ptr->sval == SV_BAG_POTION_BELT || o_ptr->sval == SV_BAG_SCROLL_CASE) {
-    o_ptr->xtra4 = o_ptr->pval * 10; // item capacity (tenths of a slot)
-    
-    // A basic potion belt or scroll case holds just 10 items (potions/scrolls weigh ~0.5lb each)
-    // Potion Belt [10] => 5 lbs
-    
-    //                                         Frequency:  50%   25%   12%    6%    3%
-    //                                       Improvement:   -   +20%  +40%  +60%  +80%
-    while (one_in_(2)) o_ptr->xtra4 += o_ptr->pval * 2; // 10 -> 12 -> 14 -> 16 -> 18
-    
-    o_ptr->xtra5 = (o_ptr->xtra4 + 1) / 2; // weight capacity (decipounds) is half the capacity for potion/scroll bags
-  } else {
+  if(o_ptr->sval == SV_BAG_POUCH) { // Generic bags
     o_ptr->xtra4 = o_ptr->pval *  5; // item capacity (tenths)
     o_ptr->xtra5 = o_ptr->pval * 10; // weight capacity (decipounds)
     

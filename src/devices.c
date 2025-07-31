@@ -6744,25 +6744,38 @@ cptr do_effect(effect_t *effect, int mode, int boost)
             }
         }
         break;
-    case EFFECT_BOTTOMLESS_BAG: /* should only be on a potion belt or scroll case */
-        if (name && boost == SV_BAG_POTION_BELT) return "Bottomless Potion Belt";
-        if (name && boost == SV_BAG_SCROLL_CASE) return "Curious Scroll Case";
-        if (name) return "Error, invalid Bag type.";
+    case EFFECT_BOTTOMLESS_BAG: // Should only be on a potion belt or scroll case
+        if (name && effect->extra == SV_BAG_POTION_BELT) return "Bottomless Potion Belt";
+        if (name && effect->extra == SV_BAG_SCROLL_CASE) return "Curious Scroll Case";
+        if (name) return "Bottomless Bag";
         
-        if (desc && boost == SV_BAG_POTION_BELT) return "You occasionally find potions you swear weren't there before.";
-        if (desc && boost == SV_BAG_SCROLL_CASE) return "You occasionally find scrolls you swear weren't there before.";
-        if (desc) return "Error, invalid Bag type.";
-        if (value) return format("%d", 1500);
-        if (color) return format("%d", TERM_L_RED);
-        if (cast && boost) // Use boost value to determine the bag type
+        if (desc && effect->extra == SV_BAG_POTION_BELT) return "You occasionally find potions you swear weren't there.";
+        if (desc && effect->extra == SV_BAG_SCROLL_CASE) return "You occasionally find scrolls you swear weren't there.";
+        if (desc)  return "This bag seems to be larger inside than out.";
+        if (value) return format("%d", 15000);
+        if (color) return format("%d", TERM_L_ORANGE);
+        if (cast && one_in_(5))
         {
-          obj_t forge = {0};
-          if(boost == SV_BAG_POTION_BELT) object_prep(&forge, lookup_kind(TV_POTION, SV_ANY));
-          if(boost == SV_BAG_SCROLL_CASE) object_prep(&forge, lookup_kind(TV_SCROLL, SV_ANY));
-          forge.number = MAX(0, MIN(1, bag_capacity() - bag_count(NULL)));
-          object_origins(&forge, ORIGIN_BOTTOMLESS);
-          
-          if (forge.number) bag_carry(&forge);
+            obj_ptr bag = equip_obj(equip_find_obj(TV_BAG, SV_ANY));
+            if (!bag) break;
+
+            obj_t forge = {0};
+            if      (bag->sval == SV_BAG_POTION_BELT) object_prep(&forge, lookup_kind(TV_POTION, SV_ANY));
+            else if (bag->sval == SV_BAG_SCROLL_CASE) object_prep(&forge, lookup_kind(TV_SCROLL, SV_ANY));
+            else break;
+
+            forge.number = MAX(0, MIN(1, bag_capacity() - bag_count(NULL)));
+            object_origins(&forge, ORIGIN_BOTTOMLESS);
+
+            if (forge.number) {
+                silent_carry_hack = !one_in_(5); // We don't always notice that the bag produced something
+                bag_carry(&forge);
+                if(!silent_carry_hack) {
+                  device_noticed = TRUE;
+                  equip_learn_flag(OF_BOTTOMLESS);
+                }
+                silent_carry_hack = FALSE;
+            }
         }
         break;
     case EFFECT_WALL_BUILDING:

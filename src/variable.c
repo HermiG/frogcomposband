@@ -197,6 +197,7 @@ bool temporary_name_hack = FALSE;
 bool online_macro_hack = FALSE;
 bool recall_stairs_hack = FALSE;
 bool silent_drop_hack = FALSE;
+bool silent_carry_hack = FALSE;
 bool check_useless_pickup_hack = FALSE;
 bool drop_near_stack_hack = FALSE;
 bool advance_time_hack = FALSE;

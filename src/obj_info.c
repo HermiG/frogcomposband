@@ -1312,7 +1312,8 @@ static void _display_activation(object_type *o_ptr, u32b flgs[OF_ARRAY_SIZE], do
         if (have_flag(flgs, OF_ACTIVATE))
         {
             effect_t e = obj_get_effect(o_ptr);
-            bool capture_ball_hack = ((o_ptr->tval == TV_CAPTURE) && (o_ptr->pval > 0));
+            bool capture_ball_hack = (o_ptr->tval == TV_CAPTURE && o_ptr->pval > 0);
+            if(o_ptr->tval == TV_BAG) e.extra = o_ptr->sval;
             _display_activation_aux(&e, obj_is_identified_fully(o_ptr), doc, capture_ball_hack);
             doc_newline(doc);
         }

@@ -3642,8 +3642,7 @@ void obj_create_bag(object_type *o_ptr, int level, int power, int mode)
 {
   // Baseline bags should be conservative (these are free inventory slots, after all)
   if(o_ptr->sval == SV_BAG_POTION_BELT || o_ptr->sval == SV_BAG_SCROLL_CASE) {
-    o_ptr->xtra4 = o_ptr->pval * 10; // item capacity
-    o_ptr->xtra5 = o_ptr->pval *  5; // weight capacity (pounds)
+    o_ptr->xtra4 = o_ptr->pval * 10; // item capacity (tenths of a slot)
     
     // A basic potion belt or scroll case holds just 10 items (potions/scrolls weigh ~0.5lb each)
     // Potion Belt [10] => 5 lbs
@@ -3651,10 +3650,11 @@ void obj_create_bag(object_type *o_ptr, int level, int power, int mode)
     //                                         Frequency:  50%   25%   12%    6%    3%
     //                                       Improvement:   -   +20%  +40%  +60%  +80%
     while (one_in_(2)) o_ptr->xtra4 += o_ptr->pval * 2; // 10 -> 12 -> 14 -> 16 -> 18
-    while (one_in_(2)) o_ptr->xtra5 += o_ptr->pval * 1; //  5 ->  6 ->  7 ->  8 ->  9
+    
+    o_ptr->xtra5 = (o_ptr->xtra4 + 1) / 2; // weight capacity (decipounds) is half the capacity for potion/scroll bags
   } else {
-    o_ptr->xtra4 = o_ptr->pval *  5; // item capacity
-    o_ptr->xtra5 = o_ptr->pval * 10; // weight capacity (pounds)
+    o_ptr->xtra4 = o_ptr->pval *  5; // item capacity (tenths)
+    o_ptr->xtra5 = o_ptr->pval * 10; // weight capacity (decipounds)
     
     // A basic Linen Bag (half of all bags) can hold up to 5 items weighing up to 10 pounds total
     // Linen Bag [10 lbs] => 5 items
@@ -3666,6 +3666,16 @@ void obj_create_bag(object_type *o_ptr, int level, int power, int mode)
     //                                       Improvement:   -   +20%  +40%  +60%  +80%
     while (one_in_(2)) o_ptr->xtra4 += o_ptr->pval * 1; //  5 ->  6 ->  7 ->  8 ->  9
     while (one_in_(2)) o_ptr->xtra5 += o_ptr->pval * 2; // 10 -> 12 -> 14 -> 16 -> 18
+  } else { // Specialized bags
+    o_ptr->xtra4 = o_ptr->pval * 10; // item capacity (tenths of a slot)
+    o_ptr->xtra5 = 9999; // no weight limit
+    
+    // A basic potion belt or scroll case holds just 10 items (potions/scrolls weigh ~0.5lb each)
+    // Potion Belt [10] => 5 lbs
+    
+    //                                         Frequency:  50%   25%   12%    6%    3%
+    //                                       Improvement:   -   +20%  +40%  +60%  +80%
+    while (one_in_(2)) o_ptr->xtra4 += o_ptr->pval * 2; // 10 -> 12 -> 14 -> 16 -> 18
   }
   // pval is used to determine magnitude of "pval stats" like +Str or +Stealth
   // We must zero out the pval field otherwise we'll generate bags of +100 Strength

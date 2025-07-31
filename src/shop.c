@@ -861,6 +861,8 @@ static bool _alchemist_stock_p(int k_idx)
     switch (k_info[k_idx].tval)
     {
     /* Scrolls and Potions are also stocked by the Temple. */
+    case TV_BAG:
+        return (k_info[k_idx].sval == SV_BAG_POTION_BELT);
     case TV_SCROLL:
     case TV_POTION:
         if (!_temple_stock_p(k_idx)) return TRUE;

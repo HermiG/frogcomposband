@@ -2183,12 +2183,11 @@ static bool inn_comm(int cmd)
                 else
                 {
                     p_ptr->chp = p_ptr->mhp;
-                    if ((p_ptr->pclass != CLASS_RUNE_KNIGHT) && (!elemental_is_(ELEMENTAL_WATER)))
-                        p_ptr->csp = p_ptr->msp;
+                    if (p_ptr->pclass != CLASS_RUNE_KNIGHT && !elemental_is_(ELEMENTAL_WATER)) p_ptr->csp = p_ptr->msp;
 
                     _recharge_player_items();
 
-                    if ((prace_is_(RACE_MON_POSSESSOR)) && (p_ptr->current_r_idx == MON_AUDE))
+                    if (prace_is_(RACE_MON_POSSESSOR) && p_ptr->current_r_idx == MON_AUDE)
                     {
                         msg_format("You awaken smiling and much refreshed after a good%s... sleep?%s", (prev_hour >= 6 && prev_hour <= 17) ? " evening's" : " night's", mut_present(MUT_NO_INHIBITIONS) ? " (You really like that No Inhibitions mutation!)" : "");
                     }
@@ -2217,7 +2216,7 @@ static bool inn_comm(int cmd)
             }
     }
 
-    return (TRUE);
+    return TRUE;
 }
 
 /*

@@ -1269,6 +1269,7 @@ int py_food_regen(void)
         }
     }
 }
+
 /*
  * Handle timed damage and regeneration every 10 game turns
  */
@@ -2069,8 +2070,7 @@ static void process_world_aux_timeout(void)
 
     wild_decrement_counters();
 
-    if (p_ptr->pclass == CLASS_PSION)
-        psion_decrement_counters();
+    if (p_ptr->pclass == CLASS_PSION) psion_decrement_counters();
 
     if (disciple_is_(DISCIPLE_TROIKA)) troika_reduce_timeouts();
 
@@ -2086,8 +2086,8 @@ static void process_world_aux_timeout(void)
             case 4: do_res_stat(A_DEX); break;
             case 5: do_res_stat(A_CON); break;
             case 6: do_res_stat(A_CHR); break;
-            case 7: restore_level(); break;
-            case 8: lp_player(150); break;
+            case 7:    restore_level(); break;
+            case 8:     lp_player(150); break;
             }
         }
     }

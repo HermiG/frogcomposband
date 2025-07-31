@@ -2070,11 +2070,9 @@ void object_desc(char *buf, object_type *o_ptr, u32b mode)
     }
     if (have_flag(known_flgs, OF_DEVICE_POWER))
     {
-        int pct = device_power_aux(100, (((prace_is_(RACE_MON_ARMOR)) && (o_ptr->loc.where == INV_EQUIP)) ? rag_effect_pval(o_ptr, -1, OF_DEVICE_POWER, FALSE) : o_ptr->pval)) - 100;
-        if (pct >= 0)
-            t = object_desc_str(t, format(" {+%d%%}", pct));
-        else
-            t = object_desc_str(t, format(" {%d%%}", pct));
+        int pct = device_power_aux(100, ((prace_is_(RACE_MON_ARMOR) && o_ptr->loc.where == INV_EQUIP) ? rag_effect_pval(o_ptr, -1, OF_DEVICE_POWER, FALSE) : o_ptr->pval)) - 100;
+        if (pct >= 0) t = object_desc_str(t, format(" {+%d%%}", pct));
+        else          t = object_desc_str(t, format(" {%d%%}", pct));
     }
     else if (have_flag(known_flgs, OF_DEC_MAGIC_MASTERY))
     {
@@ -2096,10 +2094,8 @@ void object_desc(char *buf, object_type *o_ptr, u32b mode)
     if (have_flag(known_flgs, OF_SPELL_CAP))
     {
         int pct = spell_cap_aux(100, o_ptr->pval) - 100;
-        if (pct > 0)
-            t = object_desc_str(t, format(" [+%d%%]", pct));
-        else
-            t = object_desc_str(t, format(" [%d%%]", pct));
+        if (pct >= 0) t = object_desc_str(t, format(" [+%d%%]", pct));
+        else          t = object_desc_str(t, format(" [%d%%]", pct));
     }
     else if (have_flag(known_flgs, OF_DEC_SPELL_CAP))
     {

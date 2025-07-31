@@ -1561,8 +1561,7 @@ static errr _parse_effect(int tval, cptr arg, room_grid_ptr grid, int options)
         effect_t e = {0};
         e.type = grid->extra;
         sprintf(name, "%s", do_effect(&e, SPELL_NAME, 0));
-        doc_printf(trace_doc, "Mapping effect <color:B>%s</color> to <color:R>%s</color> (%d).\n",
-            arg, name, grid->extra);
+        doc_printf(trace_doc, "Mapping effect <color:B>%s</color> to <color:R>%s</color> (%d).\n", arg, name, grid->extra);
     }
     return 0;
 }

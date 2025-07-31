@@ -582,10 +582,10 @@ void inv_display(inv_ptr inv, slot_t start, slot_t stop, obj_p p, doc_ptr doc, i
             }
             else
                 object_desc(name, obj, OD_COLOR_CODED);
-            if (flags & INV_SHOW_SLOT)
-                doc_printf(doc, " %d)", slot);
-            else if (!(flags & INV_NO_LABELS))
-                doc_printf(doc, " %c)", inv_slot_label(inv, slot));
+
+            if        (flags & INV_SHOW_SLOT)  doc_printf(doc, " %d)", slot);
+            else if (!(flags & INV_NO_LABELS)) doc_printf(doc, " %c)", inv_slot_label(inv, slot));
+
             doc_insert(doc, " ");
             if (show_item_graph)
             {
@@ -616,10 +616,8 @@ void inv_display(inv_ptr inv, slot_t start, slot_t stop, obj_p p, doc_ptr doc, i
                         effect_t effect = obj_get_effect(obj);
                         fail = effect_calc_fail_rate(&effect);
                     }
-                    if (fail == 1000)
-                        doc_printf(doc, "<tab:%d> %3d%%", doc_width(doc) - xtra, fail/10);
-                    else
-                        doc_printf(doc, "<tab:%d> %2d.%d%%", doc_width(doc) - xtra, fail/10, fail%10);
+                    if (fail == 1000) doc_printf(doc, "<tab:%d> %3d%%",    doc_width(doc) - xtra, fail/10);
+                    else              doc_printf(doc, "<tab:%d> %2d.%d%%", doc_width(doc) - xtra, fail/10, fail%10);
                 }
             }
             else if (flags & INV_SHOW_VALUE)

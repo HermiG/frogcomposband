@@ -90,7 +90,7 @@ static void do_cmd_eat_food_aux(obj_ptr obj)
         return;
     }
 
-    if ((disciple_is_(DISCIPLE_TROIKA)) && (object_is_(obj, TV_FOOD, SV_FOOD_CURE_POISON)) && (p_ptr->poisoned > 0))
+    if (disciple_is_(DISCIPLE_TROIKA) && object_is_(obj, TV_FOOD, SV_FOOD_CURE_POISON) && p_ptr->poisoned > 0)
     {
         msg_print("Using mushrooms to cure poison is an abomination unto Uxip!");
         return;
@@ -390,8 +390,7 @@ static void do_cmd_eat_food_aux(obj_ptr obj)
     {
         int amt = obj->activation.cost;
 
-        if (amt > device_sp(obj))
-            amt = device_sp(obj);
+        if (amt > device_sp(obj)) amt = device_sp(obj);
 
         if (!amt)
         {
@@ -447,21 +446,17 @@ static void do_cmd_eat_food_aux(obj_ptr obj)
         /* Waybread is always fully satisfying. */
         set_food(MAX(p_ptr->food, PY_FOOD_MAX - 1));
     }
-    else
-    {
-        /* Food can feed the player */
-        set_food(p_ptr->food + obj->pval);
-    }
-
+    else set_food(p_ptr->food + obj->pval);
+    
     /* Consume the object */
-    if ((obj->art_name) && (p_ptr->prace != RACE_MON_JELLY)) /* Hack: Artifact Food does not get destroyed! */
+    if (obj->art_name && p_ptr->prace != RACE_MON_JELLY) /* Hack: Artifact Food does not get destroyed! */
         obj->timeout += 99;
     else
     {
         obj->number--;
         obj_release(obj, 0);
-        p_ptr->window |= (PW_INVEN);
-        p_ptr->update |= (PU_BONUS);
+        p_ptr->window |= PW_INVEN;
+        p_ptr->update |= PU_BONUS;
     }
 }
 
@@ -475,8 +470,7 @@ static bool _can_eat(object_type *o_ptr)
 
     if (get_race()->flags & RACE_EATS_DEVICES)
     {
-        if (object_is_device(o_ptr))
-            return TRUE;
+        if (object_is_device(o_ptr)) return TRUE;
     }
     else if (get_race()->flags & RACE_IS_DEMON)
     {
@@ -485,10 +479,8 @@ static bool _can_eat(object_type *o_ptr)
             my_strchr("pht", r_info[o_ptr->pval].d_char))
             return TRUE;
     }
-    else if (prace_is_(RACE_MON_JELLY))
-        return TRUE;
-    else if ((prace_is_(RACE_ANDROID)) && (o_ptr->tval == TV_FLASK))
-        return TRUE;
+    else if (prace_is_(RACE_MON_JELLY)) return TRUE;
+    else if (prace_is_(RACE_ANDROID) && o_ptr->tval == TV_FLASK) return TRUE;
 
     return FALSE;
 }

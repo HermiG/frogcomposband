@@ -2998,29 +2998,25 @@ bool device_init_fixed(object_type *o_ptr, int effect)
 /* TODO: See wiz_obj.c for reliance on xtra fields */
 int device_level(object_type *o_ptr)
 {
-    if (_is_valid_device(o_ptr))
-        return o_ptr->xtra3;
+    if (_is_valid_device(o_ptr)) return o_ptr->xtra3;
     return 0;
 }
 
 int device_sp(object_type *o_ptr)
 {
-    if (_is_valid_device(o_ptr))
-        return o_ptr->xtra5 / 100;
+    if (_is_valid_device(o_ptr)) return o_ptr->xtra5 / 100;
     return 0;
 }
 
 int device_charges(object_type *o_ptr)
 {
-    if (_is_valid_device(o_ptr) && o_ptr->activation.cost)
-        return  device_sp(o_ptr) / o_ptr->activation.cost;
+    if (_is_valid_device(o_ptr) && o_ptr->activation.cost) return device_sp(o_ptr) / o_ptr->activation.cost;
     return 0;
 }
 
 int device_max_charges(object_type *o_ptr)
 {
-    if (_is_valid_device(o_ptr) && o_ptr->activation.cost)
-        return  device_max_sp(o_ptr) / o_ptr->activation.cost;
+    if (_is_valid_device(o_ptr) && o_ptr->activation.cost) return device_max_sp(o_ptr) / o_ptr->activation.cost;
     return 0;
 }
 
@@ -3030,10 +3026,8 @@ void device_decrease_sp(object_type *o_ptr, int amt)
     {
         int charges = device_charges(o_ptr);
         o_ptr->xtra5 -= amt * 100;
-        if (o_ptr->xtra5 < 0)
-            o_ptr->xtra5 = 0;
-        if (device_charges(o_ptr) != charges)
-            p_ptr->window |= PW_INVEN;
+        if (o_ptr->xtra5 < 0) o_ptr->xtra5 = 0;
+        if (device_charges(o_ptr) != charges) p_ptr->window |= PW_INVEN;
     }
 }
 
@@ -3043,23 +3037,15 @@ void device_increase_sp(object_type *o_ptr, int amt)
     {
         int charges = device_charges(o_ptr);
         o_ptr->xtra5 += amt * 100;
-        if (o_ptr->xtra5 > o_ptr->xtra4 * 100)
-            o_ptr->xtra5 = o_ptr->xtra4 * 100;
-        if (device_charges(o_ptr) != charges)
-            p_ptr->window |= PW_INVEN;
+        if (o_ptr->xtra5 > o_ptr->xtra4 * 100) o_ptr->xtra5 = o_ptr->xtra4 * 100;
+        if (device_charges(o_ptr) != charges) p_ptr->window |= PW_INVEN;
     }
 }
 
 bool device_is_fully_charged(object_type *o_ptr)
 {
-    if (_is_valid_device(o_ptr))
-    {
-        if (o_ptr->xtra5 == o_ptr->xtra4 * 100)
-            return TRUE;
-        else
-            return FALSE;
-    }
-    return FALSE; /* ?? */
+    if (_is_valid_device(o_ptr)) return (o_ptr->xtra5 == o_ptr->xtra4 * 100);
+    return FALSE;
 }
 
 /* Note: Rods fire every 10 game turns; wands and staves fire every 100 game turns.*/
@@ -3072,14 +3058,11 @@ void device_regen_sp_aux(object_type *o_ptr, int per_mill)
         int charges = device_charges(o_ptr);
 
         o_ptr->xtra5 += amt / div;
-        if (randint0(div) < (amt % div))
-            o_ptr->xtra5++;
+        if (randint0(div) < (amt % div)) o_ptr->xtra5++;
 
-        if (o_ptr->xtra5 > o_ptr->xtra4 * 100)
-            o_ptr->xtra5 = o_ptr->xtra4 * 100;
+        if (o_ptr->xtra5 > o_ptr->xtra4 * 100) o_ptr->xtra5 = o_ptr->xtra4 * 100;
 
-        if (device_is_fully_charged(o_ptr))
-            recharged_notice(o_ptr, '!');
+        if (device_is_fully_charged(o_ptr)) recharged_notice(o_ptr, '!');
 
         if (device_charges(o_ptr) != charges)
         {
@@ -3091,29 +3074,22 @@ void device_regen_sp_aux(object_type *o_ptr, int per_mill)
 
 void device_regen_sp(object_type *o_ptr, int base_per_mill)
 {
-    int  per_mill = base_per_mill;
+    if (!_is_valid_device(o_ptr)) return;
+    if (device_is_fully_charged(o_ptr)) return;
+
+    int per_mill = base_per_mill;
+    if (devicemaster_is_speciality(o_ptr)) per_mill += base_per_mill;
+
     u32b flgs[OF_ARRAY_SIZE];
-
-    if (!_is_valid_device(o_ptr))
-        return;
-
-    if (device_is_fully_charged(o_ptr))
-        return;
-
-    if (devicemaster_is_speciality(o_ptr))
-        per_mill += base_per_mill;
-
     obj_flags(o_ptr, flgs);
-    if (have_flag(flgs, OF_REGEN))
-        per_mill += o_ptr->pval * base_per_mill;
+    if (have_flag(flgs, OF_REGEN)) per_mill += o_ptr->pval * base_per_mill;
 
     device_regen_sp_aux(o_ptr, per_mill);
 }
 
 int device_max_sp(object_type *o_ptr)
 {
-    if (_is_valid_device(o_ptr))
-        return o_ptr->xtra4;
+    if (_is_valid_device(o_ptr)) return o_ptr->xtra4;
     return 0;
 }
 
@@ -3123,8 +3099,7 @@ int device_value(object_type *o_ptr, int options)
     u32b flgs[OF_ARRAY_SIZE];
     int  pval = 0;
 
-    if (!_is_valid_device(o_ptr))
-        return 0;
+    if (!_is_valid_device(o_ptr)) return 0;
 
     switch (o_ptr->tval)
     {
@@ -3205,9 +3180,7 @@ device_effect_info_ptr device_get_effect_info(int tval, int effect)
 
 static void _device_stats_reset_imp(device_effect_info_ptr table)
 {
-    int i;
-
-    for (i = 0; ; i++)
+    for (int i = 0; ; i++)
     {
         device_effect_info_ptr entry = &table[i];
         if (!entry->type) break;
@@ -3224,9 +3197,9 @@ void device_stats_reset(void)
 
 static void _device_stats_save_imp(savefile_ptr file, device_effect_info_ptr table)
 {
-    int i, ct = 0;
+    int ct = 0;
 
-    for (i = 0; ; i++)
+    for (int i = 0; ; i++)
     {
         device_effect_info_ptr entry = &table[i];
         if (!entry->type) break;
@@ -3234,7 +3207,7 @@ static void _device_stats_save_imp(savefile_ptr file, device_effect_info_ptr tab
     }
 
     savefile_write_s32b(file, ct);
-    for (i = 0; ; i++)
+    for (int i = 0; ; i++)
     {
         device_effect_info_ptr entry = &table[i];
         if (!entry->type) break;
@@ -3251,14 +3224,12 @@ static void _device_stats_save_imp(savefile_ptr file, device_effect_info_ptr tab
 
 static void _device_stats_load_imp(savefile_ptr file, device_effect_info_ptr table)
 {
-    int ct, i;
-
     /* We reset since not every current table entry need exist in the savefile.
        In other words, code changes over time and I might add a new entry :) */
     _device_stats_reset_imp(table);
 
-    ct = savefile_read_s32b(file);
-    for (i = 0; i < ct; i++)
+    int ct = savefile_read_s32b(file);
+    for (int i = 0; i < ct; i++)
     {
         int                     type = savefile_read_s32b(file);
         counts_t                counts;
@@ -3270,47 +3241,42 @@ static void _device_stats_load_imp(savefile_ptr file, device_effect_info_ptr tab
         counts.used = savefile_read_s32b(file);
         counts.destroyed = savefile_read_s32b(file);
 
-        if (entry)
-            entry->counts = counts;
+        if (entry) entry->counts = counts;
     }
 }
 
 void device_stats_on_save(savefile_ptr file)
 {
-    int i, ct = 0;
+    int ct = 0;
     _device_stats_save_imp(file, wand_effect_table);
     _device_stats_save_imp(file, rod_effect_table);
     _device_stats_save_imp(file, staff_effect_table);
 
-    for (i = 0; ; i++)
+    for (int i = 0; ; i++)
     {
         if (!_effect_info[i].type) break;
         if (_effect_info[i].known) ct++;
     }
     savefile_write_s32b(file, ct);
-    for (i = 0; ; i++)
+    for (int i = 0; ; i++)
     {
         if (!_effect_info[i].type) break;
-        if (_effect_info[i].known)
-            savefile_write_s32b(file, _effect_info[i].type);
+        if (_effect_info[i].known) savefile_write_s32b(file, _effect_info[i].type);
     }
 }
 
 void device_stats_on_load(savefile_ptr file)
 {
-    int i, ct;
-
     _device_stats_load_imp(file, wand_effect_table);
     _device_stats_load_imp(file, rod_effect_table);
     _device_stats_load_imp(file, staff_effect_table);
 
-    ct = savefile_read_s32b(file);
-    for (i = 0; i < ct; i++)
+    int ct = savefile_read_s32b(file);
+    for (int i = 0; i < ct; i++)
     {
         int type = savefile_read_s32b(file);
         _effect_info_ptr e = _get_effect_info(type);
-        if (e)
-            e->known = TRUE;
+        if (e) e->known = TRUE;
     }
 }
 
@@ -3319,8 +3285,7 @@ void device_stats_on_find(object_type *o_ptr)
     if (_is_valid_device(o_ptr))
     {
         device_effect_info_ptr entry = device_get_effect_info(o_ptr->tval, o_ptr->activation.type);
-        if (entry)
-            entry->counts.found++;
+        if (entry) entry->counts.found++;
     }
 }
 
@@ -3329,8 +3294,7 @@ void device_stats_on_use(object_type *o_ptr, int num)
     if (_is_valid_device(o_ptr))
     {
         device_effect_info_ptr entry = device_get_effect_info(o_ptr->tval, o_ptr->activation.type);
-        if (entry)
-            entry->counts.used += num;
+        if (entry) entry->counts.used += num;
     }
 }
 
@@ -3339,8 +3303,7 @@ void device_stats_on_destroy(object_type *o_ptr)
     if (_is_valid_device(o_ptr))
     {
         device_effect_info_ptr entry = device_get_effect_info(o_ptr->tval, o_ptr->activation.type);
-        if (entry)
-            entry->counts.destroyed++;
+        if (entry) entry->counts.destroyed++;
     }
 }
 
@@ -3349,16 +3312,14 @@ void device_stats_on_purchase(object_type *o_ptr)
     if (_is_valid_device(o_ptr))
     {
         device_effect_info_ptr entry = device_get_effect_info(o_ptr->tval, o_ptr->activation.type);
-        if (entry)
-            entry->counts.bought++;
+        if (entry) entry->counts.bought++;
     }
 }
 
 static int _extra(effect_t *effect, int def)
 {
     int result = effect->extra;
-    if (!result)
-        result = def;
+    if (!result) result = def;
     return result;
 }
 
@@ -3713,8 +3674,7 @@ cptr do_effect(effect_t *effect, int mode, int boost)
         if (color) return format("%d", TERM_L_UMBER);
         if (cast)
         {
-            if (!earthquake(py, px, _extra(effect, 10)))
-                msg_print("The ground trembles.");
+            if (!earthquake(py, px, _extra(effect, 10))) msg_print("The ground trembles.");
             device_noticed = TRUE;
         }
         break;

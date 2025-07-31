@@ -160,7 +160,7 @@ void obj_release(obj_ptr obj, int options)
         p_ptr->redraw |= PR_EQUIPPY;
         break;
     case INV_BAG:
-        if (!quiet && !delayed) msg_format("You have %s in your bag.", name);
+        if (!quiet && !delayed) msg_format("You have %s in your %s.", name, bag_type_name(0));
         if (obj->number <= 0) bag_remove(obj->loc.slot);
         else if (delayed)
         {
@@ -174,8 +174,7 @@ void obj_release(obj_ptr obj, int options)
         break;
     case INV_SPECIAL1:
     case INV_SPECIAL2:
-        if ((obj->number <= 0) && !(obj->marked & OM_BEING_SHUFFLED))
-            special_remove(obj->loc.slot, obj->loc.where);
+        if (obj->number <= 0 && !(obj->marked & OM_BEING_SHUFFLED)) special_remove(obj->loc.slot, obj->loc.where);
         break;
     default:
         break;
@@ -875,8 +874,9 @@ void obj_delayed_describe(obj_ptr obj)
         string_printf(msg, " %s", name);
 
         if (obj->loc.where == INV_QUIVER) string_append_s(msg, " in your quiver");
-        if (obj->loc.where == INV_BAG)    string_append_s(msg, " in your bag");
-
+        if (obj->loc.where == INV_BAG)    string_append_s(msg, " in your ");
+        if (obj->loc.where == INV_BAG)    string_append_s(msg, bag_type_name(0));
+      
         switch (obj->loc.where)
         {
         case INV_PACK:
@@ -1591,8 +1591,7 @@ void obj_load(obj_ptr obj, savefile_ptr file)
             TODO: Report an error back to the load routine!!*/
         }
     }
-    if (object_is_device(obj))
-        add_flag(obj->flags, OF_ACTIVATE);
+    if (object_is_device(obj)) add_flag(obj->flags, OF_ACTIVATE);
 }
 
 void obj_save(obj_ptr obj, savefile_ptr file)

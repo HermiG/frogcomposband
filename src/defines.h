@@ -2196,7 +2196,8 @@ enum {
 #define SV_BAG_POUCH        1 // Regular bags have a max carry weight
 #define SV_BAG_POTION_BELT  2 // Potion Belts carry a max number of individual potions (like quivers)
 #define SV_BAG_SCROLL_CASE  3 // Scroll Cases carry a max number of individual scrolls (like quivers)
-#define SV_BAG_BOOK_BAG     4 // Book Bags have a max carry weight
+#define SV_BAG_DEVICE_CASE  4 // Device Cases are TBD
+#define SV_BAG_BOOK_BAG     5 // Book Bags have a max carry weight NYI
 
 /*
  * Special "sval" limit -- first "normal" food

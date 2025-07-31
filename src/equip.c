@@ -157,13 +157,7 @@ static void _slot_menu_fn(int cmd, int which, vptr cookie, variant *res)
         }
         break;
     case MENU_COLOR:
-        if (obj)
-        {
-            if (obj->timeout)
-                var_set_int(res, TERM_L_DARK);
-            else
-                var_set_int(res, tval_to_attr[obj->tval % 128]);
-        }
+        if (obj) var_set_int(res, (obj->timeout > 0) ? TERM_L_DARK : tval_to_attr[obj->tval % 128]);
         break;
     default:
         default_menu(cmd, which, cookie, res);

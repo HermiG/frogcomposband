@@ -2070,21 +2070,24 @@ void have_nightmare(int r_idx)
 
 static void _recharge_player_items(void)
 {
-    slot_t slot;
-    if (p_ptr->pclass == CLASS_MAGIC_EATER)
-        magic_eater_restore_all();
+    if (p_ptr->pclass == CLASS_MAGIC_EATER) magic_eater_restore_all();
 
-    for (slot = 1; slot <= pack_max(); slot++)
-    {
-        obj_ptr obj = pack_obj(slot);
-        if (obj && object_is_device(obj))
-        device_regen_sp_aux(obj, 1000);
-    }
-    for (slot = 1; slot <= equip_max(); slot++)
+    for (slot_t slot = 1; slot <= equip_max(); slot++)
     {
         obj_ptr obj = equip_obj(slot);
-        if (obj && obj->timeout > 0)
-        obj->timeout = 0;
+        if (obj) obj->timeout = 0;
+    }
+
+    for (slot_t slot = 1; slot <= pack_max(); slot++)
+    {
+        obj_ptr obj = pack_obj(slot);
+        if (obj && object_is_device(obj)) device_regen_sp_aux(obj, 1000);
+    }
+
+    for (slot_t slot = equip_find_obj(TV_BAG, SV_ANY) ? bag_max() : 0 ; slot > 0; slot--)
+    {
+        obj_ptr obj = bag_obj(slot);
+        if (obj && object_is_device(obj)) device_regen_sp_aux(obj, 1000);
     }
 }
 

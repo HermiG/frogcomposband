@@ -2570,9 +2570,9 @@ static void process_world_aux_curse(void)
 static bool _recharge_changed = FALSE;
 static void _recharge_aux(object_type *o_ptr)
 {
-    if (o_ptr->timeout > 0)
+    if (o_ptr->timeout)
     {
-        o_ptr->timeout--;
+        o_ptr->timeout -= SGN(o_ptr->timeout);
         if (!o_ptr->timeout)
         {
             recharged_notice(o_ptr, '!');
@@ -2580,8 +2580,10 @@ static void _recharge_aux(object_type *o_ptr)
         }
     }
 }
+
 static void process_world_aux_recharge(void)
 {
+    // Recharge Equipment
     _recharge_changed = FALSE;
     equip_for_each(_recharge_aux);
     if (_recharge_changed)
@@ -2590,37 +2592,33 @@ static void process_world_aux_recharge(void)
         wild_regen = 20;
     }
 
-    /*
-     * Recharge Devices
-     */
+    // Recharge Devices
     _recharge_changed = FALSE;
-    for (int i = 1; i <= pack_max(); i++)
-    {
-        object_type *o_ptr = pack_obj(i);
-
-        if (!o_ptr) continue;
-
-        switch (o_ptr->tval)
+    for(int use_bag = 0; use_bag < 2; use_bag++) {
+        slot_t slot = use_bag ? equip_find_obj(TV_BAG, SV_ANY) : 0;
+        if(use_bag && !slot) continue;
+        obj_ptr bag = use_bag ? equip_obj(slot) : NULL;
+        
+        for (int i = (use_bag ? bag_max() : pack_max()); i > 0; i--)
         {
-        case TV_ROD:
-            device_regen_sp(o_ptr, 10);
-            break;
-        case TV_WAND:
-        case TV_STAFF:
-            if ((game_turn % (TURNS_PER_TICK*10)) == 0)
-                device_regen_sp(o_ptr, 10);
-            break;
-        }
-
-        /* Artifact mushrooms for the snotling ... they never stack */
-        if (object_is_mushroom(o_ptr) && o_ptr->timeout)
-        {
-            o_ptr->timeout--;
-            if (o_ptr->timeout < 0) o_ptr->timeout = 0;
-            if (!o_ptr->timeout)
+            object_type *o_ptr = use_bag ? bag_obj(i) : pack_obj(i);
+            if (!o_ptr) continue;
+            
+            int mana = 10;
+            if (bag) mana = (bag->sval == SV_BAG_DEVICE_CASE) ? 10 + randint1(20) : randint1(6) ;
+            
+            switch (o_ptr->tval)
             {
-                recharged_notice(o_ptr, '!');
-                _recharge_changed = TRUE;
+                case TV_ROD:
+                    device_regen_sp(o_ptr, mana);
+                    break;
+                case TV_WAND:
+                case TV_STAFF:
+                    if ((game_turn % (TURNS_PER_TICK*10)) == 0) device_regen_sp(o_ptr, mana);
+                    break;
+                case TV_FOOD:
+                    _recharge_aux(o_ptr); // Artifact mushrooms for the snotling
+                    break;
             }
         }
     }

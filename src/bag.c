@@ -40,6 +40,7 @@ const char* bag_type_name(int sval)
   {
     case SV_BAG_SCROLL_CASE:  return "scroll case";
     case SV_BAG_POTION_BELT:  return "potion belt";
+    case SV_BAG_DEVICE_CASE:  return "device case";
     case SV_BAG_BOOK_BAG:     return "book bag";
     default:                  return "bag";
   }

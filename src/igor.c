@@ -1632,9 +1632,9 @@ int _igor_pack_weight(obj_p p)
 /* Igor body parts can sometimes be activated! */
 static void _igor_recharge_body_aux(object_type *o_ptr)
 {
-    if (o_ptr->timeout > 0)
+    if (o_ptr->timeout)
     {
-        o_ptr->timeout--;
+        o_ptr->timeout -= SGN(o_ptr->timeout);
         if (!o_ptr->timeout) recharged_notice(o_ptr, '!');
     }
 }

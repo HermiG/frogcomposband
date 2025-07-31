@@ -2117,10 +2117,7 @@ void object_desc(char *buf, object_type *o_ptr, u32b mode)
         }
 
         /* Indicate charging objects, but not rods. */
-        if (o_ptr->timeout && o_ptr->tval != TV_ROD)
-        {
-            t = object_desc_str(t, " (charging)");
-        }
+        if (o_ptr->timeout > 0 && o_ptr->tval != TV_ROD) t = object_desc_str(t, " (charging)");
     }
 
     /* No more details wanted */

@@ -1293,14 +1293,13 @@ static void _display_activation_aux(effect_t *effect, bool full_info, doc_ptr do
 
     if (full_info)
     {
-        int fail = effect_calc_fail_rate(effect);
-
+        res = do_effect(effect, SPELL_DESC, 0);
+        if (res && strlen(res)) doc_printf(doc, "<color:U>Effect:</color><tab:12>%s\n", res);
         res = do_effect(effect, SPELL_INFO, 0);
-        if (res && strlen(res))
-            doc_printf(doc, "<color:U>Info:</color><tab:12>%s\n", res);
+        if (res && strlen(res)) doc_printf(doc, "<color:U>Info:</color><tab:12>%s\n", res);
+        int fail = effect_calc_fail_rate(effect);
         doc_printf(doc, "<color:U>Fail:</color><tab:12>%d.%d%%\n", fail/10, fail%10);
-        if (effect->cost)
-            doc_printf(doc, "<color:U>Timeout:</color><tab:12>%d\n", effect->cost);
+        if (effect->cost) doc_printf(doc, "<color:U>Timeout:</color><tab:12>%d\n", effect->cost);
     }
 
 }

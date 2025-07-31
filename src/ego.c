@@ -3643,12 +3643,13 @@ void obj_create_bag(object_type *o_ptr, int level, int power, int mode)
   if(o_ptr->sval == SV_BAG_POUCH) { // Generic bags
     o_ptr->xtra4 = o_ptr->pval *  5; // item capacity (tenths)
     o_ptr->xtra5 = o_ptr->pval * 10; // weight capacity (decipounds)
-    
-    // A basic Linen Bag (half of all bags) can hold up to 5 items weighing up to 10 pounds total
-    // Linen Bag [10 lbs] => 5 items
+    // Generic bags are defined by their weight capacity, but they also have an item count capacity that's ~half the weight
+    // The count capacity will never be the limit when you have heavy items, but it might discourage hoarding hundreds of potions/scrolls
+    // An un-upgraded Linen Bag (half of all bags) can hold up to 5 items weighing up to 10 pounds total
+    // Linen Bag [10 lbs], 5 items
     
     // A twice-upgraded Linen Bag (12.5%) can hold up to 7 items weighing up to 14 pounds total
-    // Linen Bag [10 lbs] => 5 items
+    // Linen Bag [14 lbs], 7 items
     
     //                                         Frequency:  50%   25%   12%    6%    3%
     //                                       Improvement:   -   +20%  +40%  +60%  +80%
@@ -3658,8 +3659,7 @@ void obj_create_bag(object_type *o_ptr, int level, int power, int mode)
     o_ptr->xtra4 = o_ptr->pval * 10; // item capacity (tenths of a slot)
     o_ptr->xtra5 = 9999; // no weight limit
     
-    // A basic potion belt or scroll case holds just 10 items (potions/scrolls weigh ~0.5lb each)
-    // Potion Belt [10] => 5 lbs
+    // A basic potion belt or scroll case holds just 10 items
     
     //                                         Frequency:  50%   25%   12%    6%    3%
     //                                       Improvement:   -   +20%  +40%  +60%  +80%

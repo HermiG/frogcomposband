@@ -663,19 +663,21 @@ void obj_learn_activation(object_type *o_ptr)
     else if (o_ptr->name1)
     {
         artifact_type *a_ptr = &a_info[o_ptr->name1];
-        if (a_ptr->activation.type)
+        if (a_ptr->activation.type) {
             add_flag(a_ptr->known_flags, OF_ACTIVATE);
-        else
-            add_flag(o_ptr->known_flags, OF_ACTIVATE); /* Paranoia: Activation on k_ptr, but that should be known by default! */
+            effect_learn(a_ptr->activation.type);
+        }
     }
     else if (o_ptr->name2)
     {
         ego_type *e_ptr = &e_info[o_ptr->name2];
-        if (e_ptr->activation.type)
+        if (e_ptr->activation.type) {
             add_flag(e_ptr->known_flags, OF_ACTIVATE);
-        else
-            add_flag(o_ptr->known_flags, OF_ACTIVATE); /* Paranoia: Activation on k_ptr, but that should be known by default! */
+            effect_learn(e_ptr->activation.type);
+        }
     }
+
+    if (have_flag(o_ptr->flags, OF_ACTIVATE)) add_flag(o_ptr->known_flags, OF_ACTIVATE);
 }
 
 bool obj_learn_curse(object_type *o_ptr, u64b flag)

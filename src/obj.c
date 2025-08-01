@@ -1200,14 +1200,13 @@ void obj_destroy_ui(void)
     if (!prompt.obj) return;
 
     /* Verify unless quantity given beforehand */
-    if (!force && (confirm_destroy || (obj_value(prompt.obj) > 0) || ((prompt.obj->tval == TV_CORPSE) && (prace_is_(RACE_IGOR)) && (prompt.obj->sval != SV_SKELETON))))
+    if (!force && (confirm_destroy || obj_value(prompt.obj) > 0 || (prompt.obj->tval == TV_CORPSE && prace_is_(RACE_IGOR) && prompt.obj->sval != SV_SKELETON)))
     {
         char ch;
         int  options = OD_COLOR_CODED;
         char msg[MAX_NLEN + 100];
 
-        if (prompt.obj->number > 1)
-            options |= OD_OMIT_PREFIX;
+        if (prompt.obj->number > 1) options |= OD_OMIT_PREFIX;
         object_desc(name, prompt.obj, options);
         sprintf(msg, "Really destroy %s? <color:y>[y/n/Auto]</color>", name);
 
@@ -1308,15 +1307,16 @@ void obj_destroy(obj_ptr obj, int amt)
     if (!amt) return;
 
     energy_use = 100;
-    if (obj->loc.where != INV_FLOOR) p_ptr->update |= PU_BONUS; /* recalculate weight */
+    if (obj->loc.where == INV_BAG) energy_use *= 2;
+    if (obj->loc.where != INV_FLOOR) p_ptr->update |= PU_BONUS; // recalculate weight
+
     if (amt < obj->number)
     {
         obj_t copy = *obj;
         copy.number = amt;
         obj_dec_number(obj, amt, TRUE);
         _destroy(&copy);
-        if (obj->loc.where == INV_PACK)
-            p_ptr->window |= PW_INVEN;
+        if (obj->loc.where == INV_PACK) p_ptr->window |= PW_INVEN;
     }
     else
     {

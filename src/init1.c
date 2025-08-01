@@ -3189,17 +3189,16 @@ errr parse_a_info(char *buf, header *head)
     /* Process 'W' for "More Info" (one line only) */
     else if (buf[0] == 'W')
     {
-        int level, rarity, wgt;
-        int cost;
+        int level, rarity, wgt, cost;
 
         /* Scan for the values */
         if (4 != sscanf(buf+2, "%d:%d:%d:%d", &level, &rarity, &wgt, &cost)) return (1);
 
         /* Save the values */
-        a_ptr->level = level;
+        a_ptr->level  = level;
         a_ptr->rarity = rarity;
         a_ptr->weight = wgt;
-        a_ptr->cost = cost;
+        a_ptr->cost   = cost;
     }
 
     /* Hack -- Process 'P' for "power" and such */

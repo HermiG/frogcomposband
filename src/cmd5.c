@@ -762,7 +762,7 @@ void do_cmd_cast(void)
         if (hex_spell_fully())
         {
             bool flag = FALSE;
-            msg_print("Can not spell new spells more.");
+            msg_print("You cannot cast any more spells.");
             flush();
             if (p_ptr->lev >= 35) flag = stop_hex_spell();
             if (!flag) return;
@@ -949,8 +949,7 @@ void do_cmd_cast(void)
 
         spell_stats_on_cast_old(use_realm, spell);
 
-        if (hp_caster)
-            take_hit(DAMAGE_USELIFE, need_mana, "concentrating too hard");
+        if (hp_caster) take_hit(DAMAGE_USELIFE, need_mana, "concentrating too hard");
 
         if (caster_ptr && caster_ptr->on_cast != NULL && p_ptr->pclass != CLASS_POLITICIAN)
         {
@@ -971,15 +970,9 @@ void do_cmd_cast(void)
             int e = s_ptr->sexp;
 
             /* The spell worked */
-            if (use_realm == p_ptr->realm1)
-            {
-                p_ptr->spell_worked1 |= (1L << spell);
-            }
-            else
-            {
-                p_ptr->spell_worked2 |= (1L << spell);
-            }
-
+            if (use_realm == p_ptr->realm1) p_ptr->spell_worked1 |= (1L << spell);
+            else                            p_ptr->spell_worked2 |= (1L << spell);
+            
             /* Gain experience */
             gain_exp(e * vaikeustaso);
 

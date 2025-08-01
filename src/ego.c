@@ -2557,7 +2557,7 @@ static void _ego_create_dragon_armor(object_type *o_ptr, int level)
 
         case EGO_DRAGON_BREATH:
             o_ptr->activation = k_info[o_ptr->k_idx].activation;
-            o_ptr->activation.cost /= 2;  /* Timeout */
+            o_ptr->activation.cost  /= 2; /* Timeout */
             o_ptr->activation.extra *= 2; /* Damage */
             break;
 

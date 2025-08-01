@@ -385,8 +385,7 @@ static void do_cmd_eat_food_aux(obj_ptr obj)
         if (!jelly_eat_object(obj)) return; /* this is okay - only happens with artifacts */
         obj->number = luku;
     }
-    else if ((get_race()->flags & RACE_EATS_DEVICES)
-           && object_is_device(obj) )
+    else if ((get_race()->flags & RACE_EATS_DEVICES) && object_is_device(obj))
     {
         int amt = obj->activation.cost;
 
@@ -964,13 +963,14 @@ static void do_cmd_device_aux(obj_ptr obj)
     int  charges = 1;
     int  boost;
     bool is_devicemaster = FALSE;
-    u32b flgs[OF_ARRAY_SIZE];
-
+    
+    assert(object_is_device(obj));
     assert(obj->number == 1); /* Devices no longer stack */
 
     /* Check what Uxip thinks... */
     if ((disciple_is_(DISCIPLE_TROIKA)) && (!troika_allow_use_device(obj))) return;
 
+    u32b flgs[OF_ARRAY_SIZE];
     obj_flags(obj, flgs);
 
     /* Devicemasters get extra power */
@@ -985,12 +985,10 @@ static void do_cmd_device_aux(obj_ptr obj)
     if (is_devicemaster && !devicemaster_desperation)
     {
         int delta = MIN(50, 2*p_ptr->lev - obj->activation.power);
-        if (delta > 0)
-            energy_use -= delta;
+        if (delta > 0) energy_use -= delta;
     }
 
-    if (have_flag(flgs, OF_SPEED))
-        energy_use -= energy_use * obj->pval / 10;
+    if (have_flag(flgs, OF_SPEED)) energy_use -= energy_use * obj->pval / 10;
 
     if (device_sp(obj) < obj->activation.cost)
     {

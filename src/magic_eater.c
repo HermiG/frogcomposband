@@ -5,19 +5,18 @@
 #define _MAX_SLOTS 10
 #define _INVALID_SLOT -1
 
-static object_type _wands[_MAX_SLOTS];
-static object_type _staves[_MAX_SLOTS];
-static object_type _rods[_MAX_SLOTS];
+static object_type    _wands[_MAX_SLOTS];
+static object_type   _staves[_MAX_SLOTS];
+static object_type     _rods[_MAX_SLOTS];
 static unsigned char _labels[_MAX_SLOTS];
 
 static void _birth(void)
 {
-    int i;
-    for (i = 0; i < _MAX_SLOTS; i++)
+    for (int i = 0; i < _MAX_SLOTS; i++)
     {
-        memset(&_wands[i], 0, sizeof(object_type));
+        memset(&_wands[i],  0, sizeof(object_type));
         memset(&_staves[i], 0, sizeof(object_type));
-        memset(&_rods[i], 0, sizeof(object_type));
+        memset(&_rods[i],   0, sizeof(object_type));
     }
     py_birth_obj_aux(TV_WAND, EFFECT_BOLT_MISSILE, 1);
     py_birth_obj_aux(TV_SWORD, SV_SHORT_SWORD, 1);
@@ -28,9 +27,9 @@ static object_type *_which_list(int tval)
 {
     switch (tval)
     {
-    case TV_WAND: return _wands;
+    case TV_WAND:  return _wands;
     case TV_STAFF: return _staves;
-    case TV_ROD: return _rods;
+    case TV_ROD:   return _rods;
     }
     assert(0);
     return NULL;
@@ -46,9 +45,9 @@ static cptr _which_name(int tval)
 {
     switch (tval)
     {
-    case TV_WAND: return "Wand";
+    case TV_WAND:  return "Wand";
     case TV_STAFF: return "Staff";
-    case TV_ROD: return "Rod";
+    case TV_ROD:   return "Rod";
     }
     assert(0);
     return NULL;
@@ -56,23 +55,17 @@ static cptr _which_name(int tval)
 
 static int _magic_eater_label_slot(unsigned char label)
 {
-    int slot;
-    for (slot = 0; slot < _MAX_SLOTS; slot++)
-    {
-        if (_labels[slot] == label) return slot;
-    }
+    for (slot_t slot = 0; slot < _MAX_SLOTS; slot++) if (_labels[slot] == label) return slot;
+    
     return -1;
 }
 
 static void _magic_eater_calculate_labels(object_type *list, bool allow_inscriptions)
 {
-    int slot;
+    slot_t slot;
     
     /* Initialize by ordinal */
-    for (slot = 0; slot < _MAX_SLOTS; slot++)
-    {
-        _labels[slot] = 'a' + slot;
-    }
+    for (slot = 0; slot < _MAX_SLOTS; slot++) _labels[slot] = 'a' + slot;
 
     if (!allow_inscriptions) return;
 
@@ -371,8 +364,7 @@ static void _use_object(object_type *o_ptr)
     energy_use = 100;
 
     obj_flags(o_ptr, flgs);
-    if (have_flag(flgs, OF_SPEED))
-        energy_use -= energy_use * o_ptr->pval / 10;
+    if (have_flag(flgs, OF_SPEED)) energy_use -= energy_use * o_ptr->pval / 10;
 
     if (!fear_allow_device())
     {
@@ -412,15 +404,13 @@ static void _use_object(object_type *o_ptr)
         stats_on_use(o_ptr, charges);
         device_decrease_sp(o_ptr, o_ptr->activation.cost * charges);
     }
-    else
-        energy_use = 0;
+    else energy_use = 0;
 }
 
 void magic_eater_browse(void)
 {
     object_type *o_ptr = _choose("Browse", TV_WAND, _ALLOW_SWITCH | _ALLOW_EXCHANGE);
-    if (o_ptr)
-        obj_display(o_ptr);
+    if (o_ptr) obj_display(o_ptr);
 }
 
 void magic_eater_cast(int tval)
@@ -629,19 +619,15 @@ void magic_eater_restore_all(void)
    See dungeon.c:process_player() */
 bool magic_eater_can_regen(void)
 {
-    int i;
     if (p_ptr->pclass != CLASS_MAGIC_EATER) return FALSE;
-    for (i = 0; i < _MAX_SLOTS; i++)
+    for (int i = 0; i < _MAX_SLOTS; i++)
     {
         object_type *o_ptr = _which_obj(TV_WAND, i);
-        if (o_ptr->k_idx && device_sp(o_ptr) < device_max_sp(o_ptr))
-            return TRUE;
+        if (o_ptr->k_idx && device_sp(o_ptr) < device_max_sp(o_ptr)) return TRUE;
         o_ptr = _which_obj(TV_STAFF, i);
-        if (o_ptr->k_idx && device_sp(o_ptr) < device_max_sp(o_ptr))
-            return TRUE;
+        if (o_ptr->k_idx && device_sp(o_ptr) < device_max_sp(o_ptr)) return TRUE;
         o_ptr = _which_obj(TV_ROD, i);
-        if (o_ptr->k_idx && device_sp(o_ptr) < device_max_sp(o_ptr))
-            return TRUE;
+        if (o_ptr->k_idx && device_sp(o_ptr) < device_max_sp(o_ptr)) return TRUE;
     }
     return FALSE;
 }
@@ -649,9 +635,8 @@ bool magic_eater_can_regen(void)
 /* Auto-ID */
 bool magic_eater_auto_id(object_type *o_ptr)
 {
-    int i;
     if (p_ptr->pclass != CLASS_MAGIC_EATER) return FALSE;
-    for (i = 0; i < _MAX_SLOTS; i++)
+    for (int i = 0; i < _MAX_SLOTS; i++)
     {
         object_type *device_ptr = _which_obj(TV_STAFF, i);
         if (device_ptr->activation.type == EFFECT_IDENTIFY && device_sp(device_ptr) > device_ptr->activation.cost)

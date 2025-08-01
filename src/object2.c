@@ -976,7 +976,7 @@ bool object_is_tried(object_type *o_ptr)
 static s32b object_value_base(object_type *o_ptr)
 {
     /* Aware item -- use template cost */
-    if (object_is_aware(o_ptr)) return (k_info[o_ptr->k_idx].cost);
+    if (object_is_aware(o_ptr)) return k_info[o_ptr->k_idx].cost;
 
     /* Analyze the type */
     switch (o_ptr->tval)

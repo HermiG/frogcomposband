@@ -1529,8 +1529,7 @@ static bool is_autopick_aux(object_type *o_ptr, autopick_type *entry, cptr o_nam
 
     if (IS_FLG(FLG_MORE_WEIGHT))
     {
-        if (o_ptr->weight <= entry->weight * 10)
-            return FALSE;
+        if (o_ptr->weight <= entry->weight * 10) return FALSE;
     }
 
     if (IS_FLG(FLG_MORE_CHARGES))
@@ -1542,8 +1541,7 @@ static bool is_autopick_aux(object_type *o_ptr, autopick_type *entry, cptr o_nam
     if (IS_FLG(FLG_MORE_VALUE))
     {
         int value = obj_value(o_ptr);
-        if (value <= entry->value)
-            return FALSE;
+        if (value <= entry->value) return FALSE;
     }
 
     /*** Worthless items ***/

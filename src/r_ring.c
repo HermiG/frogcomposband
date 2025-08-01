@@ -1147,8 +1147,7 @@ static void _group_menu_fn(int cmd, int which, vptr cookie, variant *res)
 static _group_ptr _prompt_group(void)
 {
     int        idx = -1;
-    menu_t     menu = { "Use which type of spell?", NULL, NULL,
-                        _group_menu_fn, NULL, _groups_count(), 0};
+    menu_t     menu = { "Use which type of spell?", NULL, NULL, _group_menu_fn, NULL, _groups_count(), 0};
 
     idx = menu_choose(&menu);
     if (idx < 0) return NULL;
@@ -1230,8 +1229,7 @@ static _spell_t _prompt_spell(_spell_ptr spells)
     {
         int    idx = -1;
         char   heading[255], prompt1[255], prompt2[255];
-        menu_t menu = { prompt1, prompt2, heading,
-                        _spell_menu_fn, choices, ct_avail, 0};
+        menu_t menu = { prompt1, prompt2, heading, _spell_menu_fn, choices, ct_avail, 0};
 
         sprintf(prompt1, "Use which type of %s?", _group_choice);
         sprintf(prompt2, "Browse which type of %s?", _group_choice);
@@ -1252,11 +1250,9 @@ static _spell_t _prompt(void)
     for (;;)
     {
         group = _prompt_group();
-        if (!group)
-            break;
+        if (!group) break;
         result = _prompt_spell(group->spells);
-        if (result.effect != EFFECT_NONE)
-            break;
+        if (result.effect != EFFECT_NONE) break;
     }
     return result;
 }
@@ -1274,8 +1270,7 @@ void ring_cast(void)
     if (pelko()) return;
 
     spell = _prompt();
-    if (spell.effect == EFFECT_NONE)
-        return;
+    if (spell.effect == EFFECT_NONE) return;
 
     if (spell.level > p_ptr->lev)
     {

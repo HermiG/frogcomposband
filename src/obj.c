@@ -1328,25 +1328,13 @@ void obj_destroy(obj_ptr obj, int amt)
 
 void obj_describe_charges(obj_ptr obj)
 {
-    int charges;
-
     if (!object_is_device(obj)) return;
-    if (!object_is_known(obj)) return;
-    if (!obj->activation.cost) return; /* Just checking ... */
+    if (!object_is_known(obj))  return;
+    if (!obj->activation.cost)  return; // Just checking
 
-    charges = device_sp(obj) / obj->activation.cost;
-
-    if (charges == 1)
-    {
-        msg_format("%s 1 charge remaining.",
-            obj->loc.where == INV_FLOOR ? "There is" : "You have");
-    }
-    else
-    {
-        msg_format("%s %d charges remaining.",
-            obj->loc.where == INV_FLOOR ? "There are" : "You have",
-            charges);
-    }
+    int charges = device_sp(obj) / obj->activation.cost;
+    if (charges == 1) msg_format("%s 1 charge remaining.",   obj->loc.where == INV_FLOOR ? "There is"  : "You have");
+    else              msg_format("%s %d charges remaining.", obj->loc.where == INV_FLOOR ? "There are" : "You have", charges);
 }
 
 /************************************************************************
@@ -1565,11 +1553,11 @@ void obj_load(obj_ptr obj, savefile_ptr file)
             obj->art_name = quark_add(buf);
             break;
         case OBJ_SAVE_ACTIVATION:
-            obj->activation.type = savefile_read_s16b(file);
-            obj->activation.power = savefile_read_byte(file);
+            obj->activation.type       = savefile_read_s16b(file);
+            obj->activation.power      = savefile_read_byte(file);
             obj->activation.difficulty = savefile_read_byte(file);
-            obj->activation.cost = savefile_read_s16b(file);
-            obj->activation.extra = savefile_read_s16b(file);
+            obj->activation.cost       = savefile_read_s16b(file);
+            obj->activation.extra      = savefile_read_s16b(file);
             break;
         case OBJ_SAVE_LEVEL:
             obj->level = savefile_read_s16b(file);

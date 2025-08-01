@@ -176,11 +176,9 @@ static bool _transfer_obj_p(object_type *o_ptr)
         if (p_ptr->psubclass == DEVICEMASTER_POTIONS || p_ptr->psubclass == DEVICEMASTER_SCROLLS)
         {
             /* One may not use worthless high level items as source objects (e.g. Curse Armor could make Genocide!!) */
-            if (!_transfer_src_obj && k_info[o_ptr->k_idx].cost <= 0)
-                return FALSE;
+            if (!_transfer_src_obj && k_info[o_ptr->k_idx].cost <= 0) return FALSE;
             /* Potions and scrolls must transfer to weaker destination objects */
-            if (_transfer_src_obj && k_info[_transfer_src_obj->k_idx].level < k_info[o_ptr->k_idx].level)
-                return FALSE;
+            if (_transfer_src_obj && k_info[_transfer_src_obj->k_idx].level < k_info[o_ptr->k_idx].level) return FALSE;
         }
         return TRUE;
     }
@@ -249,10 +247,10 @@ static bool _transfer_effect(void)
     }
 
     /* Move the effect */
-    dest_obj->activation.type = src_obj->activation.type;
+    dest_obj->activation.type       = src_obj->activation.type;
     dest_obj->activation.difficulty = src_obj->activation.difficulty;
-    dest_obj->activation.cost = src_obj->activation.cost;
-    dest_obj->activation.extra = src_obj->activation.extra;
+    dest_obj->activation.cost       = src_obj->activation.cost;
+    dest_obj->activation.extra      = src_obj->activation.extra;
 
     /* Destroy the source */
     assert(src_obj->number == 1); /* Wands/Rods/Staves no longer stack */

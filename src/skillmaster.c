@@ -855,19 +855,16 @@ static _spell_info_ptr _get_spell(int realm, int idx, int pts)
     _spell_info_ptr spell = malloc(sizeof(_spell_info_t));
     _realm_skill_t  skill = _realm_skills[pts];
 
-    if (is_magic(realm))
-        info = mp_ptr->info[realm - 1][idx];
-    else
-        info = technic_info[realm - MIN_TECHNIC][idx];
+    if (is_magic(realm)) info = mp_ptr->info[realm - 1][idx];
+    else                 info = technic_info[realm - MIN_TECHNIC][idx];
 
     spell->realm = realm;
     spell->idx = idx;
-    spell->level = MAX(1, lawyer_hack(&info, LAWYER_HACK_LEVEL) * skill.lvl_mult / 100);
-    spell->cost = MAX(1, lawyer_hack(&info, LAWYER_HACK_MANA) * skill.cost_mult / 100);
-    if (realm == REALM_HISSATSU)
-        spell->fail = 0;
-    else
-        spell->fail = MIN(95, MAX(5, lawyer_hack(&info, LAWYER_HACK_FAILRATE) + skill.fail_adj));
+    spell->level = MAX(1, lawyer_hack(&info, LAWYER_HACK_LEVEL) * skill.lvl_mult  / 100);
+    spell->cost  = MAX(1, lawyer_hack(&info, LAWYER_HACK_MANA)  * skill.cost_mult / 100);
+
+    if (realm == REALM_HISSATSU) spell->fail = 0;
+    else spell->fail = MIN(95, MAX(5, lawyer_hack(&info, LAWYER_HACK_FAILRATE) + skill.fail_adj));
 
     return spell;
 }

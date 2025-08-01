@@ -673,17 +673,16 @@ static void _unpossess_spell(int cmd, variant *res)
     }
 }
 
-static void _add_power(power_info* power, int lvl, int cost, int fail, ang_spell fn, int stat_idx)
+static void _add_power(power_info *power, int lvl, int cost, int fail, ang_spell fn, int stat_idx)
 {
-    int l = MIN(_max_lvl(), lvl); /* It's frustrating when a corpse can *never* use a given power ... */
-    power->spell.level = l;
+    power->spell.level = MIN(_max_lvl(), lvl); // It's frustrating when a corpse can *never* use a given power
     power->spell.cost = cost;
     power->spell.fail = fail;
     power->spell.fn = fn;
     power->stat = stat_idx;
 }
 
-int possessor_get_powers(power_info* spells, int max)
+int possessor_get_powers(power_info *spells, int max)
 {
     mon_race_ptr race = &r_info[p_ptr->current_r_idx];
     int          ct = 0;
@@ -1177,18 +1176,15 @@ void possessor_init_race_t(race_t *race_ptr, int default_r_idx)
     static int last_r_idx = -1;
     int        r_idx = p_ptr->current_r_idx, i;
 
-    if (!r_idx) /* Birthing menus. p_ptr->prace not chosen yet. _birth() not called yet. */
-        r_idx = default_r_idx; 
+    if (!r_idx) r_idx = default_r_idx; // Birthing menus. p_ptr->prace not chosen yet. _birth() not called yet.
 
     if (r_idx != last_r_idx)
     {
-        monster_race *r_ptr;
-    
-        if (p_ptr->current_r_idx == r_idx) /* Birthing menus. current_r_idx = 0 but r_idx = default_r_idx. */
-            last_r_idx = r_idx;            /* BTW, the game really needs a "current state" concept ... */
+        // Birthing menus. current_r_idx = 0 but r_idx = default_r_idx.
+        // BTW, the game really needs a "current state" concept
+        if (p_ptr->current_r_idx == r_idx) last_r_idx = r_idx;
 
-        r_ptr = &r_info[r_idx];
-
+        monster_race *r_ptr = &r_info[r_idx];
         race_ptr->base_hp = 15;
 
         race_ptr->get_spells = NULL;
@@ -1202,13 +1198,11 @@ void possessor_init_race_t(race_t *race_ptr, int default_r_idx)
         race_ptr->infra = r_ptr->body.infra;
 
         race_ptr->life = r_ptr->body.life;
-        if (!race_ptr->life)
-            race_ptr->life = 100;
+        if (!race_ptr->life) race_ptr->life = 100;
     
         race_ptr->equip_template = mon_get_equip_template();
 
-        for (i = 0; i < MAX_STATS; i++)
-            race_ptr->stats[i] = r_ptr->body.stats[i];
+        for (int i = 0; i < MAX_STATS; i++) race_ptr->stats[i] = r_ptr->body.stats[i];
 
         race_ptr->skills = r_ptr->body.skills;
         race_ptr->extra_skills = r_ptr->body.extra_skills;
@@ -1218,12 +1212,9 @@ void possessor_init_race_t(race_t *race_ptr, int default_r_idx)
         race_ptr->subname = mon_name(r_idx);
 
         race_ptr->flags = RACE_IS_MONSTER;
-        if (r_ptr->flags3 & RF3_UNDEAD)
-            race_ptr->flags |= RACE_IS_UNDEAD | RACE_IS_NONLIVING;
-        if (r_ptr->flags3 & RF3_NONLIVING)
-            race_ptr->flags |= RACE_IS_NONLIVING;
-        if (r_ptr->flags3 & RF3_DEMON)
-            race_ptr->flags |= RACE_IS_DEMON | RACE_IS_NONLIVING;
+        if (r_ptr->flags3 & RF3_UNDEAD)    race_ptr->flags |= RACE_IS_UNDEAD | RACE_IS_NONLIVING;
+        if (r_ptr->flags3 & RF3_NONLIVING) race_ptr->flags |= RACE_IS_NONLIVING;
+        if (r_ptr->flags3 & RF3_DEMON)     race_ptr->flags |= RACE_IS_DEMON | RACE_IS_NONLIVING;
     }
     if (birth_hack || spoiler_hack)
     {
@@ -1255,7 +1246,7 @@ race_t *mon_possessor_get_race(void)
                     "The current body also determines the spell stat; for example, a novice priest possessor uses wisdom, while a novice mage possessor relies on intelligence.";
 
         me.exp = 250;
-        me.shop_adjust = 110; /* Really should depend on current form */
+        me.shop_adjust = 110; // Really should depend on current form
 
         me.birth = _birth;
 

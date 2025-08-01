@@ -871,8 +871,7 @@ void _reproduceInf(object_type* o_ptr){
 
 	object_desc(o_name, o_ptr, OD_COLOR_CODED);
 	sprintf(prompt, "Reproduction would cost %d chemicals. Are you sure? <color:y>[y/n]</color>", cost);
-	if (msg_prompt(prompt, "ny", PROMPT_DEFAULT) == 'n')
-		return;
+	if (msg_prompt(prompt, "ny", PROMPT_DEFAULT) == 'n') return;
 
 	if (cost > _CHEM[tier]){ 
 		msg_format("You do not have enough %s chemicals.", _tiername[tier]);

@@ -2015,7 +2015,7 @@ void object_desc(char *buf, object_type *o_ptr, u32b mode)
                 t = object_desc_chr(t, p1);
                 if (statistics_hack)
                 {
-                    double charges = (double)device_max_sp(o_ptr)/o_ptr->activation.cost;
+                    double charges = (double)device_max_sp(o_ptr) / o_ptr->activation.cost;
                     t = object_desc_str(t, format("%.2f charges", charges));
                 }
                 else

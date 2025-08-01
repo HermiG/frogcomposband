@@ -2494,12 +2494,12 @@ static void _add_index(object_type *o_ptr, int index)
 {
     if (index >= 0)
     {
-        o_ptr->activation.type = _effect_info[index].type;
-        o_ptr->activation.power = _effect_info[index].level;
+        o_ptr->activation.type       = _effect_info[index].type;
+        o_ptr->activation.power      = _effect_info[index].level;
         o_ptr->activation.difficulty = _effect_info[index].level;
-        o_ptr->activation.cost = _effect_info[index].cost;
-        o_ptr->activation.extra = 0;
-        o_ptr->timeout = 0;
+        o_ptr->activation.cost       = _effect_info[index].cost;
+        o_ptr->activation.extra      = 0;
+        o_ptr->timeout               = 0;
         add_flag(o_ptr->flags, OF_ACTIVATE); /* for object lore */
     }
 }
@@ -2768,10 +2768,9 @@ static void _device_adjust_activation_difficulty(object_type *o_ptr, device_effe
 
 static void _device_pick_effect(object_type *o_ptr, device_effect_info_ptr table, int level, int mode)
 {
-    int i, n;
     int tot = 0;
 
-    for (i = 0; ; i++)
+    for (int i = 0; ; i++)
     {
         device_effect_info_ptr entry = &table[i];
         int                    rarity;
@@ -2786,17 +2785,17 @@ static void _device_pick_effect(object_type *o_ptr, device_effect_info_ptr table
         if ((mode & AM_GOOD) && !(entry->flags & _DROP_GOOD)) continue;
         if ((mode & AM_GREAT) && !(entry->flags & _DROP_GREAT)) continue;
         if ((mode & AM_STOCK_TOWN) && !(entry->flags & _STOCK_TOWN)) continue;
-		if (easy_id && entry->type == EFFECT_IDENTIFY_FULL) continue;
-		if (easy_lore && entry->type == EFFECT_PROBING) continue;
+        if (easy_id && entry->type == EFFECT_IDENTIFY_FULL) continue;
+        if (easy_lore && entry->type == EFFECT_PROBING) continue;
 
         entry->prob = 64 / rarity;
         tot += entry->prob;
     }
 
     if (!tot) return;
-    n = randint1(tot);
+    int n = randint1(tot);
 
-    for (i = 0; ; i++)
+    for (int i = 0; ; i++)
     {
         device_effect_info_ptr entry = &table[i];
 
@@ -2806,8 +2805,6 @@ static void _device_pick_effect(object_type *o_ptr, device_effect_info_ptr table
         n -= entry->prob;
         if (n <= 0)
         {
-            int cost;
-
             o_ptr->activation.type = entry->type;
 
             /* Power is the casting level of the device and determines damage or power of the effect.
@@ -2821,7 +2818,7 @@ static void _device_pick_effect(object_type *o_ptr, device_effect_info_ptr table
                 _device_adjust_activation_difficulty(o_ptr, entry);
             }
 
-            cost = entry->cost;
+            int cost = entry->cost;
             cost += effect_cost_extra(&o_ptr->activation);
             o_ptr->activation.cost = _bounds_check(_rand_normal(cost, 5), 1, 1000);
 
@@ -2948,18 +2945,15 @@ bool device_init_fixed(object_type *o_ptr, int effect)
     {
     case TV_WAND:
         e_ptr = _device_find_effect(wand_effect_table, effect);
-        if (!e_ptr)
-            return FALSE;
+        if (!e_ptr) return FALSE;
         break;
     case TV_ROD:
         e_ptr = _device_find_effect(rod_effect_table, effect);
-        if (!e_ptr)
-            return FALSE;
+        if (!e_ptr) return FALSE;
         break;
     case TV_STAFF:
         e_ptr = _device_find_effect(staff_effect_table, effect);
-        if (!e_ptr)
-            return FALSE;
+        if (!e_ptr) return FALSE;
         break;
     }
 
@@ -2970,8 +2964,7 @@ bool device_init_fixed(object_type *o_ptr, int effect)
         o_ptr->level = 0;
     }
 
-    if (o_ptr->xtra3 < 7)
-        o_ptr->xtra3 = 7;
+    if (o_ptr->xtra3 < 7) o_ptr->xtra3 = 7;
 
     o_ptr->activation.type = e_ptr->type;
     o_ptr->activation.power = o_ptr->xtra3;
@@ -2983,14 +2976,9 @@ bool device_init_fixed(object_type *o_ptr, int effect)
     
     o_ptr->activation.cost = e_ptr->cost + effect_cost_extra(&o_ptr->activation);
 
-    if (o_ptr->tval == TV_ROD)
-    {
-        o_ptr->xtra4 = _bounds_check(3 * o_ptr->xtra3 / 2, o_ptr->activation.cost*2, 1000);
-    }
-    else
-    {
-        o_ptr->xtra4 = _bounds_check(3 * o_ptr->xtra3, o_ptr->activation.cost*4, 1000);
-    }
+    if (o_ptr->tval == TV_ROD) o_ptr->xtra4 = _bounds_check(3 * o_ptr->xtra3 / 2, o_ptr->activation.cost * 2, 1000);
+    else                       o_ptr->xtra4 = _bounds_check(3 * o_ptr->xtra3    , o_ptr->activation.cost * 4, 1000);
+    
     o_ptr->xtra5 = o_ptr->xtra4; /* Fully Charged */
     o_ptr->xtra5 *= 100; /* scale current sp by 100 for smoother regeneration */
 

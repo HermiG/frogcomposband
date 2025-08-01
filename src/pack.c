@@ -319,8 +319,7 @@ slot_t pack_find_obj(int tval, int sval)
 
 slot_t pack_find_device(int effect)
 {
-    int slot;
-    for (slot = 1; slot <= pack_max(); slot++)
+    for (slot_t slot = 1; slot <= pack_max(); slot++)
     {
         obj_ptr obj = inv_obj(_inv, slot);
         if (!obj) continue;

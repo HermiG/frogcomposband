@@ -719,8 +719,7 @@ static bool get_moves_aux(int m_idx, int *yp, int *xp, bool no_flow)
     {
         rng = AAF_LIMIT_RING;
     }
-    else if (py_on_surface())
-        rng = AAF_LIMIT;
+    else if (py_on_surface()) rng = AAF_LIMIT;
 
     if (mon_has_attack_spell(m_ptr))
     {
@@ -753,11 +752,8 @@ static bool get_moves_aux(int m_idx, int *yp, int *xp, bool no_flow)
     c_ptr = &cave[y1][x1];
 
     /* If we can hear noises, advance towards them */
-    if (c_ptr->cost)
-    {
-        best = 999;
-    }
-
+    if (c_ptr->cost) best = 999;
+    
     /* Otherwise, try to follow a scent trail */
     else if (c_ptr->when)
     {
@@ -767,15 +763,10 @@ static bool get_moves_aux(int m_idx, int *yp, int *xp, bool no_flow)
         use_scent = TRUE;
         best = 0;
     }
-
-    /* Otherwise, advance blindly */
-    else
-    {
-        return (FALSE);
-    }
-
+    else return FALSE; // Otherwise, advance blindly
+    
     /* Check nearby grids, diagonals first */
-    for (i = 7; i >= 0; i--)
+    for (int i = 7; i >= 0; i--)
     {
         /* Get the location */
         y = y1 + ddy_ddd[i];
@@ -799,14 +790,10 @@ static bool get_moves_aux(int m_idx, int *yp, int *xp, bool no_flow)
         /* We're using sound */
         else
         {
-            int cost;
-
-            if (r_ptr->flags2 & (RF2_BASH_DOOR | RF2_OPEN_DOOR))
-                cost = c_ptr->dist;
-            else cost = c_ptr->cost;
+            int cost = (r_ptr->flags2 & (RF2_BASH_DOOR | RF2_OPEN_DOOR)) ? c_ptr->dist : c_ptr->cost ;
 
             /* Accept louder sounds */
-            if ((cost == 0) || (best < cost)) continue;
+            if (cost == 0 || best < cost) continue;
             /* Hack: Don't flow into occupied squares
                TODO: Don't flow into squares that the monster can't move into.
             */
@@ -821,10 +808,9 @@ static bool get_moves_aux(int m_idx, int *yp, int *xp, bool no_flow)
     }
 
     /* No legal move (?) */
-    if (best == 999 || best == 0) return (FALSE);
+    if (best == 999 || best == 0) return FALSE;
 
-    /* Success */
-    return (TRUE);
+    return TRUE;
 }
 
 

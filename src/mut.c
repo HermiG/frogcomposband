@@ -673,16 +673,14 @@ bool mut_gain_random(mut_pred pred)
 
 int mut_get_powers(power_info* spells, int max)
 {
-    int i;
     int ct = 0;
 
-    for (i = 0; i < MAX_MUTATIONS; i++)
+    for (int i = 0; i < MAX_MUTATIONS; i++)
     {
-        if ( mut_present(i)
-          && (_mutations[i].type & MUT_TYPE_ACTIVATION) )
+        if ( mut_present(i) && (_mutations[i].type & MUT_TYPE_ACTIVATION) )
         {
             spell_info *base = &_mutations[i].spell;
-            power_info* current = NULL;
+            power_info *current = NULL;
             int stat_idx = p_ptr->stat_ind[_mutations[i].stat];
 
             if (ct >= max) break;

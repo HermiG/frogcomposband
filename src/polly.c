@@ -555,7 +555,7 @@ int politician_get_cost(const spell_info *loitsu)
      * Stopping filibustering actually costs nothing anyway, but we need to
      * specify the cost as zero here or the player will get error messages
      * like "you do not have enough hp" at low HP etc. */
-    if ((loitsu->cost == 39) && (p_ptr->filibuster)) return 0;
+    if (loitsu->cost == 39 && p_ptr->filibuster) return 0;
 
     switch (_get_toggle())
     {

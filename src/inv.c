@@ -377,7 +377,7 @@ void inv_swap(inv_ptr inv, slot_t left, slot_t right)
 /* Iterating, Searching and Accessing Objects (Predicates are always optional) */
 obj_ptr inv_obj(inv_ptr inv, slot_t slot)
 {
-    assert(slot);
+    if (!slot) return NULL;
     if (slot >= vec_length(inv->objects))
     {
         assert(!inv->max || slot <= inv->max);

@@ -345,7 +345,9 @@ static obj_ptr _bag_place_get_obj(void)
 
 void bag_place_ui(void)
 {
-  if(!equip_find_obj(TV_BAG, SV_ANY))
+  obj_ptr bag = equip_obj(equip_find_obj(TV_BAG, SV_ANY));
+  
+  if(!bag)
   {
     msg_print("You don't have a bag equipped.");
     return;
@@ -382,14 +384,16 @@ void bag_place_ui(void)
     amt -= copy.number; // amt is the number actually transferred
     obj->number -= amt; // remaining objects that didn't transfer
     
-    if(amt) // we actually transferred something
+    if (amt) // we actually transferred something
     {
       obj_release(obj, obj->number ? OBJ_RELEASE_DELAYED_MSG : OBJ_RELEASE_QUIET);
       
       p_ptr->notice |= PN_OPTIMIZE_PACK | PN_OPTIMIZE_BAG;
       p_ptr->window |= PW_INVEN | PW_EQUIP;
       
-      energy_use = 50;
+      energy_use = 100;
+      if (bag->curse_flags & OFC_TANGLING) energy_use *= 3;
+      if (obj_has_flag(bag, OF_ORGANIZED)) energy_use *= 0.5;
     }
   }
 }

@@ -961,8 +961,6 @@ static void do_cmd_device_aux(obj_ptr obj)
 {
     bool used = FALSE;
     int  charges = 1;
-    int  boost;
-    bool is_devicemaster = FALSE;
     
     assert(object_is_device(obj));
     assert(obj->number == 1); /* Devices no longer stack */
@@ -974,21 +972,34 @@ static void do_cmd_device_aux(obj_ptr obj)
     obj_flags(obj, flgs);
 
     /* Devicemasters get extra power */
-    is_devicemaster = devicemaster_is_speciality(obj);
-    if (is_devicemaster)
-        boost = device_power_aux(100, p_ptr->device_power + p_ptr->lev/10) - 100;
-    else
-        boost = device_power(100) - 100;
+    bool is_devicemaster = devicemaster_is_speciality(obj);
+    int boost = is_devicemaster ? device_power_aux(100, p_ptr->device_power + p_ptr->lev/10) - 100 : device_power(100) - 100;
 
     /* Devicemasters use devices more quickly */
     energy_use = 100;
     if (is_devicemaster && !devicemaster_desperation)
     {
-        int delta = MIN(50, 2*p_ptr->lev - obj->activation.power);
+        int delta = MIN(50, 2 * p_ptr->lev - obj->activation.power);
         if (delta > 0) energy_use -= delta;
     }
 
     if (have_flag(flgs, OF_SPEED)) energy_use -= energy_use * obj->pval / 10;
+    energy_use = MAX(energy_use, 20);
+
+    obj_ptr bag = NULL;
+    if (obj->loc.where == INV_BAG) {
+        bag = equip_obj(equip_find_obj(TV_BAG, SV_ANY));
+        if (bag) {
+            if(bag->sval == SV_BAG_DEVICE_CASE) energy_use *= 0.7;
+            else                                energy_use *= 2;
+            
+            if(bag->curse_flags & OFC_TANGLING) energy_use *= 2.5;
+            if(obj_has_flag(bag, OF_ORGANIZED)) energy_use *= 0.7;
+            
+            equip_learn_flag(OF_ORGANIZED);
+            equip_learn_curse(OFC_TANGLING);
+        }
+    }
 
     if (device_sp(obj) < obj->activation.cost)
     {

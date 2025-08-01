@@ -520,15 +520,22 @@ static void do_cmd_quaff_potion_aux(obj_ptr obj)
     if (mut_present(MUT_POTION_CHUGGER)) energy_use = 50;
     else energy_use = 100;
 
+    if (devicemaster_is_(DEVICEMASTER_POTIONS) && !devicemaster_desperation)
+    {
+        int delta = MIN(50, 2*p_ptr->lev - lev);
+        if (delta > 0) energy_use -= delta;
+    }
+    energy_use = MAX(energy_use, 40); // Potion Chuggers could go negative!
+
     obj_ptr bag = NULL;
     if (obj->loc.where == INV_BAG) {
         bag = equip_obj(equip_find_obj(TV_BAG, SV_ANY));
         if (bag) {
-            if(bag->sval == SV_BAG_POTION_BELT) energy_use *= 0.5;
-            else                                energy_use *= 2;
+            if (bag->sval == SV_BAG_POTION_BELT) energy_use *= 0.5;
+            else                                 energy_use *= 2;
 
-            if(bag->curse_flags & OFC_TANGLING) energy_use *= 3;
-            if(obj_has_flag(bag, OF_ORGANIZED)) energy_use *= 0.5;
+            if (bag->curse_flags & OFC_TANGLING) energy_use *= 3;
+            if (obj_has_flag(bag, OF_ORGANIZED)) energy_use *= 0.5;
 
             equip_learn_flag(OF_ORGANIZED);
             equip_learn_curse(OFC_TANGLING);
@@ -544,19 +551,10 @@ static void do_cmd_quaff_potion_aux(obj_ptr obj)
         return;
     }
 
+    warlock_stop_singing();
     if (music_singing_any()) bard_stop_singing();
     if (hex_spelling_any() && !hex_spelling(HEX_INHAIL)) stop_hex_spell_all();
-    warlock_stop_singing();
 
-    if (devicemaster_is_(DEVICEMASTER_POTIONS) && !devicemaster_desperation)
-    {
-        int delta = MIN(50, 2*p_ptr->lev - lev);
-        if (delta > 0)
-        {
-            energy_use -= delta;
-            if (energy_use < 25) energy_use = 25; /* Potion Chuggers could go negative! */
-        }
-    }
     if (devicemaster_desperation)
     {
         int amt = 50;
@@ -737,28 +735,25 @@ static void do_cmd_read_scroll_aux(obj_ptr o_ptr)
     if (mut_present(MUT_SPEED_READER)) energy_use = 50;
     else energy_use = 100;
 
+    if (devicemaster_is_(DEVICEMASTER_SCROLLS) && !devicemaster_desperation)
+    {
+        int delta = MIN(50, 2 * p_ptr->lev - lev);
+        if (delta > 0) energy_use -= delta;
+    }
+    energy_use = MAX(energy_use, 40); // Speed Readers could go negative!
+  
     obj_ptr bag = NULL;
     if (o_ptr->loc.where == INV_BAG) {
         bag = equip_obj(equip_find_obj(TV_BAG, SV_ANY));
         if (bag) {
-            if(bag->sval == SV_BAG_SCROLL_CASE) energy_use *= 0.5;
-            else                                energy_use *= 2;
+            if (bag->sval == SV_BAG_SCROLL_CASE) energy_use *= 0.5;
+            else                                 energy_use *= 2;
 
-            if(bag->curse_flags & OFC_TANGLING) energy_use *= 3;
-            if(obj_has_flag(bag, OF_ORGANIZED)) energy_use *= 0.5;
+            if (bag->curse_flags & OFC_TANGLING) energy_use *= 3;
+            if (obj_has_flag(bag, OF_ORGANIZED)) energy_use *= 0.5;
 
             equip_learn_flag(OF_ORGANIZED);
             equip_learn_curse(OFC_TANGLING);
-        }
-    }
-
-    if (devicemaster_is_(DEVICEMASTER_SCROLLS) && !devicemaster_desperation)
-    {
-        int delta = MIN(50, 2*p_ptr->lev - lev);
-        if (delta > 0)
-        {
-            energy_use -= delta;
-            if (energy_use < 25) energy_use = 25; /* Speed Readers could go negative! */
         }
     }
 
@@ -784,12 +779,9 @@ static void do_cmd_read_scroll_aux(obj_ptr o_ptr)
         return;
     }
 
-    if (music_singing_any()) bard_stop_singing();
-
-    /* Hex */
-    if (hex_spelling_any() && ((p_ptr->lev < 35) || hex_spell_fully())) stop_hex_spell_all();
-
     warlock_stop_singing();
+    if (music_singing_any()) bard_stop_singing();
+    if (hex_spelling_any() && ((p_ptr->lev < 35) || hex_spell_fully())) stop_hex_spell_all();
 
     if (o_ptr->tval == TV_SCROLL)
     {
@@ -990,11 +982,11 @@ static void do_cmd_device_aux(obj_ptr obj)
     if (obj->loc.where == INV_BAG) {
         bag = equip_obj(equip_find_obj(TV_BAG, SV_ANY));
         if (bag) {
-            if(bag->sval == SV_BAG_DEVICE_CASE) energy_use *= 0.7;
-            else                                energy_use *= 2;
+            if (bag->sval == SV_BAG_DEVICE_CASE) energy_use *= 0.7;
+            else                                 energy_use *= 2;
             
-            if(bag->curse_flags & OFC_TANGLING) energy_use *= 2.5;
-            if(obj_has_flag(bag, OF_ORGANIZED)) energy_use *= 0.7;
+            if (bag->curse_flags & OFC_TANGLING) energy_use *= 2.5;
+            if (obj_has_flag(bag, OF_ORGANIZED)) energy_use *= 0.7;
             
             equip_learn_flag(OF_ORGANIZED);
             equip_learn_curse(OFC_TANGLING);

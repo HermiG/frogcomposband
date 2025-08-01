@@ -729,7 +729,20 @@ void equip_takeoff_ui(void)
         msg_print("Your bag still contains items. Empty your bag first.");
         return;
     }
+
     energy_use = 50;
+    if (obj->loc.where == INV_BAG) {
+        obj_ptr bag = equip_obj(equip_find_obj(TV_BAG, SV_ANY));
+        if (bag) {
+            energy_use *= 2;
+            if (bag->curse_flags & OFC_TANGLING) energy_use *= 3;
+            if (obj_has_flag(bag, OF_ORGANIZED)) energy_use *= 0.5;
+            
+            equip_learn_flag(OF_ORGANIZED);
+            equip_learn_curse(OFC_TANGLING);
+        }
+    }
+
     if (!_unwield_verify(obj)) return;
 
     _unwield_before(obj);

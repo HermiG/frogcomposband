@@ -2324,7 +2324,7 @@ static _effect_info_t _effect_info[] =
     {"STARLITE",        EFFECT_STARLITE,            20, 100,  2, 0},
     {"NOTHING",         EFFECT_NOTHING,              1,   1,  0, 0},
     {"ENDLESS_QUIVER",  EFFECT_ENDLESS_QUIVER,      50, 150,  0, BIAS_ARCHER},
-    {"BOTTOMLESS_BAG",  EFFECT_BOTTOMLESS_BAG,      50, 150,  0, 0},
+    {"BOTTOMLESS_BAG",  EFFECT_BOTTOMLESS_BAG,      5, -50,  0, 0},
 
     /* Bad Effects                                  Lv    T   R  Bias */
     {"AGGRAVATE",       EFFECT_AGGRAVATE,           10, 100,  1, BIAS_DEMON},
@@ -6753,7 +6753,7 @@ cptr do_effect(effect_t *effect, int mode, int boost)
         if (desc)  return "This bag seems to be larger inside than out.";
         if (value) return format("%d", 15000);
         if (color) return format("%d", TERM_L_ORANGE);
-        if (cast && one_in_(5))
+        if (cast)
         {
             obj_ptr bag = equip_obj(equip_find_obj(TV_BAG, SV_ANY));
             if (!bag) break;

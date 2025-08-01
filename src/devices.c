@@ -320,9 +320,7 @@ bool device_try(object_type *o_ptr)
 bool device_use(object_type *o_ptr, int boost)
 {
     device_known = object_is_known(o_ptr);
-    if (do_device(o_ptr, SPELL_CAST, boost))
-        return TRUE;
-    return FALSE;
+    return !! do_device(o_ptr, SPELL_CAST, boost);
 }
 
 static int _scroll_power(int val)
@@ -3470,8 +3468,7 @@ cptr do_effect(effect_t *effect, int mode, int boost)
         if (color) return format("%d", TERM_L_BLUE);
         if (cast)
         {
-            if (detect_traps(DETECT_RAD_DEFAULT, device_known))
-                device_noticed = TRUE;
+            if (detect_traps(DETECT_RAD_DEFAULT, device_known)) device_noticed = TRUE;
         }
         break;
     case EFFECT_DETECT_MONSTERS:
@@ -3481,8 +3478,7 @@ cptr do_effect(effect_t *effect, int mode, int boost)
         if (color) return format("%d", TERM_L_BLUE);
         if (cast)
         {
-            if (detect_monsters_normal(DETECT_RAD_DEFAULT))
-                device_noticed = TRUE;
+            if (detect_monsters_normal(DETECT_RAD_DEFAULT)) device_noticed = TRUE;
         }
         break;
     case EFFECT_DETECT_OBJECTS:
@@ -3492,8 +3488,7 @@ cptr do_effect(effect_t *effect, int mode, int boost)
         if (color) return format("%d", TERM_L_BLUE);
         if (cast)
         {
-            if (detect_objects_normal(DETECT_RAD_DEFAULT))
-                device_noticed = TRUE;
+            if (detect_objects_normal(DETECT_RAD_DEFAULT)) device_noticed = TRUE;
         }
         break;
     case EFFECT_DETECT_ALL:

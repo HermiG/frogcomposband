@@ -2147,7 +2147,7 @@ static bool inn_comm(int cmd)
             break;
 
         case BACT_REST: /* Rest for the night */
-            if ((p_ptr->poisoned) || (p_ptr->cut))
+            if (p_ptr->poisoned || p_ptr->cut)
             {
                 msg_print("You need a healer, not a room.");
                 msg_print("Sorry, but I don't want anyone dying in here.");
@@ -2194,10 +2194,8 @@ static bool inn_comm(int cmd)
                     {
                         msg_format("You awaken smiling and much refreshed after a good%s... sleep?%s", (prev_hour >= 6 && prev_hour <= 17) ? " evening's" : " night's", mut_present(MUT_NO_INHIBITIONS) ? " (You really like that No Inhibitions mutation!)" : "");
                     }
-                    else if (prev_hour >= 6 && prev_hour <= 17)
-                        msg_print("You awake refreshed for the evening.");
-                    else
-                        msg_print("You awake refreshed for the new day.");
+                    else if (prev_hour >= 6 && prev_hour <= 17) msg_print("You awake refreshed for the evening.");
+                    else                                        msg_print("You awake refreshed for the new day.");
                 }
                 /* Update daily wanted */
                 if (prev_hour >= 18) /* Proxy for date change */

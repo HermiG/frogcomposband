@@ -445,17 +445,17 @@ void syuriken_spreading_spell(int cmd, variant *res)
         break;
     case SPELL_CAST:
     {
-        int i;
-        for (i = 0; i < 8; i++)
+        for (int i = 0; i < 8; i++)
         {
-            int        slot = pack_find_first(_obj_is_shuriken);
-            py_throw_t context = {0}; /* better reset for each shot! */
+            slot_t slot = pack_find_first(_obj_is_shuriken);
             if (!slot)
             {
                 if (!i) msg_print("You have no Iron Spikes.");
                 else msg_print("You have no more Iron Spikes.");
                 break;
             }
+
+            py_throw_t context = {0}; /* better reset for each shot! */
             context.dir = DIR_RANDOM;
             context.obj = pack_obj(slot);
             py_throw(&context);

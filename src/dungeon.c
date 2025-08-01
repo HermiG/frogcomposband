@@ -1145,14 +1145,10 @@ bool psychometry(void)
  */
 void recharged_notice(object_type *o_ptr, unsigned char neula)
 {
-    char o_name[MAX_NLEN];
-
-    cptr s;
-
     if (!o_ptr->inscription) return;
 
     /* Find first '!' */
-    s = my_strchr(quark_str(o_ptr->inscription), '!');
+    cptr s = my_strchr(quark_str(o_ptr->inscription), '!');
 
     /* Process notification request. */
     while (s)
@@ -1161,19 +1157,16 @@ void recharged_notice(object_type *o_ptr, unsigned char neula)
         if (s[1] == neula)
         {
             /* Describe (briefly) */
+            char o_name[MAX_NLEN];
             object_desc(o_name, o_ptr, OD_OMIT_PREFIX | OD_OMIT_INSCRIPTION | OD_COLOR_CODED);
 
             /* Notify the player */
-            if (o_ptr->number > 1)
-                msg_format("Your %s are recharged.", o_name);
-            else if (neula != '!')
-                msg_format("Your %s now has %c charge%s.", o_name, neula, (neula == '1') ? "" : "s");
-            else
-                msg_format("Your %s is recharged.", o_name);
+            if (o_ptr->number > 1) msg_format("Your %s are recharged.", o_name);
+            else if (neula != '!') msg_format("Your %s now has %c charge%s.", o_name, neula, (neula == '1') ? "" : "s");
+            else                   msg_format("Your %s is recharged.", o_name);
 
             disturb(0, 0);
 
-            /* Done. */
             return;
         }
 
@@ -2595,9 +2588,8 @@ static void process_world_aux_recharge(void)
     // Recharge Devices
     _recharge_changed = FALSE;
     for(int use_bag = 0; use_bag < 2; use_bag++) {
-        slot_t slot = use_bag ? equip_find_obj(TV_BAG, SV_ANY) : 0;
-        if(use_bag && !slot) continue;
-        obj_ptr bag = use_bag ? equip_obj(slot) : NULL;
+        obj_ptr bag = use_bag ? equip_obj(equip_find_obj(TV_BAG, SV_ANY)) : NULL;
+        if(use_bag && !bag) continue;
         
         for (int i = (use_bag ? bag_max() : pack_max()); i > 0; i--)
         {
@@ -2992,22 +2984,20 @@ static void process_world(void)
     /*** Check monster arena ***/
     if (p_ptr->inside_battle && !p_ptr->leaving)
     {
-        int i2, j2;
         int win_m_idx = 0;
         int number_mon = 0;
 
         /* Count all hostile monsters */
-        for (i2 = 0; i2 < cur_wid; ++i2)
-            for (j2 = 0; j2 < cur_hgt; j2++)
-            {
-                cave_type *c_ptr = &cave[j2][i2];
+        for (int j2 = 0; j2 < cur_hgt; j2++) for (int i2 = 0; i2 < cur_wid; ++i2)
+        {
+            cave_type *c_ptr = &cave[j2][i2];
 
-                if ((c_ptr->m_idx > 0) && (c_ptr->m_idx != p_ptr->riding))
-                {
-                    number_mon++;
-                    win_m_idx = c_ptr->m_idx;
-                }
+            if (c_ptr->m_idx > 0 && c_ptr->m_idx != p_ptr->riding)
+            {
+                number_mon++;
+                win_m_idx = c_ptr->m_idx;
             }
+        }
 
         if (number_mon == 0)
         {
@@ -3018,11 +3008,9 @@ static void process_world(void)
         }
         else if (number_mon == 1)
         {
+            monster_type *wm_ptr = &m_list[win_m_idx];
+
             char m_name[80];
-            monster_type *wm_ptr;
-
-            wm_ptr = &m_list[win_m_idx];
-
             monster_desc(m_name, wm_ptr, 0);
             msg_format("%^s is the winner!", m_name);
             /* Hack: Make sure the player sees this one! */
@@ -3036,15 +3024,13 @@ static void process_world(void)
                 p_ptr->au += battle_odds;
                 stats_on_gold_winnings(battle_odds);
             }
-            else
-            {
-                msg_print("You lost gold.");
-            }
+            else msg_print("You lost gold.");
+
             msg_print(NULL);
             p_ptr->energy_need = 0;
             battle_monsters();
         }
-        else if (game_turn - old_turn == 150*TURNS_PER_TICK)
+        else if (game_turn - old_turn == 150 * TURNS_PER_TICK)
         {
             msg_format("This battle has ended in a draw.");
             p_ptr->au += kakekin;
@@ -3073,32 +3059,17 @@ static void process_world(void)
         /* Check time and load */
         if ((0 != check_time()) || (0 != check_load()))
         {
-            /* Warning */
             if (closing_flag <= 2)
             {
-                /* Disturb */
                 disturb(0, 0);
-
-                /* Count warnings */
                 closing_flag++;
-
-                /* Message */
                 msg_print("The gates to ANGBAND are closing...");
                 msg_print("Please finish up and/or save your game.");
-
             }
-
-            /* Slam the gate */
             else
             {
-                /* Message */
                 msg_print("The gates to ANGBAND are now closed.");
-
-
-                /* Stop playing */
                 p_ptr->playing = FALSE;
-
-                /* Leaving */
                 p_ptr->leaving = TRUE;
             }
         }
@@ -3121,25 +3092,19 @@ static void process_world(void)
         /* Hack -- Daybreak/Nighfall in town */
         if (!(game_turn % ((TURNS_PER_TICK * TOWN_DAWN) / 2)))
         {
-            bool dawn;
-
-            /* Check for dawn */
-            dawn = (!(game_turn % (TURNS_PER_TICK * TOWN_DAWN)));
+            bool dawn = (!(game_turn % (TURNS_PER_TICK * TOWN_DAWN)));
 
             /* Day breaks */
             if (dawn)
             {
-                int y, x;
-
-                /* Message */
                 msg_print("The sun has risen.");
 
                 if (!p_ptr->wild_mode)
                 {
                     /* Hack -- Scan the town */
-                    for (y = 0; y < cur_hgt; y++)
+                    for (int y = 0; y < cur_hgt; y++)
                     {
-                        for (x = 0; x < cur_wid; x++)
+                        for (int x = 0; x < cur_wid; x++)
                         {
                             /* Get the cave grid */
                             cave_type *c_ptr = &cave[y][x];
@@ -3160,17 +3125,14 @@ static void process_world(void)
             /* Night falls */
             else
             {
-                int y, x;
-
-                /* Message */
                 msg_print("The sun has fallen.");
 
                 if (!p_ptr->wild_mode)
                 {
                     /* Hack -- Scan the town */
-                    for (y = 0; y < cur_hgt; y++)
+                    for (int y = 0; y < cur_hgt; y++)
                     {
-                        for (x = 0; x < cur_wid; x++)
+                        for (int x = 0; x < cur_wid; x++)
                         {
                             /* Get the cave grid */
                             cave_type *c_ptr = &cave[y][x];
@@ -3342,7 +3304,6 @@ static void process_world(void)
             /* Digest some food */
             (void)set_food(p_ptr->food - digestion);
         }
-
 
         /* Getting Faint */
         if ((p_ptr->food < PY_FOOD_FAINT))

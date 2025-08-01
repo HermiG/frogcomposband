@@ -706,8 +706,9 @@ void do_cmd_quaff_potion(void)
     prompt.prompt = "Quaff which potion?";
     prompt.error = "You have no potions to quaff.";
     prompt.filter = _can_quaff;
-    prompt.where[0] = INV_PACK;
-    prompt.where[1] = INV_BAG;
+    bool bag_first = !! equip_find_obj(TV_BAG, SV_BAG_POTION_BELT);
+    prompt.where[ bag_first] = INV_PACK;
+    prompt.where[!bag_first] = INV_BAG;
     prompt.where[2] = INV_FLOOR;
 
     obj_prompt(&prompt);
@@ -937,8 +938,9 @@ void do_cmd_read_scroll(void)
     prompt.prompt = "Read which scroll?";
     prompt.error = "You have no scrolls to read.";
     prompt.filter = _can_read;
-    prompt.where[0] = INV_PACK;
-    prompt.where[1] = INV_BAG;
+    bool bag_first = !! equip_find_obj(TV_BAG, SV_BAG_SCROLL_CASE);
+    prompt.where[ bag_first] = INV_PACK;
+    prompt.where[!bag_first] = INV_BAG;
     prompt.where[2] = INV_FLOOR;
     prompt.flags = INV_SHOW_FAIL_RATES;
 

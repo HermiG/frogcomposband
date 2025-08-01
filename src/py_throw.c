@@ -167,7 +167,23 @@ bool _init_context(py_throw_ptr context)
             context->energy = 100;
             if (p_ptr->pclass == CLASS_ROGUE || p_ptr->pclass == CLASS_NINJA) context->energy -= p_ptr->lev;
             if (p_ptr->pclass == CLASS_NINJA_LAWYER) context->energy -= (p_ptr->lev * 2 / 3);
+          
+            if (context->obj->loc.where == INV_BAG)
+            {
+                obj_ptr bag = equip_obj(equip_find_obj(TV_BAG, SV_ANY));
+                if (bag) {
+                    if (bag->sval == SV_BAG_POTION_BELT) energy_use *= 0.5;
+                    else                                 energy_use *= 2;
+
+                    if (bag->curse_flags & OFC_TANGLING) energy_use *= 3;
+                    if (obj_has_flag(bag, OF_ORGANIZED)) energy_use *= 0.5;
+                    
+                    equip_learn_flag(OF_ORGANIZED);
+                    equip_learn_curse(OFC_TANGLING);
+                }
+            }
         }
+
         energy_use = context->energy;
         if (!fear_allow_shoot())
         {

@@ -956,6 +956,7 @@ extern void do_cmd_aim_wand(void);
 extern void do_cmd_use_staff(void);
 extern void do_cmd_zap_rod(void);
 extern void do_cmd_activate(void);
+extern void trigger_passive_effect(obj_ptr obj);
 extern void do_cmd_rerate_aux(void);
 extern int  life_rating(void);
 extern cptr life_rating_desc(bool use_attr);

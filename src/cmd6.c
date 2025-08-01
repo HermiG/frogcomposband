@@ -1504,6 +1504,38 @@ static void _do_capture_ball(object_type *o_ptr)
     }
 }
 
+
+/*
+ * Randomly trigger a wielded object with a passive activated effect.
+ */
+void trigger_passive_effect(obj_ptr obj)
+{
+    assert(obj);
+    if (obj->timeout) return;
+    if (world_player) return;
+
+    effect_t effect = obj_get_effect(obj);
+
+    assert(effect.cost < 0); // Passive randomly triggered effects must have a negative timeout
+
+    if (!effect_try(&effect)) return;
+
+    if(1)
+    {
+        cptr msg = obj_get_effect_msg(obj);
+        if (msg) msg_print(msg);
+    }
+
+    device_known = TRUE; // Suppress aiming prompt
+    if (effect_use(&effect, device_power(100) - 100))
+    {
+        if (device_noticed) obj_learn_activation(obj);
+
+        obj->timeout = effect.cost;
+        p_ptr->window |= (PW_INVEN | PW_EQUIP);
+    }
+}
+
 /*
  * Activate a wielded object. Wielded objects never stack.
  * And even if they did, activatable objects never stack.

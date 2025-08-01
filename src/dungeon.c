@@ -2621,6 +2621,23 @@ static void process_world_aux_recharge(void)
     }
 }
 
+/*
+ * Handle passive effect triggers every 10 game turns
+ */
+static void _passive_trigger_aux(object_type *obj)
+{
+    if (!obj->timeout && obj_has_passive_effect(obj))
+    {
+        if (one_in_(-obj_get_effect(obj).cost)) trigger_passive_effect(obj);
+    }
+}
+
+static void process_world_aux_passive_triggers(void)
+{
+    // Trigger Equipment
+    equip_for_each(_passive_trigger_aux);
+}
+
 
 /*
  * Handle involuntary movement once every 10 game turns
@@ -3349,6 +3366,9 @@ static void process_world(void)
 
     /* Process recharging */
     process_world_aux_recharge();
+
+    /* Process passive item effects */
+    process_world_aux_passive_triggers();
 
     /* Feel the inventory */
     sense_inventory1();

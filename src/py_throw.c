@@ -53,6 +53,8 @@ void _animate(py_throw_ptr context)
 
 static obj_ptr _get_obj(int type)
 {
+    static int previous_inventory = INV_PACK;
+
     obj_prompt_t prompt = {0};
 
     prompt.prompt = "Throw which item?";
@@ -66,13 +68,17 @@ static obj_ptr _get_obj(int type)
     }
     else
     {
-        prompt.where[0] = INV_PACK;
-        prompt.where[1] = INV_EQUIP;
-        prompt.where[2] = INV_QUIVER;
-        prompt.where[3] = INV_BAG;
-        prompt.where[4] = INV_FLOOR;
+        int i = 0;
+        prompt.where[i++] = previous_inventory;
+        if(previous_inventory != INV_PACK)   prompt.where[i++] = INV_PACK;
+        if(previous_inventory != INV_EQUIP)  prompt.where[i++] = INV_EQUIP;
+        if(previous_inventory != INV_QUIVER) prompt.where[i++] = INV_QUIVER;
+        if(previous_inventory != INV_BAG)    prompt.where[i++] = INV_BAG;
+        if(previous_inventory != INV_FLOOR)  prompt.where[i++] = INV_FLOOR;
     }
     obj_prompt(&prompt);
+    if(prompt.obj) previous_inventory = prompt.obj->loc.where;
+
     return prompt.obj;
 }
 

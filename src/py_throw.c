@@ -135,18 +135,17 @@ bool _init_context(py_throw_ptr context)
         }
         if ( context->obj->loc.where == INV_BAG )
         {
-            slot_t slot = equip_find_obj(TV_BAG, SV_ANY);
-            if (!slot) return FALSE;
-            obj_ptr obj_bag = equip_obj(slot);
+            obj_ptr bag = equip_obj(equip_find_obj(TV_BAG, SV_ANY));
+            if (!bag) return FALSE;
 
-            if(obj_bag->curse_flags & OFC_DEVOURING) {
+            if(bag->curse_flags & OFC_DEVOURING) {
                 char bag_name[MAX_NLEN];
-                object_desc(bag_name, obj_bag, OD_COLOR_CODED | OD_NAME_ONLY | OD_OMIT_PREFIX);
+                object_desc(bag_name, bag, OD_COLOR_CODED | OD_NAME_ONLY | OD_OMIT_PREFIX);
                 char obj_name[MAX_NLEN];
                 object_desc(obj_name, context->obj, OD_COLOR_CODED | OD_NAME_ONLY | OD_OMIT_PREFIX | OD_SINGULAR);
                 
                 msg_format("Your %s refuses to release the %s!", bag_name, obj_name);
-                obj_learn_curse(obj_bag, OFC_DEVOURING);
+                equip_learn_curse(OFC_DEVOURING);
                 disturb(0, 0);
                 return FALSE;
             }
@@ -226,10 +225,7 @@ bool _init_context(py_throw_ptr context)
     context->range = MIN(MAX_RANGE, context->range);
 
     /* target */
-    if (!(context->type & THROW_DISPLAY))
-    {
-        if (!_get_target(context)) { energy_use = 0; return FALSE; }
-    }
+    if (!(context->type & THROW_DISPLAY) && !_get_target(context)) { energy_use = 0; return FALSE; }
 
     /* boomerang? */
     context->come_back = FALSE;
@@ -565,8 +561,7 @@ void py_throw_doc(py_throw_ptr context, doc_ptr doc)
 
     _init_context(context);
     if (!context->obj) return;
-    if (context->energy)
-        num_throw = 10000 / context->energy;
+    if (context->energy) num_throw = 10000 / context->energy;
 
     if (object_is_known(context->obj))
     {

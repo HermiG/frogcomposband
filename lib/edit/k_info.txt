@@ -4894,7 +4894,7 @@ D:A sturdy, iron-studded pack crafted from thick boarhide and banded with bronze
 N:*:& Potion Belt~
 G:&:g
 I:47:2:8
-W:5:0:20:10:50
+W:5:0:20:20:50
 A:0/4:5/1:15/4
 F:TOWN
 D:A wide leather belt fitted with reinforced loops and slots to cradle fragile vials.
@@ -4902,14 +4902,14 @@ D:A wide leather belt fitted with reinforced loops and slots to cradle fragile v
 N:*:& Alchemist's Pouch~
 G:&:g
 I:47:2:16
-W:15:0:40:15:100
+W:15:0:40:30:125
 A:5/4:15/1:25/4
 D:A padded sidebag used by field alchemists to protect potions from shattering.
 
 N:*:& Apothecary's Satchel~
 G:&:t
 I:47:2:32
-W:25:0:0:20:250
+W:25:0:0:40:375
 A:15/4:25/1:35/4
 F:IGNORE_ACID
 D:A reinforced satchel lined with vial loops and padded sleeves - ideal for potion mixing on the go.
@@ -4917,16 +4917,17 @@ D:A reinforced satchel lined with vial loops and padded sleeves - ideal for poti
 N:*:& Wyrmhide Vialcase~
 G:&:t
 I:47:2:64
-W:35:0:0:15:500
+W:35:0:0:30:1000
 A:30/4:40/1:50/4
 F:IGNORE_ACID | IGNORE_FIRE | IGNORE_COLD
 D:Fashioned from the scaled hide of a slain wyrm, this reinforced case resists heat, cold, and corrosion alike.
 D:The prized companion of a master alchemist.
 
+
 N:*:& Scroll Case~
 G:&:P
 I:47:3:8
-W:5:0:20:10:50
+W:5:0:20:20:50
 A:0/4:5/1:15/4
 F:TOWN
 D:A simple scroll case with a tight clasp to keep delicate parchment safe.
@@ -4934,14 +4935,14 @@ D:A simple scroll case with a tight clasp to keep delicate parchment safe.
 N:*:& Scribe's Folio~
 G:&:P
 I:47:3:16
-W:15:0:40:15:100
+W:15:0:40:30:125
 A:5/4:15/1:25/4
 D:A reinforced folio with layered compartments and stiff panels to shield delicate scrolls.
 
 N:*:& Archivist's Scrollcase~
 G:&:p
 I:47:3:32
-W:25:0:0:20:250
+W:25:0:0:40:375
 A:15/4:25/1:35/4
 F:IGNORE_FIRE
 D:A hardened leather scroll tube sealed with wax and fastened by brass buckles.
@@ -4950,7 +4951,7 @@ D:Capable of surviving flame, rain, and rough travel alike.
 N:*:& Rune-Etched Scrollcase~
 G:&:p
 I:47:3:64
-W:35:0:0:15:500
+W:35:0:0:30:1000
 A:30/4:40/1:50/4
 F:IGNORE_ACID | IGNORE_FIRE | IGNORE_COLD
 D:A rune-etched case sealed by ancient wards, built to resist flame, theft, and decay.

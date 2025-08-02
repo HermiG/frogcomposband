@@ -2343,15 +2343,15 @@ void do_cmd_list_objects(void)
 void _fix_object_list_aux(void)
 {
     _obj_list_ptr list = _create_obj_list();
-    rect_t        display_rect = {0};
-    int           ct = 0, i;
 
+    rect_t display_rect = {0};
     Term_get_size(&display_rect.cx, &display_rect.cy);
 
-    if ((list->ct_total + list->ct_feature) && (display_rect.cx >= (use_bigtile ? 3 : 2)))
+    int ct = 0;
+    if (list->ct_total + list->ct_feature && display_rect.cx >= (use_bigtile ? 3 : 2))
         ct = _draw_obj_list(list, 0, display_rect);
 
-    for (i = ct; i < display_rect.cy; i++)
+    for (int i = ct; i < display_rect.cy; i++)
         Term_erase(display_rect.x, display_rect.y + i, display_rect.cx);
 
     _obj_list_free(list);
@@ -2359,15 +2359,14 @@ void _fix_object_list_aux(void)
 
 void fix_object_list(void)
 {
-    int j;
-    for (j = 0; j < 8; j++)
+    for (int i = 0; i < 8; i++)
     {
         term *old = Term;
 
-        if (!angband_term[j]) continue;
-        if (!(window_flag[j] & PW_OBJECT_LIST)) continue;
+        if (!angband_term[i]) continue;
+        if (!(window_flag[i] & PW_OBJECT_LIST)) continue;
 
-        Term_activate(angband_term[j]);
+        Term_activate(angband_term[i]);
 
         _fix_object_list_aux();
 

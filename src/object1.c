@@ -790,21 +790,22 @@ bool check_book_realm(const byte book_tval, const byte book_sval)
  */
 void toggle_inven_equip(void)
 {
-    /* Scan windows */
-    for (int j = 0; j < 8; j++)
-    {
-        if (!angband_term[j]) continue;
+    p_ptr->window  &= ~(PW_EQUIP | PW_INVEN);
 
-        if (window_flag[j] & PW_INVEN)
+    for (int i = 0; i < 8; i++)
+    {
+        if (!angband_term[i]) continue;
+
+        if (window_flag[i] & PW_INVEN)
         {
-            window_flag[j] &= ~PW_INVEN;
-            window_flag[j] |=  PW_EQUIP;
+            window_flag[i] &= ~PW_INVEN;
+            window_flag[i] |=  PW_EQUIP;
             p_ptr->window  |=  PW_EQUIP;
         }
-        else if (window_flag[j] & PW_EQUIP)
+        else if (window_flag[i] & PW_EQUIP)
         {
-            window_flag[j] &= ~PW_EQUIP;
-            window_flag[j] |=  PW_INVEN;
+            window_flag[i] &= ~PW_EQUIP;
+            window_flag[i] |=  PW_INVEN;
             p_ptr->window  |=  PW_INVEN;
         }
     }

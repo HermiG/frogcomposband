@@ -50,7 +50,7 @@
 #define COL_POOL                0
 
 #define ROW_STATE              (p_ptr->pclass == CLASS_POLITICIAN ? 15 : 14)
-#define COL_STATE               7
+#define COL_STATE               0
 
 #define ROW_HEALTH_BARS        (p_ptr->pclass == CLASS_POLITICIAN ? 16 : 15)
 #define COL_HEALTH_BARS         0
@@ -1704,154 +1704,62 @@ static void prt_depth(void)
 static void prt_state(void)
 {
     byte attr = TERM_WHITE;
-    rect_t r = ui_char_info_rect();
+    char text[20] = {0};
 
-    char text[20];
-
-    /* Repeating */
-    if (command_rep)
-    {
-        if (command_rep > 999) (void)sprintf(text, "%2d00", command_rep / 100);
-        else                   (void)sprintf(text, "  %2d", command_rep);
-    }
-
-    /* Action */
-    else
+    // Repeating
+    if (command_rep) sprintf(text, "%d", command_rep > 999 ? (command_rep / 100) * 100 : command_rep);
+    else // Action
     {
         switch(p_ptr->action)
         {
-            case ACTION_GLITTER:
-            {
-                strcpy(text, "Lure");
-                break;
-            }
-            case ACTION_SEARCH:
-            {
-                strcpy(text, "Sear");
-                break;
-            }
+            case ACTION_SEARCH:     strcpy(text, "Search"); break;
+            case ACTION_LEARN:      strcpy(text,  "Learn"); break;
+            case ACTION_FISH:       strcpy(text,   "Fish"); break;
+            case ACTION_GLITTER:    strcpy(text,   "Lure"); break;
+            case ACTION_SING:       strcpy(text,   "Sing"); break;
+            case ACTION_QUICK_WALK: strcpy(text,   "Fast"); break;
+            case ACTION_SPELL:      strcpy(text,  "Spell"); break;
+            case ACTION_STALK:      strcpy(text,  "Stalk"); break;
+
             case ACTION_REST:
             {
-                int i;
-
-                /* Start with "Rest" */
-                strcpy(text, "    ");
-
-
-                /* Extensive (timed) rest */
-                if (resting >= 1000)
-                {
-                    i = resting / 100;
-                    text[3] = '0';
-                    text[2] = '0';
-                    text[1] = '0' + (i % 10);
-                    text[0] = '0' + (i / 10);
-                }
-
-                /* Long (timed) rest */
-                else if (resting >= 100)
-                {
-                    i = resting;
-                    text[3] = '0' + (i % 10);
-                    i = i / 10;
-                    text[2] = '0' + (i % 10);
-                    text[1] = '0' + (i / 10);
-                }
-
-                /* Medium (timed) rest */
-                else if (resting >= 10)
-                {
-                    i = resting;
-                    text[3] = '0' + (i % 10);
-                    text[2] = '0' + (i / 10);
-                }
-
-                /* Short (timed) rest */
-                else if (resting > 0)
-                {
-                    i = resting;
-                    text[3] = '0' + (i);
-                }
-
-                /* Rest until healed */
-                else if (resting == -1)
-                {
-                    text[0] = text[1] = text[2] = text[3] = '*';
-                }
-
-                /* Rest until done */
-                else if (resting == -2)
-                {
-                    text[0] = text[1] = text[2] = text[3] = '&';
+                switch (resting) {
+                  case -1: strcpy(text, "****"); break;
+                  case -2: strcpy(text, "&&&&"); break;
+                  default:
+                      sprintf(text, "%d", (resting > 999) ? (resting / 100) * 100 : (resting > 99) ?  (resting / 10) * 10 : resting);
                 }
                 break;
             }
-            case ACTION_LEARN:
-            {
-                strcpy(text, "Lear");
-                if (new_mane) attr = TERM_L_RED;
-                break;
-            }
-            case ACTION_FISH:
-            {
-                strcpy(text, "Fish");
-                break;
-            }
+
             case ACTION_KAMAE:
             {
-                int i;
-                for (i = 0; i < MAX_KAMAE; i++)
-                    if (p_ptr->special_defense & (KAMAE_GENBU << i)) break;
-                switch (i)
+                for (int i = 0; i < MAX_KAMAE; i++) if (p_ptr->special_defense & (KAMAE_GENBU << i))
                 {
-                    case 0: attr = TERM_GREEN;break;
-                    case 1: attr = TERM_WHITE;break;
-                    case 2: attr = TERM_L_BLUE;break;
-                    case 3: attr = TERM_L_RED;break;
+                    switch (i)
+                    {
+                      case 0: attr = TERM_GREEN;  break;
+                      case 1: attr = TERM_WHITE;  break;
+                      case 2: attr = TERM_L_BLUE; break;
+                      case 3: attr = TERM_L_RED;  break;
+                    }
+                    strcpy(text, kamae_shurui[i].desc);
+                    break;
                 }
-                strcpy(text, kamae_shurui[i].desc);
                 break;
             }
             case ACTION_KATA:
             {
-                int i;
-                for (i = 0; i < MAX_KATA; i++)
-                    if (p_ptr->special_defense & (KATA_IAI << i)) break;
-                strcpy(text, kata_shurui[i].desc);
-                break;
-            }
-            case ACTION_SING:
-            {
-                strcpy(text, "Sing");
-                break;
-            }
-            case ACTION_QUICK_WALK:
-            {
-                strcpy(text, "Fast");
-                break;
-            }
-            case ACTION_SPELL:
-            {
-                strcpy(text, "Spel");
-                break;
-            }
-            case ACTION_STALK:
-            {
-                strcpy(text, "Stlk");
-                break;
-            }
-            default:
-            {
-                strcpy(text, "    ");
-                break;
+              for (int i = 0; i < MAX_KATA; i++)
+                  if (p_ptr->special_defense & (KATA_IAI << i)) { strcpy(text, kata_shurui[i].desc); break; }
+              break;
             }
         }
     }
 
-    /* Display the info (or blanks) */
-    c_put_str(attr, format("%5.5s",text), r.y + ROW_STATE, r.x + COL_STATE);
+    rect_t r = ui_char_info_rect();
+    c_put_str(attr, format("%12s", text), r.y + ROW_STATE, r.x + COL_STATE);
 }
-
 
 static bool prt_speed(int row, int col)
 {

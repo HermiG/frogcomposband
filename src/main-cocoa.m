@@ -32,6 +32,7 @@ static NSString * const AngbandDirectoryNameBase = @"FrogComposband";
 static NSString * const AngbandTerminalsDefaultsKey = @"Terminals";
 static NSString * const AngbandTerminalRowsDefaultsKey = @"Rows";
 static NSString * const AngbandTerminalColumnsDefaultsKey = @"Columns";
+static NSString * const AngbandTerminalVisibleDefaultsKey = @"Visible";
 static NSInteger const AngbandWindowMenuItemTagBase = 1000;
 static NSInteger const AngbandCommandMenuItemTagBase = 2000;
 
@@ -133,10 +134,10 @@ static NSFont *default_font;
 
 @private
 
-    BOOL _hasSubwindowFlags;
+    u32b _subwindowFlags;
 }
 
-@property (nonatomic, assign) BOOL hasSubwindowFlags;
+@property (nonatomic, assign) u32b subwindowFlags;
 
 - (void)drawRect:(NSRect)rect inView:(NSView *)view;
 
@@ -233,21 +234,22 @@ static void AngbandUpdateWindowVisibility(void)
     // we don't care about the flags themselves; we just want to know if any are set.
     for(int i = 1; i < ANGBAND_TERM_MAX; i++)
     {
-        AngbandContext *angbandContext = angband_term[i]->data;
-
-        if( angbandContext == nil ) continue;
+        AngbandContext *context = angband_term[i]->data;
+        if(context == nil) continue;
 
         BOOL termHasSubwindowFlags = !! (window_flag[i] & validWindowFlagsMask);
 
-        if( angbandContext.hasSubwindowFlags && !termHasSubwindowFlags )
+        if(!termHasSubwindowFlags && context.subwindowFlags)
         {
-            [angbandContext->primaryWindow close];
-            angbandContext.hasSubwindowFlags = NO;
+            context.subwindowFlags = 0;
+            [context->primaryWindow close];
         }
-        else if( !angbandContext.hasSubwindowFlags && termHasSubwindowFlags )
+        else if(termHasSubwindowFlags && context.subwindowFlags != window_flag[i])
         {
-            [angbandContext->primaryWindow orderFront: nil];
-            angbandContext.hasSubwindowFlags = YES;
+            context.subwindowFlags = window_flag[i];
+            NSDictionary *term = [[[NSUserDefaults standardUserDefaults] objectForKey:AngbandTerminalsDefaultsKey] objectAtIndex:i];
+            BOOL visible = [[term objectForKey:AngbandTerminalVisibleDefaultsKey] boolValue];
+            if(visible) [context->primaryWindow orderFront:nil];
         }
     }
 }
@@ -405,7 +407,7 @@ static void record_current_savefile(void);
 
 @implementation AngbandContext
 
-@synthesize hasSubwindowFlags=_hasSubwindowFlags;
+@synthesize subwindowFlags = _subwindowFlags;
 
 - (NSFont *)selectionFont
 {
@@ -838,6 +840,19 @@ static int compare_advances(const void *ap, const void *bp)
     quit_when_ready = TRUE;
 }
 
++ (void)setTerminalVisible:(BOOL)visible atIndex:(NSInteger)index
+{
+  NSArray *terminals = [[NSUserDefaults standardUserDefaults] objectForKey:AngbandTerminalsDefaultsKey];
+  if (index < 1 || index >= (int)[terminals count]) return;
+  
+  NSMutableDictionary *mutableTerm = [[[terminals objectAtIndex:index] mutableCopy] autorelease];
+  [mutableTerm setValue:@(visible) forKey:AngbandTerminalVisibleDefaultsKey];
+  
+  NSMutableArray *mutableTerminals = [[terminals mutableCopy] autorelease];
+  [mutableTerminals replaceObjectAtIndex:index withObject:mutableTerm];
+  
+  [[NSUserDefaults standardUserDefaults] setObject:mutableTerminals forKey:AngbandTerminalsDefaultsKey];
+}
 
 - (IBAction)setGraphicsMode:(NSMenuItem *)sender
 {
@@ -971,8 +986,6 @@ static NSMenuItem *superitem(NSMenuItem *self)
     }
     return primaryWindow;
 }
-
-
 
 #pragma mark View/Window Passthrough
 
@@ -1149,6 +1162,20 @@ static NSMenuItem *superitem(NSMenuItem *self)
     [item setState: NSOffState];
 }
 
+- (void)windowWillClose:(NSNotification *)notification
+{
+  NSWindow *window = [notification object];
+  
+  // Find which terminal this window corresponds to
+  for (int i = 1; i < ANGBAND_TERM_MAX; i++) {
+    AngbandContext *context = angband_term[i]->data;
+    if (context && context->primaryWindow == window) {
+      [AngbandContext setTerminalVisible:NO atIndex:i];
+      break;
+    }
+  }
+}
+
 @end
 
 
@@ -1284,13 +1311,16 @@ static void Term_init_cocoa(term *t)
     NSArray *terminalDefaults = [[NSUserDefaults standardUserDefaults] objectForKey:AngbandTerminalsDefaultsKey];
     NSInteger rows = 24;
     NSInteger columns = 80;
+    BOOL visible = TRUE;
 
     if(termIdx < (int)[terminalDefaults count])
     {
         NSDictionary *term = [terminalDefaults objectAtIndex:termIdx];
         rows = [[term objectForKey:AngbandTerminalRowsDefaultsKey] integerValue];
         columns = [[term objectForKey:AngbandTerminalColumnsDefaultsKey] integerValue];
+        visible = [[term objectForKey:AngbandTerminalVisibleDefaultsKey] boolValue];
     }
+    
     
     context->cols = columns;
     context->rows = rows;
@@ -1319,9 +1349,12 @@ static void Term_init_cocoa(term *t)
     
     [context setTerm:t];
     
+  
     /* Only order front if it's the first term. Other terms will be ordered front from update_term_visibility().
      * This is to work around a problem where Angband aggressively tells us to initialize terms that don't do anything! */
     if (t == angband_term[0]) [context orderFront];
+
+    //context.subwindowFlags = window_flag[termIdx];
     
     NSEnableScreenUpdates();
     
@@ -1876,6 +1909,7 @@ static void load_prefs()
     NSDictionary *standardTerm = @{
                                    AngbandTerminalRowsDefaultsKey : @24,
                                    AngbandTerminalColumnsDefaultsKey : @80,
+                                   AngbandTerminalVisibleDefaultsKey : @1,
                                    };
     
     for(int i = 0; i < ANGBAND_TERM_MAX; i++) [defaultTerms addObject: standardTerm];
@@ -2614,17 +2648,21 @@ static void hook_quit(const char * str)
     [[NSUserDefaults angbandDefaults] setInteger:frames_per_second forKey:@"FramesPerSecond"];
 }
 
+
 - (IBAction)selectWindow:(id)sender
 {
   NSInteger subwindowNumber = [(NSMenuItem *)sender tag] - AngbandWindowMenuItemTagBase;
   if (subwindowNumber < 1 || subwindowNumber >= ANGBAND_TERM_MAX) return;
   
   AngbandContext *context = angband_term[subwindowNumber]->data;
-  NSWindow *window = context->primaryWindow;
-  
-  if ([window isVisible]) [window orderOut:self];
-  else                    [window orderFront:self];
-  
+  if(context) {
+    NSWindow *window = context->primaryWindow;
+    
+    if ([window isVisible]) [window orderOut:self];
+    else                    [window orderFront:self];
+    
+    [AngbandContext setTerminalVisible:[window isVisible] atIndex:subwindowNumber];
+  }
 }
 
 - (IBAction)cycleWindows:(id)sender
@@ -2636,7 +2674,7 @@ static void hook_quit(const char * str)
   for(i = 0; i < ANGBAND_TERM_MAX; i++) {
     if(angband_term[i] && angband_term[i]->data) {
       AngbandContext *context = angband_term[i]->data;
-      if(context->primaryWindow == currentKeyWindow) break;
+      if(context && context->primaryWindow == currentKeyWindow) break;
     }
   }
   
@@ -2645,6 +2683,7 @@ static void hook_quit(const char * str)
     int nextIndex = i % ANGBAND_TERM_MAX;
     if(angband_term[nextIndex] && angband_term[nextIndex]->data) {
       AngbandContext *context = angband_term[nextIndex]->data;
+      if(!context) return;
       NSWindow *win = context->primaryWindow;
       if([win isVisible]) {
         [win makeKeyAndOrderFront:self];
@@ -2689,7 +2728,7 @@ static void hook_quit(const char * str)
   for(int i = 1; i < ANGBAND_TERM_MAX; i++) {
     if(angband_term[i] && angband_term[i]->data) {
       AngbandContext *context = angband_term[i]->data;
-      [context->primaryWindow setLevel:NSFloatingWindowLevel];
+      if(context) [context->primaryWindow setLevel:NSFloatingWindowLevel];
     }
   }
 }
@@ -2699,7 +2738,7 @@ static void hook_quit(const char * str)
   for(int i = 1; i < ANGBAND_TERM_MAX; i++) {
     if(angband_term[i] && angband_term[i]->data) {
       AngbandContext *context = angband_term[i]->data;
-      [context->primaryWindow setLevel:NSNormalWindowLevel];
+      if(context) [context->primaryWindow setLevel:NSNormalWindowLevel];
     }
   }
 }

@@ -340,13 +340,12 @@ bool inv_sort_aux(inv_ptr inv, obj_cmp_f f)
     inv_for_each(inv, obj_clear_scratch);
     if (!vec_is_sorted_range(inv->objects, start, stop, (vec_cmp_f)f))
     {
-        slot_t slot;
         vec_sort_range(inv->objects, start, stop, (vec_cmp_f)f);
         /* It is OK to sort a filtered inv, but we better not update
          * locations for objects we do not own! */
         if (!(inv->flags & _FILTER))
         {
-            for (slot = start; slot <= stop; slot++)
+            for (slot_t slot = start; slot <= stop; slot++)
             {
                 obj_ptr obj = vec_get(inv->objects, slot);
                 if (obj)
@@ -659,11 +658,30 @@ void inv_calculate_labels(inv_ptr inv, slot_t start, slot_t stop, int flags)
     /* Clear old labels or old sort data */
     inv_for_each(inv, obj_clear_scratch);
 
+    assert(stop <= 26);
+    int shuffle[26];
+    for (int i = 0; i < 26; i++) shuffle[i] = i;
+
+    if (inv->type == INV_BAG)
+    {
+        obj_ptr bag = equip_obj(equip_find_obj(TV_BAG, SV_ANY));
+        if(bag && bag->curse_flags) {
+            int *shuf = &shuffle[start-1]; // shuffle only the range [start, stop]
+            for (int i = stop-start; i > 0; i--)
+            {
+                int j = randint0(i+1);
+                int tmp = shuf[i];
+                shuf[i] = shuf[j];
+                shuf[j] = tmp;
+            }
+        }
+    }
+
     /* Initialize by ordinal */
     for (slot_t slot = start; slot <= stop; slot++)
     {
         obj_ptr obj = inv_obj(inv, slot);
-        if (obj) obj->scratch = slot_label(slot - start + 1);
+        if (obj) obj->scratch = slot_label(shuffle[slot - start + 1]);
     }
 
     /* Inscription overrides don't function is shops */

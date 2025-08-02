@@ -1711,16 +1711,8 @@ static void prt_state(void)
     /* Repeating */
     if (command_rep)
     {
-        if (command_rep > 999)
-        {
-            (void)sprintf(text, "%2d00", command_rep / 100);
-
-        }
-        else
-        {
-            (void)sprintf(text, "  %2d", command_rep);
-
-        }
+        if (command_rep > 999) (void)sprintf(text, "%2d00", command_rep / 100);
+        else                   (void)sprintf(text, "  %2d", command_rep);
     }
 
     /* Action */

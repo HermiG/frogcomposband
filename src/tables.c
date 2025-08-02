@@ -2664,21 +2664,21 @@ cptr lv_size_options[SMALL_LVL_MAX + 1] =
 
 martial_arts ma_blows[MAX_MA] =
 {
-    { "Punch",         "You punch.",                                 1, 0, 1, 4, 0 },
-    { "Kick",          "You kick.",                                  2, 0, 1, 6, 0 },
-    { "Strike",        "You strike.",                                3, 0, 1, 7, 0 },
-    { "Knee",          "You knee.",                                  5, 5, 2, 3, MA_KNEE },
-    { "Elbow",         "You elbow.",                                 7, 5, 1, 8, 0 },
-    { "Butt",          "You <color:U>butt</color>.",                 9, 10, 2, 5, 0 },
-    { "Kick",          "You <color:U>kick</color>.",                 11, 10, 3, 4, MA_SLOW },
-    { "Uppercut",      "You <color:U>uppercut</color>.",             13, 12, 4, 4, 6 },
-    { "Double Kick",   "You <color:y>double-kick</color>.",          16, 15, 5, 4, 8 },
-    { "Cat's Claw",    "You land a <color:y>Cat's Claw</color>.",     20, 20, 5, 5, 0 },
-    { "Jump Kick",     "You <color:y>jump kick</color>.",            25, 25, 5, 6, 10 },
-    { "Eagle's Claw",  "You land an <color:o>Eagle's Claw</color>.", 29, 25, 6, 6, 0 },
-    { "Circle Kick",   "You <color:o>circle kick</color>.",          33, 30, 6, 8, 10 },
-    { "Iron Fist",     "You land an <color:R>Iron Fist</color>.",    37, 35, 8, 8, 10 },
-    { "Flying Kick",   "You land a <color:R>flying kick</color>.",   41, 35, 8, 10, 12 },
+    { "Punch",         "You punch.",                                 1,  0,   1,  4,  0 },
+    { "Kick",          "You kick.",                                  2,  0,   1,  6,  0 },
+    { "Strike",        "You strike.",                                3,  0,   1,  7,  0 },
+    { "Knee",          "You knee.",                                  5,  5,   2,  3,  MA_KNEE },
+    { "Elbow",         "You elbow.",                                 7,  5,   1,  8,  0 },
+    { "Butt",          "You <color:U>butt</color>.",                 9,  10,  2,  5,  0 },
+    { "Kick",          "You <color:U>kick</color>.",                 11, 10,  3,  4,  MA_SLOW },
+    { "Uppercut",      "You <color:U>uppercut</color>.",             13, 12,  4,  4,  6 },
+    { "Double Kick",   "You <color:y>double-kick</color>.",          16, 15,  5,  4,  8 },
+    { "Cat's Claw",    "You land a <color:y>Cat's Claw</color>.",    20, 20,  5,  5,  0 },
+    { "Jump Kick",     "You <color:y>jump kick</color>.",            25, 25,  5,  6, 10 },
+    { "Eagle's Claw",  "You land an <color:o>Eagle's Claw</color>.", 29, 25,  6,  6,  0 },
+    { "Circle Kick",   "You <color:o>circle kick</color>.",          33, 30,  6,  8, 10 },
+    { "Iron Fist",     "You land an <color:R>Iron Fist</color>.",    37, 35,  8,  8, 10 },
+    { "Flying Kick",   "You land a <color:R>flying kick</color>.",   41, 35,  8, 10, 12 },
     { "Dragon Fist",   "You land a <color:r>Dragon Fist</color>.",   45, 35, 10, 10, 16 },
     { "Crushing Blow", "You land a <color:v>Crushing Blow</color>.", 48, 35, 10, 12, 18 },
 };
@@ -2704,18 +2704,18 @@ cptr game_inscriptions[] =
 
 kamae kamae_shurui[MAX_KAMAE] =
 {
-    {"Genbu", 25, "(Black Tortoise) "},
-    {"Byakko", 30, "(White Tiger) "},
+    {"Genbu",   25, "(Black Tortoise) "},
+    {"Byakko",  30, "(White Tiger) "},
     {"Seiryuu", 35, "(Blue Dragon) "},
-    {"Suzaku", 40, "(Red Phoenix) "},
+    {"Suzaku",  40, "(Red Phoenix) "},
 };
 
 kamae kata_shurui[MAX_KATA] =
 {
-    {"Iai", 25, "Gives a single accuracy-boosted retaliatory blow against melee attacks, at the cost of increasing all damage taken by 20%. Any melee attack by you dispels this posture."},
+    {"Iai",    25, "Gives a single accuracy-boosted retaliatory blow against melee attacks, at the cost of increasing all damage taken by 20%. Any melee attack by you dispels this posture."},
     {"Huujin", 30, "Gives reflection unless blind, at the cost of -1.00 to blows."},
-    {"Kouki", 35, "Gives +5 to all stats and +50 melee to-hit, at the cost of -50 AC, vulnerability to the base elements, and zero regeneration. Using most inventory items dispels this posture."},
-    {"Musou", 40, "Gives full telepathy and ultimate resistance, halves most types of damage, and gives a full round of retaliatory blows against melee attacks, at the cost of 2 SP per turn. Almost any action other than retaliation dispels this posture."},
+    {"Kouki",  35, "Gives +5 to all stats and +50 melee to-hit, at the cost of -50 AC, vulnerability to the base elements, and zero regeneration. Using most inventory items dispels this posture."},
+    {"Musou",  40, "Gives full telepathy and ultimate resistance, halves most types of damage, and gives a full round of retaliatory blows against melee attacks, at the cost of 2 SP per turn. Almost any action other than retaliation dispels this posture."},
 };
 
 cptr exp_level_str[5]=

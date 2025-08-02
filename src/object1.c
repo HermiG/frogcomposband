@@ -816,6 +816,8 @@ void toggle_inven_equip(void)
  */
 void toggle_mon_obj_lists(void)
 {
+    p_ptr->window  &= ~(PW_OBJECT_LIST | PW_MONSTER_LIST);
+
     for (int i = 0; i < 8; i++)
     {
         if (!angband_term[i]) continue;

@@ -3655,11 +3655,20 @@ void obj_create_bag(object_type *o_ptr, int level, int power, int mode)
     //                                       Improvement:   -   +20%  +40%  +60%  +80%
     while (one_in_(2)) o_ptr->xtra4 += o_ptr->pval * 1; //  5 ->  6 ->  7 ->  8 ->  9
     while (one_in_(2)) o_ptr->xtra5 += o_ptr->pval * 2; // 10 -> 12 -> 14 -> 16 -> 18
+  } else if(o_ptr->sval == SV_BAG_DEVICE_CASE) {
+    o_ptr->xtra4 = o_ptr->pval * 10; // item capacity (tenths of a slot)
+    o_ptr->xtra5 = 9999; // no weight limit
+    
+    // A basic device case holds 10 items
+    
+    //                                         Frequency:  50%   25%   12%    6%    3%
+    //                                       Improvement:   -   +10%  +20%  +30%  +40%
+    while (one_in_(2)) o_ptr->xtra4 += o_ptr->pval * 1; // 10 -> 11 -> 12 -> 13 -> 14
   } else { // Specialized bags
     o_ptr->xtra4 = o_ptr->pval * 10; // item capacity (tenths of a slot)
     o_ptr->xtra5 = 9999; // no weight limit
     
-    // A basic potion belt or scroll case holds just 10 items
+    // A basic potion belt or scroll case holds 10 items
     
     //                                         Frequency:  50%   25%   12%    6%    3%
     //                                       Improvement:   -   +20%  +40%  +60%  +80%
@@ -3683,8 +3692,8 @@ void obj_create_bag(object_type *o_ptr, int level, int power, int mode)
       {
         case EGO_BAG_BOTTOMLESS:
         case EGO_BAG_HOLDING:
-          o_ptr->xtra4 *= 1.5;
-          o_ptr->xtra5 *= 1.5;
+          o_ptr->xtra4 *= o_ptr->sval == SV_BAG_DEVICE_CASE ? 1.25 : 1.5;
+          o_ptr->xtra5 *= o_ptr->sval == SV_BAG_DEVICE_CASE ? 1.25 : 1.5;
           done = TRUE;
           break;
         case EGO_BAG_ETHEREAL:
@@ -3742,6 +3751,8 @@ void obj_create_bag(object_type *o_ptr, int level, int power, int mode)
   o_ptr->xtra4 = MIN(999, MAX(4, (o_ptr->xtra4 + 5) / 10));
   o_ptr->xtra5 = MIN(999, MAX(4, (o_ptr->xtra5 + 5) / 10));
   o_ptr->xtra5 *= 10; // convert pounds to decipounds
+  
+  if(o_ptr->sval == SV_BAG_DEVICE_CASE) o_ptr->xtra4 = MIN(o_ptr->xtra4, 26);
   
   ego_finalize(o_ptr, level, power, mode);
 }

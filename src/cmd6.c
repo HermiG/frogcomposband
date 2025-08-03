@@ -1052,7 +1052,7 @@ static void do_cmd_device_aux(obj_ptr obj)
         msg_print("You failed to use the device properly.");
         if (prompt_on_failure) msg_print(NULL);
         sound(SOUND_FAIL);
-        if ((p_ptr->pclass == CLASS_BERSERKER) || (beorning_is_(BEORNING_FORM_BEAR)))
+        if (p_ptr->pclass == CLASS_BERSERKER || beorning_is_(BEORNING_FORM_BEAR))
         {
             energy_use = 0; /* let's be nice */
             return;

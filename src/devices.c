@@ -311,10 +311,7 @@ static bool _do_identify(void)
 */
 bool device_try(object_type *o_ptr)
 {
-    int fail = device_calc_fail_rate(o_ptr);
-    if (randint0(1000) < fail)
-        return FALSE;
-    return TRUE;
+    return (randint0(1000) >= device_calc_fail_rate(o_ptr));
 }
 
 bool device_use(object_type *o_ptr, int boost)

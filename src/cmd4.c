@@ -6102,7 +6102,6 @@ static void display_object_list(int col, int row, int per_page, int object_idx[]
         byte attr = ((k_ptr->aware || visual_only) ? TERM_WHITE : TERM_SLATE);
         byte cursor = ((k_ptr->aware || visual_only) ? TERM_L_BLUE : TERM_BLUE);
 
-
         if (!visual_only && k_ptr->flavor)
         {
             /* Appearance of this object is shuffled */
@@ -6113,8 +6112,6 @@ static void display_object_list(int col, int row, int per_page, int object_idx[]
             /* Appearance of this object is very normal */
             flavor_k_ptr = k_ptr;
         }
-
-
 
         attr = ((i + object_top == object_cur) ? cursor : attr);
 

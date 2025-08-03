@@ -1028,7 +1028,25 @@ static void do_cmd_device_aux(obj_ptr obj)
         return;
     }
 
-    if (!device_try(obj))
+    bool failed = FALSE;
+    if (obj_has_flag(bag, OF_BRIMMING) && device_is_fully_charged(obj)) {
+        int successes = device_try(obj) + device_try(obj);
+        if ( bag->curse_flags && successes < 2) failed = TRUE; // Disadvantage
+        if (!bag->curse_flags && successes < 1) failed = TRUE; // Advantage
+
+        successes += device_try(obj);
+        if (!bag->curse_flags && successes > 1)
+        {
+            boost += successes - 1;
+
+            char bag_name[MAX_NLEN];
+            object_desc(bag_name, bag, OD_LORE);
+            msg_format("Excess magic from your %s empowers the spell!", bag_name);
+            equip_learn_flag(OF_BRIMMING);
+        }
+    } else failed = !device_try(obj);
+
+    if (failed)
     {
         if (flush_failure) flush();
         msg_print("You failed to use the device properly.");
@@ -1076,6 +1094,16 @@ static void do_cmd_device_aux(obj_ptr obj)
         {
             boost += amt;
             amt /= 2;
+        }
+    }
+  
+    if (obj_has_flag(bag, OF_DAMPENING) && boost > 0) {
+        if ((bag->curse_flags && one_in_(2)) || (!bag->curse_flags && one_in_(10))) {
+            char bag_name[MAX_NLEN];
+            object_desc(bag_name, bag, OD_LORE);
+            msg_format("Your %s saps some power from the spell!", bag_name);
+            equip_learn_flag(OF_DAMPENING);
+            boost--;
         }
     }
 

@@ -757,6 +757,9 @@ static cptr k_info_flags[OF_COUNT] =
     "DEVOURING",
     "TEMPERANCE",
     "BOTTOMLESS",
+    "ENERGIZED",
+    "DAMPENING",
+    "BRIMMING",
 };
 
 

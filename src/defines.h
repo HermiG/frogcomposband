@@ -3091,6 +3091,10 @@ enum obj_flags_e {
     OF_TEMPERANCE,   // Consumables sometimes aren't
     OF_BOTTOMLESS,   // Generates random items
 
+    /* Device Holsters */
+    OF_ENERGIZED,   // Recharges devices faster
+    OF_DAMPENING,   // Recharges devices slower
+    OF_BRIMMING,    // Fully charged devices get a boost
 
     /* A few places loop from 0 <= i < OF_COUNT ... (init1, race_sword and race_ring) */
     OF_COUNT, /* currently 180+ */
@@ -5794,6 +5798,9 @@ enum ego_type_e {
     EGO_BAG_DEVOURING,
     EGO_BAG_TEMPERANCE,
     EGO_BAG_BOTTOMLESS,
+    EGO_BAG_ENERGIZED,
+    EGO_BAG_DAMPENING,
+    EGO_BAG_BRIMMING,
 
     /* Special */
     EGO_SPECIAL_BLASTED = 999,

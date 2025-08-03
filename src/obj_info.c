@@ -1074,9 +1074,14 @@ static void _display_extra(object_type *o_ptr, u32b flgs[OF_ARRAY_SIZE], doc_ptr
 
     if (have_flag(flgs, OF_SECURE))
         doc_insert(doc, "It foils thieves.\n");
-
     if (have_flag(flgs, OF_TEMPERANCE))
         doc_insert(doc, "Items used from this bag may be conserved instead of consumed.\n");
+    if (have_flag(flgs, OF_ENERGIZED))
+      doc_insert(doc, object_is_cursed(obj) ? "It saps magical energy.\n" : "It hums with energy.\n");
+    if (have_flag(flgs, OF_DAMPENING))
+        doc_insert(doc, object_is_cursed(obj) ? "It absorbs magical energy.\n" : "It dampens magical energy.\n");
+    if (have_flag(flgs, OF_BRIMMING))
+        doc_insert(doc, object_is_cursed(obj) ? "It overflows with energy.\n" : "It crackles with energy.\n");
 
     switch (o_ptr->name1)
     {

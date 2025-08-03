@@ -3688,6 +3688,12 @@ void obj_create_bag(object_type *o_ptr, int level, int power, int mode)
         case EGO_BAG_CLASPED:
           done = TRUE;
           break;
+        case EGO_BAG_BRIMMING:
+        case EGO_BAG_ENERGIZED:
+        case EGO_BAG_DAMPENING:
+          if(o_ptr->sval != SV_BAG_DEVICE_CASE) break; // Only valid on device cases
+          done = TRUE;
+          break;
       }
     }
     o_ptr->xtra4 *= 1.25;
@@ -3718,6 +3724,11 @@ void obj_create_bag(object_type *o_ptr, int level, int power, int mode)
           break;
         case EGO_BAG_DEVOURING:
           o_ptr->curse_flags |= OFC_DEVOURING;
+          done = TRUE;
+          break;
+        case EGO_BAG_DAMPENING:
+          if(o_ptr->sval != SV_BAG_DEVICE_CASE) break; // Only valid on device cases
+          o_ptr->curse_flags |= OFC_CURSED;
           done = TRUE;
           break;
       }

@@ -2597,7 +2597,11 @@ static void process_world_aux_recharge(void)
             if (!o_ptr) continue;
             
             int mana = 10;
-            if (bag) mana = (bag->sval == SV_BAG_DEVICE_CASE) ? 10 + randint1(20) : randint1(6) ;
+            if (bag) {
+              mana = (bag->sval == SV_BAG_DEVICE_CASE) ? 10 + randint1(9) : randint1(9) ;
+              if(obj_has_flag(bag, OF_ENERGIZED)) mana += bag->curse_flags ? -randint1(15) :  randint1(9) ;
+              if(obj_has_flag(bag, OF_DAMPENING)) mana += bag->curse_flags ? -randint1(9)  : -randint1(5) ;
+            }
             
             switch (o_ptr->tval)
             {

@@ -331,10 +331,8 @@ static void _art_create_random(object_type *o_ptr, int level, int power)
     for (int i = 0; i < 1000 ; i++)
     {
         object_type forge = *o_ptr;
-        int         score;
-
         create_artifact(&forge, mode);
-        score = obj_value_real(&forge);
+        int score = obj_value_real(&forge);
 
         if (score < min) continue;
         if (score > max) continue;
@@ -363,9 +361,7 @@ static _power_limit_t _jewelry_power_limits[] = {
 static _power_limit_t _get_jewelry_power_limit(int level, int mode)
 {
     _power_limit_t rng = {0};
-    int            i;
-
-    for (i = 0; ; i++)
+    for (int i = 0; ; i++)
     {
         if (level < _jewelry_power_limits[i].lvl)
         {
@@ -377,12 +373,12 @@ static _power_limit_t _get_jewelry_power_limit(int level, int mode)
 
     if (mode & (AM_FORCE_EGO | AM_GREAT | AM_QUEST)) /* Quest rewards and early dungeon guardians ... and Smeagol, Robin Hood, Wormy, etc. */
     {
-        if (rng.min < 5000) rng.min = 5000;
+        if (rng.min < 5000)             rng.min = 5000;
         if (rng.max && rng.max < 10000) rng.max = 10000;
     }
     else if (mode & AM_GOOD) /* Early game uniques all DROP_GOOD */
     {
-        if (rng.min < 2500) rng.min = 2500;
+        if (rng.min < 2500)            rng.min = 2500;
         if (rng.max && rng.max < 7500) rng.max = 7500;
     }
 
@@ -402,10 +398,8 @@ void ego_create_ring(object_type *o_ptr, int level, int power, int mode)
     for (int i = 0; i < 1000 ; i++)
     {
         object_type forge = *o_ptr;
-        int         score;
-
         _create_ring_aux(&forge, level, power, mode);
-        score = obj_value_real(&forge);
+        int score = obj_value_real(&forge);
 
         if (rng.min > 0 && score < rng.min) continue;
         if (rng.max > 0 && score > rng.max) continue;
@@ -423,10 +417,8 @@ void ego_create_amulet(object_type *o_ptr, int level, int power, int mode)
     for (int i = 0; i < 1000 ; i++)
     {
         object_type forge = *o_ptr;
-        int         score;
-
         _create_amulet_aux(&forge, level, power, mode);
-        score = obj_value_real(&forge);
+        int score = obj_value_real(&forge);
 
         if (rng.min > 0 && score < rng.min) continue;
         if (rng.max > 0 && score > rng.max) continue;
@@ -445,9 +437,8 @@ void ego_create_amulet(object_type *o_ptr, int level, int power, int mode)
 static int *_effect_list = NULL;
 static bool _effect_list_p(int effect)
 {
-    int i;
     assert(_effect_list);
-    for (i = 0; ; i++)
+    for (int i = 0; ; i++)
     {
         int n = _effect_list[i];
         if (n == -1) return FALSE;
@@ -468,12 +459,10 @@ static void _effect_add_list(object_type *o_ptr, int *list)
 
 static bool _create_level_check(int power, int lvl)
 {
-    if (lvl <= 0)
-        return FALSE;
+    if (lvl <= 0) return FALSE;
 
     /* L/P odds of success ... */
-    if (randint0(power * 100 / lvl) < 100)
-        return TRUE;
+    if (randint0(power * 100 / lvl) < 100) return TRUE;
 
     return FALSE;
 }
@@ -490,14 +479,10 @@ static int _jewelry_powers(int num, int level, int power)
 
 static void _finalize_jewelry(object_type *o_ptr)
 {
-    if (have_flag(o_ptr->flags, OF_RES_ACID))
-        add_flag(o_ptr->flags, OF_IGNORE_ACID);
-    if (have_flag(o_ptr->flags, OF_RES_ELEC))
-        add_flag(o_ptr->flags, OF_IGNORE_ELEC);
-    if (have_flag(o_ptr->flags, OF_RES_FIRE))
-        add_flag(o_ptr->flags, OF_IGNORE_FIRE);
-    if (have_flag(o_ptr->flags, OF_RES_COLD))
-        add_flag(o_ptr->flags, OF_IGNORE_COLD);
+    if (have_flag(o_ptr->flags, OF_RES_ACID)) add_flag(o_ptr->flags, OF_IGNORE_ACID);
+    if (have_flag(o_ptr->flags, OF_RES_ELEC)) add_flag(o_ptr->flags, OF_IGNORE_ELEC);
+    if (have_flag(o_ptr->flags, OF_RES_FIRE)) add_flag(o_ptr->flags, OF_IGNORE_FIRE);
+    if (have_flag(o_ptr->flags, OF_RES_COLD)) add_flag(o_ptr->flags, OF_IGNORE_COLD);
 }
 
 static void _ego_create_jewelry_defender(object_type *o_ptr, int level, int power)
@@ -3684,23 +3669,20 @@ void obj_create_bag(object_type *o_ptr, int level, int power, int mode)
     while(!done) {
       o_ptr->name2 = ego_choose_type(EGO_TYPE_BAG, level);
       
-      if(o_ptr->name2 == EGO_BAG_TEMPERANCE && !(o_ptr->sval == SV_BAG_POTION_BELT || o_ptr->sval == SV_BAG_SCROLL_CASE)) {
-        o_ptr->name2 = EGO_BAG_ORGANIZED; // of Temperance is not valid for regular bags, so replace with Organized
-      }
-      
       switch (o_ptr->name2)
       {
         case EGO_BAG_BOTTOMLESS:
         case EGO_BAG_HOLDING:
-          o_ptr->xtra4 *= o_ptr->sval == SV_BAG_DEVICE_CASE ? 1.25 : 1.5;
-          o_ptr->xtra5 *= o_ptr->sval == SV_BAG_DEVICE_CASE ? 1.25 : 1.5;
+          o_ptr->xtra4 *= (o_ptr->sval == SV_BAG_DEVICE_CASE) ? 1.25 : 1.5;
+          o_ptr->xtra5 *= (o_ptr->sval == SV_BAG_DEVICE_CASE) ? 1.25 : 1.5;
           done = TRUE;
           break;
         case EGO_BAG_ETHEREAL:
           o_ptr->weight = 0;
           done = TRUE;
           break;
-        case EGO_BAG_TEMPERANCE:
+        case EGO_BAG_TEMPERANCE: // of Temperance is only valid for potion belts / scroll cases
+          if(!(o_ptr->sval == SV_BAG_POTION_BELT || o_ptr->sval == SV_BAG_SCROLL_CASE)) break;
         case EGO_BAG_ORGANIZED:
         case EGO_BAG_PROTECTION:
         case EGO_BAG_CLASPED:

@@ -1001,11 +1001,11 @@ static void _display_auras(u32b flgs[OF_ARRAY_SIZE], doc_ptr doc)
     vec_free(v);
 }
 
-static void _display_extra(object_type *o_ptr, u32b flgs[OF_ARRAY_SIZE], doc_ptr doc)
+static void _display_extra(object_type *obj, u32b flgs[OF_ARRAY_SIZE], doc_ptr doc)
 {
     int net = 0;
 
-    switch (o_ptr->name2)
+    switch (obj->name2)
     {
     case EGO_AMMO_RETURNING:
         doc_insert(doc, "It often returns to your pack after being fired.\n");
@@ -1024,29 +1024,80 @@ static void _display_extra(object_type *o_ptr, u32b flgs[OF_ARRAY_SIZE], doc_ptr
         break;
     case EGO_BAG_HOLDING:
         doc_printf(doc, "This %s stretches space in subtle ways, holding far more than its size would suggest. "
-                        "The interior seems larger than the outside - unnervingly so.\n", bag_type_name(o_ptr->sval));
+                        "The interior seems larger than the outside - unnervingly so.\n", bag_type_name(obj->sval));
         break;
     case EGO_BAG_PROTECTION:
         doc_printf(doc, "The lining of this %s pulses faintly with warding runes, "
                         "shielding its contents from fire, frost, and ruin.\n",
-                        bag_type_name(o_ptr->sval));
+                        bag_type_name(obj->sval));
         break;
     case EGO_BAG_ETHEREAL:
         doc_printf(doc, "This %s barely seems to exist, its form light and shifting. "
                         "Items within feel strangely insubstantial, as though part of them rests in some other place.\n",
-                        bag_type_name(o_ptr->sval));
+                        bag_type_name(obj->sval));
+        break;
+    case EGO_BAG_BULKY:
+        doc_printf(doc, "This %s is awkwardly sized, making even light loads feel unbearably heavy.\n",
+                        bag_type_name(obj->sval));
         break;
     case EGO_BAG_CLASPED:
         doc_printf(doc, "Reinforced clasps and clever folds make this %s devilishly hard to open - at least for anyone but you. "
                         "A subtle mechanism guards the bag, locking securely at the slightest tug.\n",
-                        bag_type_name(o_ptr->sval));
+                        bag_type_name(obj->sval));
+        break;
+    case EGO_BAG_GAUDY:
+        doc_printf(doc, "This ostentatious %s is sure to attract attention - and not always the good kind.\n",
+                        bag_type_name(obj->sval));
+        break;
+    case EGO_BAG_ORGANIZED:
+        doc_printf(doc, "Everything in this %s has its place - and can be found in a hurry.\n",
+                        bag_type_name(obj->sval));
+        break;
+    case EGO_BAG_TANGLING:
+        doc_printf(doc, "This %s is a nest of straps and clasps that somehow always catch at the worst moment.\n",
+                        bag_type_name(obj->sval));
+        break;
+    case EGO_BAG_LEAKY:
+        doc_printf(doc, "This %s must have a hidden tear; things keep slipping out no matter how tightly you cinch it closed.\n",
+                        bag_type_name(obj->sval));
+        break;
+    case EGO_BAG_DEVOURING:
+        doc_printf(doc, "This %s clutches its contents with unnatural greed, refusing to release what it holds.\n",
+                        bag_type_name(obj->sval));
+        break;
+    case EGO_BAG_TEMPERANCE:
+        if(obj->sval == SV_BAG_POTION_BELT)
+            doc_printf(doc, "This %s exudes a quiet aura of restraint. "
+                            "Now and then, a potion drawn and quaffed from it may return unspent, its essence mysteriously preserved.\n",
+                            bag_type_name(obj->sval));
+        else if(obj->sval == SV_BAG_SCROLL_CASE)
+            doc_printf(doc, "Wisps of order magic coil within this %s. "
+                            "Occasionally, a scroll drawn from it may be read and yet remain intact, its arcane script untouched.\n",
+                            bag_type_name(obj->sval));
         break;
     case EGO_BAG_BOTTOMLESS:
-        if(o_ptr->sval == SV_BAG_POTION_BELT)
-          doc_insert(doc, "It's compartments twist in strange ways; now and then, a potion turns up you don't remember packing. "
-                          "You swear this pocket was empty a moment ago...\n");
-        if(o_ptr->sval == SV_BAG_SCROLL_CASE)
-          doc_insert(doc, "Scrolls shift and shuffle within, as if reordering themselves. Occasionally, one seems to appear where none were before.\n");
+        if(obj->sval == SV_BAG_POTION_BELT)
+            doc_insert(doc, "It's compartments twist in strange ways; now and then, a potion turns up you don't remember packing. "
+                            "You swear this pocket was empty a moment ago...\n");
+        else if(obj->sval == SV_BAG_SCROLL_CASE)
+            doc_insert(doc, "Scrolls shift and shuffle within, as if reordering themselves. Occasionally, one seems to appear where none were before.\n");
+        else
+            doc_insert(doc, "The interior of this bag is larger than it should be, holding far more than its size would suggest.\n");
+        break;
+    case EGO_BAG_ENERGIZED:
+        doc_printf(doc, "The interior of this %s thrums with arcane energy. "
+                        "Devices stored within recharge more quickly, ready for use again before you expect.\n",
+                         bag_type_name(obj->sval));
+        break;
+    case EGO_BAG_DAMPENING:
+        doc_printf(doc, "A subtle ward surrounds this %s, muting both incoming and outgoing magic. "
+                        "Devices within recover more slowly, their power dulled as though muffled behind thick insulation.\n",
+                        bag_type_name(obj->sval));
+        break;
+    case EGO_BAG_BRIMMING:
+        doc_printf(doc, "Arcane energy wells from within this %s. Devices drawn from it crackle with power, "
+                        "unleashing a burst of extra potency on their first use.\n",
+                        bag_type_name(obj->sval));
         break;
     }
 
@@ -1058,32 +1109,50 @@ static void _display_extra(object_type *o_ptr, u32b flgs[OF_ARRAY_SIZE], doc_ptr
         doc_insert(doc, "It decreases your mana consumption.\n");
     }
 
-    net = _calc_net_bonus(o_ptr->pval, flgs, OF_WEAPONMASTERY, OF_INVALID);
+    net = _calc_net_bonus(obj->pval, flgs, OF_WEAPONMASTERY, OF_INVALID);
     if (net)
     {
-        doc_printf(doc, "It %s the damage dice of your melee weapon.\n",
-            (net > 0) ? "increases" : "<color:R>decreases</color>");
+        doc_printf(doc, "It %s the damage dice of your melee weapon.\n", (net > 0) ? "increases" : "<color:R>decreases</color>");
     }
 
-    net = _calc_net_bonus(o_ptr->pval, flgs, OF_XTRA_MIGHT, OF_INVALID);
+    net = _calc_net_bonus(obj->pval, flgs, OF_XTRA_MIGHT, OF_INVALID);
     if (net)
     {
-        doc_printf(doc, "It %s the multiplier of your bow.\n",
-            (net > 0) ? "increases" : "<color:R>decreases</color>");
+        doc_printf(doc, "It %s the multiplier of your bow.\n", (net > 0) ? "increases" : "<color:R>decreases</color>");
     }
 
+    if (have_flag(flgs, OF_HOLDING))
+        doc_insert(doc, "It holds far more than it should.\n");
+    if (have_flag(flgs, OF_PROTECTION))
+        doc_insert(doc, "It shields its contents from harm.\n");
+    if (have_flag(flgs, OF_ETHEREAL))
+        doc_insert(doc, "It feels almost weightless.\n");
+    if (have_flag(flgs, OF_BULKY))
+        doc_insert(doc, "It's cumbersome.\n");
     if (have_flag(flgs, OF_SECURE))
         doc_insert(doc, "It foils thieves.\n");
+    if (have_flag(flgs, OF_GAUDY))
+        doc_insert(doc, "It attracts thieves.\n");
+    if (have_flag(flgs, OF_ORGANIZED))
+        doc_insert(doc, "Its contents are perfectly arranged for quick access.\n");
+    if (have_flag(flgs, OF_TANGLING))
+        doc_insert(doc, "Its straps always seem to catch your hands.\n");
+    if (have_flag(flgs, OF_LEAKY))
+        doc_insert(doc, "Items sometimes slip from it.\n");
+    if (have_flag(flgs, OF_DEVOURING))
+        doc_insert(doc, "It refuses to release what's inside.\n");
     if (have_flag(flgs, OF_TEMPERANCE))
-        doc_insert(doc, "Items used from this bag may be conserved instead of consumed.\n");
+        doc_insert(doc, "Occasionally, its contents are not consumed.\n");
+    if (have_flag(flgs, OF_BOTTOMLESS))
+        doc_insert(doc, "You can't quite reach the bottom...\n");
     if (have_flag(flgs, OF_ENERGIZED))
-      doc_insert(doc, object_is_cursed(obj) ? "It saps magical energy.\n" : "It hums with energy.\n");
+        doc_insert(doc, object_is_cursed(obj) ? "It saps magical energy.\n" : "It hums with magical energy.\n");
     if (have_flag(flgs, OF_DAMPENING))
-        doc_insert(doc, object_is_cursed(obj) ? "It absorbs magical energy.\n" : "It dampens magical energy.\n");
+        doc_insert(doc, object_is_cursed(obj) ? "It suppresses magical energy.\n" : "It dampens magical energy.\n");
     if (have_flag(flgs, OF_BRIMMING))
-        doc_insert(doc, object_is_cursed(obj) ? "It overflows with energy.\n" : "It crackles with energy.\n");
+        doc_insert(doc, object_is_cursed(obj) ? "It overflows with unstable energy.\n" : "It's brimming with magical energy.\n");
 
-    switch (o_ptr->name1)
+    switch (obj->name1)
     {
     case ART_STONE_OF_NATURE:
         doc_insert(doc, "It greatly enhances Nature magic.\n");
@@ -1120,10 +1189,10 @@ static void _display_extra(object_type *o_ptr, u32b flgs[OF_ARRAY_SIZE], doc_ptr
         break;
     }
 
-    if (object_is_(o_ptr, TV_SWORD, SV_POISON_NEEDLE))
+    if (object_is_(obj, TV_SWORD, SV_POISON_NEEDLE))
         doc_insert(doc, "It will attempt to kill a monster instantly.\n");
 
-    if (object_is_(o_ptr, TV_POLEARM, SV_DEATH_SCYTHE))
+    if (object_is_(obj, TV_POLEARM, SV_DEATH_SCYTHE))
         doc_insert(doc, "It causes you to strike yourself sometimes.\nIt always penetrates invulnerability barriers.\n");
 
     if (have_flag(flgs, OF_IGNORE_INVULN))
@@ -1132,25 +1201,25 @@ static void _display_extra(object_type *o_ptr, u32b flgs[OF_ARRAY_SIZE], doc_ptr
     if (have_flag(flgs, OF_DUAL_WIELDING))
         doc_insert(doc, "It affects your ability to hit when you are wielding two weapons.\n");
 
-    if (o_ptr->tval == TV_STATUE)
+    if (obj->tval == TV_STATUE)
     {
-        if (o_ptr->pval == MON_BULLGATES)
+        if (obj->pval == MON_BULLGATES)
             doc_insert(doc, "It is shameful.\n");
-        else if (r_info[o_ptr->pval].flags2 & RF2_ELDRITCH_HORROR)
+        else if (r_info[obj->pval].flags2 & RF2_ELDRITCH_HORROR)
             doc_insert(doc, "It is fearful.\n");
         else
             doc_insert(doc, "It is cheerful.\n");
     }
 
-    if (o_ptr->tval == TV_FIGURINE)
+    if (obj->tval == TV_FIGURINE)
         doc_insert(doc, "It will transform into a pet when thrown.\n");
 
-    if (o_ptr->name3)
+    if (obj->name3)
     {
-        char nimi[80];
-        strcpy(nimi, a_name + a_info[o_ptr->name3].name);
-        (void)clip_and_locate("~", nimi);
-        doc_printf(doc, "It reminds you of the artifact <color:R>%s</color>.\n", ((nimi[0] == '&') && (strlen(nimi) > 2)) ? nimi + 2 : nimi);
+        char name[80];
+        strcpy(name, a_name + a_info[obj->name3].name);
+        (void)clip_and_locate("~", name);
+        doc_printf(doc, "It reminds you of the artifact <color:R>%s</color>.\n", ((name[0] == '&') && (strlen(name) > 2)) ? name + 2 : name);
     }
 }
 
@@ -1205,6 +1274,9 @@ static void _display_curses(object_type *o_ptr, u32b flgs[OF_ARRAY_SIZE], doc_pt
             doc_insert(doc, "It is <color:D>Cursed</color>.\n");
         if ((o_ptr->loc.where == INV_EQUIP) && (o_ptr->curse_flags != o_ptr->known_curse_flags))
             doc_insert(doc, "It has <color:v>unknown curses</color>.\n");
+      
+      //doc_printf(doc, "It has curse_flags: <color:G>%lx</color>\n", o_ptr->curse_flags);
+      //doc_printf(doc, " known_curse_flags: <color:G>%lx</color>\n", o_ptr->known_curse_flags);
     }
     else if (o_ptr->curse_flags & OFC_CURSED)
         doc_insert(doc, "It has <color:v>unknown curses</color>.\n");

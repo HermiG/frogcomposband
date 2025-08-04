@@ -3672,6 +3672,7 @@ void obj_create_bag(object_type *o_ptr, int level, int power, int mode)
       switch (o_ptr->name2)
       {
         case EGO_BAG_BOTTOMLESS:
+          if(o_ptr->sval == SV_BAG_DEVICE_CASE) break; // Not valid on device cases
         case EGO_BAG_HOLDING:
           o_ptr->xtra4 *= (o_ptr->sval == SV_BAG_DEVICE_CASE) ? 1.25 : 1.5;
           o_ptr->xtra5 *= (o_ptr->sval == SV_BAG_DEVICE_CASE) ? 1.25 : 1.5;

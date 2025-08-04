@@ -6741,13 +6741,13 @@ cptr do_effect(effect_t *effect, int mode, int boost)
         }
         break;
     case EFFECT_BOTTOMLESS_BAG: // Should only be on a potion belt or scroll case
-        if (name && effect->extra == SV_BAG_POTION_BELT) return "Bottomless Potion Belt";
+        if (name && effect->extra == SV_BAG_POTION_BELT) return "Distilling Potion Belt";
         if (name && effect->extra == SV_BAG_SCROLL_CASE) return "Curious Scroll Case";
-        if (name) return "Bottomless Bag";
+        if (name)                                        return "Bottomless Bag";
         
         if (desc && effect->extra == SV_BAG_POTION_BELT) return "You occasionally find potions you swear weren't there.";
         if (desc && effect->extra == SV_BAG_SCROLL_CASE) return "You occasionally find scrolls you swear weren't there.";
-        if (desc)  return "This bag seems to be larger inside than out.";
+        if (desc)                                        return "You reach in... and keep reaching. Where does it end?";
         if (value) return format("%d", 15000);
         if (color) return format("%d", TERM_L_ORANGE);
         if (cast)
@@ -6758,6 +6758,7 @@ cptr do_effect(effect_t *effect, int mode, int boost)
             obj_t forge = {0};
             if      (bag->sval == SV_BAG_POTION_BELT) object_prep(&forge, lookup_kind(TV_POTION, SV_ANY));
             else if (bag->sval == SV_BAG_SCROLL_CASE) object_prep(&forge, lookup_kind(TV_SCROLL, SV_ANY));
+            else if (bag->sval == SV_BAG_POUCH && one_in_(10)) object_prep(&forge, lookup_kind(one_in_(2) ? TV_SCROLL : TV_POTION, SV_ANY));
             else break;
 
             forge.number = MAX(0, MIN(1, bag_capacity() - bag_count(NULL)));

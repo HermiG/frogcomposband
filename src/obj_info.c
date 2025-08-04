@@ -1275,8 +1275,8 @@ static void _display_curses(object_type *o_ptr, u32b flgs[OF_ARRAY_SIZE], doc_pt
         if ((o_ptr->loc.where == INV_EQUIP) && (o_ptr->curse_flags != o_ptr->known_curse_flags))
             doc_insert(doc, "It has <color:v>unknown curses</color>.\n");
       
-      //doc_printf(doc, "It has curse_flags: <color:G>%lx</color>\n", o_ptr->curse_flags);
-      //doc_printf(doc, " known_curse_flags: <color:G>%lx</color>\n", o_ptr->known_curse_flags);
+        if(p_ptr->wizard) doc_printf(doc, "It has curse_flags: <color:G>%lx</color>\n", o_ptr->curse_flags);
+        if(p_ptr->wizard) doc_printf(doc, " known_curse_flags: <color:G>%lx</color>\n", o_ptr->known_curse_flags);
     }
     else if (o_ptr->curse_flags & OFC_CURSED)
         doc_insert(doc, "It has <color:v>unknown curses</color>.\n");

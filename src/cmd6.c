@@ -667,7 +667,7 @@ static void do_cmd_quaff_potion_aux(obj_ptr obj)
     {
         msg_print("You sip the potion sparingly.");
     } else if (bag && obj_has_flag(bag, OF_TEMPERANCE) && one_in_(4)) {
-        msg_print("A shimmering condensate gathers in the vial as you return it to your potion belt — enough for another sip.");
+        msg_print("A shimmering condensate gathers in the vial as you return it to your potion belt - enough for another sip.");
         equip_learn_flag(OF_TEMPERANCE);
     }
     else

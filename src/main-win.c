@@ -2740,17 +2740,17 @@ static void process_menus(WORD wCmd)
             RECT work = mi.rcWork;
             work.top--;
 
-            // 2) Get the “outer” rect Windows actually draws (incl. DWM shadow)
+            // 2) Get the "outer" rect Windows actually draws (incl. DWM shadow)
             RECT outer = {0};
             if (FAILED(DwmGetWindowAttribute(hwndMain, DWMWA_EXTENDED_FRAME_BOUNDS, &outer, sizeof(outer)))) {
                 GetWindowRect(hwndMain, &outer); // fallback if DWM not available
             }
             
-            // 3) Get the “window‐rect” that your app requested
+            // 3) Get the "window‐rect" that your app requested
             RECT wnd;
             GetWindowRect(hwndMain, &wnd);
 
-            // 4) Compute true non–client margins:
+            // 4) Compute true non-client margins:
             int borderLeft   = wnd.left   - outer.left;
             int borderTop    = wnd.top    - outer.top;
             int borderRight  = outer.right  - wnd.right;

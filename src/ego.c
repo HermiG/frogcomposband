@@ -1598,6 +1598,8 @@ bool obj_create_device(object_type *o_ptr, int level, int power, int mode)
      * Re-enabled for fun. */
     if (power < 0) o_ptr->curse_flags |= OFC_CURSED;
 
+    ego_finalize(o_ptr, level, power, mode);
+
     return TRUE;
 }
 

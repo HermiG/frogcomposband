@@ -2797,7 +2797,6 @@ bool askfor_aux(char *buf, int len, bool numpad_cursor)
             {
                 int next_pos = i + 1;
 
-
                 /* Is there the cursor at next position? */ 
                 if (next_pos >= pos) break;
 
@@ -2807,10 +2806,8 @@ bool askfor_aux(char *buf, int len, bool numpad_cursor)
 
             /* Get previous position */
             pos = i;
-
-            /* Fall through to 'Delete key' */
         }
-
+        // fall-through
         case 0x7F:
         case KTRL('d'):
             /* Delete key */

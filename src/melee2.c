@@ -704,7 +704,7 @@ static bool get_moves_aux2(int m_idx, int *yp, int *xp)
  */
 static bool get_moves_aux(int m_idx, int *yp, int *xp, bool no_flow)
 {
-    int i, y, x, y1, x1, best;
+    int y, x, y1, x1, best;
     int rng = 16; /* <== I don't understand this value! */
 
     cave_type *c_ptr;

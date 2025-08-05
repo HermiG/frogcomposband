@@ -608,8 +608,6 @@ bool obj_confirm_choice(obj_ptr obj)
  ***********************************************************************/
 bool obj_can_combine(obj_ptr dest, obj_ptr obj, int loc)
 {
-    int  i;
-
     if (dest == obj) return FALSE;
     if (dest->k_idx != obj->k_idx) return FALSE; /* i.e. same tval/sval */
     if (obj_is_art(dest) || obj_is_art(obj)) return FALSE;

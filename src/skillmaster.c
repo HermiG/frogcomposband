@@ -1220,18 +1220,13 @@ static void _skills_calc_bonuses(void)
 
 void _skills_get_flags(u32b flgs[OF_ARRAY_SIZE])
 {
-    int pts;
-    pts = _get_skill_pts(_TYPE_SKILLS, _AWARENESS);
-    switch (pts)
-    {
-    case 3: add_flag(flgs, OF_TELEPATHY);
-    case 2: add_flag(flgs, OF_LORE2);
-    case 1: add_flag(flgs, OF_SEE_INVIS);
-    }
+    int pts = _get_skill_pts(_TYPE_SKILLS, _AWARENESS);
+    if(pts > 0) add_flag(flgs, OF_SEE_INVIS);
+    if(pts > 1) add_flag(flgs, OF_LORE2);
+    if(pts > 2) add_flag(flgs, OF_TELEPATHY);
 
     pts = _get_skill_pts(_TYPE_SKILLS, _SPEED);
-    if (pts > 0)
-        add_flag(flgs, OF_SPEED);
+    if (pts > 0) add_flag(flgs, OF_SPEED);
 }
 
 /************************************************************************

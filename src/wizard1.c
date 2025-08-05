@@ -2288,28 +2288,27 @@ static void _spoil_spell_book(doc_ptr doc, int class_idx, int realm_idx, int boo
     doc_newline(doc);
 }
 
-static int  _cmp_class_name(int left_idx, int right_idx)
+static int _cmp_class_name(const void *a, const void *b)
 {
+    int left_idx  = *(const int *)a;
+    int right_idx = *(const int *)b;
+
     class_t *l = get_class_aux(left_idx, 0);
     class_t *r = get_class_aux(right_idx, 0);
+
     return strcmp(l->name, r->name);
 }
 
 static void spoil_spells_by_class(void)
 {
-    int i, realm_idx;
     doc_ptr doc = doc_alloc(80);
     vec_ptr vec = vec_alloc(NULL);
 
-    for (i = 0; i < MAX_CLASS; i++)
-    {
-        if (class_is_deprecated(i)) continue;
-        vec_add_int(vec, i);
-    }
+    for (int i = 0; i < MAX_CLASS; i++) if (!class_is_deprecated(i)) vec_add_int(vec, i);
 
-    vec_sort(vec, (vec_cmp_f)_cmp_class_name);
+    vec_sort(vec, _cmp_class_name);
 
-    for (i = 0; i < vec_length(vec); i++)
+    for (int i = 0; i < vec_length(vec); i++)
     {
         int           class_idx = vec_get_int(vec, i);
         class_t      *class_ptr = get_class_aux(class_idx, 0);
@@ -2317,7 +2316,7 @@ static void spoil_spells_by_class(void)
 
         if (class_idx == CLASS_RAGE_MAGE) continue; /* broken */
 
-        for (realm_idx = REALM_LIFE; realm_idx <= MAX_REALM; realm_idx++)
+        for (int realm_idx = REALM_LIFE; realm_idx <= MAX_REALM; realm_idx++)
         {
             if (_check_realm(class_idx, realm_idx))
             {
@@ -2386,11 +2385,9 @@ static void _spoil_spell_book2(doc_ptr doc, int class1_idx, int class2_idx, int 
 
 static void _spoil_spells_by_realm_aux3(int realm_idx, int class1_idx, int class2_idx)
 {
-    int i;
     doc_ptr doc = doc_alloc(80);
 
-    for (i = 0; i < 4; i++)
-        _spoil_spell_book2(doc, class1_idx, class2_idx, realm_idx, i);
+    for (int i = 0; i < 4; i++) _spoil_spell_book2(doc, class1_idx, class2_idx, realm_idx, i);
 
     doc_display(doc, "Spells by Realm", 0);
     doc_free(doc);
@@ -2404,11 +2401,10 @@ static void _spoil_spells_by_realm_aux2(int realm_idx, int class1_idx)
     for (class_idx = 0; class_idx < MAX_CLASS; class_idx++)
     {
         if (class_is_deprecated(class_idx)) continue;
-        if (_check_realm(class_idx, realm_idx))
-            vec_add_int(vec, class_idx);
+        if (_check_realm(class_idx, realm_idx)) vec_add_int(vec, class_idx);
     }
 
-    vec_sort(vec, (vec_cmp_f)_cmp_class_name);
+    vec_sort(vec, _cmp_class_name);
 
     while (1)
     {
@@ -2446,17 +2442,15 @@ static void _spoil_spells_by_realm_aux2(int realm_idx, int class1_idx)
 
 static void _spoil_spells_by_realm_aux1(int realm_idx)
 {
-    int i, row, col, class_idx, choice;
     vec_ptr vec = vec_alloc(NULL);
 
-    for (class_idx = 0; class_idx < MAX_CLASS; class_idx++)
+    for (int class_idx = 0; class_idx < MAX_CLASS; class_idx++)
     {
         if (class_is_deprecated(class_idx)) continue;
-        if (_check_realm(class_idx, realm_idx))
-            vec_add_int(vec, class_idx);
+        if (_check_realm(class_idx, realm_idx)) vec_add_int(vec, class_idx);
     }
 
-    vec_sort(vec, (vec_cmp_f)_cmp_class_name);
+    vec_sort(vec, _cmp_class_name);
 
     while (1)
     {
@@ -2465,11 +2459,11 @@ static void _spoil_spells_by_realm_aux1(int realm_idx)
         c_prt(TERM_L_BLUE, format("%s", realm_names[realm_idx]), 2, 0);
 
         /* Classes */
-        row = 4;
-        col = 2;
+        int row = 4;
+        int col = 2;
         c_prt(TERM_RED, "First Class", row++, col - 2);
 
-        for (i = 0; i < vec_length(vec); i++)
+        for (int i = 0; i < vec_length(vec); i++)
         {
             int      class_idx = vec_get_int(vec, i);
             class_t *class_ptr = get_class_aux(class_idx, 0);
@@ -2477,13 +2471,13 @@ static void _spoil_spells_by_realm_aux1(int realm_idx)
             prt(format("(%c) %s", 'a' + i, class_ptr->name), row++, col);
         }
 
-        i = inkey();
-        if (i == ESCAPE) break;
-        choice = i - 'a';
+        int choice = inkey();
+        if (choice == ESCAPE) break;
+        choice = choice - 'a';
 
         if (0 <= choice && choice < vec_length(vec))
         {
-            class_idx = vec_get_int(vec, choice);
+            int class_idx = vec_get_int(vec, choice);
             _spoil_spells_by_realm_aux2(realm_idx, class_idx);
         }
      }
@@ -2493,7 +2487,6 @@ static void _spoil_spells_by_realm_aux1(int realm_idx)
 
 static void spoil_spells_by_realm(void)
 {
-    int i, row, col, realm_idx;
     while (1)
     {
         Term_clear();
@@ -2501,21 +2494,20 @@ static void spoil_spells_by_realm(void)
         prt("Realm Spoilers", 2, 0);
 
         /* Realms */
-        row = 4;
-        col = 2;
+        int row = 4;
+        int col = 2;
         c_prt(TERM_RED, "Realms", row++, col - 2);
 
-        for (realm_idx = REALM_LIFE; realm_idx <= MAX_MAGIC; realm_idx++)
+        for (int realm_idx = REALM_LIFE; realm_idx <= MAX_MAGIC; realm_idx++)
         {
             prt(format("(%c) %s", 'a' + realm_idx - 1, realm_names[realm_idx]), row++, col);
         }
 
-        i = inkey();
+        int i = inkey();
         if (i == ESCAPE) break;
-        realm_idx = i - 'a' + 1;
+        i = i - 'a' + 1;
 
-        if (REALM_LIFE <= realm_idx && realm_idx <= MAX_MAGIC)
-            _spoil_spells_by_realm_aux1(realm_idx);
+        if (REALM_LIFE <= i && i <= MAX_MAGIC) _spoil_spells_by_realm_aux1(i);
      }
 }
 
@@ -2529,8 +2521,8 @@ static void spoil_option_bits(void)
     doc_ptr cols[2];
 
     doc_insert(doc, "Options are stored in the savefile using hard coded "
-        "bits. When adding new options, it is hard to locate a free slot. "
-        "Perhaps this will help?\n\n");
+                    "bits. When adding new options, it is hard to locate a free slot. "
+                    "Perhaps this will help?\n\n");
     cols[0] = doc_alloc(36);
     cols[1] = doc_alloc(36);
     for (set = 0; set < 8; set++) /* 8 is hardcoded ... */

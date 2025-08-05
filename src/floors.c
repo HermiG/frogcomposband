@@ -26,15 +26,12 @@ static u32b latest_visit_mark;  /* Max number of visit_mark */
 void init_saved_floors(bool force)
 {
     char floor_savefile[1024];
-    int i;
     int fd = -1;
     int mode = 0644;
 
     if(strlen(savefile) > 0) {
-        for (i = 0; i < MAX_SAVED_FLOORS; i++)
+        for (int i = 0; i < MAX_SAVED_FLOORS; i++)
         {
-            saved_floor_type *sf_ptr = &saved_floors[i];
-            
             sprintf(floor_savefile, "%s.F%02d", savefile, i);
             
             /* Grab permissions */
@@ -59,10 +56,7 @@ void init_saved_floors(bool force)
                     force = TRUE;
                 }
             }
-            else
-            {
-                (void)fd_close(fd);
-            }
+            else (void)fd_close(fd);
             
             /* Grab permissions */
             safe_setuid_grab();
@@ -75,7 +69,7 @@ void init_saved_floors(bool force)
         }
     }
 
-    for (i = 0; i < MAX_SAVED_FLOORS; i++) saved_floors[i].floor_id = 0;
+    for (int i = 0; i < MAX_SAVED_FLOORS; i++) saved_floors[i].floor_id = 0;
 
     /* No floor_id used yet (No.0 is reserved to indicate non existance) */
     max_floor_id = 1;
@@ -101,9 +95,8 @@ void init_saved_floors(bool force)
 void clear_saved_floor_files(void)
 {
     char floor_savefile[1024];
-    int i;
 
-    for (i = 0; i < MAX_SAVED_FLOORS; i++)
+    for (int i = 0; i < MAX_SAVED_FLOORS; i++)
     {
         saved_floor_type *sf_ptr = &saved_floors[i];
 
@@ -131,12 +124,10 @@ void clear_saved_floor_files(void)
  */
 saved_floor_type *get_sf_ptr(s16b floor_id)
 {
-    int i;
-
     /* floor_id No.0 indicates no floor */
     if (!floor_id) return NULL;
 
-    for (i = 0; i < MAX_SAVED_FLOORS; i++)
+    for (int i = 0; i < MAX_SAVED_FLOORS; i++)
     {
         saved_floor_type *sf_ptr = &saved_floors[i];
 

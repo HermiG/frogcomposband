@@ -863,15 +863,12 @@ static int _quest_cmp_level(quest_ptr l, quest_ptr r)
 static vec_ptr _quests_get(quest_p p)
 {
     vec_ptr v = vec_alloc(NULL);
-    int_map_iter_ptr i;
 
-    for (i = int_map_iter_alloc(_quests);
-            int_map_iter_is_valid(i);
-            int_map_iter_next(i))
+    int_map_iter_ptr i = int_map_iter_alloc(_quests);
+    for (; int_map_iter_is_valid(i); int_map_iter_next(i))
     {
         quest_ptr q = int_map_iter_current(i);
-        if (!p || p(q))
-            vec_add(v, q);
+        if (!p || p(q)) vec_add(v, q);
     }
     int_map_iter_free(i);
 

@@ -199,7 +199,6 @@ static BOOL NEAR PASCAL MakeBitmapAndPalette(HDC hDC, HANDLE hDIB,
  */
 BOOL ReadDIB(HWND hWnd, LPSTR lpFileName, DIBINIT *pInfo)
 {
-    unsigned fh;
     LPBITMAPINFOHEADER lpbi;
     OFSTRUCT of;
     BITMAPFILEHEADER bf;
@@ -211,7 +210,7 @@ BOOL ReadDIB(HWND hWnd, LPSTR lpFileName, DIBINIT *pInfo)
     BOOL bCoreHead = FALSE;
 
     /* Open the file and get a handle to it's BITMAPINFO */
-    fh = OpenFile(lpFileName, &of, OF_READ);
+    HFILE fh = OpenFile(lpFileName, &of, OF_READ);
     if (fh == -1)
     {
         wsprintf(str, "Can't open file '%s'", (LPSTR)lpFileName);
@@ -219,24 +218,19 @@ BOOL ReadDIB(HWND hWnd, LPSTR lpFileName, DIBINIT *pInfo)
         return (FALSE);
     }
 
-    pInfo->hDIB = GlobalAlloc(GHND, (DWORD)(sizeof(BITMAPINFOHEADER) +
-                  256 * sizeof(RGBQUAD)));
+    pInfo->hDIB = GlobalAlloc(GHND, (DWORD)(sizeof(BITMAPINFOHEADER) + 256 * sizeof(RGBQUAD)));
 
-    if (!pInfo->hDIB)
-        return (FALSE);
+    if (!pInfo->hDIB) return (FALSE);
 
     lpbi = (LPBITMAPINFOHEADER)GlobalLock(pInfo->hDIB);
 
     /* read the BITMAPFILEHEADER */
-    if (sizeof (bf) != _lread(fh, (LPSTR)&bf, sizeof(bf)))
-        goto ErrExit;
+    if (sizeof (bf) != _lread(fh, (LPSTR)&bf, sizeof(bf))) goto ErrExit;
 
     /* 'BM' */
-    if (bf.bfType != 0x4d42)
-        goto ErrExit;
+    if (bf.bfType != 0x4d42) goto ErrExit;
 
-    if (sizeof(BITMAPCOREHEADER) != _lread(fh, (LPSTR)lpbi, sizeof(BITMAPCOREHEADER)))
-        goto ErrExit;
+    if (sizeof(BITMAPCOREHEADER) != _lread(fh, (LPSTR)lpbi, sizeof(BITMAPCOREHEADER))) goto ErrExit;
 
     if (lpbi->biSize == sizeof(BITMAPCOREHEADER))
     {
@@ -251,43 +245,32 @@ BOOL ReadDIB(HWND hWnd, LPSTR lpFileName, DIBINIT *pInfo)
     {
         /* get to the start of the header and read INFOHEADER */
         _llseek(fh, sizeof(BITMAPFILEHEADER), SEEK_SET);
-        if (sizeof(BITMAPINFOHEADER) != _lread(fh, (LPSTR)lpbi, sizeof(BITMAPINFOHEADER)))
-            goto ErrExit;
+        if (sizeof(BITMAPINFOHEADER) != _lread(fh, (LPSTR)lpbi, sizeof(BITMAPINFOHEADER))) goto ErrExit;
     }
 
     nNumColors = (WORD)lpbi->biClrUsed;
     if (!nNumColors)
     {
         /* no color table for 24-bit, default size otherwise */
-        if (lpbi->biBitCount != 24)
-            nNumColors = 1 << lpbi->biBitCount;
+        if (lpbi->biBitCount != 24) nNumColors = 1 << lpbi->biBitCount;
     }
 
     /* fill in some default values if they are zero */
-    if (lpbi->biClrUsed == 0)
-        lpbi->biClrUsed = nNumColors;
+    if (lpbi->biClrUsed == 0) lpbi->biClrUsed = nNumColors;
 
     if (lpbi->biSizeImage == 0)
     {
-        lpbi->biSizeImage = (((((lpbi->biWidth * (DWORD)lpbi->biBitCount) + 31) & ~31) >> 3)
-                     * lpbi->biHeight);
+        lpbi->biSizeImage = (((((lpbi->biWidth * (DWORD)lpbi->biBitCount) + 31) & ~31) >> 3) * lpbi->biHeight);
     }
-
     /* otherwise wouldn't work with 16 color bitmaps -- S.K. */
-    else if ((nNumColors == 16) && (lpbi->biSizeImage > bf.bfSize))
-    {
-        lpbi->biSizeImage /= 2;
-    }
+    else if ((nNumColors == 16) && (lpbi->biSizeImage > bf.bfSize)) lpbi->biSizeImage /= 2;
 
     /* get a proper-sized buffer for header, color table and bits */
     GlobalUnlock(pInfo->hDIB);
-    pInfo->hDIB = GlobalReAlloc(pInfo->hDIB, lpbi->biSize +
-                                        nNumColors * sizeof(RGBQUAD) +
-                                        lpbi->biSizeImage, 0);
+    pInfo->hDIB = GlobalReAlloc(pInfo->hDIB, lpbi->biSize + nNumColors * sizeof(RGBQUAD) + lpbi->biSizeImage, 0);
 
     /* can't resize buffer for loading */
-    if (!pInfo->hDIB)
-        goto ErrExit2;
+    if (!pInfo->hDIB) goto ErrExit2;
 
     lpbi = (LPBITMAPINFOHEADER)GlobalLock(pInfo->hDIB);
 
@@ -298,7 +281,6 @@ BOOL ReadDIB(HWND hWnd, LPSTR lpFileName, DIBINIT *pInfo)
     }
     else
     {
-        signed int i;
         RGBQUAD FAR *pQuad;
         RGBTRIPLE FAR *pTriple;
 
@@ -306,7 +288,7 @@ BOOL ReadDIB(HWND hWnd, LPSTR lpFileName, DIBINIT *pInfo)
 
         pQuad = (RGBQUAD FAR *)((LPSTR)lpbi + lpbi->biSize);
         pTriple = (RGBTRIPLE FAR *) pQuad;
-        for (i = nNumColors - 1; i >= 0; i--)
+        for (int i = nNumColors - 1; i >= 0; i--)
         {
             pQuad[i].rgbRed = pTriple[i].rgbtRed;
             pQuad[i].rgbBlue = pTriple[i].rgbtBlue;
@@ -318,10 +300,8 @@ BOOL ReadDIB(HWND hWnd, LPSTR lpFileName, DIBINIT *pInfo)
     /* offset to the bits from start of DIB header */
     offBits = (WORD)lpbi->biSize + nNumColors * sizeof(RGBQUAD);
 
-    if (bf.bfOffBits != 0L)
-    {
-        _llseek(fh,bf.bfOffBits,SEEK_SET);
-    }
+    if (bf.bfOffBits != 0L) _llseek(fh,bf.bfOffBits,SEEK_SET);
+
 
     /* Use local version of '_lread()' above */
     if (lpbi->biSizeImage == lread(fh, (LPSTR)lpbi + offBits, lpbi->biSizeImage))

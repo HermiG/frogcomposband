@@ -2036,9 +2036,7 @@ bool obj_has_passive_effect(object_type *o_ptr)
 
 bool effect_try(effect_t *effect)
 {
-    int fail = effect_calc_fail_rate(effect);
-    if (randint0(1000) < fail) return FALSE;
-    return TRUE;
+    return (randint0(1000) >= effect_calc_fail_rate(effect));
 }
 
 bool effect_use(effect_t *effect, int boost)
@@ -2046,7 +2044,7 @@ bool effect_use(effect_t *effect, int boost)
     device_noticed = FALSE;
     device_used_charges = 0;
     device_available_charges = 1;
-    return do_effect(effect, SPELL_CAST, boost);
+    return !! do_effect(effect, SPELL_CAST, boost);
 }
 
 int effect_value(effect_t *effect)

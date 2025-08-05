@@ -768,14 +768,14 @@ static void _display_slays(u32b flgs[OF_ARRAY_SIZE], doc_ptr doc)
     else if (have_flag(flgs, OF_SLAY_EVIL))
         vec_add(v, string_copy_s("<color:y>Evil</color>"));
 
-	if (have_flag(flgs, OF_KILL_GOOD))
-		vec_add(v, string_copy_s("<color:y>*Good*</color>"));
-	else if (have_flag(flgs, OF_SLAY_GOOD))
+    if (have_flag(flgs, OF_KILL_GOOD))
+        vec_add(v, string_copy_s("<color:y>*Good*</color>"));
+    else if (have_flag(flgs, OF_SLAY_GOOD))
         vec_add(v, string_copy_s("<color:W>Good</color>"));
 
-	if (have_flag(flgs, OF_KILL_LIVING))
-		vec_add(v, string_copy_s("<color:y>*Living*</color>"));
-	else if (have_flag(flgs, OF_SLAY_LIVING))
+    if (have_flag(flgs, OF_KILL_LIVING))
+        vec_add(v, string_copy_s("<color:y>*Living*</color>"));
+    else if (have_flag(flgs, OF_SLAY_LIVING))
         vec_add(v, string_copy_s("<color:o>Living</color>"));
 
     if (have_flag(flgs, OF_KILL_DRAGON))
@@ -830,15 +830,13 @@ static void _display_slays(u32b flgs[OF_ARRAY_SIZE], doc_ptr doc)
 
 static void _display_resists(u32b flgs[OF_ARRAY_SIZE], doc_ptr doc)
 {
-    int     i;
     vec_ptr v = vec_alloc((vec_free_f)string_free);
 
     /* Immunities */
-    for (i = 0; i < RES_TELEPORT; i++)
+    for (int i = 0; i < RES_TELEPORT; i++)
     {
         int flg = res_get_object_immune_flag(i);
-        if (flg != OF_INVALID && have_flag(flgs, flg))
-            vec_add(v, _get_res_name(i));
+        if (flg != OF_INVALID && have_flag(flgs, flg)) vec_add(v, _get_res_name(i));
     }
     if (vec_length(v))
     {
@@ -849,7 +847,7 @@ static void _display_resists(u32b flgs[OF_ARRAY_SIZE], doc_ptr doc)
 
     /* Resistances */
     vec_clear(v);
-    for (i = 0; i < RES_TELEPORT; i++)
+    for (int i = 0; i < RES_TELEPORT; i++)
     {
         int flg_im = res_get_object_immune_flag(i);
         int net = 0;
@@ -868,7 +866,7 @@ static void _display_resists(u32b flgs[OF_ARRAY_SIZE], doc_ptr doc)
 
     /* Vulnerabilities */
     vec_clear(v);
-    for (i = 0; i < RES_TELEPORT; i++)
+    for (int i = 0; i < RES_TELEPORT; i++)
     {
         int flg_im = res_get_object_immune_flag(i);
         int net = 0;

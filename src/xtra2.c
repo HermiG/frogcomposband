@@ -4605,7 +4605,7 @@ static int target_set_aux(int y, int x, int mode, cptr info)
  */
 bool target_set(int mode)
 {
-    int        i, d, t;
+    int        i, d;
     int        y = py;
     int        x = px;
     bool       done = FALSE;
@@ -4749,7 +4749,7 @@ bool target_set(int mode)
                     y = py;
                     x = px;
                 }
-
+                // fall-through
                 case 'o':
                 {
                     flag = FALSE;

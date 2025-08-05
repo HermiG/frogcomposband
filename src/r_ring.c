@@ -3,18 +3,12 @@
 
 static cptr _mon_name(int r_idx)
 {
-    if (r_idx)
-        return r_name + r_info[r_idx].name;
-    return ""; /* Birth Menu */
+    return r_idx ? r_name + r_info[r_idx].name : "";
 }
 
 static int _count(int list[])
 {
-    int i;
-    for (i = 0; ; i++)
-    {
-        if (list[i] == -1) return i;
-    }
+    for (int i = 0; ; i++) if (list[i] == -1) return i;
     /* return 0;  error: missing sentinel ... unreachable */
 }
 
@@ -41,35 +35,28 @@ static int _bounds_check(int n)
 
 static void _load(savefile_ptr file)
 {
-    int ct, i;
-
     /* Essences */
-    for (i = 0; i < _MAX_ESSENCE; i++)
-        _essences[i] = 0;
+    for (int i = 0; i < _MAX_ESSENCE; i++) _essences[i] = 0;
 
-    ct = savefile_read_s16b(file);
-    for (i = 0; i < ct; i++)
+    int ct = savefile_read_s16b(file);
+    for (int i = 0; i < ct; i++)
     {
         int j = savefile_read_s16b(file);
         int n = _bounds_check(savefile_read_s16b(file));
 
-
-        if (0 <= j && j < _MAX_ESSENCE)
-            _essences[j] += n;
+        if (0 <= j && j < _MAX_ESSENCE) _essences[j] += n;
     }
 
     /* Effects (i.e. Activations) */
-    for (i = 0; i < EFFECT_MAX; i++)
-        _effects[i] = 0;
+    for (int i = 0; i < EFFECT_MAX; i++) _effects[i] = 0;
 
     ct = savefile_read_s16b(file);
-    for (i = 0; i < ct; i++)
+    for (int i = 0; i < ct; i++)
     {
         int j = savefile_read_s16b(file);
         int n = _bounds_check(savefile_read_s16b(file));
 
-        if (0 <= j && j < EFFECT_MAX)
-            _effects[j] += n;
+        if (0 <= j && j < EFFECT_MAX) _effects[j] += n;
     }
     ini_statup_list();
     if (!savefile_is_older_than(file, 7,1,0,1)) dungeon_statup_load(file);
@@ -77,18 +64,14 @@ static void _load(savefile_ptr file)
 
 static void _save(savefile_ptr file)
 {
-    int ct = 0, i;
+    int ct = 0;
 
     /* Essences */
-    for (i = 0; i < _MAX_ESSENCE; i++)
-    {
-        if (_essences[i])
-            ct++;
-    }
+    for (int i = 0; i < _MAX_ESSENCE; i++) if (_essences[i]) ct++;
 
     savefile_write_s16b(file, ct);
 
-    for (i = 0; i < _MAX_ESSENCE; i++)
+    for (int i = 0; i < _MAX_ESSENCE; i++)
     {
         if (_essences[i])
         {
@@ -99,15 +82,11 @@ static void _save(savefile_ptr file)
 
     /* Effects */
     ct = 0;
-    for (i = 0; i < EFFECT_MAX; i++)
-    {
-        if (_effects[i])
-            ct++;
-    }
+    for (int i = 0; i < EFFECT_MAX; i++) if (_effects[i]) ct++;
 
     savefile_write_s16b(file, ct);
 
-    for (i = 0; i < EFFECT_MAX; i++)
+    for (int i = 0; i < EFFECT_MAX; i++)
     {
         if (_effects[i])
         {
@@ -1372,13 +1351,12 @@ static void _calc_bonuses(void)
     /* Speed rings come very late, and very unreliably ... */
     p_ptr->pspeed += p_ptr->lev / 10;
 
-    for (i = 0; i < RES_MAX; i++)
+    for (int i = 0; i < RES_MAX; i++)
     {
         int j = res_get_object_flag(i);
         int n = _calc_amount(_essences[j], _res_power(i), 1);
 
-        for (; n; --n)
-            res_add(i);
+        for (; n; --n) res_add(i);
     }
     if (_essences[OF_IM_ACID] >= 2)
         res_add_immune(RES_ACID);
@@ -1446,8 +1424,8 @@ static void _calc_bonuses(void)
         p_ptr->esp_good = TRUE;
     if (_essences[OF_ESP_NONLIVING] >= 2)
         p_ptr->esp_nonliving = TRUE;
-	if (_essences[OF_ESP_LIVING] >= 2)
-		p_ptr->esp_living = TRUE;
+    if (_essences[OF_ESP_LIVING] >= 2)
+        p_ptr->esp_living = TRUE;
     if (_essences[OF_ESP_UNIQUE] >= 2)
         p_ptr->esp_unique = TRUE;
 
@@ -1490,9 +1468,7 @@ static void _calc_bonuses(void)
 
 static void _calc_stats(s16b stats[MAX_STATS])
 {
-    int i;
-    for (i = 0; i < 6; i++)
-        stats[i] += _calc_stat_bonus(OF_STR + i);
+    for (int i = 0; i < 6; i++) stats[i] += _calc_stat_bonus(OF_STR + i);
 }
 
 static void _get_flags(u32b flgs[OF_ARRAY_SIZE]) 
@@ -1547,8 +1523,8 @@ static void _get_flags(u32b flgs[OF_ARRAY_SIZE])
         add_flag(flgs, OF_ESP_GOOD);
     if (_essences[OF_ESP_NONLIVING] >= 2)
         add_flag(flgs, OF_ESP_NONLIVING);
-	if (_essences[OF_ESP_LIVING] >= 2)
-		add_flag(flgs, OF_ESP_LIVING);
+    if (_essences[OF_ESP_LIVING] >= 2)
+        add_flag(flgs, OF_ESP_LIVING);
     if (_essences[OF_ESP_UNIQUE] >= 2)
         add_flag(flgs, OF_ESP_UNIQUE);
     if (_essences[OF_ESP_DRAGON] >= 2)

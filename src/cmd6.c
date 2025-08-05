@@ -1073,19 +1073,6 @@ static void do_cmd_device_aux(obj_ptr obj)
         return;
     }
 
-    if ((obj->curse_flags & OFC_CURSED) && one_in_(6))
-    {
-        msg_print("Oops! The device explodes!");
-        project(
-            PROJECT_WHO_UNCTRL_POWER, 4, py, px,
-            device_sp(obj), GF_MANA,
-            PROJECT_STOP | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL);
-        obj->number = 0;
-        obj_release(obj, OBJ_RELEASE_QUIET);
-        p_inc_fatigue(MUT_EASY_TIRING2, 50);
-        return;
-    }
-
     if (is_devicemaster && devicemaster_desperation)
     {
         int amt = 50;
@@ -1096,7 +1083,41 @@ static void do_cmd_device_aux(obj_ptr obj)
             amt /= 2;
         }
     }
-  
+
+    if ((obj->curse_flags & OFC_CURSED) && one_in_(3))
+    {
+        bool known_bad = obj->feeling || obj->known_curse_flags;
+        obj_learn_curse(obj, (OFC_CURSED | OFC_HEAVY_CURSE | OFC_PERMA_CURSE));
+
+        int outcome = randint1(10);
+        if(known_bad && (outcome == 1 || (outcome == 2 && device_is_fully_charged(obj)))) { // <0-20% Explode and destroy device
+            msg_print("The device shudders violently and explodes!");
+            project(PROJECT_WHO_UNCTRL_POWER, 4, py, px, device_sp(obj), GF_MANA, PROJECT_STOP | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL);
+            obj->number = 0;
+            obj_release(obj, OBJ_RELEASE_QUIET);
+            p_inc_fatigue(MUT_EASY_TIRING2, 50);
+            return;
+        } else if(outcome <= 3) { // 10-30% It just fails (fallthrough from explosion)
+            msg_print("The device hums softly, then suddenly falls silent as the spell fizzles.");
+            p_inc_fatigue(MUT_EASY_TIRING2, 50);
+            return;
+        } else if(outcome <= 5) { // 20% Lose a max charge
+            msg_print("A wisp of acrid smoke curls from the device. It feels subtly hollowed.");
+            obj->xtra4 = MAX(0, obj->xtra4 - 1);
+            obj->xtra5 = MAX(0, obj->xtra5 - 100);
+        } else if(outcome <= 7) {
+            msg_print("The device discharges in a burst of light and heat!"); // 20% Discharge all mana
+            project(PROJECT_WHO_UNCTRL_POWER, 4, py, px, device_sp(obj), GF_LITE, PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL);
+            device_decrease_sp(obj, obj->activation.cost * charges);
+        } else if(outcome <= 9 && boost > 0) { // <20% Weaken activated effect
+            msg_print("The device hums feebly, producing only a weak effect.");
+            boost--;
+        } else { // 10+% Drain player mana (in addition to the device sp)
+            msg_print("You feel a chill as the device drains some of your magical energy.");
+            sp_player(-obj->activation.cost);
+        }
+    }
+
     if (obj_has_flag(bag, OF_DAMPENING) && boost > 0) {
         if ((bag->curse_flags && one_in_(2)) || (!bag->curse_flags && one_in_(10))) {
             char bag_name[MAX_NLEN];
@@ -1158,7 +1179,7 @@ static void do_cmd_device_aux(obj_ptr obj)
             else
             {
                 device_decrease_sp(obj, obj->activation.cost * charges);
-                obj->marked |= OM_DELAYED_MSG;
+                obj->marked   |= OM_DELAYED_MSG;
                 p_ptr->notice |= PN_CARRY;
             }
         }

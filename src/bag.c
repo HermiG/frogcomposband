@@ -275,9 +275,8 @@ void bag_delayed_describe(void)
 /* Properties of the entire inventory */
 int bag_weight_total(obj_p p)
 {
-    slot_t slot = equip_find_obj(TV_BAG, SV_ANY);
-    if (!slot) return 0;
-    obj_ptr bag = equip_obj(slot);
+    obj_ptr bag = equip_obj(equip_find_obj(TV_BAG, SV_ANY));
+    if (!bag) return 0;
 
     float scale = 1.0f;
     switch (bag->sval)

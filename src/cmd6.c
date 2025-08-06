@@ -1029,7 +1029,7 @@ static void do_cmd_device_aux(obj_ptr obj)
     }
 
     bool failed = FALSE;
-    if (obj_has_flag(bag, OF_BRIMMING) && device_is_fully_charged(obj)) {
+    if (bag && obj_has_flag(bag, OF_BRIMMING) && device_is_fully_charged(obj)) {
         int successes = device_try(obj) + device_try(obj);
         if ( bag->curse_flags && successes < 2) failed = TRUE; // Disadvantage
         if (!bag->curse_flags && successes < 1) failed = TRUE; // Advantage
@@ -1118,7 +1118,7 @@ static void do_cmd_device_aux(obj_ptr obj)
         }
     }
 
-    if (obj_has_flag(bag, OF_DAMPENING) && boost > 0) {
+    if (bag && obj_has_flag(bag, OF_DAMPENING) && boost > 0) {
         if ((bag->curse_flags && one_in_(2)) || (!bag->curse_flags && one_in_(10))) {
             char bag_name[MAX_NLEN];
             object_desc(bag_name, bag, OD_LORE);

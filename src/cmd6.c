@@ -1084,7 +1084,7 @@ static void do_cmd_device_aux(obj_ptr obj)
         }
     }
 
-    if ((obj->curse_flags & OFC_CURSED) && one_in_(3))
+    if ((obj->curse_flags & OFC_CURSED) && one_in_(4))
     {
         bool known_bad = obj->feeling || obj->known_curse_flags;
         obj_learn_curse(obj, (OFC_CURSED | OFC_HEAVY_CURSE | OFC_PERMA_CURSE));
@@ -1098,7 +1098,7 @@ static void do_cmd_device_aux(obj_ptr obj)
             p_inc_fatigue(MUT_EASY_TIRING2, 50);
             return;
         } else if(outcome <= 3) { // 10-30% It just fails (fallthrough from explosion)
-            msg_print("The device hums softly, then suddenly falls silent as the spell fizzles.");
+            msg_print("The device hums softly, then falls silent as the spell fizzles.");
             p_inc_fatigue(MUT_EASY_TIRING2, 50);
             return;
         } else if(outcome <= 5) { // 20% Lose a max charge
